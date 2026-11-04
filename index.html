@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no,url=no">
+<meta name="theme-color" content="#060d1a">
+<title>Credit Up - Smart Loans</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--p:#1ddb80;--p2:#0fbb65;--pdark:#0a8a48;--bg:#060d1a;--bg2:#0b1628;--surf:#111f35;--surf2:#18293e;--glass:rgba(255,255,255,0.04);--gbord:rgba(255,255,255,0.08);--txt:#e2eeff;--txt2:#7b90b4;--txt3:#5a6b85;--orange:#ff8c42;--red:#ff4d6a;--blue:#4d8fff;--purple:#a855f7;--bord:rgba(255,255,255,0.07);--sh:0 20px 60px rgba(0,0,0,.7);--glow:0 0 24px rgba(29,219,128,.25)}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:auto;user-select:auto}
+html,body{height:100%}
+body{background:#000;color:var(--txt);display:flex;justify-content:center;min-height:100dvh;overflow-x:hidden}
+#app{width:100%;max-width:400px;background:var(--bg);height:100dvh;overflow-y:auto;overflow-x:hidden;position:relative;box-shadow:0 0 80px rgba(0,0,0,.9);scrollbar-width:none;padding-bottom:80px}
+#app::-webkit-scrollbar{display:none}
+#loader{position:fixed;inset:0;background:rgba(6,13,26,.92);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:99999;flex-direction:column;gap:16px}
+#loader.on{display:flex}
+.loader-ring{width:48px;height:48px;border:3px solid rgba(29,219,128,.15);border-top-color:var(--p);border-radius:50%;animation:spin .9s linear infinite}
+.loader-text{color:var(--txt2);font-size:13px;font-weight:500;letter-spacing:.5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#splash{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:99999;transition:opacity .7s ease,visibility .7s ease}
+#splash.out{opacity:0;visibility:hidden}
+.sp-logo{width:110px;height:110px;background:linear-gradient(145deg,#0a6e35,#0f9e4e);border-radius:28px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:18px;box-shadow:0 12px 40px rgba(10,110,53,.4);margin-bottom:18px}
+.sp-c{width:46px;height:46px;border:8px solid #fff;border-right-color:transparent;border-radius:50%;transform:rotate(-35deg)}
+.sp-bars{position:absolute;bottom:20px;display:flex;align-items:flex-end;gap:3px}
+.sp-bar{width:6px;background:#4ade80;border-radius:2px}
+.sp-bar:nth-child(1){height:10px}.sp-bar:nth-child(2){height:16px}.sp-bar:nth-child(3){height:24px}
+.sp-curve{position:absolute;bottom:0;width:100%;height:28px;background:#fff;border-top-left-radius:50% 100%;border-top-right-radius:50% 100%;display:flex;justify-content:center;align-items:center}
+.sp-curve-txt{font-size:12px;font-weight:800;color:#065c25;letter-spacing:.5px}
+.sp-curve-txt span{color:#22c55e}
+.sp-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:3px}
+.sp-sub{font-size:12px;color:#64748b;margin-bottom:18px;font-weight:500}
+.sp-pay-title{font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:700}
+.sp-pay-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:18px;padding:0 15px}
+.sp-logo-chip{background:#fff;border:1px solid #e2e8f0;padding:4px 10px;border-radius:6px;height:28px;display:flex;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.sp-logo-chip img{height:13px;width:auto;object-fit:contain}
+.sp-badge{display:flex;align-items:center;gap:6px;background:#f0fdf4;color:#15803d;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:14px;border:1px solid #bbf7d0}
+.sp-bar-wrap{width:130px;height:3px;background:#e2e8f0;border-radius:2px;overflow:hidden;margin-bottom:5px}
+.sp-progress{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);width:0%;animation:sp-load 3.5s ease-in-out forwards;border-radius:2px}
+@keyframes sp-load{0%{width:0%}50%{width:60%}100%{width:100%}}
+.sp-foot{position:absolute;bottom:22px;font-size:10px;color:#94a3b8;display:flex;align-items:center;gap:6px;font-weight:500}
+.sp-foot i{color:#22c55e}
+.screen{display:none;padding:20px;min-height:100dvh;background:var(--bg);overflow-x:hidden}
+.screen.active{display:block;animation:screenIn .28s ease}
+@keyframes screenIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+#screen-policy.active{display:flex;flex-direction:column;height:100dvh;padding:0}
+#screen-approved.active,#screen-fee-payment.active,#screen-waiting.active{display:flex;flex-direction:column;padding:0}
+#screen-review-progress.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative}
+#screen-home.active{display:block;padding:0}
+.ticker-wrap{width:100%;overflow:hidden;background:rgba(29,219,128,0.1);border-bottom:1px solid rgba(29,219,128,0.2);padding:8px 0;position:relative;z-index:10;display:flex;align-items:center}
+.ticker-title{background:var(--p);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;margin-left:15px;z-index:2;white-space:nowrap;box-shadow:0 2px 8px rgba(29,219,128,.3)}
+.ticker{display:flex;white-space:nowrap;animation:ticker 20s linear infinite;padding-left:15px;will-change:transform}
+.ticker-item{font-size:12px;color:var(--txt);font-weight:500;margin-right:30px;display:inline-flex;align-items:center;gap:6px}
+.ticker-item i{color:var(--p);font-size:10px}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+.home-hdr{background:linear-gradient(145deg,#063a1e 0%,#0a5c2f 50%,#0d7a40 100%);padding:20px 20px 48px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;position:relative;overflow:hidden}
+.home-hdr::before{content:'';position:absolute;top:-80px;right:-80px;width:240px;height:240px;background:radial-gradient(circle,rgba(29,219,128,.18) 0%,transparent 70%);border-radius:50%;animation:orb 6s ease-in-out infinite}
+.home-hdr::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(29,219,128,.1) 0%,transparent 70%);border-radius:50%;animation:orb 8s ease-in-out infinite reverse}
+@keyframes orb{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.15) translate(10px,-10px)}}
+.home-top-bar{display:flex;justify-content:space-between;align-items:center;padding:15px 0 10px;background:transparent;position:relative;z-index:20}
+.home-greeting h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:20px;font-weight:900;letter-spacing:-0.5px}
+.balance-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.35);border:1px solid rgba(29,219,128,0.4);border-radius:20px;padding:6px 14px;margin-top:8px;box-shadow:0 4px 15px rgba(29,219,128,0.15);backdrop-filter:blur(5px)}
+.balance-pill span{font-size:15px;font-weight:800;color:#fff}
+.balance-pill i{color:var(--p);cursor:pointer;font-size:14px;padding:4px}
+.notif-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);display:flex;justify-content:center;align-items:center;color:#fff;font-size:18px;cursor:pointer;border:1px solid rgba(255,255,255,.15);position:relative;transition:.2s}
+.notif-btn:active{transform:scale(.9)}
+.notif-badge{position:absolute;top:-2px;right:-2px;width:12px;height:12px;background:var(--red);border-radius:50%;border:2px solid #0a5c2f;display:none}
+.h-logo{text-align:center;font-size:26px;font-weight:900;color:#fff;margin-top:15px;margin-bottom:20px;position:relative;z-index:2;letter-spacing:-.5px}
+.h-logo span{color:#4ade80}
+.h-label{text-align:center;color:rgba(255,255,255,.65);font-size:12px;font-weight:500;position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px}
+.h-label::before,.h-label::after{content:'';height:1px;width:28px;background:rgba(255,255,255,.3)}
+.h-amount{text-align:center;font-size:44px;font-weight:900;color:#fff;margin-bottom:28px;position:relative;z-index:2;letter-spacing:-1px;text-shadow:0 4px 20px rgba(0,0,0,.3)}
+.h-feats{display:flex;justify-content:center;gap:28px;margin-bottom:20px;position:relative;z-index:2}
+.h-feat{text-align:center}
+.h-feat-ic{background:rgba(0,0,0,.25);backdrop-filter:blur(8px);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;border:1px solid rgba(255,255,255,.12)}
+.h-feat-ic i{color:#fff;font-size:17px}
+.h-feat-txt{font-size:11px;color:rgba(255,255,255,.8);font-weight:500}
+.btn-borrow{background:rgba(255,255,255,.97);color:#0a5c2f;border:none;padding:17px 20px;border-radius:32px;font-size:17px;font-weight:800;width:100%;cursor:pointer;position:relative;z-index:2;box-shadow:0 8px 32px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s}
+.btn-borrow:active{transform:scale(.98)}
+.bn-div{height:20px;width:1.5px;background:#86efac}
+.bn-bn{font-family:'Hind Siliguri',sans-serif;font-weight:700;font-size:16px;color:#166534}
+.bn-hand{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:26px;animation:handPulse 1.5s infinite}
+@keyframes handPulse{0%,100%{transform:translateY(-50%) scale(1)}50%{transform:translateY(-60%) scale(1.1)}}
+.home-body{padding:0 16px 32px;margin-top:-18px;position:relative;z-index:3}
+.status-card-clickable{background:linear-gradient(135deg,var(--surf),var(--bg2));border:1px solid var(--p);border-radius:18px;padding:18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:20px;box-shadow:0 10px 30px rgba(29,219,128,0.1);transition:.2s}
+.status-card-clickable:active{transform:scale(.97)}
+.status-card-left{display:flex;align-items:center;gap:15px}
+.status-icon-box{width:45px;height:45px;border-radius:50%;background:rgba(29,219,128,0.15);color:var(--p);display:flex;justify-content:center;align-items:center;font-size:20px}
+.status-card-left h4{font-size:15px;color:var(--txt);margin-bottom:4px}
+.status-card-left p{font-size:12px;color:var(--txt2)}
+.quick-actions-title{font-size:16px;font-weight:800;color:var(--txt);margin-bottom:12px;margin-top:25px;padding-left:5px}
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:25px;margin-top:10px}
+.qa-item{background:linear-gradient(145deg,var(--surf),var(--bg2));border:1px solid var(--gbord);box-shadow:0 8px 20px rgba(0,0,0,0.2);border-radius:16px;padding:15px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:.2s}
+.qa-item:active{transform:scale(.95)}
+.qa-icon{width:44px;height:44px;border-radius:14px;display:flex;justify-content:center;align-items:center;font-size:18px}
+.qa-blue{background:linear-gradient(135deg,rgba(77,143,255,.2),rgba(77,143,255,.05));color:#66a3ff;border:1px solid rgba(77,143,255,.3)}
+.qa-orange{background:linear-gradient(135deg,rgba(255,140,66,.2),rgba(255,140,66,.05));color:#ffa366;border:1px solid rgba(255,140,66,.3)}
+.qa-purple{background:linear-gradient(135deg,rgba(168,85,247,.2),rgba(168,85,247,.05));color:#c085ff;border:1px solid rgba(168,85,247,.3)}
+.qa-green{background:linear-gradient(135deg,rgba(29,219,128,.2),rgba(29,219,128,.05));color:#4dff9f;border:1px solid rgba(29,219,128,.3)}
+.qa-item span{font-size:11px;font-weight:600;color:var(--txt);text-align:center}
+.info-card{background:var(--surf);border-radius:22px;padding:24px 20px;box-shadow:var(--sh);border:1px solid var(--bord)}
+.info-card-title{text-align:center;font-size:17px;font-weight:800;margin-bottom:24px;color:var(--txt)}
+.step-row{display:flex;margin-bottom:22px;align-items:flex-start}
+.step-row:last-child{margin-bottom:0}
+.step-ic{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:14px}
+.step-ic i{color:#fff;font-size:19px}
+.bg-g{background:linear-gradient(135deg,#10b981,#059669)}
+.bg-o{background:linear-gradient(135deg,#f97316,#ea580c)}
+.bg-b{background:linear-gradient(135deg,#3b82f6,#2563eb)}
+.step-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;margin-bottom:5px;letter-spacing:.3px}
+.bd-g{background:rgba(16,185,129,.12);color:#34d399}
+.bd-o{background:rgba(249,115,22,.12);color:#fb923c}
+.bd-b{background:rgba(59,130,246,.12);color:#60a5fa}
+.step-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--txt2);line-height:1.5}
+.live-section{margin-bottom:25px; padding-bottom:20px;}
+.live-title{font-size:15px;font-weight:800;color:var(--txt);margin-bottom:12px;padding-left:5px}
+.live-feed{background:var(--surf);border-radius:16px;border:1px solid var(--bord);padding:10px 15px;max-height:180px;overflow-y:auto}
+.live-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--bord)}
+.live-item:last-child{border-bottom:none}
+.live-left{display:flex;align-items:center;gap:10px}
+.live-avatar{width:32px;height:32px;border-radius:50%;background:rgba(29,219,128,.1);color:var(--p);display:flex;justify-content:center;align-items:center;font-size:14px}
+.live-info h4{font-size:13px;color:var(--txt);font-weight:600;margin-bottom:2px}
+.live-info p{font-size:10px;color:var(--txt2)}
+.live-amount{font-size:14px;font-weight:800;color:var(--p)}
+.partner-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--surf);border-radius:16px;border:1px solid var(--bord);padding:15px 10px}
+.partner-item{background:#fff;border-radius:8px;padding:6px;display:flex;justify-content:center;align-items:center;height:40px;overflow:hidden}
+.partner-item img{max-width:100%;max-height:100%;object-fit:contain}
+.pol-hdr{background:var(--bg2);color:#fff;text-align:center;padding:16px;font-size:17px;font-weight:700;border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)}
+.pol-body{flex:1;overflow-y:auto;padding:20px;padding-bottom:140px;color:var(--txt2);font-size:13.5px;line-height:1.7}
+.pol-body p{margin-bottom:14px}
+.pol-updated{text-align:center;margin-bottom:18px;border-bottom:1px solid var(--bord);padding-bottom:14px;color:var(--txt);font-weight:600}
+.pol-h{color:var(--p);font-weight:700;font-size:14px;margin:18px 0 8px;border-bottom:1px solid var(--bord);padding-bottom:5px}
+.pol-body ul{padding-left:18px;margin-bottom:14px}
+.pol-body li{margin-bottom:8px}
+.pol-foot{position:sticky;bottom:0;left:0;width:100%;background:var(--bg2);padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px rgba(0,0,0,.5);z-index:10;border-top:1px solid var(--bord)}
+.agree-wrap{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;color:var(--txt2);cursor:pointer}
+.agree-wrap input[type="checkbox"]{width:18px;height:18px;accent-color:var(--p);cursor:pointer;flex-shrink:0}
+.btn-pol{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:16px;border-radius:28px;font-size:16px;font-weight:700;width:100%;cursor:pointer;box-shadow:var(--glow)}
+.auth-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;margin-top:8px;position:relative}
+.auth-logo{font-size:28px;font-weight:900;color:var(--txt);letter-spacing:-.5px}
+.auth-logo span{color:var(--p)}
+.ic-headset{font-size:22px;color:var(--txt2);cursor:pointer;padding:6px;transition:.2s}
+.ic-headset:hover{color:var(--p)}
+.auth-title{font-size:30px;font-weight:800;margin-bottom:8px;color:var(--txt);letter-spacing:-.5px}
+.auth-sub{font-size:15px;color:var(--txt2);margin-bottom:14px;font-weight:400}
+.auth-line{width:32px;height:3px;background:linear-gradient(90deg,var(--p),var(--p2));margin-bottom:28px;border-radius:2px}
+.auth-label{font-size:18px;font-weight:700;color:var(--txt);margin-bottom:18px}
+.ph-wrap{display:flex;align-items:center;background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--gbord);border-radius:32px;padding:0 20px;height:58px;margin-bottom:14px;transition:.3s}
+.ph-wrap:focus-within{border-color:var(--p);box-shadow:0 0 0 3px rgba(29,219,128,.1)}
+.ph-cc{color:var(--txt);font-weight:700;font-size:16px;margin-right:14px;border-right:1px solid var(--bord);padding-right:14px}
+.ph-wrap input{border:none;flex:1;background:transparent;color:var(--txt);outline:none;font-size:16px;font-weight:500}
+.ibox{position:relative;margin-bottom:14px}
+.ibox input{width:100%;height:56px;padding:0 20px;border-radius:16px;background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--gbord);color:var(--txt);font-size:16px;outline:none;transition:.3s;font-weight:500}
+.ibox input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(29,219,128,.1)}
+.ibox input::placeholder{color:var(--txt2)}
+.advice-txt{font-size:13px;color:var(--txt2);margin-bottom:28px;line-height:1.6;padding:12px 14px;background:var(--glass);border-radius:12px;border:1px solid var(--bord)}
+.advice-txt i{color:var(--p);margin-right:6px}
+.btn-auth{background:var(--surf2);color:var(--txt2);border:none;padding:17px;border-radius:32px;font-size:16px;font-weight:700;width:100%;cursor:pointer;margin-bottom:22px;height:58px;transition:all .3s;letter-spacing:.3px}
+.btn-auth.go{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:var(--glow)}
+.btn-auth:active{transform:scale(.98)}
+.auth-check{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--txt2)}
+.auth-check .green-link{color:var(--p);font-weight:600}
+.ck{appearance:none;width:20px;height:20px;border:2px solid var(--gbord);border-radius:50%;position:relative;cursor:pointer;flex-shrink:0;transition:.2s}
+.ck:checked{background:var(--p);border-color:var(--p)}
+.ck:checked::after{content:'✔';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:11px}
+.dash-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;position:relative}
+.dash-hdr .back-ic{font-size:18px;color:var(--txt2);cursor:pointer;padding:6px;transition:.2s}
+.dash-hdr .logo{font-size:20px;font-weight:900;color:var(--txt);position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap}
+.dash-hdr .logo span{color:var(--p)}
+.suc-banner{background:linear-gradient(135deg,var(--p),var(--p2));border-radius:14px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;box-shadow:var(--glow)}
+.suc-left{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:14px}
+.suc-icon{font-size:22px}
+.warn-box{background:rgba(255,140,66,.07);border:1px solid rgba(255,140,66,.25);border-radius:13px;padding:14px;display:flex;gap:10px;margin-bottom:22px}
+.warn-box i{color:var(--orange);font-size:16px;margin-top:2px;flex-shrink:0}
+.warn-box p{color:var(--txt2);font-size:12.5px;line-height:1.6}
+.prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-hdr h3{font-size:15px;font-weight:700;color:var(--txt)}
+.prog-hdr span{color:var(--p);font-size:13px;font-weight:600}
+.prog-track{width:100%;height:5px;background:var(--surf2);border-radius:3px;margin-bottom:22px;overflow:hidden}
+.prog-fill{width:0%;height:100%;background:linear-gradient(90deg,var(--p),var(--p2));border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.step-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.scard{background:var(--surf);border-radius:14px;padding:14px 16px;display:flex;align-items:center;cursor:pointer;transition:.2s;border:1px solid transparent;border-left:3px solid transparent}
+.scard.active{border-color:rgba(29,219,128,.15);border-left-color:var(--p);background:rgba(29,219,128,.04)}
+.scard.locked{opacity:.7;cursor:not-allowed}
+.scard.done{border-left-color:var(--p);background:rgba(29,219,128,.04);border-color:rgba(29,219,128,.1)}
+.scard-num{width:30px;height:30px;border-radius:50%;background:var(--bg2);color:var(--txt2);display:flex;justify-content:center;align-items:center;font-size:13px;font-weight:700;margin-right:13px;flex-shrink:0;border:1px solid var(--bord)}
+.scard.active .scard-num{background:rgba(29,219,128,.12);color:var(--p);border-color:rgba(29,219,128,.3)}
+.scard.done .scard-num{background:var(--p);color:#fff;border-color:var(--p)}
+.scard-icbox{width:38px;height:38px;border-radius:9px;display:flex;justify-content:center;align-items:center;margin-right:13px;background:rgba(71,85,105,.18);flex-shrink:0}
+.scard.active .scard-icbox,.scard.done .scard-icbox{background:rgba(29,219,128,.1);border:1px solid rgba(29,219,128,.25)}
+.scard-icbox i{font-size:17px;color:var(--txt2)}
+.scard.active .scard-icbox i,.scard.done .scard-icbox i{color:var(--p)}
+.scard-txt{flex:1;font-weight:600;color:var(--txt);font-size:14px}
+.scard.locked .scard-txt{color:var(--txt2)}
+.scard-arr{font-size:14px;color:var(--txt2)}
+.scard.active .scard-arr,.scard.done .scard-arr{color:var(--p)}
+.btn-apply{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:17px;border-radius:32px;font-size:17px;font-weight:800;width:100%;cursor:pointer;box-shadow:var(--glow);margin-bottom:18px;letter-spacing:.3px;transition:.2s}
+#screen-basic-info,#screen-personal-info,#screen-emergency-contact,#screen-bank-info,#screen-nid-upload{padding-bottom:120px}
+.form-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:4px}
+.form-top h2{font-size:18px;font-weight:800;color:var(--txt)}
+.form-top span{color:var(--p);font-weight:700;font-size:13px;background:rgba(29,219,128,.1);padding:4px 10px;border-radius:20px;border:1px solid rgba(29,219,128,.2)}
+.step-track{width:100%;height:4px;background:var(--surf2);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.step-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--p2));border-radius:3px}
+.step-fill.s1{width:20%}.step-fill.s2{width:40%}.step-fill.s3{width:60%}.step-fill.s4{width:80%}.step-fill.s5{width:100%}
+.g-banner{background:linear-gradient(135deg,rgba(6,58,30,.9),rgba(10,92,47,.9));border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:26px;border:1px solid rgba(29,219,128,.15);position:relative;overflow:hidden}
+.g-banner::after{content:'';position:absolute;right:-15px;top:-15px;width:70px;height:70px;background:rgba(29,219,128,.08);border-radius:50%}
+.g-banner-txt{color:rgba(255,255,255,.85);font-size:12.5px;line-height:1.5;flex:1}
+.g-banner-ic{font-size:34px;color:#4ade80;z-index:1;filter:drop-shadow(0 0 8px rgba(74,222,128,.4))}
+.form-sec-title{font-size:20px;font-weight:800;color:var(--txt);margin-bottom:20px;letter-spacing:-.3px}
+.fg{margin-bottom:22px;position:relative}
+.fg label{display:block;font-size:13px;color:var(--txt2);margin-bottom:7px;font-weight:500}
+.fg label span.req{color:var(--red);margin-right:2px}
+.fg input{width:100%;background:transparent;border:none;border-bottom:1.5px solid var(--surf2);color:var(--txt);font-size:16px;padding:8px 0;outline:none;transition:.3s;font-weight:500}
+.fg input:focus{border-bottom-color:var(--p)}
+.fg input::placeholder{color:var(--surf2)}
+.sel-disp{border-bottom:1.5px solid var(--surf2);padding:8px 0;font-size:16px;color:var(--surf2);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:.2s}
+.sel-disp.filled{color:var(--txt)}
+.sel-disp i{font-size:13px}
+.btn-next{background:var(--surf2);color:var(--txt2);border:none;padding:17px;border-radius:32px;font-size:16px;font-weight:700;width:100%;cursor:pointer;margin-top:10px;height:56px;transition:all .3s;letter-spacing:.3px}
+.btn-next.on{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:var(--glow)}
+.btn-next:active{transform:scale(.98)}
+.orng-warn{border:1px solid rgba(255,140,66,.3);background:rgba(255,140,66,.08);color:#fb923c;border-radius:12px;padding:12px 15px;text-align:center;font-size:13px;margin-bottom:22px;font-weight:500}
+.contact-card{background:var(--surf);border-radius:14px;padding:18px;margin-bottom:18px;border:1px solid var(--bord)}
+.cc-title{font-size:14px;font-weight:600;color:var(--txt2);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.cc-title::before{content:'';width:3px;height:16px;background:var(--p);border-radius:2px}
+.ci-row{display:flex;align-items:center;margin-bottom:13px}
+.ci-lbl{width:105px;font-size:13px;color:var(--txt);flex-shrink:0;font-weight:500}
+.ci-lbl span.req{color:var(--red)}
+.ci-row input{flex:1;min-width:0;background:var(--bg2);border:1px solid var(--bord);color:var(--txt);padding:11px 14px;border-radius:10px;outline:none;font-size:13.5px;transition:.2s;font-weight:500}
+.ci-row input:focus{border-color:var(--p);box-shadow:0 0 0 2px rgba(29,219,128,.1)}
+.cs-row{display:flex;align-items:center;margin-bottom:13px}
+.cs-lbl{width:105px;font-size:13px;color:var(--txt);flex-shrink:0;font-weight:500}
+.cs-lbl span.req{color:var(--red)}
+.sel-box{flex:1;background:var(--bg2);border:1px solid var(--bord);color:var(--txt);padding:11px 14px;border-radius:10px;font-size:13.5px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:.2s}
+.bank-warn{border:1px solid rgba(255,140,66,.25);background:rgba(255,140,66,.07);color:#fb923c;border-radius:12px;padding:14px;font-size:13px;line-height:1.6;margin-bottom:22px}
+.wallet-grid{display:flex;gap:10px;margin-bottom:20px}
+.w-card{flex:1;background:var(--surf);border:1.5px solid var(--bord);border-radius:13px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;transition:.25s}
+.w-card.sel{border-color:var(--p);background:rgba(29,219,128,.05);box-shadow:0 0 0 1px rgba(29,219,128,.15)}
+.w-card img{width:36px;height:36px;object-fit:contain}
+.w-card span{font-size:12.5px;font-weight:700;color:var(--txt)}
+.ph-lbl{font-size:13px;color:var(--txt2);margin-bottom:8px;font-weight:500}
+.ph-lbl span{color:var(--red)}
+.ph-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid var(--surf2);padding-bottom:10px;margin-bottom:26px}
+.ph-row input{background:transparent;border:none;color:var(--txt);font-size:18px;font-weight:800;outline:none;width:100%;font-family:'Plus Jakarta Sans',sans-serif}
+.ph-row i{color:var(--p);font-size:17px;cursor:pointer;padding:4px}
+.tips-card{background:var(--surf);border-radius:14px;padding:18px;border:1px solid var(--bord)}
+.tips-card h4{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.tips-card h4 i{color:var(--p);font-size:14px}
+.tips-card p{font-size:13px;color:var(--txt2);margin-bottom:10px;line-height:1.6;padding-left:4px}
+.tips-card p:last-child{margin-bottom:0}
+.nid-desc{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:24px;padding:14px;background:var(--glass);border-radius:12px;border:1px solid var(--bord)}
+.nid-desc i{color:var(--orange);margin-right:6px}
+.upload-wrap{margin-bottom:18px}
+.upload-box{width:100%;height:165px;border:2px dashed rgba(29,219,128,.35);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;cursor:pointer;background:rgba(29,219,128,.02);overflow:hidden;transition:.3s}
+.upload-box.up{border-style:solid;border-color:var(--p);background:rgba(29,219,128,.06)}
+.upload-thumb{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:14px;display:none}
+.upload-box.up .upload-thumb{display:block;opacity:.55}
+.upload-main{display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:2}
+.upload-box.up .upload-main{display:none}
+.upload-done{display:none;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:2}
+.upload-box.up .upload-done{display:flex}
+.upload-ic{font-size:36px;color:var(--p)}
+.upload-hint{font-size:13px;color:var(--txt2);font-weight:500}
+.upload-done-ic{width:44px;height:44px;background:var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;box-shadow:0 0 20px rgba(29,219,128,.4)}
+.upload-done-txt{font-size:13px;color:var(--p);font-weight:600}
+.upload-change{font-size:11px;color:var(--txt2)}
+.upload-tab{background:var(--surf2);color:var(--txt);font-size:13px;font-weight:700;padding:6px 22px;border-radius:10px 10px 0 0;position:absolute;bottom:0;left:50%;transform:translateX(-50%);transition:.3s;white-space:nowrap}
+.upload-box.up .upload-tab{background:var(--p);color:#fff}
+.sheet-back{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:9999;display:none;opacity:0;transition:opacity .3s}
+.sheet-back.on{display:block;opacity:1}
+.bottom-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:400px;background:var(--surf);border-radius:22px 22px 0 0;z-index:10000;padding:16px 20px calc(20px + env(safe-area-inset-bottom));transition:transform .35s cubic-bezier(.4,0,.2,1);border-top:1px solid var(--bord)}
+.bottom-sheet.on{transform:translateX(-50%) translateY(0)}
+.sheet-handle{width:36px;height:4px;background:var(--bord);border-radius:2px;margin:0 auto 18px}
+.sheet-title{font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px}
+.sheet-sub{font-size:13px;color:var(--txt2);margin-bottom:18px}
+.sheet-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.sheet-opt{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg2);border-radius:13px;cursor:pointer;border:1px solid var(--bord);transition:.2s}
+.sheet-opt-ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;flex-shrink:0}
+.sheet-opt-info{flex:1}
+.sheet-opt-title{font-size:15px;font-weight:700;color:var(--txt)}
+.sheet-opt-sub{font-size:12px;color:var(--txt2)}
+.sheet-opt-arr{color:var(--txt2);font-size:13px}
+.sheet-cancel{background:var(--bg2);color:var(--txt2);border:1px solid var(--bord);padding:14px;border-radius:14px;font-size:15px;font-weight:600;width:100%;cursor:pointer}
+.rv-green{position:absolute;top:0;left:0;width:100%;height:42%;background:linear-gradient(180deg,#0a5c2f,#063a1e);z-index:0;border-bottom-left-radius:32px;border-bottom-right-radius:32px}
+.rv-hdr{position:relative;z-index:1;text-align:center;margin-bottom:28px;margin-top:52px}
+.rv-hdr h2{font-size:17px;font-weight:700;color:#fff;line-height:1.6}
+.rv-card{background:var(--surf);border-radius:22px;padding:36px 24px;width:100%;max-width:340px;z-index:1;text-align:center;box-shadow:var(--sh);border:1px solid var(--bord)}
+.rv-ic{width:72px;height:72px;background:linear-gradient(135deg,var(--orange),#e07320);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:32px;color:#fff;box-shadow:0 10px 30px rgba(255,140,66,.35)}
+.rv-card h3{font-size:19px;font-weight:800;color:var(--orange);margin-bottom:12px}
+.rv-card p{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:26px}
+.rv-divider{width:100%;height:1px;background:var(--bord);margin-bottom:26px}
+.rv-load-txt{color:var(--p);font-size:17px;font-weight:800;margin-bottom:14px}
+.rv-track{width:100%;height:8px;background:var(--bg2);border-radius:5px;position:relative;margin-bottom:10px;overflow:hidden;border:1px solid var(--bord)}
+.rv-bar{height:100%;background:linear-gradient(90deg,var(--p),var(--p2));width:0%;border-radius:5px;transition:width .5s ease}
+.rv-knob{position:absolute;top:50%;left:0%;transform:translate(-50%,-50%);width:14px;height:14px;background:#fff;border-radius:50%;border:2.5px solid var(--orange);transition:left .5s ease;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.rv-pct{color:var(--orange);font-size:13px;font-weight:700}
+.rv-foot{position:relative;z-index:1;margin-top:36px;text-align:center;font-size:12px;color:var(--txt2);line-height:1.7}
+.rv-foot a{color:var(--p);text-decoration:none}
+.apv-hdr{display:flex;align-items:center;justify-content:center;padding:18px 20px 14px;position:relative}
+.apv-hdr .back-ic{position:absolute;left:20px;font-size:18px;color:var(--txt2);cursor:pointer}
+.apv-hdr .logo{font-size:18px;font-weight:900;color:var(--txt)}
+.apv-green-box{background:linear-gradient(135deg,#063a1e,#0a5c2f,#0d7a40);margin:0 16px 18px;border-radius:18px;padding:18px;border:1px solid rgba(29,219,128,.2);position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(6,58,30,.5)}
+.apv-banner{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:9px;color:#fff;font-weight:700;font-size:13px;margin-bottom:13px;border:1px solid rgba(255,255,255,.15)}
+.apv-banner i{font-size:16px;color:#4ade80}
+.apv-prog-txt{display:flex;justify-content:space-between;color:rgba(255,255,255,.8);font-size:11px;margin-bottom:6px}
+.apv-prog-bg{width:100%;height:5px;background:rgba(0,0,0,.25);border-radius:3px;overflow:hidden}
+.apv-prog-fill{width:100%;height:100%;background:linear-gradient(90deg,var(--orange),#e07320);border-radius:3px}
+.apv-content{padding:0 16px;overflow-y:auto}
+.loan-card{background:var(--surf);border-radius:18px;padding:22px 18px;margin-bottom:16px;box-shadow:var(--sh);border:1px solid var(--bord)}
+.loan-card p{text-align:center;color:var(--txt2);font-size:13px;margin-bottom:8px}
+.loan-card h1{text-align:center;font-size:40px;color:var(--txt);font-weight:900;margin-bottom:18px;letter-spacing:-1px}
+.loan-meta{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bord);padding-top:13px}
+.loan-meta span{color:var(--txt2);font-size:13px}
+.loan-meta span strong{color:var(--txt)}
+.loan-meta a{color:var(--p);font-size:13px;text-decoration:none;display:flex;align-items:center;gap:4px;font-weight:600}
+.disb-title{color:var(--txt2);font-size:13px;margin-bottom:8px;font-weight:500}
+.disb-card{background:var(--surf);border-radius:16px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border:1px solid var(--bord)}
+.disb-left{display:flex;align-items:center;gap:13px}
+.disb-img{width:42px;height:42px;border-radius:10px;background:#fff;padding:5px;object-fit:contain;border:1px solid var(--bord)}
+.disb-info h4{color:var(--txt);font-size:15px;font-weight:700;margin-bottom:3px}
+.disb-info p{color:var(--txt2);font-size:13px}
+.disb-card a{color:var(--txt2);font-size:13px;text-decoration:none;display:flex;align-items:center;gap:4px}
+.rules-card{background:var(--surf);border-radius:16px;padding:18px;margin-bottom:18px;border:1px solid var(--bord)}
+.rule-row{display:flex;gap:13px;margin-bottom:13px}
+.rule-row:last-child{margin-bottom:0}
+.rule-num{background:var(--txt);color:var(--bg);width:20px;height:20px;border-radius:5px;display:flex;justify-content:center;align-items:center;font-size:11px;font-weight:800;flex-shrink:0;transform:rotate(-10deg)}
+.rule-txt{color:var(--txt2);font-size:13px;line-height:1.6}
+.apv-foot{padding:16px;margin-top:auto}
+.btn-final{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:17px;border-radius:32px;font-size:17px;font-weight:800;width:100%;cursor:pointer;box-shadow:var(--glow);letter-spacing:.3px;transition:.2s}
+.fee-hdr{display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surf);border-bottom:1px solid var(--bord);position:relative}
+.fee-hdr .back-ic{position:absolute;left:16px;font-size:18px;color:var(--txt2);cursor:pointer}
+.fee-hdr .title{font-size:17px;font-weight:800;color:var(--txt)}
+.fee-sum{background:var(--surf);border-radius:18px;padding:18px;margin:16px;border:1px solid var(--bord)}
+.fee-row{display:flex;justify-content:space-between;margin-bottom:12px;font-size:14px;color:var(--txt2)}
+.fee-row.total{margin-bottom:0;border-top:1px dashed var(--bord);padding-top:13px;font-weight:800;font-size:16px;color:var(--txt)}
+.fee-row span.red{color:var(--red)}
+.fee-row span.grn{color:var(--p)}
+.pm-title{margin:0 16px 10px;font-size:15px;font-weight:700;color:var(--txt)}
+.pm-grid{display:flex;gap:10px;margin:0 16px 18px}
+.pm-card{flex:1;background:var(--surf);border:1.5px solid var(--bord);border-radius:14px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.25s}
+.pm-card.sel{border-color:var(--p);background:rgba(29,219,128,.05);box-shadow:0 0 0 1px rgba(29,219,128,.15)}
+.pm-card img{width:40px;height:40px;object-fit:contain}
+.pm-card span{font-size:12px;font-weight:700;color:var(--txt)}
+.pay-instr{background:var(--surf);border-radius:16px;padding:18px;margin:0 16px 18px;border:1px solid var(--bord)}
+.pay-instr h4{font-size:14px;color:var(--txt);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.pay-instr h4 i{color:var(--p)}
+.pay-instr p{font-size:12.5px;color:var(--txt2);margin-bottom:8px;line-height:1.5}
+.pay-num{font-size:20px;font-weight:900;color:var(--p);letter-spacing:1.5px;margin:12px 0;padding:12px;background:var(--bg2);border-radius:10px;text-align:center;border:1px solid rgba(29,219,128,.15)}
+.trx-wrap{margin:0 16px 18px}
+.trx-wrap label{display:block;font-size:13px;color:var(--txt2);margin-bottom:8px;font-weight:500}
+.trx-wrap input{width:100%;padding:15px;border-radius:14px;background:var(--surf);border:1.5px solid var(--bord);color:var(--txt);font-size:16px;outline:none;font-weight:600;letter-spacing:.5px;transition:.2s}
+.trx-wrap input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(29,219,128,.1)}
+.fee-foot{padding:16px;margin-top:auto}
+.btn-pay{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:17px;border-radius:32px;font-size:17px;font-weight:800;width:100%;cursor:pointer;box-shadow:var(--glow);opacity:.5;transition:all .3s;letter-spacing:.3px}
+.btn-pay.on{opacity:1}
+.wait-ic{width:82px;height:82px;background:rgba(255,140,66,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--orange);margin-bottom:20px;animation:wait-pulse 2s infinite;border:1px solid rgba(255,140,66,.2)}
+@keyframes wait-pulse{0%{box-shadow:0 0 0 0 rgba(255,140,66,.3)}70%{box-shadow:0 0 0 20px rgba(255,140,66,0)}100%{box-shadow:0 0 0 0 rgba(255,140,66,0)}}
+.wait-title{font-size:22px;font-weight:800;color:var(--txt);margin-bottom:10px;letter-spacing:-.5px}
+.wait-desc{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:28px;max-width:300px;text-align:center}
+.wait-card{background:var(--surf);border-radius:18px;padding:20px;width:100%;max-width:340px;border:1px solid var(--bord);margin-bottom:28px}
+.st-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:14px}
+.st-row:last-child{margin-bottom:0}
+.st-lbl{color:var(--txt2)}
+.st-val{color:var(--txt);font-weight:700}
+.st-val.pend{color:var(--orange)}
+.btn-home{background:transparent;color:var(--txt);border:1.5px solid var(--bord);padding:15px;border-radius:32px;font-size:15px;font-weight:700;width:100%;cursor:pointer;max-width:340px;transition:.2s}
+.btn-home:hover{border-color:var(--p);color:var(--p)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:9999999;padding:20px;overflow-y:auto}
+.modal-overlay.on{display:flex}
+.mc{background:linear-gradient(145deg,#0f1d35,#0d1829);border:1px solid rgba(255,255,255,.1);border-radius:26px;width:100%;max-width:340px;padding:28px 24px;box-shadow:0 30px 80px rgba(0,0,0,.9),0 0 0 1px rgba(29,219,128,.08);transform:scale(.88) translateY(8px);opacity:0;transition:all .32s cubic-bezier(.175,.885,.32,1.275);display:flex;flex-direction:column;margin:auto;max-height:88dvh;overflow-y:auto}
+.modal-overlay.on .mc{transform:scale(1) translateY(0);opacity:1}
+.m-icon{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px}
+.m-ic-suc{background:rgba(29,219,128,.12);color:var(--p);border:1.5px solid rgba(29,219,128,.25);box-shadow:0 0 24px rgba(29,219,128,.15)}
+.m-ic-err{background:rgba(255,77,106,.12);color:var(--red);border:1.5px solid rgba(255,77,106,.25)}
+.m-ic-warn{background:rgba(255,140,66,.12);color:var(--orange);border:1.5px solid rgba(255,140,66,.25)}
+.m-ic-lock{background:rgba(123,144,180,.1);color:var(--txt2);border:1.5px solid rgba(123,144,180,.15)}
+.m-title{text-align:center;font-size:19px;font-weight:800;color:var(--txt);margin-bottom:8px;letter-spacing:-.3px}
+.m-msg{text-align:center;font-size:14px;color:var(--txt2);margin-bottom:24px;line-height:1.6}
+.m-acts{display:flex;gap:10px;width:100%}
+.mbtn{flex:1;height:50px;border-radius:15px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:.2s;letter-spacing:.2px}
+.mbtn-cancel{background:var(--surf2);color:var(--txt2)}
+.mbtn-ok{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:var(--glow)}
+.mbtn-full{width:100%;height:50px;border-radius:15px;font-size:15px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:var(--glow);margin-top:4px;transition:.2s;letter-spacing:.2px}
+.pass-wrap{position:relative;margin-bottom:10px}
+.pass-wrap input{width:100%;height:52px;padding:0 48px 0 18px;border-radius:14px;background:var(--bg2);border:1.5px solid var(--bord);color:var(--txt);font-size:16px;outline:none;transition:.2s;font-weight:500}
+.pass-wrap input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(29,219,128,.1)}
+.pass-eye{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--txt2);cursor:pointer;font-size:17px;padding:4px}
+.forgot-link{text-align:right;font-size:12.5px;color:var(--txt2);cursor:pointer;margin-bottom:20px;display:block}
+.forgot-link strong{color:var(--p)}
+.m-err-msg{text-align:center;font-size:13.5px;color:var(--orange);margin-bottom:22px;line-height:1.6}
+.picker-card{background:linear-gradient(145deg,#0f1d35,#0d1829);border-radius:22px 22px 0 0;width:100%;max-width:400px;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom));height:62dvh;max-height:520px;display:flex;flex-direction:column;overflow:hidden;border-top:1px solid rgba(255,255,255,.08);box-shadow:0 -20px 60px rgba(0,0,0,.8)}
+.modal-overlay.on .picker-card{transform:translateX(-50%) translateY(0)}
+.picker-hdr{text-align:center;font-size:17px;font-weight:800;color:var(--txt);margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--bord);flex-shrink:0}
+.dob-cols{display:flex;flex:1;min-height:0;overflow:hidden;margin-bottom:14px;gap:8px}
+.dob-col{flex:1;overflow-y:auto;text-align:center;scrollbar-width:none}
+.dob-col::-webkit-scrollbar{display:none}
+.dob-item{padding:14px 0;color:var(--txt2);font-size:16px;cursor:pointer;font-weight:500;transition:.15s;border-bottom:1px solid transparent}
+.dob-item.sel{color:var(--txt);font-weight:800;font-size:17px;border-bottom-color:rgba(255,255,255,.1)}
+.pick-list{flex:1;min-height:0;overflow-y:auto;margin-bottom:14px}
+.pick-item{padding:14px 16px;text-align:center;color:var(--txt2);font-size:15px;border-bottom:1px solid var(--bord);cursor:pointer;transition:.15s;border-radius:10px;margin-bottom:2px}
+.pick-item.sel{color:var(--p);font-weight:800;font-size:16px;background:rgba(29,219,128,.07);border-bottom-color:rgba(29,219,128,.2)}
+.pick-acts{display:flex;gap:12px;flex-shrink:0;margin-top:auto;padding-top:8px}
+.btn-pick-cancel{flex:1;background:var(--surf2);color:var(--txt2);border:none;padding:14px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-pick-ok{flex:1;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:14px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:var(--glow)}
+.conf-card{background:linear-gradient(145deg,#0f1d35,#0d1829);border-radius:22px;width:100%;max-width:340px;padding:24px;margin:auto;max-height:88dvh;overflow-y:auto;border:1px solid rgba(255,255,255,.08);box-shadow:0 30px 80px rgba(0,0,0,.9)}
+.conf-title{text-align:center;font-size:18px;font-weight:800;color:var(--txt);margin-bottom:16px;letter-spacing:-.3px}
+.conf-warn{background:rgba(255,140,66,.08);border:1px solid rgba(255,140,66,.25);border-radius:11px;padding:11px;text-align:center;color:#fb923c;font-size:12.5px;margin-bottom:18px;line-height:1.5}
+.conf-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;font-size:14px;gap:10px;padding-bottom:13px;border-bottom:1px solid var(--bord)}
+.conf-row:last-of-type{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.conf-lbl{color:var(--txt2);flex-shrink:0}
+.conf-val{color:var(--txt);font-weight:600;text-align:right;word-break:break-all}
+.ld-card{background:linear-gradient(145deg,#0f1d35,#0d1829);border-radius:22px;width:100%;max-width:340px;padding:24px;margin:auto;border:1px solid rgba(255,255,255,.08);box-shadow:0 30px 80px rgba(0,0,0,.9);max-height:88dvh;overflow-y:auto}
+.ld-title{text-align:center;font-size:18px;font-weight:800;color:var(--txt);margin-bottom:20px}
+.ld-row{display:flex;justify-content:space-between;margin-bottom:12px;font-size:14px;padding-bottom:12px;border-bottom:1px solid var(--bord)}
+.ld-row.total{border-top:1.5px solid rgba(29,219,128,.2);border-bottom:none;padding-top:14px;padding-bottom:0;margin-top:4px}
+.ld-lbl{color:var(--txt2)}
+.ld-val{color:var(--txt);font-weight:600}
+.ld-val.grn{color:var(--p);font-size:17px;font-weight:800}
+input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;-webkit-text-fill-color:var(--txt) !important}
+.calc-val{font-size:28px;font-weight:900;color:var(--p);text-align:center;margin:10px 0 20px}
+.calc-slider{width:100%;-webkit-appearance:none;height:6px;background:var(--surf2);border-radius:5px;outline:none;margin-bottom:20px}
+.calc-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--p);cursor:pointer;box-shadow:var(--glow);border:2px solid #fff}
+.calc-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--bord);font-size:14px;color:var(--txt2)}
+.calc-row:last-child{border:none}
+.calc-row span:last-child{color:var(--txt);font-weight:700}
+.notif-list{display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:5px}
+.notif-item{background:var(--bg2);border-radius:14px;padding:16px;border:1px solid var(--bord);display:flex;gap:12px}
+.notif-item.unread{border-left:3px solid var(--p)}
+.notif-icon{width:36px;height:36px;border-radius:50%;background:rgba(29,219,128,.1);color:var(--p);display:flex;justify-content:center;align-items:center;font-size:14px;flex-shrink:0}
+.notif-content h4{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.notif-content p{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:6px}
+.notif-date{font-size:10px;color:var(--txt3);font-weight:600}
+.premium-popup .mc{background:rgba(15,29,53,.85) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important}
+.premium-cs-item{display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.03);padding:15px;border-radius:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);transition:.2s}
+.premium-cs-icon{width:40px;height:40px;border-radius:12px;display:flex;justify-content:center;align-items:center;font-size:18px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--bord)}
+.detail-row:last-of-type{border-bottom:none}
+.detail-lbl{color:var(--txt2);font-size:13px}
+.detail-val{color:var(--txt);font-weight:600;font-size:13px;text-align:right}
+.color-p{color:var(--p) !important}
+.fw8{font-weight:800 !important}
+.rep-schedule{max-height:40vh;overflow-y:auto;margin-top:15px;border:1px solid var(--bord);border-radius:10px}
+.rep-row{display:flex;justify-content:space-between;padding:10px 15px;border-bottom:1px solid var(--bord);font-size:13px}
+.rep-row:last-child{border-bottom:none}
+.rep-row.header{background:var(--surf2);font-weight:700;color:var(--p)}
+.bonus-banner{background:linear-gradient(90deg,rgba(255,140,66,.15),rgba(255,77,106,.15));border:1px dashed var(--orange);border-radius:12px;padding:10px 15px;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;position:relative;z-index:2}
+.bonus-banner span{font-size:13px;font-weight:700;color:#fff}
+.shake-icon{font-size:20px;animation:shake 2s infinite cubic-bezier(.36,.07,.19,.97) both;display:inline-block}
+@keyframes shake{10%,90%{transform:translate3d(-2px,0,0) rotate(-10deg)}20%,80%{transform:translate3d(4px,0,0) rotate(10deg)}30%,50%,70%{transform:translate3d(-6px,0,0) rotate(-10deg)}40%,60%{transform:translate3d(6px,0,0) rotate(10deg)}}
+.hot-offer-floating{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 30px);max-width:380px;background:linear-gradient(90deg,#ff4d6a,#ff8c42);border-radius:14px;padding:10px 15px;box-shadow:0 10px 30px rgba(255,77,106,0.4),0 0 0 2px rgba(255,255,255,0.2) inset;z-index:99999;cursor:pointer;animation:floatBounce 3s ease-in-out infinite;display:none}
+.hot-offer-content{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hot-icon{font-size:22px;animation:fire-shake 1.5s infinite}
+.hot-text h4{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;text-shadow:0 2px 4px rgba(0,0,0,0.2);margin-bottom:2px}
+.hot-text p{font-size:11px;font-weight:600;color:rgba(255,255,255,0.95);margin:0;line-height:1.3}
+.hot-close{background:rgba(0,0,0,0.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:12px;cursor:pointer;flex-shrink:0}
+@keyframes floatBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+@keyframes fire-shake{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.2) rotate(10deg)}}
+.fomo-fire-icon{font-size:55px;animation:fire-shake 1.5s infinite;margin-bottom:10px;display:inline-block}
+.fomo-progress-wrap{background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.08)}
+.fomo-progress-header{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#fff;margin-bottom:8px}
+.fomo-progress-track{width:100%;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;margin-bottom:10px}
+.fomo-progress-fill{height:100%;background:linear-gradient(90deg,#ff416c,#ff4b2b);border-radius:5px;transition:width 1s ease}
+.fomo-warning{font-size:11px;color:var(--red);font-weight:700;margin:0;display:flex;align-items:center;justify-content:center;gap:5px}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="loader-ring"></div><div class="loader-text">Please wait...</div></div>
+
+<div class="hot-offer-floating" id="hotOfferBanner" onclick="openFomoModal()">
+  <div class="hot-offer-content">
+    <span class="hot-icon">🔥</span>
+    <div class="hot-text">
+      <h4>SUPER HOT OFFER!</h4>
+      <p>প্রথম ৫০ জন লাকি ইউজারের জন্য <b>১ম মাসের লোন ফ্রি!</b></p>
+    </div>
+    <button class="hot-close" onclick="event.stopPropagation(); closeHotOffer();"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+</div>
+
+<div class="modal-overlay premium-popup" id="fomoModal">
+  <div class="mc" style="max-width: 360px; text-align: center;">
+    <div class="fomo-fire-icon">🔥</div>
+    <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
+    <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">প্রথম ৫০ জন ইউজারের মধ্যে থাকলে আপনার লোনের <b style="color:var(--orange);">১ম মাসের কিস্তি সম্পূর্ণ ফ্রি!</b> <br><span style="font-size: 11px; color: var(--p);">(১ম মাসের কিস্তি কোম্পানিই বহন করবে, ২য় মাস থেকে পরিশোধ শুরু)</span></p>
+    <div class="fomo-progress-wrap">
+      <div class="fomo-progress-header"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;">৩৮/৫০ জন</span></div>
+      <div class="fomo-progress-track"><div class="fomo-progress-fill" style="width: 76%;"></div></div>
+      <p class="fomo-warning"><i class="fa-solid fa-triangle-exclamation"></i> মাত্র ১২টি অফার বাকি!</p>
+    </div>
+    <button class="mbtn-full" style="background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255,75,43,0.4); font-size: 16px; margin-bottom: 12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
+    <button class="mbtn-cancel" style="width: 100%; border: none; background: transparent; color: var(--txt2);" onclick="closeFomoModal()">আমি পরে দেখব</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="globalModal">
+  <div class="mc" id="modal-password" style="display:none;">
+    <div class="m-icon m-ic-lock"><i class="fa-solid fa-lock"></i></div>
+    <div class="m-title">Welcome Back!</div>
+    <div class="m-msg">Enter your password to continue securely.</div>
+    <div class="pass-wrap"><input type="password" id="loginPassInput" placeholder="Enter your password"><i class="fa-solid fa-eye-slash pass-eye" id="passToggleIcon" onclick="togglePasswordVisibility()"></i></div>
+    <span class="forgot-link" onclick="contactSupportForForgot()">Forgot Password? <strong>Contact Support</strong></span>
+    <div class="m-acts"><button class="mbtn mbtn-cancel" onclick="closeGlobalModal(true)">Cancel</button><button class="mbtn mbtn-ok" onclick="submitLoginPassword()">Login</button></div>
+  </div>
+  <div class="mc" id="modal-alert" style="display:none;">
+    <div class="m-icon" id="m-icon-wrap"><i id="m-icon" class="fa-solid fa-circle-info"></i></div>
+    <div class="m-title" id="m-title"></div>
+    <div class="m-msg" id="m-msg"></div>
+    <button class="mbtn-full" onclick="closeGlobalModal()">OK</button>
+  </div>
+  <div class="mc" id="modal-error" style="display:none;">
+    <div class="m-icon m-ic-warn"><i class="fa-solid fa-circle-exclamation"></i></div>
+    <div class="m-title" id="err-title"></div>
+    <div class="m-err-msg" id="err-msg"></div>
+    <button class="mbtn-full" onclick="closeGlobalModal()">Got it</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="pickerModal">
+  <div class="picker-card">
+    <div class="picker-hdr" id="pickerTitle">Select Option</div>
+    <div class="pick-list" id="pickerList"></div>
+    <div class="pick-acts"><button class="btn-pick-cancel" onclick="closePicker()">Cancel</button><button class="btn-pick-ok" onclick="confirmPicker()">Confirm</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="dobModal">
+  <div class="picker-card">
+    <div class="picker-hdr">Date of Birth</div>
+    <div class="dob-cols"><div class="dob-col" id="yearCol"></div><div class="dob-col" id="monthCol"></div><div class="dob-col" id="dayCol"></div></div>
+    <div class="pick-acts"><button class="btn-pick-cancel" onclick="closeDob()">Cancel</button><button class="btn-pick-ok" onclick="confirmDob()">Confirm</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="conf-card">
+    <div class="conf-title">Confirm Your Information</div>
+    <div class="conf-warn"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>Accurate info greatly increases approval chances</div>
+    <div class="conf-row"><span class="conf-lbl">Full Name</span><span class="conf-val" id="cName">-</span></div>
+    <div class="conf-row"><span class="conf-lbl">E-mail</span><span class="conf-val" id="cEmail">-</span></div>
+    <div class="conf-row"><span class="conf-lbl">Gender</span><span class="conf-val" id="cGender">-</span></div>
+    <div class="conf-row"><span class="conf-lbl">Date of Birth</span><span class="conf-val" id="cDob">-</span></div>
+    <div class="conf-row"><span class="conf-lbl">NID / ID No.</span><span class="conf-val" id="cId">-</span></div>
+    <div class="conf-row"><span class="conf-lbl">Monthly Income</span><span class="conf-val" id="cIncome">-</span></div>
+    <button class="mbtn-full" onclick="submitConfirmedInfo()" style="margin-top:18px;">Confirm &amp; Continue</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="loanDetailsModal">
+  <div class="ld-card">
+    <div class="ld-title">Loan Details</div>
+    <div class="ld-row"><span class="ld-lbl">Loan Amount</span><span class="ld-val" id="ldAmount">-</span></div>
+    <div class="ld-row"><span class="ld-lbl">Term (months)</span><span class="ld-val" id="ldTerm">-</span></div>
+    <div class="ld-row"><span class="ld-lbl">Annual Interest</span><span class="ld-val" id="ldInterest">-</span></div>
+    <div class="ld-row"><span class="ld-lbl">Origination Fee</span><span class="ld-val" id="ldOrgFee">-</span></div>
+    <div class="ld-row"><span class="ld-lbl">Service Charge</span><span class="ld-val" id="ldService">-</span></div>
+    <div class="ld-row"><span class="ld-lbl">Start Date</span><span class="ld-val" id="ldStart">-</span></div>
+    <div class="ld-row"><span class="ld-lbl">Due Date</span><span class="ld-val" id="ldDue">-</span></div>
+    <div class="ld-row"><span class="ld-lbl">You Receive</span><span class="ld-val" id="ldReceive">-</span></div>
+    <div class="ld-row total"><span class="ld-lbl" style="font-weight:700;color:var(--txt)">Total Repayment</span><span class="ld-val grn" id="ldTotal">-</span></div>
+    <button class="mbtn-full" onclick="closeModal('loanDetailsModal')" style="margin-top:18px;">OK</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="repaymentModal">
+  <div class="ld-card">
+    <div class="ld-title">Repayment Schedule</div>
+    <p style="text-align:center;font-size:13px;color:var(--txt2);margin-bottom:10px;">Your monthly EMI will be approximately <strong id="emiAmount" style="color:var(--p);"></strong></p>
+    <div class="rep-schedule" id="repScheduleList"></div>
+    <button class="mbtn-full" onclick="closeModal('repaymentModal')" style="margin-top:18px;">Close</button>
+  </div>
+</div>
+
+<div class="sheet-back" id="nidSheetBack" onclick="closeNidSheet()"></div>
+<div class="bottom-sheet" id="nidSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title" id="nidSheetTitle">Upload Front Side</div>
+  <div class="sheet-sub">Choose how to add your ID photo</div>
+  <div class="sheet-opts">
+    <div class="sheet-opt" onclick="triggerNidCapture('camera')"><div class="sheet-opt-ic" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fa-solid fa-camera"></i></div><div class="sheet-opt-info"><div class="sheet-opt-title">Take Photo</div><div class="sheet-opt-sub">Open camera to capture</div></div><i class="fa-solid fa-chevron-right sheet-opt-arr"></i></div>
+    <div class="sheet-opt" onclick="triggerNidCapture('gallery')"><div class="sheet-opt-ic" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"><i class="fa-solid fa-images"></i></div><div class="sheet-opt-info"><div class="sheet-opt-title">Choose from Gallery</div><div class="sheet-opt-sub">Select an existing photo</div></div><i class="fa-solid fa-chevron-right sheet-opt-arr"></i></div>
+  </div>
+  <button class="sheet-cancel" onclick="closeNidSheet()">Cancel</button>
+</div>
+
+<input type="file" accept="image/*" id="nidFrontInput" style="display:none" onchange="handleFileUpload('nidFrontInput','boxNidFront')">
+<input type="file" accept="image/*" id="nidBackInput" style="display:none" onchange="handleFileUpload('nidBackInput','boxNidBack')">
+
+<div class="modal-overlay premium-popup" id="notifModal">
+  <div class="mc" style="max-width: 380px;">
+    <div class="m-title" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">Notifications <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--txt2); font-size:18px;" onclick="closeModal('notifModal')"></i></div>
+    <div class="notif-list" id="notifListContainer"></div>
+  </div>
+</div>
+
+<div class="modal-overlay premium-popup" id="calcModal">
+  <div class="mc">
+    <div class="m-title">Loan Calculator</div>
+    <p class="m-msg">Estimate your monthly repayment easily.</p>
+    <label style="font-size:12px; color:var(--txt2); font-weight:600;">Loan Amount (BDT)</label>
+    <div class="calc-val" id="calcAmountDisplay">৳ 10,000</div>
+    <input type="range" class="calc-slider" id="calcAmount" min="1000" max="60000" step="1000" value="10000" oninput="updateCalc()">
+    <label style="font-size:12px; color:var(--txt2); font-weight:600;">Term (Months)</label>
+    <div class="calc-val" id="calcTermDisplay">6 Months</div>
+    <input type="range" class="calc-slider" id="calcTerm" min="3" max="36" step="3" value="6" oninput="updateCalc()">
+    <div class="calc-row"><span>Principal Amount</span><span id="calcPrincipal">৳ 10,000</span></div>
+    <div class="calc-row"><span>Interest (18% p.a)</span><span id="calcInterest">৳ 900</span></div>
+    <div class="calc-row"><span>Processing Fee</span><span>৳ 400</span></div>
+    <div class="calc-row" style="border-top:1px solid var(--bord); margin-top:5px; padding-top:10px; font-weight:800; color:var(--txt); font-size:16px;"><span>Total Repayment</span><span id="calcTotal" style="color:var(--p);">৳ 11,300</span></div>
+    <button class="mbtn-full" style="margin-top:20px;" onclick="closeModal('calcModal')">Got it</button>
+  </div>
+</div>
+
+<div class="modal-overlay premium-popup" id="referModal">
+  <div class="mc" style="max-height: 90dvh; overflow-y: auto;">
+    <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
+    <div class="m-title">Refer &amp; Win Big!</div>
+    <p class="m-msg">বন্ধুদের রেফার করে জিতুন বিশাল সব পুরস্কার!</p>
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+      <div style="flex:1; background:var(--bg2); padding:12px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase;">Total Refers</p><h3 style="font-size:18px; color:var(--txt);" id="refTotalCount">0</h3></div>
+      <div style="flex:1; background:rgba(29,219,128,.1); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase;">Success</p><h3 style="font-size:18px; color:var(--p);" id="refSuccessCount">0</h3></div>
+    </div>
+    <div style="background:var(--bg2); border:1px solid var(--bord); border-radius:14px; padding:15px; margin-bottom:15px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:13px; font-weight:700; color:var(--txt);">Current Status:</span><span style="font-size:14px; font-weight:800; color:var(--orange);" id="currentTierName">Starter</span></div>
+      <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:8px;"><div id="tierProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff8c42, #ff4b2b); border-radius:5px; transition: width 0.5s;"></div></div>
+      <p style="font-size:11px; color:var(--txt2); text-align:center;" id="tierProgressText">পরবর্তী পুরস্কার পেতে আরও রেফার করুন!</p>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px; border-top:1px dashed var(--bord); padding-top:15px;">
+        <div id="tierRow20" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥉</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">২০ জন রেফারেল</div><div style="font-size:11px; color:var(--orange);">৳১০,০০০ এর নিচে লোনে ১ম কিস্তি মাফ!</div></div><i class="fa-solid fa-lock" id="tierLock20" style="color:var(--txt2); font-size:12px;"></i></div>
+        <div id="tierRow50" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥈</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">৫০ জন রেফারেল</div><div style="font-size:11px; color:var(--blue);">৳৫,০০০ ফ্রি লোন! (শোধ করতে হবে না)</div></div><i class="fa-solid fa-lock" id="tierLock50" style="color:var(--txt2); font-size:12px;"></i></div>
+        <div id="tierRow100" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥇</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">১০০ জন রেফারেল</div><div style="font-size:11px; color:var(--red);">ইনস্ট্যান্ট ৳৫০,০০০ জ্যাকপট!</div></div><i class="fa-solid fa-lock" id="tierLock100" style="color:var(--txt2); font-size:12px;"></i></div>
+      </div>
+    </div>
+    <div style="background:var(--bg2); border-radius:14px; padding:15px; border:1px dashed var(--p); text-align:center;"><p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Referral Link</p><div style="font-size:12px; color:var(--p); word-break:break-all; font-weight:700;" id="refLinkDisplay">Loading...</div></div>
+    <div style="display:flex; gap:10px; margin-top:15px;"><button class="mbtn mbtn-cancel" style="flex:1; background:var(--surf2);" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button><button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button></div>
+    <button class="mbtn-cancel" style="width:100%; margin-top:10px; border:none; background:transparent; color:var(--txt2);" onclick="closeModal('referModal')">Close</button>
+  </div>
+</div>
+
+<div class="modal-overlay premium-popup" id="historyModal">
+  <div class="mc" style="max-width: 380px;">
+    <div class="m-title" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">Transaction History <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--txt2); font-size:18px;" onclick="closeModal('historyModal')"></i></div>
+    <div class="notif-list" id="historyListContainer" style="max-height: 60vh;"></div>
+  </div>
+</div>
+
+<div class="modal-overlay premium-popup" id="appStatusModal">
+  <div class="mc">
+    <div class="m-title" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">Application Details <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--txt2); font-size:18px;" onclick="closeModal('appStatusModal')"></i></div>
+    <div id="statusModalContent" style="margin-top:20px; text-align:left;"></div>
+  </div>
+</div>
+
+<div class="modal-overlay premium-popup" id="profileModal">
+  <div class="mc">
+    <div class="m-icon m-ic-suc"><i class="fa-solid fa-user"></i></div>
+    <div class="m-title">My Profile</div>
+    <div style="background:var(--bg2); border-radius:14px; padding:15px; margin:15px 0; border:1px solid var(--bord);">
+      <div class="detail-row"><div class="detail-lbl">Phone Number</div><div class="detail-val" id="profPhone">-</div></div>
+      <div class="detail-row"><div class="detail-lbl">Account Status</div><div class="detail-val" style="color:var(--p);">Active</div></div>
+    </div>
+    <button class="mbtn-full" style="background:var(--red); color:#fff; box-shadow:none; margin-bottom:10px;" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    <button class="mbtn-cancel" style="width:100%;" onclick="closeModal('profileModal')">Close</button>
+  </div>
+</div>
+
+<div class="modal-overlay premium-popup" id="csPopup" onclick="toggleCS(event)">
+  <div class="mc" onclick="event.stopPropagation()">
+    <div class="m-icon m-ic-suc" style="width:60px; height:60px; font-size:24px; margin-bottom:15px;"><i class="fa-solid fa-headset"></i></div>
+    <div class="m-title">How can we help?</div>
+    <div class="m-msg">Our support team is available 24/7.</div>
+    <div class="premium-cs-item" onclick="window.open('https://wa.me/8801700000000','_blank')"><div class="premium-cs-icon" style="background:rgba(37,211,102,.15); color:#25D366;"><i class="fa-brands fa-whatsapp"></i></div><div style="flex:1;"><h4 style="font-size:14px; color:var(--txt);">WhatsApp Support</h4><p style="font-size:12px; color:var(--txt2);">Tap to chat with us</p></div></div>
+    <div class="premium-cs-item" onclick="window.location.href='mailto:hello@synapsetech.cloud'"><div class="premium-cs-icon" style="background:rgba(77,143,255,.15); color:var(--blue);"><i class="fa-solid fa-envelope"></i></div><div style="flex:1;"><h4 style="font-size:14px; color:var(--txt);">Email Support</h4><p style="font-size:12px; color:var(--txt2);">hello@synapsetech.cloud</p></div></div>
+    <button class="mbtn-cancel" style="width:100%; margin-top:10px;" onclick="toggleCS()">Close</button>
+  </div>
+</div>
+
+<div id="splash">
+  <div class="sp-logo"><div class="sp-c"></div><div class="sp-bars"><div class="sp-bar"></div><div class="sp-bar"></div><div class="sp-bar"></div></div><div class="sp-curve"><div class="sp-curve-txt">Credit <span>Up</span></div></div></div>
+  <div class="sp-title">CreditUp – Smart Credit &amp; Loans</div>
+  <div class="sp-sub">Build Credit. Move Up.</div>
+  <div class="sp-pay-title">Supported Payments</div>
+  <div class="sp-pay-row"><div class="sp-logo-chip"><img src="https://premiumedutools.com/uploads/payment.png" alt="payments" style="height:18px;width:auto"></div><div class="sp-logo-chip"><i class="fa-solid fa-dollar-sign" style="color:#15803d;font-size:13px;font-weight:800;margin-right:2px"></i><span style="font-size:11px;font-weight:800;color:#15803d">USD</span></div></div>
+  <div class="sp-badge"><i class="fa-solid fa-shield-check"></i> 100% Authentic &amp; Verified</div>
+  <div class="sp-bar-wrap"><div class="sp-progress"></div></div>
+  <div class="sp-foot"><i class="fa-solid fa-lock"></i> 256-bit SSL Encrypted | Safe &amp; Secure</div>
+</div>
+
+<div id="app">
+
+<!-- HOME -->
+<div id="screen-home" class="screen active" style="padding:0;">
+  <div class="ticker-wrap" id="tickerWrap" style="display:none;"><div class="ticker-title">Notice</div><div class="ticker" id="tickerContent"></div></div>
+  <div class="home-hdr">
+    <div class="home-top-bar">
+      <div class="home-greeting">
+        <h3 id="userGreeting">Hello, User 👋</h3>
+        <div class="balance-pill" id="balanceContainer" style="display:none;"><span style="font-size:12px; color:var(--p);"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <!-- Notification button container -->
+        <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
+        <div class="notif-btn" onclick="toggleCS()"><i class="fa-solid fa-headset"></i></div>
+      </div>
+    </div>
+    <div class="h-logo">Credit <span>Up</span></div>
+    <div class="bonus-banner" id="bonusBanner" style="display:none;"><span class="shake-icon">🎁</span><span>নতুন ইউজারদের জন্য <b style="color:var(--orange);">১০০ টাকা</b> সাইন-আপ বোনাস!</span></div>
+    <div class="h-label">Borrow up to (BDT)</div>
+    <div class="h-amount">60,000.00</div>
+    <div class="h-feats">
+      <div class="h-feat"><div class="h-feat-ic"><i class="fa fa-shield-halved"></i></div><div class="h-feat-txt">Easy Approval</div></div>
+      <div class="h-feat"><div class="h-feat-ic"><i class="fa fa-bolt"></i></div><div class="h-feat-txt">Fast Funding</div></div>
+      <div class="h-feat"><div class="h-feat-ic"><i class="fa fa-circle-check"></i></div><div class="h-feat-txt">Safe &amp; Secure</div></div>
+    </div>
+    <div class="dual-btn-wrap">
+      <button class="btn-borrow" id="mainBorrowBtn" onclick="handleMainAction()"><span id="mainBorrowBtnText">Borrow Now</span> <span class="bn-div"></span> <span class="bn-bn">লোন নিন</span><span class="bn-hand">👉</span></button>
+      <div style="text-align:center; margin-top:12px;" id="loginRegisterLink"><span style="font-size:13px; color:rgba(255,255,255,.7);">Already have an account? </span><a href="javascript:void(0)" onclick="nav('screen-login')" style="color:#fff; font-weight:700; text-decoration:underline;">Login / Register</a></div>
+    </div>
+  </div>
+  <div class="home-body">
+    <div class="status-card-clickable" id="userStatusCard" style="display:none;" onclick="openAppStatusModal()">
+      <div class="status-card-left"><div class="status-icon-box"><i class="fa-solid fa-file-invoice" id="statusCardIcon"></i></div><div><h4 id="statusCardTitle">Application Status</h4><p id="statusCardDesc">Tap to view your application details</p></div></div>
+      <i class="fa-solid fa-chevron-right" style="color:var(--txt2)"></i>
+    </div>
+    <div class="quick-actions-title">Quick Services</div>
+    <div class="qa-grid">
+      <div class="qa-item" onclick="openCalculator()"><div class="qa-icon qa-blue"><i class="fa-solid fa-calculator"></i></div><span>Calculator</span></div>
+      <div class="qa-item" onclick="openReferModal()"><div class="qa-icon qa-orange"><i class="fa-solid fa-gift"></i></div><span>Refer &amp; Earn</span></div>
+      <div class="qa-item" onclick="openHistoryModal()"><div class="qa-icon qa-purple"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></div>
+      <div class="qa-item" onclick="openProfileModal()"><div class="qa-icon qa-green"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Your Loan, Simplified</div>
+      <div class="step-row"><div class="step-ic bg-g"><i class="fa-regular fa-comment-dots"></i></div><div class="step-cont"><span class="step-badge bd-g">Step 1</span><div class="step-title">Apply Online</div><div class="step-desc">Fill basic info in under a minute — no complex documents needed.</div></div></div>
+      <div class="step-row"><div class="step-ic bg-o"><i class="fa-solid fa-clipboard-check"></i></div><div class="step-cont"><span class="step-badge bd-o">Step 2</span><div class="step-title">Fast Approval</div><div class="step-desc">Automated review with instant results and funding in minutes.</div></div></div>
+      <div class="step-row"><div class="step-ic bg-b"><i class="fa-solid fa-credit-card"></i></div><div class="step-cont"><span class="step-badge bd-b">Step 3</span><div class="step-title">Receive Funds</div><div class="step-desc">Approved funds deposited directly into your mobile wallet.</div></div></div>
+    </div>
+    <div class="live-section" id="liveSection" style="margin-top: 25px;">
+      <div class="live-title">লাইভ ট্রানজেকশন <span style="color:var(--p); font-size:12px; font-weight:400; float:right;"><i class="fa-solid fa-circle" style="font-size:6px; animation:wait-pulse 1.5s infinite;"></i> Live</span></div>
+      <div class="live-feed" id="liveFeedContainer"><div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Loading recent activity...</div></div>
+      <div class="live-title" style="margin-top:20px;">আমাদের পার্টনার</div>
+      <div class="partner-grid">
+        <!-- Updated Partner Logos -->
+        <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="bKash" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Bkash</span>'"></div>
+        <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png" alt="Nagad" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Nagad</span>'"></div>
+        <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Rocket</span>'"></div>
+        <div class="partner-item"><img src="https://logo.clearbit.com/citybankbd.com" alt="City Bank" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>City</span>'"></div>
+        <div class="partner-item"><img src="https://logo.clearbit.com/bracbank.com" alt="Brac Bank" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Brac</span>'"></div>
+        <div class="partner-item"><img src="https://logo.clearbit.com/dbbl.com" alt="DBBL" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>DBBL</span>'"></div>
+        <div class="partner-item"><img src="https://logo.clearbit.com/islamibankbd.com" alt="Islami Bank" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>IBBL</span>'"></div>
+        <div class="partner-item"><img src="https://logo.clearbit.com/upaybd.com" alt="Upay" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Upay</span>'"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POLICY -->
+<div id="screen-policy" class="screen">
+  <div class="pol-hdr">Privacy Policy</div>
+  <div class="pol-body">
+    <div class="pol-updated">Last updated: 2026/10/09</div>
+    <p>This Privacy Agreement explains how we collect, use, store, share and protect your personal information when you use Credit Up services.</p>
+    <div class="pol-h">How we collect and use your personal information</div>
+    <p>We only collect and use your personal information to the extent necessary to provide loan services and improve your experience.</p>
+    <div class="pol-h">How we protect your personal information</div>
+    <p>We adopt security measures and technical means that meet industry standards, including 256-bit SSL encryption.</p>
+    <div class="pol-h">Data retention and deletion</div>
+    <p>We retain personal information as required by law. You may request deletion of your data at any time by contacting us.</p>
+    <div class="pol-h">Your rights</div>
+    <ul><li><strong>Right to review:</strong> Review your personal information collected and used by us.</li><li><strong>Right to correction:</strong> Request correction of inaccurate or incomplete information.</li><li><strong>Right to delete:</strong> Request deletion of your account and personal information.</li></ul>
+    <div class="pol-h">Fraud prevention reminder</div>
+    <p>Be cautious of messages, websites or people impersonating Credit Up. Never disclose your passwords or OTP codes to anyone.</p>
+    <div style="margin-top:22px;"><p style="font-weight:700;color:var(--txt);">Contact Us</p><p>Email: <a href="mailto:stormltdgames@gmail.com" style="color:var(--blue)">stormltdgames@gmail.com</a></p><p>Address: STORM SKIN LTD, 12 Constance Street, London, E16 2DQ</p></div>
+  </div>
+  <div class="pol-foot"><label class="agree-wrap"><input type="checkbox" id="policyCheck"><span>I have read and agree to the Privacy Policy and Terms &amp; Conditions.</span></label><button class="btn-pol" onclick="acceptPolicy()">OK, I Agree</button></div>
+</div>
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen">
+  <div class="auth-hdr"><div class="auth-logo">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
+  <div class="auth-title">Hello!</div>
+  <div class="auth-sub">Welcome to Credit Up</div>
+  <div class="auth-line"></div>
+  <div class="auth-label">Register / Login</div>
+  <div class="ph-wrap"><span class="ph-cc">+880</span><input type="tel" id="loginPhone" placeholder="Enter mobile number" maxlength="10" inputmode="numeric" oninput="checkLoginInput(this)"></div>
+  <div class="advice-txt"><i class="fa-solid fa-circle-info"></i>Use the phone number linked to your NID for a smoother approval process.</div>
+  <button class="btn-auth" id="loginNextBtn" onclick="checkPhoneAndProceed()">NEXT</button>
+  <label class="auth-check"><input type="checkbox" class="ck" checked><span>By continuing you agree to our <span class="green-link">Privacy Policy</span></span></label>
+</div>
+
+<!-- REGISTER -->
+<div id="screen-register" class="screen">
+  <div class="auth-hdr"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer;color:var(--txt2)" onclick="nav('screen-login')"></i><div class="auth-logo" style="font-size:24px;position:absolute;left:50%;transform:translateX(-50%)">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
+  <div class="auth-title" style="font-size:26px;margin-top:8px;margin-bottom:26px">Create Account</div>
+  <div class="ph-wrap"><span class="ph-cc">+880</span><input type="tel" id="regPhone" placeholder="Enter mobile number" maxlength="10" inputmode="numeric" oninput="checkRegisterInputs()"></div>
+  <div class="ibox"><input type="password" id="regPassword" placeholder="Create password (min 6 chars)" oninput="checkRegisterInputs()"></div>
+  <div class="ibox" style="margin-bottom:28px"><input type="password" id="regConfirmPassword" placeholder="Confirm password" oninput="checkRegisterInputs()"></div>
+  <button class="btn-auth" id="registerBtn" onclick="registerUser()">Create Account</button>
+  <label class="auth-check"><input type="checkbox" class="ck" checked><span>By continuing you agree to our <span class="green-link">Privacy Policy</span></span></label>
+</div>
+
+<!-- APPLICATION PROGRESS -->
+<div id="screen-application-progress" class="screen" style="padding-bottom:40px">
+  <div class="dash-hdr"><i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-home')"></i><div class="logo">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
+  <div class="suc-banner"><div class="suc-left"><i class="fa-solid fa-circle-check suc-icon"></i><span id="dashSuccessText">Welcome!</span></div><span class="suc-icon">🎉</span></div>
+  <div class="warn-box"><i class="fa-solid fa-circle-exclamation"></i><p>Tap <strong style="color:var(--txt)">"APPLY"</strong> and complete each step in order.</p></div>
+  <div class="prog-hdr"><h3>Application Progress</h3><span id="progText">0 / 5</span></div>
+  <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  <div class="step-list">
+    <div class="scard active" id="sc1" onclick="openStep(1)"><div class="scard-num" id="sn1">1</div><div class="scard-icbox"><i class="fa-regular fa-user"></i></div><div class="scard-txt">Basic Information</div><i class="fa-solid fa-chevron-right scard-arr" id="si1"></i></div>
+    <div class="scard locked" id="sc2" onclick="openStep(2)"><div class="scard-num" id="sn2">2</div><div class="scard-icbox"><i class="fa-regular fa-id-card"></i></div><div class="scard-txt">Personal Information</div><i class="fa-solid fa-lock scard-arr" id="si2"></i></div>
+    <div class="scard locked" id="sc3" onclick="openStep(3)"><div class="scard-num" id="sn3">3</div><div class="scard-icbox"><i class="fa-solid fa-user-group"></i></div><div class="scard-txt">Emergency Contact</div><i class="fa-solid fa-lock scard-arr" id="si3"></i></div>
+    <div class="scard locked" id="sc4" onclick="openStep(4)"><div class="scard-num" id="sn4">4</div><div class="scard-icbox"><i class="fa-solid fa-credit-card"></i></div><div class="scard-txt">Bank Information</div><i class="fa-solid fa-lock scard-arr" id="si4"></i></div>
+    <div class="scard locked" id="sc5" onclick="openStep(5)"><div class="scard-num" id="sn5">5</div><div class="scard-icbox"><i class="fa-solid fa-camera"></i></div><div class="scard-txt">Identity Verification</div><i class="fa-solid fa-lock scard-arr" id="si5"></i></div>
+  </div>
+  <button class="btn-apply" onclick="openStep(currentDashboardStep + 1)">Apply Now</button>
+</div>
+
+<!-- STEP 1: BASIC INFO -->
+<div id="screen-basic-info" class="screen">
+  <div class="form-top"><h2>Application</h2><span>Step 1 / 5</span></div>
+  <div class="step-track"><div class="step-fill s1"></div></div>
+  <div class="g-banner"><div class="g-banner-txt">Please ensure all information matches your official documents for a smooth approval process.</div><i class="fa-solid fa-shield-halved g-banner-ic"></i></div>
+  <h3 class="form-sec-title">Basic Information</h3>
+  <div class="fg"><label><span class="req">*</span> Full Name</label><input type="text" id="infoName" autocomplete="name" oninput="checkStep1()"></div>
+  <div class="fg"><label><span class="req">*</span> E-mail Address</label><input type="email" id="infoEmail" autocomplete="email" oninput="checkStep1()"></div>
+  <div class="fg" onclick="openPicker('gender','Gender')"><label><span class="req">*</span> Gender</label><div class="sel-disp" id="dGender"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <div class="fg" onclick="openDobPicker()"><label><span class="req">*</span> Date of Birth</label><div class="sel-disp" id="dDob"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <div class="fg"><label><span class="req">*</span> NID / National ID Number</label><input type="text" id="infoId" inputmode="numeric" oninput="checkStep1()"></div>
+  <div class="fg" onclick="openPicker('income','Monthly Income')"><label><span class="req">*</span> Monthly Income (BDT)</label><div class="sel-disp" id="dIncome"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <button class="btn-next" id="btnStep1" onclick="showConfirmModal()">NEXT</button>
+</div>
+
+<!-- STEP 2: PERSONAL INFO -->
+<div id="screen-personal-info" class="screen">
+  <div class="form-top"><h2>Application</h2><span>Step 2 / 5</span></div>
+  <div class="step-track"><div class="step-fill s2"></div></div>
+  <div class="g-banner"><div class="g-banner-txt">Please ensure all information matches your official documents for a smooth approval process.</div><i class="fa-solid fa-shield-halved g-banner-ic"></i></div>
+  <h3 class="form-sec-title">Personal Information</h3>
+  <div class="fg" onclick="openPicker('loanPurpose','Loan Purpose')"><label><span class="req">*</span> Loan Purpose</label><div class="sel-disp" id="dPurpose"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <div class="fg" onclick="openPicker('loanAmount','Loan Amount (BDT)')"><label><span class="req">*</span> Loan Amount Required</label><div class="sel-disp" id="dAmount"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <div class="fg" onclick="openPicker('term','Loan Term')"><label><span class="req">*</span> Repayment Term (Months)</label><div class="sel-disp" id="dTerm"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <div class="fg" onclick="openPicker('education','Education Level')"><label><span class="req">*</span> Education Level</label><div class="sel-disp" id="dEdu"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <div class="fg" onclick="openPicker('marital','Marital Status')"><label><span class="req">*</span> Marital Status</label><div class="sel-disp" id="dMarital"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <div class="fg" onclick="openPicker('children','Number of Children')"><label><span class="req">*</span> Number of Children</label><div class="sel-disp" id="dChildren"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <div class="fg" onclick="openPicker('occupation','Occupation')"><label><span class="req">*</span> Occupation</label><div class="sel-disp" id="dOccupation"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  <div class="fg"><label><span class="req">*</span> Company / Employer Name</label><input type="text" id="infoCompany" oninput="checkStep2()"></div>
+  <div class="fg"><label><span class="req">*</span> Home Address</label><input type="text" id="infoAddress" oninput="checkStep2()"></div>
+  <button class="btn-next" id="btnStep2" onclick="submitStep2()">NEXT</button>
+</div>
+
+<!-- STEP 3: EMERGENCY CONTACT -->
+<div id="screen-emergency-contact" class="screen">
+  <div class="form-top"><h2>Application</h2><span>Step 3 / 5</span></div>
+  <div class="step-track"><div class="step-fill s3"></div></div>
+  <div class="g-banner"><div class="g-banner-txt">Please ensure all information matches your official documents for a smooth approval process.</div><i class="fa-solid fa-shield-halved g-banner-ic"></i></div>
+  <h3 class="form-sec-title">Emergency Contact</h3>
+  <div class="orng-warn"><i class="fa-solid fa-circle-exclamation" style="margin-right:6px"></i>Please provide real contact persons</div>
+  <div class="contact-card">
+    <div class="cc-title">First Contact</div>
+    <div class="ci-row"><label class="ci-lbl">Name <span class="req">*</span></label><input type="text" id="c1Name" oninput="checkStep3()"></div>
+    <div class="ci-row"><label class="ci-lbl">+880 <span class="req">*</span></label><input type="tel" id="c1Phone" placeholder="1XXXXXXXXX" maxlength="10" inputmode="numeric" oninput="checkStep3()"></div>
+    <div class="cs-row" onclick="openPicker('rel1','Relationship')"><label class="cs-lbl">Relation <span class="req">*</span></label><div class="sel-box" id="dRel1"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  </div>
+  <div class="contact-card">
+    <div class="cc-title">Second Contact</div>
+    <div class="ci-row"><label class="ci-lbl">Name <span class="req">*</span></label><input type="text" id="c2Name" oninput="checkStep3()"></div>
+    <div class="ci-row"><label class="ci-lbl">+880 <span class="req">*</span></label><input type="tel" id="c2Phone" placeholder="1XXXXXXXXX" maxlength="10" inputmode="numeric" oninput="checkStep3()"></div>
+    <div class="cs-row" onclick="openPicker('rel2','Relationship')"><label class="cs-lbl">Relation <span class="req">*</span></label><div class="sel-box" id="dRel2"><span></span><i class="fa-solid fa-caret-down"></i></div></div>
+  </div>
+  <button class="btn-next" id="btnStep3" onclick="submitStep3()">NEXT</button>
+</div>
+
+<!-- STEP 4: BANK INFO -->
+<div id="screen-bank-info" class="screen">
+  <div class="form-top"><h2>Application</h2><span>Step 4 / 5</span></div>
+  <div class="step-track"><div class="step-fill s4"></div></div>
+  <h3 class="form-sec-title">Bank Information</h3>
+  <div class="bank-warn"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>We've pre-filled your registered phone number. Tap the edit icon to change it.</div>
+  <div class="ph-lbl">Select Wallet Type <span>*</span></div>
+  <div class="wallet-grid" id="walletGrid">
+    <div class="w-card sel" id="wBkash" onclick="selectWallet('Bkash')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="Bkash"><span>Bkash</span></div>
+    <div class="w-card" id="wNagad" onclick="selectWallet('Nagad')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png" alt="Nagad"><span>Nagad</span></div>
+    <div class="w-card" id="wRocket" onclick="selectWallet('Rocket')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket"><span>Rocket</span></div>
+  </div>
+  <div class="ph-lbl">Receiving Account Number <span>*</span></div>
+  <div class="ph-row"><input type="tel" id="bankPhone" readonly inputmode="numeric"><i class="fa-regular fa-pen-to-square"  onclick="enableBankEdit()"></i></div>
+  <div class="tips-card">
+    <h4><i class="fa-solid fa-lightbulb"></i> Tips</h4>
+    <p>1. Use your own wallet account to receive your loan.</p>
+    <p>2. Your account details are encrypted and safely protected.</p>
+    <p>3. Receiving account cannot be changed once a loan is active.</p>
+    <p>4. Make sure the wallet is active and registered in your name.</p>
+  </div>
+  <button class="btn-next on" id="btnStep4" onclick="submitStep4()" style="margin-top:20px">NEXT</button>
+</div>
+
+<!-- STEP 5: NID UPLOAD -->
+<div id="screen-nid-upload" class="screen">
+  <div class="form-top"><h2>Application</h2><span>Step 5 / 5</span></div>
+  <div class="step-track"><div class="step-fill s5"></div></div>
+  <h3 class="form-sec-title">Identity Verification</h3>
+  <div class="nid-desc"><i class="fa-solid fa-triangle-exclamation"></i>Please upload a clear, complete photo of your National ID Card. Blurry or cropped images will delay approval.</div>
+  <div class="upload-wrap">
+    <div class="upload-box" id="boxNidFront" onclick="openNidSheet('front')">
+      <div class="upload-thumb" id="thumbFront"></div>
+      <div class="upload-main"><i class="fa-solid fa-camera upload-ic"></i><div class="upload-hint">Tap to upload</div></div>
+      <div class="upload-done"><div class="upload-done-ic"><i class="fa-solid fa-check"></i></div><div class="upload-done-txt">Photo Uploaded</div><div class="upload-change">Tap to change</div></div>
+      <div class="upload-tab">Front Side</div>
+    </div>
+  </div>
+  <div class="upload-wrap" style="margin-bottom:36px">
+    <div class="upload-box" id="boxNidBack" onclick="openNidSheet('back')">
+      <div class="upload-thumb" id="thumbBack"></div>
+      <div class="upload-main"><i class="fa-solid fa-camera upload-ic"></i><div class="upload-hint">Tap to upload</div></div>
+      <div class="upload-done"><div class="upload-done-ic"><i class="fa-solid fa-check"></i></div><div class="upload-done-txt">Photo Uploaded</div><div class="upload-change">Tap to change</div></div>
+      <div class="upload-tab">Back Side</div>
+    </div>
+  </div>
+  <button class="btn-next" id="btnStep5" onclick="submitApplication()">SUBMIT APPLICATION</button>
+</div>
+
+<!-- REVIEW PROGRESS -->
+<div id="screen-review-progress" class="screen">
+  <div class="rv-green"></div>
+  <div class="rv-hdr"><h2>All documents submitted successfully ✓</h2></div>
+  <div class="rv-card">
+    <div class="rv-ic"><i class="fa-regular fa-clock"></i></div>
+    <h3>Review in Progress</h3>
+    <p>Your application is under review. Our system is verifying your information automatically.</p>
+    <div class="rv-divider"></div>
+    <div class="rv-load-txt" id="rvText">Reviewing...</div>
+    <div class="rv-track"><div class="rv-bar" id="rvBar"></div><div class="rv-knob" id="rvKnob"></div></div>
+    <div class="rv-pct" id="rvPct">0%</div>
+  </div>
+  <div class="rv-foot">Need help? Contact us:<br><a href="mailto:hello@synapsetech.cloud">hello@synapsetech.cloud</a></div>
+</div>
+
+<!-- APPROVED -->
+<div id="screen-approved" class="screen">
+  <div class="apv-hdr">
+    <i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-home')"></i>
+    <div class="logo" style="font-size:18px;font-weight:900;color:var(--txt)">Credit Up</div>
+  </div>
+  <div class="apv-green-box">
+    <div class="apv-banner"><i class="fa-solid fa-circle-check"></i> Your application has been approved!</div>
+    <div class="apv-prog-txt"><span>Application Complete</span><span>100%</span></div>
+    <div class="apv-prog-bg"><div class="apv-prog-fill"></div></div>
+  </div>
+  <div class="apv-content">
+    <div class="loan-card">
+      <p>Loan amount available (BDT)</p>
+      <h1 id="finalAmount">0</h1>
+      <div class="loan-meta">
+        <span>Term: <strong id="finalTerm">-</strong> months</span>
+        <a href="javascript:void(0)" onclick="openLoanDetails()">View Details <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></a>
+      </div>
+    </div>
+    <p class="disb-title">Your loan will be disbursed into</p>
+    <div class="disb-card">
+      <div class="disb-left">
+        <img class="disb-img" id="finalWalletLogo" src="" alt="Wallet">
+        <div class="disb-info"><h4 id="finalWalletName">-</h4><p id="approvedPhone">-</p></div>
+      </div>
+      <a href="javascript:void(0)" onclick="showAlert('Notice','Account switch is not allowed when a loan is active.','info')">Change <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></a>
+    </div>
+    <div style="padding: 0 16px 16px;">
+      <button class="btn-home" style="border-color:var(--p); color:var(--p);" onclick="openRepaymentSchedule()">
+        <i class="fa-solid fa-calendar-days" style="margin-right:6px;"></i> View Repayment Schedule
+      </button>
+    </div>
+    <div class="rules-card">
+      <div class="rule-row"><div class="rule-num">1</div><div class="rule-txt">Please authorise all permissions before submitting, otherwise lending may be interrupted.</div></div>
+      <div class="rule-row"><div class="rule-num">2</div><div class="rule-txt">Lending may be delayed. Check your SMS messages for loan progress updates.</div></div>
+      <div class="rule-row"><div class="rule-num">3</div><div class="rule-txt">Repay on time to qualify for higher amounts and better interest rates in future.</div></div>
+    </div>
+  </div>
+  <div class="apv-foot"><button class="btn-final" onclick="goToFeePayment()">Proceed to Pay Fee</button></div>
+</div>
+
+<!-- FEE PAYMENT -->
+<div id="screen-fee-payment" class="screen">
+  <div class="fee-hdr">
+    <i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-approved')"></i>
+    <div class="title">Fee Payment</div>
+  </div>
+  <div class="fee-sum">
+    <div class="fee-row"><span>Loan Amount (You Receive)</span><span id="payAmount">-</span></div>
+    <div class="fee-row"><span>Origination Fee</span><span class="red" id="payOrgFee">-</span></div>
+    <div class="fee-row"><span>Service Charge</span><span class="red" id="payService">-</span></div>
+    <div class="fee-row"><span>Advance Interest Fee</span><span class="red" id="payInterest">-</span></div>
+    <div class="fee-row total"><span>Total Fee to Pay Now</span><span class="grn" id="payTotal">-</span></div>
+  </div>
+
+  <!-- নতুন ব্যালেন্স অ্যাডজাস্টমেন্ট সিস্টেম -->
+  <div class="bal-toggle-box" id="balanceApplyBox" onclick="toggleBalanceApply()" style="display: none;">
+    <div class="bal-left">
+      <i class="fa-solid fa-wallet"></i>
+      <div>
+        <h4>Use Account Balance</h4>
+        <p>Available: <strong id="dispAvailBalance">৳ 0</strong></p>
+      </div>
+    </div>
+    <div class="bal-check" id="balCheckIcon"><i class="fa-solid fa-check"></i></div>
+  </div>
+
+  <div class="pm-title">Select Payment Method</div>
+  <div class="pm-grid" id="pmGrid">
+    <div class="pm-card sel" id="pmBkash" onclick="selectPayMethod('Bkash')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="Bkash"><span>Bkash</span></div>
+    <div class="pm-card" id="pmNagad" onclick="selectPayMethod('Nagad')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png" alt="Nagad"><span>Nagad</span></div>
+    <div class="pm-card" id="pmRocket" onclick="selectPayMethod('Rocket')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket"><span>Rocket</span></div>
+  </div>
+  <div class="pay-instr">
+    <h4><i class="fa-solid fa-circle-info"></i> Payment Instructions</h4>
+    <p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> amount using <strong style="color:var(--txt)">Send Money</strong> to:</p>
+    <div class="pay-num" id="adminNumber">-</div>
+    <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS.</p>
+    <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>
+  </div>
+  <div class="trx-wrap">
+    <label>Transaction ID (TrxID) *</label>
+    <input type="text" id="trxInput" placeholder="e.g. AK9F5B2C" oninput="checkTrx()">
+  </div>
+  <div class="fee-foot"><button class="btn-pay" id="btnTrx" onclick="submitTrx()">Submit Transaction ID</button></div>
+</div>
+
+<!-- WAITING -->
+<div id="screen-waiting" class="screen" style="align-items:center;justify-content:center;text-align:center">
+  <div class="wait-ic"><i class="fa-solid fa-hourglass-half"></i></div>
+  <h2 class="wait-title">Verification Pending</h2>
+  <p class="wait-desc">Your Transaction ID has been submitted. Our team is verifying your payment. This usually takes 5–15 minutes.</p>
+  <div class="wait-card">
+    <div class="st-row"><span class="st-lbl">Transaction ID</span><span class="st-val" id="dispTrx">-</span></div>
+    <div class="st-row"><span class="st-lbl">Payment Method</span><span class="st-val" id="dispMethod">-</span></div>
+    <div class="st-row"><span class="st-lbl">Status</span><span class="st-val pend">⏳ Pending Verification</span></div>
+  </div>
+  <button class="btn-home" onclick="nav('screen-home')">Back to Home</button>
+</div>
+
+</div><!-- #app -->
+
+<script>
+// ─── CONFIG & INITIALIZATION ─────────────────────────────────
+const BASE_URL = window.location.origin + window.location.pathname;
+const refCode = new URLSearchParams(window.location.search).get('ref');
+if(refCode) localStorage.setItem('referrerPhone', refCode);
+
+const ADMIN = {
+  orgFee: 200, serviceCharge: 100, processingFee: 100, annualRate: 18,
+  paymentNumbers: { Bkash:'01711111111', Nagad:'01822222222', Rocket:'01933333333' },
+  walletLogos: {
+    Bkash:  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png',
+    Nagad:  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png',
+    Rocket: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png'
+  }
+};
+
+let currentDashboardStep = 0;
+let selGender='', selDob='', selIncome='';
+let selPurpose='', selAmount='', selTerm='';
+let selEdu='', selMarital='', selChildren='', selOccupation='';
+let selRel1='', selRel2='';
+let selWallet='Bkash';
+let nidFrontOk=false, nidBackOk=false;
+let nidFrontUrl='', nidBackUrl='';
+let selPayMethod='Bkash';
+let totalFee=0;
+let originalTotalFee = 0;
+let appliedBalance = 0;
+let isBalanceApplied = false;
+let pickerType='', pickerVal='';
+let pickerYear=1995, pickerMonth='01', pickerDay='01';
+let pendingLoginUser=null, modalCloseCb=null;
+let currentNidTarget='';
+window._userRealBalance = 0;
+window._isBalanceHidden = true;
+
+// ─── SPLASH & LOADER ─────────────────────────────────────────
+setTimeout(()=>{
+  const s=document.getElementById('splash');
+  if(s){ s.classList.add('out'); setTimeout(()=>s.remove(),750); }
+},2500); 
+
+function showLoader(on){ document.getElementById('loader').classList.toggle('on',on); }
+
+// ─── HOT OFFER LOGIC ─────────────────────────────────────────
+function initHotOffer() {
+  setTimeout(() => {
+    const banner = document.getElementById('hotOfferBanner');
+    if(banner && !localStorage.getItem('hotOfferClosed')) {
+      banner.style.display = 'block';
+    }
+  }, 3500);
+}
+
+function openFomoModal() { document.getElementById('fomoModal').classList.add('on'); }
+function closeFomoModal() { document.getElementById('fomoModal').classList.remove('on'); }
+function closeHotOffer() {
+  document.getElementById('hotOfferBanner').style.display = 'none';
+  localStorage.setItem('hotOfferClosed', 'true');
+}
+
+function claimFomoOffer() {
+  closeFomoModal();
+  closeHotOffer();
+  const u = _getUser();
+  if (u) {
+    showAlert('অফার একটিভেটেড! 🎉', 'অভিনন্দন! আপনি ১ম মাসের ফ্রি কিস্তির অফার পেয়েছেন। আপনার লোন অ্যাপ্রুভ হলে ১ম মাসের কিস্তি কোম্পানিই দিয়ে দিবে!', 'success', () => {
+      startNewApplication();
+    });
+  } else {
+    showAlert('অফারটি আপনার জন্য অপেক্ষা করছে! 🎁', 'এই অফারটি পেতে দ্রুত একটি অ্যাকাউন্ট তৈরি করুন এবং আবেদন করুন।', 'info', () => {
+      nav('screen-login');
+    });
+  }
+}
+
+// ─── FORM AUTO-SAVE LOGIC ────────────────────────────────────
+function saveFormState(){
+  const state = {
+    infoName: document.getElementById('infoName')?.value || '',
+    infoEmail: document.getElementById('infoEmail')?.value || '',
+    infoId: document.getElementById('infoId')?.value || '',
+    infoCompany: document.getElementById('infoCompany')?.value || '',
+    infoAddress: document.getElementById('infoAddress')?.value || '',
+    c1Name: document.getElementById('c1Name')?.value || '',
+    c1Phone: document.getElementById('c1Phone')?.value || '',
+    c2Name: document.getElementById('c2Name')?.value || '',
+    c2Phone: document.getElementById('c2Phone')?.value || '',
+    bankPhone: document.getElementById('bankPhone')?.value || '',
+    selGender, selDob, selIncome, selPurpose, selAmount, selTerm,
+    selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2,
+    selWallet, currentDashboardStep
+  };
+  localStorage.setItem('creditUpFormDraft', JSON.stringify(state));
+}
+
+function restoreFormState(){
+  try {
+    const draft = JSON.parse(localStorage.getItem('creditUpFormDraft'));
+    if(!draft) return;
+    
+    if(document.getElementById('infoName')) document.getElementById('infoName').value = draft.infoName || '';
+    if(document.getElementById('infoEmail')) document.getElementById('infoEmail').value = draft.infoEmail || '';
+    if(document.getElementById('infoId')) document.getElementById('infoId').value = draft.infoId || '';
+    if(document.getElementById('infoCompany')) document.getElementById('infoCompany').value = draft.infoCompany || '';
+    if(document.getElementById('infoAddress')) document.getElementById('infoAddress').value = draft.infoAddress || '';
+    if(document.getElementById('c1Name')) document.getElementById('c1Name').value = draft.c1Name || '';
+    if(document.getElementById('c1Phone')) document.getElementById('c1Phone').value = draft.c1Phone || '';
+    if(document.getElementById('c2Name')) document.getElementById('c2Name').value = draft.c2Name || '';
+    if(document.getElementById('c2Phone')) document.getElementById('c2Phone').value = draft.c2Phone || '';
+    if(document.getElementById('bankPhone') && draft.bankPhone) document.getElementById('bankPhone').value = draft.bankPhone;
+
+    selGender = draft.selGender || ''; selDob = draft.selDob || ''; selIncome = draft.selIncome || '';
+    selPurpose = draft.selPurpose || ''; selAmount = draft.selAmount || ''; selTerm = draft.selTerm || '';
+    selEdu = draft.selEdu || ''; selMarital = draft.selMarital || ''; selChildren = draft.selChildren || '';
+    selOccupation = draft.selOccupation || ''; selRel1 = draft.selRel1 || ''; selRel2 = draft.selRel2 || '';
+    selWallet = draft.selWallet || 'Bkash';
+    
+    const setDisp = (id, val, wrapperId) => {
+      if(!val) return;
+      const el = document.getElementById(wrapperId);
+      if(el) { el.querySelector('span').innerText = val; el.classList.add('filled'); }
+    };
+    setDisp('dGender', selGender, 'dGender');
+    setDisp('dDob', selDob, 'dDob');
+    setDisp('dIncome', selIncome, 'dIncome');
+    setDisp('dPurpose', selPurpose, 'dPurpose');
+    setDisp('dAmount', selAmount, 'dAmount');
+    setDisp('dTerm', selTerm, 'dTerm');
+    setDisp('dEdu', selEdu, 'dEdu');
+    setDisp('dMarital', selMarital, 'dMarital');
+    setDisp('dChildren', selChildren, 'dChildren');
+    setDisp('dOccupation', selOccupation, 'dOccupation');
+    setDisp('dRel1', selRel1, 'dRel1');
+    setDisp('dRel2', selRel2, 'dRel2');
+    
+    selectWallet(selWallet);
+
+    if(draft.currentDashboardStep > 0 && draft.currentDashboardStep < 5) {
+       currentDashboardStep = draft.currentDashboardStep;
+       updateProgressUI();
+    }
+  } catch(e) { console.error('Error restoring form:', e); }
+}
+
+function clearFormState(){
+  localStorage.removeItem('creditUpFormDraft');
+  ['infoName','infoEmail','infoId','infoCompany','infoAddress','c1Name','c1Phone','c2Name','c2Phone','trxInput'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  selGender = selDob = selIncome = selPurpose = selAmount = selTerm = selEdu = selMarital = selChildren = selOccupation = selRel1 = selRel2 = '';
+  currentDashboardStep = 0;
+  document.querySelectorAll('.sel-disp, .sel-box').forEach(el => { el.querySelector('span').innerText = ''; el.classList.remove('filled'); });
+}
+
+function updateProgressUI(){
+  document.getElementById('progText').innerText=`${currentDashboardStep} / 5`;
+  document.getElementById('progFill').style.width=(currentDashboardStep*20)+'%';
+  for(let i=1; i<=5; i++){
+    const card = document.getElementById('sc'+i);
+    const num = document.getElementById('sn'+i);
+    const icon = document.getElementById('si'+i);
+    if(i <= currentDashboardStep){
+      card.className = 'scard done'; num.innerHTML = '<i class="fa-solid fa-check"></i>'; icon.className = 'fa-solid fa-check scard-arr';
+    } else if(i === currentDashboardStep + 1){
+      card.className = 'scard active'; num.innerText = i; icon.className = 'fa-solid fa-chevron-right scard-arr';
+    } else {
+      card.className = 'scard locked'; num.innerText = i; icon.className = 'fa-solid fa-lock scard-arr';
+    }
+  }
+}
+
+document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach(inp => {
+  if(inp.id !== 'loginPhone' && inp.id !== 'regPhone' && inp.id !== 'regPassword' && inp.id !== 'regConfirmPassword' && inp.id !== 'trxInput') {
+    inp.addEventListener('input', saveFormState);
+  }
+});
+
+// ─── BALANCE DISPLAY ─────────────────────────────────────────
+function toggleBalanceVisibility() {
+  const balEl = document.getElementById('headerBalance');
+  const icon  = document.getElementById('balanceToggleBtn');
+  window._isBalanceHidden = !window._isBalanceHidden;
+  if(window._isBalanceHidden) {
+    balEl.innerText = '৳ ••••'; icon.className = 'fa-solid fa-eye-slash';
+  } else {
+    balEl.innerText = '৳ ' + window._userRealBalance.toLocaleString(); icon.className = 'fa-solid fa-eye';
+  }
+}
+
+// ─── NAVIGATION & UI ─────────────────────────────────────────
+function nav(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const t=document.getElementById(id);
+  if(t){
+    t.classList.add('active');
+    document.getElementById('app').scrollTo({top: 0, behavior: 'instant'});
+    if(id === 'screen-home'){
+      const u = _getUser();
+      if(u && typeof window.loadUserDashboardData === 'function'){
+        setTimeout(()=>window.loadUserDashboardData(), 100);
+      }
+      if(typeof updateUIForUser === 'function') updateUIForUser();
+    }
+  }
+}
+
+function toggleCS(e){ if(e)e.stopPropagation(); document.getElementById('csPopup').classList.toggle('on'); }
+function closeModal(id){ document.getElementById(id).classList.remove('on'); }
+function togglePasswordVisibility(){
+  const i=document.getElementById('loginPassInput');
+  const ic=document.getElementById('passToggleIcon');
+  const show=i.type==='password';
+  i.type=show?'text':'password';
+  ic.className=show?'fa-solid fa-eye pass-eye':'fa-solid fa-eye-slash pass-eye';
+}
+function contactSupportForForgot(){
+  document.getElementById('globalModal').classList.remove('on');
+  toggleCS();
+}
+
+function _showModal(pass,alert,err){
+  ['modal-password','modal-alert','modal-error'].forEach(id=>{ document.getElementById(id).style.display='none'; });
+  if(pass)  document.getElementById('modal-password').style.display='flex';
+  if(alert) document.getElementById('modal-alert').style.display='flex';
+  if(err)   document.getElementById('modal-error').style.display='flex';
+  document.getElementById('globalModal').classList.add('on');
+}
+
+function openPasswordModal() {
+  _showModal(true, false, false);
+  const passInput = document.getElementById('loginPassInput');
+  if(passInput) {
+    passInput.value = '';
+    setTimeout(() => passInput.focus(), 100);
+  }
+}
+
+function showAlert(title,msg,type='info',cb=null){
+  _showModal(false,true,false);
+  document.getElementById('m-title').innerText=title;
+  document.getElementById('m-msg').innerText=msg;
+  const w=document.getElementById('m-icon-wrap'); const i=document.getElementById('m-icon');
+  const types={ success:['m-ic-suc','fa-solid fa-check'], error:['m-ic-err','fa-solid fa-xmark'], info:['m-ic-lock','fa-solid fa-circle-info'] };
+  const[cls,icn]=types[type]||types.info;
+  w.className='m-icon '+cls; i.className=icn;
+  modalCloseCb=cb;
+}
+function showErrorModal(title,msg){
+  _showModal(false,false,true);
+  document.getElementById('err-title').innerText=title;
+  document.getElementById('err-msg').innerText=msg;
+}
+function closeGlobalModal(clearLogin=false){
+  document.getElementById('globalModal').classList.remove('on');
+  if(clearLogin) pendingLoginUser=null;
+  const cb=modalCloseCb; modalCloseCb=null;
+  if(cb) cb();
+}
+function acceptPolicy(){
+  if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; }
+  nav('screen-login');
+}
+
+// ─── AUTH INPUTS ──────────────────────────────────────────────
+function checkLoginInput(el){ el.value=el.value.replace(/\D/g,''); document.getElementById('loginNextBtn').classList.toggle('go',el.value.length===10); }
+function checkRegisterInputs(){
+  const ph=document.getElementById('regPhone').value;
+  const pw=document.getElementById('regPassword').value;
+  const cp=document.getElementById('regConfirmPassword').value;
+  document.getElementById('registerBtn').classList.toggle('go', ph.length===10 && pw.length>=6 && pw===cp);
+}
+function isValidBDPhone(p){ return /^1[0-9]{9}$/.test(p); }
+
+// ─── PICKER & DOB ──────────────────────────────────────────────
+const OPTS = {
+  gender:     ['Male','Female','Other'],
+  income:     ['Under 10,000','10,000 – 25,000','25,001 – 49,000','49,001 – 75,000','75,001 – 98,000','98,001+'],
+  loanPurpose:['Business','Education','Personal/Consumption','Medical','Home Repair','Others'],
+  loanAmount: ['1,000','2,500','5,000','10,000','25,000','50,000','60,000'],
+  term:       ['3','6','12','24','36'],
+  education:  ['SSC / O-Level','HSC / A-Level','Honours / Bachelor','Masters','PhD','Other'],
+  marital:    ['Single','Married','Divorced','Widowed'],
+  children:   ['0','1','2','3','4','5+'],
+  occupation: ['Salaried Employee','Business Owner','Self-Employed','Student','Freelancer','Unemployed'],
+  rel1:       ['Parents','Spouse','Friend','Sibling','Relative','Colleague'],
+  rel2:       ['Parents','Spouse','Friend','Sibling','Relative','Colleague'],
+};
+const DISP_MAP={
+  gender:'dGender',income:'dIncome',loanPurpose:'dPurpose',loanAmount:'dAmount',
+  term:'dTerm',education:'dEdu',marital:'dMarital',children:'dChildren',
+  occupation:'dOccupation',rel1:'dRel1',rel2:'dRel2'
+};
+
+function openPicker(type,title){
+  pickerType=type; pickerVal='';
+  document.getElementById('pickerTitle').innerText=title;
+  const list=document.getElementById('pickerList');
+  list.innerHTML='';
+  (OPTS[type]||[]).forEach(opt=>{
+    const d=document.createElement('div'); d.className='pick-item'; d.innerText=opt;
+    d.onclick=()=>{ list.querySelectorAll('.pick-item').forEach(e=>e.classList.remove('sel')); d.classList.add('sel'); pickerVal=opt; };
+    list.appendChild(d);
+  });
+  document.getElementById('pickerModal').classList.add('on');
+}
+function closePicker(){ document.getElementById('pickerModal').classList.remove('on'); }
+function confirmPicker(){
+  if(!pickerVal){ closePicker(); return; }
+  const dispId=DISP_MAP[pickerType];
+  if(dispId){
+    const el=document.getElementById(dispId);
+    if(el){ el.querySelector('span').innerText=pickerVal; el.classList.add('filled'); }
+  }
+  switch(pickerType){
+    case 'gender':      selGender=pickerVal;     checkStep1(); break;
+    case 'income':      selIncome=pickerVal;     checkStep1(); break;
+    case 'loanPurpose': selPurpose=pickerVal;    checkStep2(); break;
+    case 'loanAmount':  selAmount=pickerVal;     checkStep2(); break;
+    case 'term':        selTerm=pickerVal;       checkStep2(); break;
+    case 'education':   selEdu=pickerVal;        checkStep2(); break;
+    case 'marital':     selMarital=pickerVal;    checkStep2(); break;
+    case 'children':    selChildren=pickerVal;   checkStep2(); break;
+    case 'occupation':  selOccupation=pickerVal; checkStep2(); break;
+    case 'rel1':        selRel1=pickerVal;       checkStep3(); break;
+    case 'rel2':        selRel2=pickerVal;       checkStep3(); break;
+  }
+  closePicker(); saveFormState();
+}
+
+function openDobPicker(){ document.getElementById('dobModal').classList.add('on'); buildDob(); }
+function closeDob(){ document.getElementById('dobModal').classList.remove('on'); }
+function buildDob(){
+  const yC=document.getElementById('yearCol'), mC=document.getElementById('monthCol'), dC=document.getElementById('dayCol');
+  if(yC.children.length) return;
+  for(let y=1970;y<=2008;y++){ const e=document.createElement('div'); e.className='dob-item'; e.innerText=y; e.onclick=()=>{ yC.querySelectorAll('.dob-item').forEach(x=>x.classList.remove('sel')); e.classList.add('sel'); pickerYear=y; }; yC.appendChild(e); }
+  for(let m=1;m<=12;m++){ const e=document.createElement('div'); e.className='dob-item'; e.innerText=String(m).padStart(2,'0'); e.onclick=()=>{ mC.querySelectorAll('.dob-item').forEach(x=>x.classList.remove('sel')); e.classList.add('sel'); pickerMonth=String(m).padStart(2,'0'); }; mC.appendChild(e); }
+  for(let d=1;d<=31;d++){ const e=document.createElement('div'); e.className='dob-item'; e.innerText=String(d).padStart(2,'0'); e.onclick=()=>{ dC.querySelectorAll('.dob-item').forEach(x=>x.classList.remove('sel')); e.classList.add('sel'); pickerDay=String(d).padStart(2,'0'); }; dC.appendChild(e); }
+}
+function confirmDob(){
+  selDob=`${pickerYear}-${pickerMonth}-${pickerDay}`;
+  const d=document.getElementById('dDob'); d.querySelector('span').innerText=selDob; d.classList.add('filled');
+  closeDob(); checkStep1(); saveFormState();
+}
+
+// ─── VALIDATION ──────────────────────────────────────────────
+function checkStep1(){
+  const ok=document.getElementById('infoName').value.trim()&&document.getElementById('infoEmail').value.trim()&&document.getElementById('infoId').value.trim()&&selGender&&selDob&&selIncome;
+  document.getElementById('btnStep1').classList.toggle('on',!!ok);
+}
+function checkStep2(){
+  const ok=document.getElementById('infoCompany').value.trim()&&document.getElementById('infoAddress').value.trim()&&selPurpose&&selAmount&&selTerm&&selEdu&&selMarital&&selChildren&&selOccupation;
+  document.getElementById('btnStep2').classList.toggle('on',!!ok);
+}
+function checkStep3(){
+  const ok=document.getElementById('c1Name').value.trim()&&isValidBDPhone(document.getElementById('c1Phone').value)&&selRel1&&document.getElementById('c2Name').value.trim()&&isValidBDPhone(document.getElementById('c2Phone').value)&&selRel2;
+  document.getElementById('btnStep3').classList.toggle('on',!!ok);
+}
+
+// ─── STEP SUBMISSIONS ────────────────────────────────────────
+function showConfirmModal(){
+  document.getElementById('cName').innerText   = document.getElementById('infoName').value;
+  document.getElementById('cEmail').innerText  = document.getElementById('infoEmail').value;
+  document.getElementById('cGender').innerText = selGender;
+  document.getElementById('cDob').innerText    = selDob;
+  document.getElementById('cId').innerText     = document.getElementById('infoId').value;
+  document.getElementById('cIncome').innerText = selIncome;
+  document.getElementById('confirmModal').classList.add('on');
+}
+function submitConfirmedInfo(){
+  document.getElementById('confirmModal').classList.remove('on');
+  showLoader(true);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); showAlert('Step 1 Complete ✓','Basic Information saved successfully!','success',()=>nav('screen-personal-info')); }, 900);
+}
+function submitStep2(){
+  showLoader(true);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); showAlert('Step 2 Complete ✓','Personal Information saved successfully!','success',()=>nav('screen-emergency-contact')); }, 900);
+}
+function submitStep3(){
+  if(!isValidBDPhone(document.getElementById('c1Phone').value)||!isValidBDPhone(document.getElementById('c2Phone').value)){ showErrorModal('Invalid Phone Number','Phone must be 10 digits starting with 1.'); return; }
+  showLoader(true);
+  setTimeout(()=>{
+    showLoader(false); currentDashboardStep=3; updateProgressUI();
+    const u=_getUser(); if(u?.phone) document.getElementById('bankPhone').value='0'+u.phone;
+    showAlert('Step 3 Complete ✓','Emergency Contact saved successfully!','success',()=>nav('screen-bank-info'));
+  }, 900);
+}
+function submitStep4(){
+  showLoader(true);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); showAlert('Step 4 Complete ✓','Bank Information saved successfully!','success',()=>nav('screen-nid-upload')); }, 900);
+}
+function selectWallet(w){
+  selWallet=w; saveFormState();
+  ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('w'+x); if(el) el.classList.remove('sel'); });
+  const target=document.getElementById('w'+w); if(target) target.classList.add('sel');
+}
+function enableBankEdit(){
+  const i=document.getElementById('bankPhone');
+  if(i.readOnly){ i.removeAttribute('readonly'); i.focus(); } else { i.setAttribute('readonly',true); saveFormState(); }
+}
+
+// ─── NID UPLOAD ──────────────────────────────────────────────
+function openNidSheet(target){
+  currentNidTarget=target;
+  document.getElementById('nidSheetTitle').innerText=target==='front'?'Upload Front Side':'Upload Back Side';
+  document.getElementById('nidSheetBack').classList.add('on'); document.getElementById('nidSheet').classList.add('on');
+}
+function closeNidSheet(){ document.getElementById('nidSheetBack').classList.remove('on'); document.getElementById('nidSheet').classList.remove('on'); }
+function triggerNidCapture(type){
+  closeNidSheet();
+  const id=currentNidTarget==='front'?'nidFrontInput':'nidBackInput'; const inp=document.getElementById(id);
+  if(type==='camera') inp.setAttribute('capture','environment'); else inp.removeAttribute('capture');
+  setTimeout(()=>inp.click(),380);
+}
+async function handleFileUpload(inputId, boxId){
+  const inp = document.getElementById(inputId); const box = document.getElementById(boxId);
+  if(!inp.files?.length) return;
+  const file = inp.files[0];
+  const thumbId = boxId === 'boxNidFront' ? 'thumbFront' : 'thumbBack'; const thumb = document.getElementById(thumbId);
+
+  if(file.size > 5 * 1024 * 1024){ showErrorModal('File Too Large', 'Maximum image size is 5 MB.'); inp.value = ''; return; }
+  if(!['image/jpeg','image/jpg','image/png','image/webp'].includes(file.type)){ showErrorModal('Invalid Format', 'Please upload a JPG, PNG or WebP image.'); inp.value = ''; return; }
+
+  const localUrl = URL.createObjectURL(file); if(thumb) thumb.style.backgroundImage = `url(${localUrl})`;
+  const user = _getUser(); if(!user?.phone){ showErrorModal('Session Expired', 'Please login again.'); return; }
+  if(typeof window._uploadNidImage !== 'function'){ showErrorModal('Upload Error', 'Storage is not ready.'); return; }
+
+  const hintEl = box.querySelector('.upload-hint'); const oldHint = hintEl ? hintEl.innerText : '';
+  if(hintEl) hintEl.innerText = 'Uploading...';
+
+  try{
+    const side = inputId === 'nidFrontInput' ? 'front' : 'back';
+    const url  = await window._uploadNidImage(user.phone, side, file);
+    if(inputId === 'nidFrontInput'){ nidFrontUrl = url; nidFrontOk = true; }
+    if(inputId === 'nidBackInput') { nidBackUrl  = url; nidBackOk  = true; }
+    box.classList.add('up');
+    if(nidFrontOk && nidBackOk){ document.getElementById('btnStep5').classList.add('on'); }
+  }catch(e){
+    showErrorModal('Upload Failed', e.message || 'Could not upload image.');
+    if(thumb) thumb.style.backgroundImage = ''; box.classList.remove('up'); inp.value = '';
+  }finally{
+    if(hintEl) hintEl.innerText = oldHint; URL.revokeObjectURL(localUrl);
+  }
+}
+
+// ─── SUBMIT APPLICATION ──────────────────────────────────────
+function _fmt(n){ return Number(n).toLocaleString('en-US'); }
+function _calcDates(months){
+  const s=new Date(), d=new Date(s); d.setMonth(d.getMonth()+months);
+  const f=x=>x.toISOString().split('T')[0];
+  return{start:f(s),due:f(d)};
+}
+function submitApplication(){
+  if(!nidFrontOk || !nidBackOk || !nidFrontUrl || !nidBackUrl){
+    showErrorModal('Missing Documents', 'Please upload both front and back images of your NID card.'); return;
+  }
+  const amt=Number(selAmount.replace(/,/g,'')); const months=Number(selTerm);
+  const interest=Math.round(amt*(ADMIN.annualRate/100)*(months/12));
+  totalFee=ADMIN.orgFee+ADMIN.serviceCharge+ADMIN.processingFee+interest;
+  const{start,due}=_calcDates(months);
+
+  document.getElementById('finalAmount').innerText    =_fmt(amt);
+  document.getElementById('finalTerm').innerText      =months;
+  document.getElementById('finalWalletName').innerText=selWallet;
+  document.getElementById('finalWalletLogo').src = (window._activeWallet && window._activeWallet.logoUrl) ? window._activeWallet.logoUrl : (ADMIN.walletLogos[selWallet] || '');
+  const u=_getUser(); if(u?.phone) document.getElementById('approvedPhone').innerText='0'+u.phone;
+
+  document.getElementById('ldAmount').innerText  =_fmt(amt);
+  document.getElementById('ldTerm').innerText    =months;
+  document.getElementById('ldInterest').innerText=_fmt(interest)+' BDT';
+  document.getElementById('ldOrgFee').innerText  =_fmt(ADMIN.orgFee)+' BDT';
+  document.getElementById('ldService').innerText =_fmt(ADMIN.serviceCharge+ADMIN.processingFee)+' BDT';
+  document.getElementById('ldStart').innerText   =start;
+  document.getElementById('ldDue').innerText     =due;
+  document.getElementById('ldReceive').innerText =_fmt(amt)+' BDT';
+  document.getElementById('ldTotal').innerText   =_fmt(amt+totalFee)+' BDT';
+
+  if(typeof saveApplicationToFirebase==='function') saveApplicationToFirebase();
+
+  nav('screen-review-progress');
+  _runReviewAnim(()=>{ 
+    clearFormState();
+    nav('screen-approved'); 
+  });
+}
+
+function _runReviewAnim(onDone){
+  const bar=document.getElementById('rvBar'), knob=document.getElementById('rvKnob'), pct=document.getElementById('rvPct'), txt=document.getElementById('rvText');
+  let p=0; txt.innerText='Reviewing...';
+  const iv=setInterval(()=>{
+    p+=2; bar.style.width=p+'%'; knob.style.left=p+'%'; pct.innerText=p+'%';
+    if(p===40) txt.innerText='Verifying identity...';
+    if(p===75) txt.innerText='Calculating offer...';
+    if(p>=100){ clearInterval(iv); txt.innerText='Approved! ✓'; setTimeout(onDone,800); }
+  },30);
+}
+
+// ─── REPAYMENT SCHEDULE ───────────────────────────────────────
+function openRepaymentSchedule(){
+  const p = Number(String(selAmount).replace(/,/g,'')) || 0;
+  const n = Number(selTerm) || 0;
+  if(!p || !n) return;
+  const annualRate = ADMIN.annualRate;
+  const r = annualRate / 100 / 12;
+  const emi = Math.round(p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
+  document.getElementById('emiAmount').innerText = '৳ ' + _fmt(emi);
+  const list = document.getElementById('repScheduleList');
+  let bal = p;
+  let html = `<div class="rep-row header"><span>Month</span><span>EMI (৳)</span><span>Principal (৳)</span><span>Balance (৳)</span></div>`;
+  for(let i = 1; i <= n; i++){
+    const interest = Math.round(bal * r);
+    const principal = emi - interest;
+    bal = Math.max(0, bal - principal);
+    html += `<div class="rep-row"><span>${i}</span><span>${_fmt(emi)}</span><span>${_fmt(principal)}</span><span style="color:var(--orange)">${_fmt(Math.round(bal))}</span></div>`;
+  }
+  list.innerHTML = html;
+  document.getElementById('repaymentModal').classList.add('on');
+}
+
+// ─── LOAN DETAILS & FEE (UPDATED FOR BALANCE) ─────────────────
+function openLoanDetails()  { document.getElementById('loanDetailsModal').classList.add('on'); }
+
+function goToFeePayment(){
+  if(!selAmount || selAmount == '0') {
+      if(window._latestApp) {
+          selAmount = window._latestApp.loanAmount;
+          selTerm = window._latestApp.term;
+          selWallet = window._latestApp.wallet;
+      }
+  }
+
+  const amt    = Number(String(selAmount).replace(/,/g,'')) || 0;
+  const months = Number(selTerm) || 0;
+  
+  const interest = Math.round(amt * (ADMIN.annualRate/100) * (months/12));
+  originalTotalFee = ADMIN.orgFee + ADMIN.serviceCharge + ADMIN.processingFee + interest;
+  
+  document.getElementById('payAmount').innerText   = _fmt(amt);
+  document.getElementById('payOrgFee').innerText   = '- '+_fmt(ADMIN.orgFee);
+  document.getElementById('payService').innerText  = '- '+_fmt(ADMIN.serviceCharge + ADMIN.processingFee);
+  document.getElementById('payInterest').innerText = '- '+_fmt(interest);
+  
+  const u = _getUser();
+  const userBalance = window._userRealBalance || 0;
+  if(userBalance > 0) {
+      document.getElementById('balanceApplyBox').style.display = 'flex';
+      document.getElementById('dispAvailBalance').innerText = '৳ ' + userBalance.toLocaleString();
+  } else {
+      document.getElementById('balanceApplyBox').style.display = 'none';
+  }
+
+  isBalanceApplied = false;
+  appliedBalance = 0;
+  document.getElementById('balanceApplyBox').classList.remove('active');
+  
+  updateFeeDisplay();
+  
+  document.getElementById('adminNumber').innerText = ADMIN.paymentNumbers[selPayMethod] || '-';
+  nav('screen-fee-payment');
+}
+
+function toggleBalanceApply() {
+  const userBalance = window._userRealBalance || 0;
+  const box = document.getElementById('balanceApplyBox');
+  
+  isBalanceApplied = !isBalanceApplied;
+  
+  if(isBalanceApplied) {
+      box.classList.add('active');
+      appliedBalance = Math.min(userBalance, originalTotalFee);
+  } else {
+      box.classList.remove('active');
+      appliedBalance = 0;
+  }
+  updateFeeDisplay();
+}
+
+function updateFeeDisplay() {
+  const finalTotal = originalTotalFee - appliedBalance;
+  document.getElementById('payTotal').innerText = _fmt(finalTotal) + ' BDT';
+  
+  if(finalTotal <= 0) {
+      document.getElementById('trxInput').placeholder = "Balance covers full fee. No TrxID needed.";
+      document.getElementById('trxInput').value = "PAID_BY_BALANCE";
+      document.getElementById('trxInput').readOnly = true;
+      document.getElementById('btnTrx').classList.add('on');
+  } else {
+      document.getElementById('trxInput').placeholder = "e.g. AK9F5B2C";
+      document.getElementById('trxInput').value = "";
+      document.getElementById('trxInput').readOnly = false;
+      document.getElementById('btnTrx').classList.remove('on');
+  }
+}
+
+function selectPayMethod(m){
+  selPayMethod=m;
+  ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('pm'+x); if(el) el.classList.remove('sel'); });
+  const target=document.getElementById('pm'+m); if(target) target.classList.add('sel');
+  document.getElementById('adminNumber').innerText=ADMIN.paymentNumbers[m]||'-';
+}
+function checkTrx(){ const ok=document.getElementById('trxInput').value.trim().length>=4; document.getElementById('btnTrx').classList.toggle('on',ok); }
+
+async function submitTrx(){
+  const trx = document.getElementById('trxInput').value.trim();
+  const finalTotal = originalTotalFee - appliedBalance;
+  
+  if(finalTotal > 0 && trx.length < 4){ 
+      showErrorModal('Invalid TrxID', 'Please enter a valid Transaction ID.'); 
+      return; 
+  }
+  
+  const user = _getUser(); if(!user?.phone){ showErrorModal('Session Expired', 'Please login again.'); nav('screen-login'); return; }
+  const btn = document.getElementById('btnTrx'); const originalHtml = btn.innerHTML;
+  
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Submitting...';
+  
+  try{
+    if(finalTotal > 0) {
+        const existing = await window.checkTrxExists(trx);
+        if(existing){ showErrorModal('Already Submitted','This Transaction ID has already been used.'); return; }
+    }
+
+    await window.saveTransactionToFirebase({
+      uid: user.phone, 
+      trxId: trx || 'BALANCE_PAYMENT', 
+      payMethod: selPayMethod, 
+      amount: finalTotal,
+      totalFee: originalTotalFee,
+      appliedBalance: appliedBalance,
+      loanAmount: Number(String(selAmount).replace(/,/g,'')) || 0, 
+      term: Number(selTerm) || 0, 
+      wallet: selWallet, 
+      status: 'Pending', 
+      submittedAt: new Date().toISOString()
+    });
+    
+    const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted');
+    
+    document.getElementById('dispTrx').innerText = trx || 'Balance Adjustment';
+    document.getElementById('dispMethod').innerText = finalTotal > 0 ? selPayMethod : 'Account Balance';
+    
+    document.getElementById('trxInput').value = '';
+    document.getElementById('btnTrx').classList.remove('on');
+    
+    nav('screen-waiting');
+  }catch(e){
+    console.error('submitTrx failed:', e); 
+    showErrorModal('Submission Failed', e.message || 'Could not submit your transaction.');
+  }finally{ 
+    btn.disabled = false; 
+    btn.innerHTML = originalHtml; 
+  }
+}
+
+function _getUser(){ try{ return JSON.parse(localStorage.getItem('creditUpUser')); }catch{ return null; } }
+
+// ─── UI UPDATE FOR USER STATE (FIXED FOR VISITOR) ─────────────────────────
+function updateUIForUser() {
+  const u = _getUser();
+  const mainBtnText = document.getElementById('mainBorrowBtnText');
+  const loginLink = document.getElementById('loginRegisterLink');
+  const balanceContainer = document.getElementById('balanceContainer');
+  const bonusBanner = document.getElementById('bonusBanner');
+  const notifBtnContainer = document.getElementById('notifBtnContainer');
+  
+  if (u) {
+    // Logged in state
+    if(balanceContainer) balanceContainer.style.display = 'inline-flex';
+    if(notifBtnContainer) notifBtnContainer.style.display = 'flex';
+    if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
+    if(loginLink) loginLink.style.display = 'none';
+    if(bonusBanner) bonusBanner.style.display = 'none';
+    const greet = document.getElementById('userGreeting');
+    if(greet) greet.innerText = `Hello, ${u.phone.slice(-4)} 👋`;
+  } else {
+    // Visitor state (Not logged in)
+    if(balanceContainer) balanceContainer.style.display = 'none';
+    if(notifBtnContainer) notifBtnContainer.style.display = 'none';
+    if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
+    if(loginLink) loginLink.style.display = 'block';
+    if(bonusBanner) bonusBanner.style.display = 'flex';
+    const greet = document.getElementById('userGreeting');
+    if(greet) greet.innerText = 'Welcome to Credit Up';
+    const statusCard = document.getElementById('userStatusCard');
+    if(statusCard) statusCard.style.display = 'none';
+  }
+}
+
+function handleMainAction() {
+  const u = _getUser();
+  if (!u) {
+    showAlert('Login Required', 'Please login or register to apply for a loan.', 'info', () => {
+      nav('screen-login');
+    });
+  } else {
+    if(typeof startNewApplication === 'function') startNewApplication();
+    else nav('screen-policy');
+  }
+}
+
+// ─── PROFILE & LOGOUT ─────────────────────────
+function openProfileModal() {
+  const u = _getUser();
+  if (!u) { nav('screen-login'); return; }
+  document.getElementById('profPhone').innerText = '+880 ' + u.phone;
+  document.getElementById('profileModal').classList.add('on');
+}
+function logoutUser() {
+  localStorage.removeItem('creditUpUser');
+  closeModal('profileModal');
+  if(typeof updateUIForUser === 'function') updateUIForUser();
+  nav('screen-home');
+  showAlert('Logged Out', 'You have been successfully logged out.', 'success');
+}
+
+// ─── REFERRAL / NOTIFICATION ─────────────────────────────────
+function startNewApplication(){
+  const u = _getUser();
+  if(!u) { nav('screen-login'); return; }
+  if(window._latestApp && window._latestApp.status === 'Pending Fee Payment') {
+    showAlert('Action Required', 'Please pay the fee for your previous application first.', 'error');
+    return;
+  }
+  if(window._latestApp && window._latestApp.status === 'TrxID Submitted') {
+    showAlert('Verification Pending', 'Please wait for your current payment to be verified.', 'info');
+    return;
+  }
+  currentDashboardStep = 0; updateProgressUI(); clearFormState();
+  nav('screen-policy');
+}
+function openNotificationModal() { const badge = document.getElementById('notifBadge'); if(badge) badge.style.display = 'none'; document.getElementById('notifModal').classList.add('on'); }
+function openCalculator() { document.getElementById('calcModal').classList.add('on'); updateCalc(); }
+function openReferModal() {
+  const u = _getUser();
+  if(!u || !u.phone) { showAlert('Login Required', 'Please login to access the referral program.', 'error'); return; }
+  const link = `${BASE_URL}?ref=${u.phone}`;
+  document.getElementById('refLinkDisplay').innerText = link;
+  document.getElementById('referModal').classList.add('on');
+  if(typeof window.loadReferralStats === 'function') window.loadReferralStats(u.phone);
+}
+function openHistoryModal() { document.getElementById('historyModal').classList.add('on'); if (typeof window.loadTransactionHistory === 'function') window.loadTransactionHistory(); }
+function copyRefLink() {
+  const user = _getUser(); if(!user) return;
+  const link = `${BASE_URL}?ref=${user.phone}`;
+  const done = () => showAlert('Copied!', 'Referral link copied.', 'success');
+  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(link).then(done).catch(done); } 
+  else { const tmp = document.createElement('textarea'); tmp.value = link; document.body.appendChild(tmp); tmp.select(); document.execCommand('copy'); document.body.removeChild(tmp); done(); }
+}
+function shareRefLink() {
+  const user = _getUser(); if(!user) return;
+  const link = `${BASE_URL}?ref=${user.phone}`;
+  const text = `🎉 Hey! I am using Credit Up to get instant personal loans. Join using my link and we both get bonuses! 💸\n\nClick here: ${link}`;
+  if (navigator.share) { navigator.share({ title: 'Join Credit Up', text: text, url: link }).catch(console.error); } 
+  else { copyRefLink(); }
+}
+
+function openAppStatusModal() {
+  const a = window._latestApp; if(!a) return;
+  const content = document.getElementById('statusModalContent');
+  let statusHtml = '', btnHtml = '';
+  if(a.status === 'Pending Fee Payment') {
+    statusHtml = '<span style="color:var(--orange); font-weight:700;">Fee Payment Pending</span>';
+    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); goToFeePayment()">Pay Fee Now</button>`;
+  } else if(a.status === 'TrxID Submitted') {
+    statusHtml = '<span style="color:var(--blue); font-weight:700;">Verification Pending ⏳</span>';
+    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); nav('screen-waiting')">View Verification Status</button>`;
+  } else if(a.status === 'Approved' || a.status === 'Disbursed') {
+    statusHtml = '<span style="color:var(--p); font-weight:700;">Approved &amp; Active 💸</span>';
+    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); _populateApprovedScreen(window._latestApp); nav('screen-approved')">View Loan Details</button>`;
+  } else if(a.status === 'Rejected') {
+    statusHtml = '<span style="color:var(--red); font-weight:700;">Rejected ❌</span>';
+    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); startNewApplication()">Apply Again</button>`;
+  }
+  content.innerHTML = `
+    <div class="detail-row"><div class="detail-lbl">Loan Amount</div><div class="detail-val color-p fw8">৳ ${a.loanAmount || '-'}</div></div>
+    <div class="detail-row"><div class="detail-lbl">Term</div><div class="detail-val">${a.term || '-'} Months</div></div>
+    <div class="detail-row"><div class="detail-lbl">Status</div><div class="detail-val">${statusHtml}</div></div>
+    <div class="detail-row"><div class="detail-lbl">Applied On</div><div class="detail-val">${a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '-'}</div></div>
+    ${btnHtml}
+  `;
+  document.getElementById('appStatusModal').classList.add('on');
+}
+
+function updateCalc() {
+  const amt = parseInt(document.getElementById('calcAmount').value);
+  const term = parseInt(document.getElementById('calcTerm').value);
+  const rate = 18;
+  document.getElementById('calcAmountDisplay').innerText = '৳ ' + amt.toLocaleString();
+  document.getElementById('calcTermDisplay').innerText = term + ' Months';
+  const interest = Math.round(amt * (rate / 100) * (term / 12));
+  const procFee = 400;
+  const total = amt + interest + procFee;
+  document.getElementById('calcPrincipal').innerText = '৳ ' + amt.toLocaleString();
+  document.getElementById('calcInterest').innerText = '৳ ' + interest.toLocaleString();
+  document.getElementById('calcTotal').innerText = '৳ ' + total.toLocaleString();
+}
+
+function _restoreAppState(app){
+  if(!app) return;
+  selAmount = app.loanAmount || selAmount; selTerm = app.term || selTerm; selWallet = app.wallet || selWallet;
+  const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0;
+  const months = Number(app.term) || 0;
+  const interest = Math.round(amt * (ADMIN.annualRate/100) * (months/12));
+  totalFee = ADMIN.orgFee + ADMIN.serviceCharge + ADMIN.processingFee + interest;
+}
+function _populateApprovedScreen(app){
+  if(!app) return;
+  const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0;
+  const months = Number(app.term) || 0;
+  document.getElementById('finalAmount').innerText = _fmt(amt);
+  document.getElementById('finalTerm').innerText = months;
+  document.getElementById('finalWalletName').innerText = app.wallet || selWallet;
+  document.getElementById('finalWalletLogo').src = (window._activeWallet && window._activeWallet.logoUrl) ? window._activeWallet.logoUrl : (ADMIN.walletLogos[app.wallet] || ADMIN.walletLogos[selWallet] || '');
+  const u = _getUser(); if(u?.phone) document.getElementById('approvedPhone').innerText = '0' + u.phone;
+}
+function openStep(n){
+  if(n > currentDashboardStep + 1) return;
+  const map = { 1:'screen-basic-info', 2:'screen-personal-info', 3:'screen-emergency-contact', 4:'screen-bank-info', 5:'screen-nid-upload' };
+  if(map[n]) nav(map[n]);
+}
+
+</script>
+
+<script type="module">
+import{initializeApp} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,doc,orderBy} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
+const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
+
+const FB={
+  apiKey: "AIzaSyA6FTCSfXhNxPkpq2WCnz_EiaJFJWYYc8Q",
+  authDomain: "creditup-fc7fe.firebaseapp.com",
+  projectId: "creditup-fc7fe",
+  storageBucket: "creditup-fc7fe.firebasestorage.app",
+  messagingSenderId: "360643553761",
+  appId: "1:360643553761:web:330a92a39e15e281e6caa0"
+};
+
+let db;
+try{ const app = initializeApp(FB); db = getFirestore(app); } catch(e){ console.error('Firebase:',e); }
+
+async function loadWallets(){
+  if(!db) return;
+  try{
+    const snap=await getDocs(query(collection(db,'wallets'),orderBy('order','asc')));
+    const wallets=snap.docs.map(d=>({id:d.id,...d.data()})).filter(w=>w.enabled);
+    if(!wallets.length) return;
+    const wg=document.getElementById('walletGrid'); wg.innerHTML='';
+    wallets.forEach((w,i)=>{
+      const d=document.createElement('div'); d.className='w-card'+(i===0?' sel':''); d.id='w_'+w.id;
+      d.onclick=()=>_selWalletDyn(w);
+      d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:36px;height:36px;object-fit:contain"><span>${w.name}</span>`;
+      wg.appendChild(d);
+    });
+    const pg=document.getElementById('pmGrid'); pg.innerHTML='';
+    wallets.forEach((w,i)=>{
+      const d=document.createElement('div'); d.className='pm-card'+(i===0?' sel':''); d.id='pm_'+w.id;
+      d.onclick=()=>_selPayDyn(w);
+      d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:40px;height:40px;object-fit:contain"><span>${w.name}</span>`;
+      pg.appendChild(d);
+    });
+    if(wallets[0]) _selWalletDyn(wallets[0],false);
+    window._wallets=wallets;
+  }catch(e){ console.error('loadWallets:',e); }
+}
+function _selWalletDyn(w,ui=true){ selWallet=w.name; window._activeWallet=w; if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); } }
+function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=w.paymentNumber||'-'; }
+
+window.checkPhoneAndProceed=async function(){
+  if(!db){ showAlert('Error','Database unavailable.','error'); return; }
+  const ph=document.getElementById('loginPhone').value;
+  if(ph.length!==10||!ph.startsWith('1')){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number.','error'); return; }
+  showLoader(true);
+  try{
+    const snap=await getDocs(query(collection(db,'users'),where('phone','==',ph)));
+    showLoader(false);
+    if(!snap.empty){ pendingLoginUser=snap.docs[0].data(); openPasswordModal(); }
+    else{ document.getElementById('regPhone').value=ph; checkRegisterInputs(); nav('screen-register'); }
+  }catch(e){ showLoader(false); showAlert('Error',e.message,'error'); }
+};
+
+window.submitLoginPassword=function(){
+  const pw=document.getElementById('loginPassInput').value;
+  if(!pw){ showAlert('Required','Please enter your password.','error'); return; }
+  if(pendingLoginUser&&pw===pendingLoginUser.password){
+    if(pendingLoginUser.status === 'banned') { showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.'); return; }
+    localStorage.setItem('creditUpUser',JSON.stringify(pendingLoginUser));
+    closeGlobalModal();
+    document.getElementById('dashSuccessText').innerText='Welcome back! 👋';
+    nav('screen-application-progress');
+    if(typeof updateUIForUser === 'function') updateUIForUser();
+    setTimeout(() => { if(typeof window.loadUserDashboardData === 'function') window.loadUserDashboardData(); }, 500);
+  } else { showAlert('Incorrect Password','The password you entered is incorrect.','error'); }
+};
+
+window.registerUser=async function(){
+  if(!db){ showAlert('Error','Database unavailable.','error'); return; }
+  const ph=document.getElementById('regPhone').value, pw=document.getElementById('regPassword').value, cp=document.getElementById('regConfirmPassword').value;
+  if(ph.length!==10){ showAlert('Invalid Number','Enter a valid 10-digit number.','error'); return; }
+  if(pw.length<6){ showAlert('Weak Password','Password must be at least 6 characters.','error'); return; }
+  if(pw!==cp){ showAlert('Mismatch','Passwords do not match.','error'); return; }
+  showLoader(true);
+  try{
+    const ex=await getDocs(query(collection(db,'users'),where('phone','==',ph)));
+    if(!ex.empty){ showLoader(false); showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
+    const cfgSnap = await getDoc(doc(db, 'siteConfig', 'main'));
+    const bonusAmt = cfgSnap.exists() ? (cfgSnap.data().newUserBonus || 100) : 100;
+    const referrer = localStorage.getItem('referrerPhone');
+    const u = { phone: ph, password: pw, createdAt: new Date().toISOString(), appStatus: 0, balance: bonusAmt, status: 'active' };
+    if(referrer && referrer !== ph) u.referredBy = referrer;
+    const userRef = await addDoc(collection(db,'users'), u);
+    localStorage.setItem('creditUpUser', JSON.stringify({...u, id: userRef.id}));
+    await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Welcome to Credit Up! 🎉', message: 'Your account is created successfully.', type: 'welcome', createdAt: new Date(Date.now() - 2000).toISOString() });
+    await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonusAmt} sign-up bonus.`, type: 'bonus', createdAt: new Date().toISOString() });
+    localStorage.removeItem('referrerPhone');
+    showLoader(false);
+    showAlert('Account Created! 🎉', `Welcome! You received ৳${bonusAmt} bonus.`, 'success', () => {
+      document.getElementById('dashSuccessText').innerText = 'Registration Successful! 🎉';
+      nav('screen-application-progress');
+      if(typeof updateUIForUser === 'function') updateUIForUser();
+      if(typeof window.loadUserDashboardData === 'function') window.loadUserDashboardData();
+    });
+  }catch(e){ showLoader(false); showAlert('Error', e.message, 'error'); }
+};
+
+window.saveApplicationToFirebase=async function(){
+  if(!db) return;
+  const u=_getUser();
+  try{
+    await addDoc(collection(db,'applications'),{
+      uid: u?.phone||'unknown', name: document.getElementById('infoName').value, email: document.getElementById('infoEmail').value,
+      gender: selGender, dob:selDob, income:selIncome, loanPurpose: selPurpose, loanAmount:selAmount, term:selTerm,
+      education: selEdu, marital:selMarital, children:selChildren, occupation:selOccupation, company: document.getElementById('infoCompany').value,
+      address: document.getElementById('infoAddress').value,
+      emergency1: {name:document.getElementById('c1Name').value,phone:document.getElementById('c1Phone').value,relation:selRel1},
+      emergency2: {name:document.getElementById('c2Name').value,phone:document.getElementById('c2Phone').value,relation:selRel2},
+      wallet: selWallet, bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
+      status: 'Pending Fee Payment', submittedAt:new Date().toISOString()
+    });
+  }catch(e){ console.error('saveApp:',e); }
+};
+
+window._uploadNidImage = async function(phone, side, file){
+  if(!phone) throw new Error('Missing phone number.');
+  const formData = new FormData(); formData.append('file', file); formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('folder', `nid/${phone}`); formData.append('public_id', `${side}_${Date.now()}`);
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+  const data = await response.json();
+  if(!response.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
+  return data.secure_url;
+};
+
+window.checkTrxExists = async function(trxId){
+  if(!db) return null;
+  try{ const snap = await getDocs(query(collection(db,'transactions'), where('trxId','==',trxId))); return snap.empty ? null : snap.docs[0].data(); }catch(e){ return null; }
+};
+window.saveTransactionToFirebase = async function(data){
+  if(!db) throw new Error('Database unavailable.');
+  const refDoc = await addDoc(collection(db,'transactions'), data); return refDoc.id;
+};
+window.updateApplicationStatusByPhone = async function(phone, status){
+  if(!db) return false;
+  try{
+    const snap = await getDocs(query(collection(db,'applications'), where('uid','==',phone)));
+    if(snap.empty) return false;
+    const active = snap.docs.filter(d => !['Rejected','Disbursed'].includes(d.data().status)).sort((a,b) => new Date(b.data().submittedAt||0) - new Date(a.data().submittedAt||0));
+    if(active.length === 0) return false;
+    await updateDoc(active[0].ref, { status, statusUpdatedAt: new Date().toISOString() });
+    return true;
+  }catch(e){ return false; }
+};
+
+// ─── GLOBAL NOTICES & TICKER (FIXED FOR ALL USERS) ───────────
+window.loadTicker = async function() {
+  if(!db) return;
+  try {
+    const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
+    let notices = gSnap.docs.map(d => d.data());
+    
+    // If user is logged in, add their personal notifications to the ticker
+    const user = _getUser();
+    if (user && user.phone) {
+      const pSnap = await getDocs(query(collection(db, 'user_notifications'), where('uid', '==', user.phone)));
+      const pNotifs = pSnap.docs.map(d => ({...d.data(), isPersonal: true}));
+      notices = [...pNotifs, ...notices]; // Show personal first
+    }
+
+    if(notices.length > 0) {
+      const ticker = document.getElementById('tickerContent');
+      ticker.innerHTML = notices.slice(0, 5).map(n =>
+        `<span class="ticker-item"><i class="fa-solid fa-circle"></i> <b>${n.title}:</b> ${(n.message || '').substring(0, 40)}...</span>`
+      ).join('');
+      document.getElementById('tickerWrap').style.display = 'flex';
+    }
+  } catch(e) { console.log("Ticker Load Error:", e); }
+};
+
+window.loadUserDashboardData = async function() {
+  const user = _getUser(); if(!user || !user.phone || !db) return;
+  document.getElementById('userGreeting').innerText = `Hello, ${user.phone.slice(-4)} 👋`;
+  
+  try {
+    const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
+    if(!uSnap.empty) {
+      window._userRealBalance = uSnap.docs[0].data().balance || 0;
+      document.getElementById('headerBalance').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + window._userRealBalance.toLocaleString();
+    }
+  } catch(e) {}
+
+  // Load Notifications ONLY for logged in user
+  try {
+    const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
+    const pSnap = await getDocs(query(collection(db, 'user_notifications'), where('uid', '==', user.phone)));
+    const allNotifs = [...gSnap.docs.map(d => ({...d.data(), isPersonal: false})), ...pSnap.docs.map(d => ({...d.data(), isPersonal: true}))].sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
+    
+    if(allNotifs.length > 0) {
+      document.getElementById('notifBadge').style.display = 'block';
+      document.getElementById('notifListContainer').innerHTML = allNotifs.map(n => `
+        <div class="notif-item ${n.isPersonal ? 'unread' : ''}">
+          <div class="notif-icon" style="background:${n.type === 'bonus' ? 'rgba(255,140,66,.1)' : 'rgba(29,219,128,.1)'}; color:${n.type === 'bonus' ? 'var(--orange)' : 'var(--p)'}">
+            <i class="fa-solid fa-${n.type === 'bonus' ? 'gift' : n.type === 'welcome' ? 'hand-sparkles' : 'bullhorn'}"></i>
+          </div>
+          <div class="notif-content"><h4>${n.title}</h4><p>${n.message}</p><div class="notif-date">${new Date(n.createdAt).toLocaleString()}</div></div>
+        </div>`).join('');
+    }
+  } catch(e) {}
+
+  // Load User's Application Status
+  try {
+    const appSnap = await getDocs(query(collection(db, 'applications'), where('uid', '==', user.phone)));
+    const card = document.getElementById('userStatusCard'), mainBtn = document.getElementById('mainBorrowBtn');
+    const title = document.getElementById('statusCardTitle'), desc = document.getElementById('statusCardDesc');
+    const iconEl = document.getElementById('statusCardIcon'), iconBox = card.querySelector('.status-icon-box');
+    card.style.display = 'none'; mainBtn.style.display = 'flex'; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
+    if(!appSnap.empty) {
+      const apps = appSnap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
+      const latestApp = apps[0]; window._latestApp = latestApp;
+      const statusMap = {
+        'Pending Fee Payment': { icon: 'fa-hourglass-half', title: 'Fee Payment Pending', desc: 'Tap to pay processing fee', color: 'var(--orange)', bg: 'rgba(255,140,66,.15)' },
+        'TrxID Submitted':     { icon: 'fa-circle-check',   title: 'Verification Pending', desc: 'Tap to view verification status', color: 'var(--blue)',   bg: 'rgba(77,143,255,.15)' },
+        'Approved':            { icon: 'fa-money-bill-wave',title: 'Loan Active',            desc: 'Tap to view loan details',       color: 'var(--p)',      bg: 'rgba(29,219,128,.15)' },
+        'Disbursed':           { icon: 'fa-money-bill-wave',title: 'Loan Disbursed',         desc: 'Tap to view loan details',       color: 'var(--p)',      bg: 'rgba(29,219,128,.15)' },
+        'Rejected':            { icon: 'fa-circle-xmark',   title: 'Application Rejected',  desc: 'Tap to reapply',                 color: 'var(--red)',    bg: 'rgba(255,77,106,.15)' },
+      };
+      const info = statusMap[latestApp.status];
+      if(info) {
+        title.innerText = info.title; desc.innerText = info.desc;
+        if(iconEl) iconEl.className = `fa-solid ${info.icon}`;
+        if(iconBox){ iconBox.style.color = info.color; iconBox.style.background = info.bg; }
+        card.style.display = 'flex';
+        if(['Pending Fee Payment', 'TrxID Submitted'].includes(latestApp.status)) {
+          mainBtn.style.display = 'none';
+        } else if (['Approved', 'Disbursed', 'Rejected'].includes(latestApp.status)) {
+          document.getElementById('mainBorrowBtnText').innerText = 'Apply for Another';
+        }
+      }
+    }
+  } catch(e) {}
+  if(typeof updateUIForUser === 'function') updateUIForUser();
+};
+
+// ─── TIER SYSTEM 20/50/100 ─────────────────────────
+window.loadReferralStats = async function(phone) {
+  if(!db) return;
+  try {
+    const snap = await getDocs(query(collection(db, 'users'), where('referredBy', '==', phone)));
+    const activeCount = snap.docs.filter(d => d.data().status === 'active').length;
+    document.getElementById('refTotalCount').innerText = snap.size;
+    document.getElementById('refSuccessCount').innerText = activeCount;
+    let tierName = 'Starter', pct = 0, txt = '';
+    if (activeCount >= 100) {
+      tierName = 'Jackpot Winner 🏆'; pct = 100;
+      txt = 'অভিনন্দন! আপনি ৫০,০০০ টাকার জ্যাকপট জিতেছেন!';
+    } else if (activeCount >= 50) {
+      tierName = 'Silver 🥈'; pct = (activeCount / 100) * 100;
+      txt = `জ্যাকপট পেতে আরও ${100 - activeCount} জন রেফার করুন!`;
+    } else if (activeCount >= 20) {
+      tierName = 'Bronze 🥉'; pct = (activeCount / 50) * 100;
+      txt = `ফ্রি লোন পেতে আরও ${50 - activeCount} জন রেফার করুন!`;
+    } else {
+      tierName = 'Starter'; pct = (activeCount / 20) * 100;
+      txt = `১ম কিস্তি মাফ পেতে আরও ${20 - activeCount} জন রেফার করুন!`;
+    }
+    document.getElementById('currentTierName').innerText = tierName;
+    document.getElementById('tierProgressBar').style.width = pct + '%';
+    document.getElementById('tierProgressText').innerText = txt;
+    const updateTierRow = (rowId, lockId, unlocked) => {
+      const row  = document.getElementById(rowId);
+      const lock = document.getElementById(lockId);
+      if (!row || !lock) return;
+      if (unlocked) {
+        row.style.border  = '1px solid var(--p)';
+        row.style.background = 'rgba(29,219,128,.06)';
+        lock.className    = 'fa-solid fa-circle-check';
+        lock.style.color  = 'var(--p)';
+      } else {
+        row.style.border  = '1px solid transparent';
+        row.style.background = 'rgba(255,255,255,0.03)';
+        lock.className    = 'fa-solid fa-lock';
+        lock.style.color  = 'var(--txt2)';
+      }
+    };
+    updateTierRow('tierRow20',  'tierLock20',  activeCount >= 20);
+    updateTierRow('tierRow50',  'tierLock50',  activeCount >= 50);
+    updateTierRow('tierRow100', 'tierLock100', activeCount >= 100);
+  } catch(e) { console.log('Referral stats error:', e); }
+};
+
+window.loadTransactionHistory = async function() {
+  const user = _getUser(); const container = document.getElementById('historyListContainer');
+  if(!container || !user || !user.phone || !db) return;
+  container.innerHTML = '<p style="text-align:center; color:var(--txt2); font-size:13px;">Loading...</p>';
+  try {
+    const snap = await getDocs(query(collection(db, 'transactions'), where('uid', '==', user.phone)));
+    if(snap.empty) { container.innerHTML = '<p style="text-align:center; color:var(--txt2); font-size:13px;">No transactions found.</p>'; return; }
+    const trxs = snap.docs.map(d => d.data()).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
+    container.innerHTML = trxs.map(t => `
+      <div class="notif-item" style="border-left:3px solid ${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">
+        <div class="notif-icon" style="background:${t.status === 'Verified' ? 'rgba(29,219,128,.1)' : 'rgba(255,140,66,.1)'}; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">
+          <i class="fa-solid fa-money-bill-transfer"></i>
+        </div>
+        <div class="notif-content"><h4 style="display:flex; justify-content:space-between;">৳ ${t.amount} <span style="font-size:10px; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">${t.status}</span></h4>
+          <p>TrxID: <strong>${t.trxId}</strong> via ${t.payMethod}</p>
+          <div class="notif-date">${new Date(t.submittedAt).toLocaleString()}</div>
+        </div>
+      </div>`).join('');
+  } catch(e) { container.innerHTML = '<p style="text-align:center; color:var(--red); font-size:13px;">Failed to load history.</p>'; }
+};
+
+// ─── LIVE FEED ─────────────────────────────────────────
+window.loadLiveFeed = async function() {
+  if(!db) return;
+  const container = document.getElementById('liveFeedContainer');
+  if(!container) return;
+  try {
+    const snap = await getDocs(query(collection(db, 'applications'), orderBy('submittedAt', 'desc')));
+    const approvedApps = snap.docs.map(d => d.data()).filter(a => ['Approved', 'Disbursed'].includes(a.status)).slice(0, 5);
+    if(approvedApps.length === 0) {
+      container.innerHTML = `
+        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>মো: সাইফুল ইসলাম</h4><p>১০ মিনিট আগে</p></div></div><div class="live-amount">+ ৳ ১০,০০০</div></div>
+        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>মো: রফিকুল ইসলাম</h4><p>২৫ মিনিট আগে</p></div></div><div class="live-amount">+ ৳ ৫,০০০</div></div>
+        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>মো: আব্দুর রহিম</h4><p>১ ঘন্টা আগে</p></div></div><div class="live-amount">+ ৳ ২০,০০০</div></div>
+      `;
+      return;
+    }
+    container.innerHTML = approvedApps.map(a => {
+      let name = a.name || 'User';
+      if(name.length > 4) name = name.substring(0, 4) + '***';
+      const diffMs = new Date() - new Date(a.submittedAt || Date.now());
+      const diffMins = Math.floor(diffMs / 60000);
+      let timeText = diffMins < 60 ? `${diffMins} মিনিট আগে` : `${Math.floor(diffMins/60)} ঘন্টা আগে`;
+      return `
+        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>${name}</h4><p>${timeText}</p></div></div><div class="live-amount">+ ৳ ${Number(String(a.loanAmount).replace(/,/g,'')).toLocaleString()}</div></div>
+      `;
+    }).join('');
+  } catch(e) {
+    console.error("Live Feed Error:", e);
+    container.innerHTML = '<div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Could not load recent activity.</div>';
+  }
+};
+
+// ─── BOOTSTRAP ─────────────────────────────────────────
+loadWallets();
+
+document.addEventListener("DOMContentLoaded", () => {
+  if(typeof window.loadTicker === 'function') window.loadTicker();
+  if(typeof window.loadLiveFeed === 'function')    window.loadLiveFeed();
+  if(typeof initHotOffer === 'function')           initHotOffer();
+});
+
+if(document.readyState !== 'loading'){
+  if(typeof window.loadTicker === 'function') window.loadTicker();
+  if(typeof initHotOffer === 'function') initHotOffer();
+}
+
+setTimeout(() => {
+  restoreFormState();
+  if(typeof updateUIForUser === 'function') updateUIForUser();
+  if(_getUser() && typeof window.loadUserDashboardData === 'function'){ window.loadUserDashboardData(); }
+}, 1500);
+
+</script>
+</body>
+</html>
