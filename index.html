@@ -691,12 +691,19 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 <div id="splash">
   <div class="sp-logo"><div class="sp-c"></div><div class="sp-bars"><div class="sp-bar"></div><div class="sp-bar"></div><div class="sp-bar"></div></div><div class="sp-curve"><div class="sp-curve-txt">Credit <span>Up</span></div></div></div>
   <div class="sp-title">CreditUp – Smart Credit &amp; Loans</div>
-  <div class="sp-sub">Build Credit. Move Up.</div>
+  <div class="sp-sub" id="splashSubtitle">Build Credit. Move Up.</div> <!-- পরিবর্তন করা হয়েছে -->
   <div class="sp-pay-title">Supported Payments</div>
   <div class="sp-pay-row"><div class="sp-logo-chip"><img src="https://premiumedutools.com/uploads/payment.png" alt="payments" style="height:18px;width:auto"></div><div class="sp-logo-chip"><i class="fa-solid fa-dollar-sign" style="color:#15803d;font-size:13px;font-weight:800;margin-right:2px"></i><span style="font-size:11px;font-weight:800;color:#15803d">USD</span></div></div>
   <div class="sp-badge"><i class="fa-solid fa-shield-check"></i> 100% Authentic &amp; Verified</div>
   <div class="sp-bar-wrap"><div class="sp-progress"></div></div>
   <div class="sp-foot"><i class="fa-solid fa-lock"></i> 256-bit SSL Encrypted | Safe &amp; Secure</div>
+</div>
+
+<!-- Maintenance Screen (নতুন যোগ করা হয়েছে) -->
+<div id="maintenanceScreen" style="display:none; position:fixed; inset:0; background:#060d1a; z-index:999999; flex-direction:column; justify-content:center; align-items:center; color:#fff; text-align:center; padding:20px;">
+  <i class="fa-solid fa-screwdriver-wrench" style="font-size:50px; color:var(--p); margin-bottom:20px;"></i>
+  <h2 style="font-size:22px; font-weight:800; margin-bottom:10px;">Under Maintenance</h2>
+  <p style="color:var(--txt2); font-size:14px;">We are currently upgrading our system. Please check back later.</p>
 </div>
 
 <div id="app">
@@ -743,7 +750,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       <div class="qa-item" onclick="openProfileModal()"><div class="qa-icon qa-green"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
     </div>
     <div class="info-card">
-      <div class="info-card-title">Your Loan, Simplified</div>
+      <div class="info-card-title" id="homeTagline">Your Loan, Simplified</div> <!-- পরিবর্তন করা হয়েছে -->
       <div class="step-row"><div class="step-ic bg-g"><i class="fa-regular fa-comment-dots"></i></div><div class="step-cont"><span class="step-badge bd-g">Step 1</span><div class="step-title">Apply Online</div><div class="step-desc">Fill basic info in under a minute — no complex documents needed.</div></div></div>
       <div class="step-row"><div class="step-ic bg-o"><i class="fa-solid fa-clipboard-check"></i></div><div class="step-cont"><span class="step-badge bd-o">Step 2</span><div class="step-title">Fast Approval</div><div class="step-desc">Automated review with instant results and funding in minutes.</div></div></div>
       <div class="step-row"><div class="step-ic bg-b"><i class="fa-solid fa-credit-card"></i></div><div class="step-cont"><span class="step-badge bd-b">Step 3</span><div class="step-title">Receive Funds</div><div class="step-desc">Approved funds deposited directly into your mobile wallet.</div></div></div>
@@ -770,7 +777,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 <div id="screen-policy" class="screen">
   <div class="pol-hdr">Privacy Policy</div>
   <div class="pol-body">
-    <div class="pol-updated">Last updated: 2026/10/09</div>
+    <div class="pol-updated" id="policyDateText">Last updated: 2026/10/09</div> <!-- পরিবর্তন করা হয়েছে -->
     <p>This Privacy Agreement explains how we collect, use, store, share and protect your personal information when you use Credit Up services.</p>
     <div class="pol-h">How we collect and use your personal information</div>
     <p>We only collect and use your personal information to the extent necessary to provide loan services and improve your experience.</p>
@@ -1769,6 +1776,10 @@ function logoutUser() {
 
 // ─── REFERRAL / NOTIFICATION ─────────────────────────────────
 function startNewApplication(){
+  if(window.siteFlags && window.siteFlags.loans === false) {
+    showAlert('Loans Paused', 'Loan applications are temporarily paused. Please try again later.', 'info');
+    return;
+  }
   const u = _getUser();
   if(!u) { nav('screen-login'); return; }
   if(window._latestApp && window._latestApp.status === 'Pending Fee Payment') {
@@ -1929,6 +1940,19 @@ async function loadDynamicConfig() {
     if(cfgSnap.exists()) {
       const cfg = cfgSnap.data();
       
+      // ফ্ল্যাগগুলো গ্লোবালি সেভ করে রাখা
+      window.siteFlags = {
+        registration: cfg.flags?.registrationOpen !== false,
+        loans: cfg.flags?.loansOpen !== false,
+        maintenance: cfg.flags?.maintenance === true
+      };
+
+      // মেইনটেন্যান্স মোড চেক
+      if(window.siteFlags.maintenance) {
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('maintenanceScreen').style.display = 'flex';
+      }
+
       // ১. Max Borrow Display আপডেট
       if(cfg.maxBorrowAmount) {
         const mbEl = document.getElementById('homeMaxBorrow');
@@ -1967,6 +1991,20 @@ async function loadDynamicConfig() {
       if(cfg.occupations && cfg.occupations.length > 0) {
         OPTS.occupation = cfg.occupations;
       }
+
+      // ৬. সাইট টেক্সট ও ব্র্যান্ডিং আপডেট
+      if(cfg.splashSubtitle) {
+        const splEl = document.getElementById('splashSubtitle');
+        if(splEl) splEl.innerText = cfg.splashSubtitle;
+      }
+      if(cfg.tagline) {
+        const tagEl = document.getElementById('homeTagline');
+        if(tagEl) tagEl.innerText = cfg.tagline;
+      }
+      if(cfg.policyDate) {
+        const polEl = document.getElementById('policyDateText');
+        if(polEl) polEl.innerText = 'Last updated: ' + cfg.policyDate;
+      }
     }
   } catch(e) {
     console.error("Dynamic Config Error:", e);
@@ -2001,6 +2039,10 @@ window.submitLoginPassword=function(){
 };
 
 window.registerUser=async function(){
+  if(window.siteFlags && window.siteFlags.registration === false) {
+      showAlert('Registration Closed', 'New user registration is currently disabled.', 'error');
+      return;
+  }
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('regPhone').value, pw=document.getElementById('regPassword').value, cp=document.getElementById('regConfirmPassword').value;
   if(ph.length!==10){ showAlert('Invalid Number','Enter a valid 10-digit number.','error'); return; }
