@@ -465,6 +465,16 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .fomo-progress-track{width:100%;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;margin-bottom:10px}
 .fomo-progress-fill{height:100%;background:linear-gradient(90deg,#ff416c,#ff4b2b);border-radius:5px;transition:width 1s ease}
 .fomo-warning{font-size:11px;color:var(--red);font-weight:700;margin:0;display:flex;align-items:center;justify-content:center;gap:5px}
+.bal-toggle-box { background: var(--surf); border: 1px solid var(--bord); border-radius: 14px; padding: 15px; margin: 0 16px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: .3s; }
+.bal-toggle-box.active { border-color: var(--p); background: rgba(29,219,128,.05); }
+.bal-left { display: flex; align-items: center; gap: 10px; }
+.bal-left i { color: var(--orange); font-size: 18px; }
+.bal-left h4 { font-size: 14px; color: var(--txt); margin-bottom: 2px; }
+.bal-left p { font-size: 11px; color: var(--txt2); }
+.bal-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--bord); display: flex; justify-content: center; align-items: center; color: transparent; transition: .2s; }
+.bal-toggle-box.active .bal-check { background: var(--p); border-color: var(--p); color: #fff; }
+#screen-fee-payment { padding-bottom: 100px !important; }
+.pay-instr { margin-bottom: 80px; }
 </style>
 </head>
 <body>
@@ -707,9 +717,9 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       </div>
     </div>
     <div class="h-logo">Credit <span>Up</span></div>
-    <div class="bonus-banner" id="bonusBanner" style="display:none;"><span class="shake-icon">🎁</span><span>নতুন ইউজারদের জন্য <b style="color:var(--orange);">১০০ টাকা</b> সাইন-আপ বোনাস!</span></div>
+    <div class="bonus-banner" id="bonusBanner" style="display:none;"><span class="shake-icon">🎁</span><span id="bonusBannerText">নতুন ইউজারদের জন্য <b style="color:var(--orange);">১০০ টাকা</b> সাইন-আপ বোনাস!</span></div>
     <div class="h-label">Borrow up to (BDT)</div>
-    <div class="h-amount">60,000.00</div>
+    <div class="h-amount" id="homeMaxBorrow">60,000.00</div>
     <div class="h-feats">
       <div class="h-feat"><div class="h-feat-ic"><i class="fa fa-shield-halved"></i></div><div class="h-feat-txt">Easy Approval</div></div>
       <div class="h-feat"><div class="h-feat-ic"><i class="fa fa-bolt"></i></div><div class="h-feat-txt">Fast Funding</div></div>
@@ -743,7 +753,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       <div class="live-feed" id="liveFeedContainer"><div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Loading recent activity...</div></div>
       <div class="live-title" style="margin-top:20px;">আমাদের পার্টনার</div>
       <div class="partner-grid">
-        <!-- Updated Partner Logos -->
         <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="bKash" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Bkash</span>'"></div>
         <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png" alt="Nagad" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Nagad</span>'"></div>
         <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Rocket</span>'"></div>
@@ -1912,6 +1921,58 @@ async function loadWallets(){
 function _selWalletDyn(w,ui=true){ selWallet=w.name; window._activeWallet=w; if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); } }
 function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=w.paymentNumber||'-'; }
 
+// ─── DYNAMIC SITE CONFIG LOADER ─────────────────────────
+async function loadDynamicConfig() {
+  if(!db) return;
+  try {
+    const cfgSnap = await getDoc(doc(db, 'siteConfig', 'main'));
+    if(cfgSnap.exists()) {
+      const cfg = cfgSnap.data();
+      
+      // ১. Max Borrow Display আপডেট
+      if(cfg.maxBorrowAmount) {
+        const mbEl = document.getElementById('homeMaxBorrow');
+        if(mbEl) mbEl.innerText = cfg.maxBorrowAmount;
+      }
+
+      // ২. সাইন-আপ বোনাস টেক্সট আপডেট
+      if(cfg.newUserBonus !== undefined) {
+        const bonusEl = document.getElementById('bonusBannerText');
+        if(bonusEl) bonusEl.innerHTML = `নতুন ইউজারদের জন্য <b style="color:var(--orange);">${cfg.newUserBonus} টাকা</b> সাইন-আপ বোনাস!`;
+      }
+
+      // ৩. ADMIN ফি ও রেট আপডেট
+      if(cfg.orgFee !== undefined) ADMIN.orgFee = Number(cfg.orgFee);
+      if(cfg.serviceCharge !== undefined) ADMIN.serviceCharge = Number(cfg.serviceCharge);
+      if(cfg.processingFee !== undefined) ADMIN.processingFee = Number(cfg.processingFee);
+      if(cfg.annualInterestRate !== undefined) ADMIN.annualRate = Number(cfg.annualInterestRate);
+
+      // ৪. পেমেন্ট নাম্বার আপডেট
+      if(cfg.paymentNumbers) {
+        if(cfg.paymentNumbers.Bkash) ADMIN.paymentNumbers.Bkash = cfg.paymentNumbers.Bkash;
+        if(cfg.paymentNumbers.Nagad) ADMIN.paymentNumbers.Nagad = cfg.paymentNumbers.Nagad;
+        if(cfg.paymentNumbers.Rocket) ADMIN.paymentNumbers.Rocket = cfg.paymentNumbers.Rocket;
+      }
+
+      // ৫. লোন সিলেক্ট করার অপশনগুলো আপডেট (OPTS)
+      if(cfg.loanAmounts && cfg.loanAmounts.length > 0) {
+        OPTS.loanAmount = cfg.loanAmounts.map(a => Number(String(a).replace(/,/g,'')).toLocaleString('en-US'));
+      }
+      if(cfg.loanTerms && cfg.loanTerms.length > 0) {
+        OPTS.term = cfg.loanTerms.map(t => String(t));
+      }
+      if(cfg.loanPurposes && cfg.loanPurposes.length > 0) {
+        OPTS.loanPurpose = cfg.loanPurposes;
+      }
+      if(cfg.occupations && cfg.occupations.length > 0) {
+        OPTS.occupation = cfg.occupations;
+      }
+    }
+  } catch(e) {
+    console.error("Dynamic Config Error:", e);
+  }
+}
+
 window.checkPhoneAndProceed=async function(){
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('loginPhone').value;
@@ -2207,6 +2268,7 @@ window.loadLiveFeed = async function() {
 
 // ─── BOOTSTRAP ─────────────────────────────────────────
 loadWallets();
+loadDynamicConfig();
 
 document.addEventListener("DOMContentLoaded", () => {
   if(typeof window.loadTicker === 'function') window.loadTicker();
