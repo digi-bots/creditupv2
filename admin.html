@@ -756,7 +756,7 @@ function gS(id,el){
 function refreshCur(){ loadSec(_sec); }
 function exportCur(){ exportCSV(_sec); }
 async function loadSec(id){
-  if(!_db) return;
+  if(!window._db) return; // ✅ এখানে window._db করা হয়েছে
   const map={dashboard:loadDash,users:loadUsers,applications:loadApps,transactions:loadTrx,portfolio:loadPortfolio,analytics:loadAnalytics,wallets:loadWallets,config:loadConfig,broadcast:loadBC,actlog:loadActLog};
   if(map[id]) await map[id]();
 }
