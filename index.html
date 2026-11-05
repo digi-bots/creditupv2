@@ -12,9 +12,9 @@
 :root{--p:#1ddb80;--p2:#0fbb65;--pdark:#0a8a48;--bg:#060d1a;--bg2:#0b1628;--surf:#111f35;--surf2:#18293e;--glass:rgba(255,255,255,0.04);--gbord:rgba(255,255,255,0.08);--txt:#e2eeff;--txt2:#7b90b4;--txt3:#5a6b85;--orange:#ff8c42;--red:#ff4d6a;--blue:#4d8fff;--purple:#a855f7;--bord:rgba(255,255,255,0.07);--sh:0 20px 60px rgba(0,0,0,.7);--glow:0 0 24px rgba(29,219,128,.25)}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:auto;user-select:auto}
-html,body{height:100%;margin:0;padding:0;background:#060d1a;overflow:hidden;}
-body{color:var(--txt);display:flex;justify-content:center;align-items:center;background:radial-gradient(circle at center, #111f35 0%, #000 100%);}
-#app{width:100%;max-width:420px;background:var(--bg);height:100dvh;overflow-y:auto;overflow-x:hidden;position:relative;box-shadow:0 0 80px rgba(0,0,0,.9);scrollbar-width:none;padding-bottom:80px}
+html,body{height:100%}
+body{background:#000;color:var(--txt);display:flex;justify-content:center;min-height:100dvh;overflow-x:hidden}
+#app{width:100%;max-width:400px;background:var(--bg);height:100dvh;overflow-y:auto;overflow-x:hidden;position:relative;box-shadow:0 0 80px rgba(0,0,0,.9);scrollbar-width:none;padding-bottom:80px}
 #app::-webkit-scrollbar{display:none}
 #loader{position:fixed;inset:0;background:rgba(6,13,26,.92);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:99999;flex-direction:column;gap:16px}
 #loader.on{display:flex}
@@ -1216,8 +1216,8 @@ function showLoader(on){ document.getElementById('loader').classList.toggle('on'
 function initHotOffer() {
   setTimeout(() => {
     const banner = document.getElementById('hotOfferBanner');
-    if(banner) {
-      banner.style.display = 'block'; // Force show for testing
+    if(banner && !localStorage.getItem('hotOfferClosed')) {
+      banner.style.display = 'block';
     }
   }, 3500);
 }
@@ -1235,7 +1235,7 @@ function openFomoModal() { document.getElementById('fomoModal').classList.add('o
 function closeFomoModal() { document.getElementById('fomoModal').classList.remove('on'); }
 function closeHotOffer() {
   document.getElementById('hotOfferBanner').style.display = 'none';
-  // localStorage.setItem('hotOfferClosed', 'true'); // Commented out so it shows every time for testing
+  localStorage.setItem('hotOfferClosed', 'true');
 }
 function claimFomoOffer() {
   closeFomoModal(); closeHotOffer();
@@ -1439,6 +1439,7 @@ function showAlert(title,msg,type='info',cb=null){
 function showErrorModal(title,msg){ _showModal(false,false,true); document.getElementById('err-title').innerText=title; document.getElementById('err-msg').innerText=msg; }
 function closeGlobalModal(clearLogin=false){ document.getElementById('globalModal').classList.remove('on'); if(clearLogin) pendingLoginUser=null; const cb=modalCloseCb; modalCloseCb=null; if(cb) cb(); }
 
+// ─── BUG FIX: acceptPolicy handles logged-in users ──────────────
 function acceptPolicy(){ 
   if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; } 
   const u = _getUser();
