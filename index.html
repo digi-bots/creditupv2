@@ -50,6 +50,21 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #screen-approved.active,#screen-fee-payment.active,#screen-waiting.active{display:flex;flex-direction:column;padding:0}
 #screen-review-progress.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative}
 #screen-home.active{display:block;padding:0}
+
+.global-back-btn { position: fixed; top: 20px; left: calc(50% - 180px); z-index: 9998; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); border: 1px solid var(--bord); display: none; justify-content: center; align-items: center; color: #fff; font-size: 16px; cursor: pointer; transition: 0.3s; }
+.global-back-btn.show { display: flex; }
+@media(max-width: 420px) { .global-back-btn { left: 15px; } }
+
+.hot-offer-floating{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 30px);max-width:380px;background:linear-gradient(90deg,#ff4d6a,#ff8c42);border-radius:14px;padding:10px 15px;box-shadow:0 10px 30px rgba(255,77,106,0.4),0 0 0 2px rgba(255,255,255,0.2) inset;z-index:99999;cursor:pointer;transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);display:none}
+.hot-offer-floating.peek { transform: translateX(calc(-50% + 140px)); opacity: 0.8; }
+.hot-offer-floating.peek:hover { opacity: 1; }
+.hot-offer-content{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hot-icon{font-size:22px;animation:fire-shake 1.5s infinite}
+.hot-text h4{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;text-shadow:0 2px 4px rgba(0,0,0,0.2);margin-bottom:2px}
+.hot-text p{font-size:11px;font-weight:600;color:rgba(255,255,255,0.95);margin:0;line-height:1.3}
+.hot-close{background:rgba(0,0,0,0.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:12px;cursor:pointer;flex-shrink:0}
+@keyframes fire-shake{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.2) rotate(10deg)}}
+
 .ticker-wrap{width:100%;overflow:hidden;background:rgba(29,219,128,0.1);border-bottom:1px solid rgba(29,219,128,0.2);padding:8px 0;position:relative;z-index:10;display:flex;align-items:center}
 .ticker-title{background:var(--p);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;margin-left:15px;z-index:2;white-space:nowrap;box-shadow:0 2px 8px rgba(29,219,128,.3)}
 .ticker{display:flex;white-space:nowrap;animation:ticker 20s linear infinite;padding-left:15px;will-change:transform}
@@ -61,7 +76,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .home-hdr::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(29,219,128,.1) 0%,transparent 70%);border-radius:50%;animation:orb 8s ease-in-out infinite reverse}
 @keyframes orb{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.15) translate(10px,-10px)}}
 .home-top-bar{display:flex;justify-content:space-between;align-items:center;padding:15px 0 10px;background:transparent;position:relative;z-index:20}
-.home-greeting h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:20px;font-weight:900;letter-spacing:-0.5px}
+.home-greeting h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:18px;font-weight:900;letter-spacing:-0.5px}
 .balance-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.35);border:1px solid rgba(29,219,128,0.4);border-radius:20px;padding:6px 14px;margin-top:8px;box-shadow:0 4px 15px rgba(29,219,128,0.15);backdrop-filter:blur(5px)}
 .balance-pill span{font-size:15px;font-weight:800;color:#fff}
 .balance-pill i{color:var(--p);cursor:pointer;font-size:14px;padding:4px}
@@ -80,6 +95,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .h-feat-txt{font-size:11px;color:rgba(255,255,255,.8);font-weight:500}
 .btn-borrow{background:rgba(255,255,255,.97);color:#0a5c2f;border:none;padding:17px 20px;border-radius:32px;font-size:17px;font-weight:800;width:100%;cursor:pointer;position:relative;z-index:2;box-shadow:0 8px 32px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s}
 .btn-borrow:active{transform:scale(.98)}
+.btn-borrow.secondary{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3);box-shadow:none;margin-top:10px;font-size:14px;padding:14px}
 .bn-div{height:20px;width:1.5px;background:#86efac}
 .bn-bn{font-family:'Hind Siliguri',sans-serif;font-weight:700;font-size:16px;color:#166534}
 .bn-hand{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:26px;animation:handPulse 1.5s infinite}
@@ -349,7 +365,10 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .pay-instr h4{font-size:14px;color:var(--txt);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .pay-instr h4 i{color:var(--p)}
 .pay-instr p{font-size:12.5px;color:var(--txt2);margin-bottom:8px;line-height:1.5}
-.pay-num{font-size:20px;font-weight:900;color:var(--p);letter-spacing:1.5px;margin:12px 0;padding:12px;background:var(--bg2);border-radius:10px;text-align:center;border:1px solid rgba(29,219,128,.15)}
+.pay-num-wrap { display: flex; align-items: center; gap: 10px; margin: 12px 0; padding: 12px; background: var(--bg2); border-radius: 10px; border: 1px solid rgba(29,219,128,.15); }
+.pay-num { flex: 1; font-size: 20px; font-weight: 900; color: var(--p); letter-spacing: 1.5px; text-align: center; }
+.copy-btn { background: rgba(29,219,128,.1); border: 1px solid rgba(29,219,128,.3); color: var(--p); width: 36px; height: 36px; border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+.copy-btn:active { transform: scale(0.9); }
 .trx-wrap{margin:0 16px 18px}
 .trx-wrap label{display:block;font-size:13px;color:var(--txt2);margin-bottom:8px;font-weight:500}
 .trx-wrap input{width:100%;padding:15px;border-radius:14px;background:var(--surf);border:1.5px solid var(--bord);color:var(--txt);font-size:16px;outline:none;font-weight:600;letter-spacing:.5px;transition:.2s}
@@ -357,6 +376,9 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .fee-foot{padding:16px;margin-top:auto}
 .btn-pay{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:17px;border-radius:32px;font-size:17px;font-weight:800;width:100%;cursor:pointer;box-shadow:var(--glow);opacity:.5;transition:all .3s;letter-spacing:.3px}
 .btn-pay.on{opacity:1}
+.timer-box { display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255,77,106,0.1); border: 1px dashed var(--red); border-radius: 12px; padding: 10px; margin: 0 16px 16px; color: var(--red); font-size: 14px; font-weight: 700; }
+.timer-box i { animation: wait-pulse 2s infinite; }
+.timer-val { font-family: monospace; font-size: 18px; letter-spacing: 2px; }
 .wait-ic{width:82px;height:82px;background:rgba(255,140,66,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--orange);margin-bottom:20px;animation:wait-pulse 2s infinite;border:1px solid rgba(255,140,66,.2)}
 @keyframes wait-pulse{0%{box-shadow:0 0 0 0 rgba(255,140,66,.3)}70%{box-shadow:0 0 0 20px rgba(255,140,66,0)}100%{box-shadow:0 0 0 0 rgba(255,140,66,0)}}
 .wait-title{font-size:22px;font-weight:800;color:var(--txt);margin-bottom:10px;letter-spacing:-.5px}
@@ -451,27 +473,37 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .bonus-banner span{font-size:13px;font-weight:700;color:#fff}
 .shake-icon{font-size:20px;animation:shake 2s infinite cubic-bezier(.36,.07,.19,.97) both;display:inline-block}
 @keyframes shake{10%,90%{transform:translate3d(-2px,0,0) rotate(-10deg)}20%,80%{transform:translate3d(4px,0,0) rotate(10deg)}30%,50%,70%{transform:translate3d(-6px,0,0) rotate(-10deg)}40%,60%{transform:translate3d(6px,0,0) rotate(10deg)}}
-.hot-offer-floating{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 30px);max-width:380px;background:linear-gradient(90deg,#ff4d6a,#ff8c42);border-radius:14px;padding:10px 15px;box-shadow:0 10px 30px rgba(255,77,106,0.4),0 0 0 2px rgba(255,255,255,0.2) inset;z-index:99999;cursor:pointer;animation:floatBounce 3s ease-in-out infinite;display:none}
-.hot-offer-content{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.hot-icon{font-size:22px;animation:fire-shake 1.5s infinite}
-.hot-text h4{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;text-shadow:0 2px 4px rgba(0,0,0,0.2);margin-bottom:2px}
-.hot-text p{font-size:11px;font-weight:600;color:rgba(255,255,255,0.95);margin:0;line-height:1.3}
-.hot-close{background:rgba(0,0,0,0.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:12px;cursor:pointer;flex-shrink:0}
-@keyframes floatBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
-@keyframes fire-shake{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.2) rotate(10deg)}}
-.fomo-fire-icon{font-size:55px;animation:fire-shake 1.5s infinite;margin-bottom:10px;display:inline-block}
-.fomo-progress-wrap{background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.08)}
-.fomo-progress-header{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#fff;margin-bottom:8px}
-.fomo-progress-track{width:100%;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;margin-bottom:10px}
-.fomo-progress-fill{height:100%;background:linear-gradient(90deg,#ff416c,#ff4b2b);border-radius:5px;transition:width 1s ease}
-.fomo-warning{font-size:11px;color:var(--red);font-weight:700;margin:0;display:flex;align-items:center;justify-content:center;gap:5px}
-.bal-toggle-box { background: var(--surf); border: 1px solid var(--bord); border-radius: 14px; padding: 15px; margin: 0 16px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: .3s; }
+#csChatInterface { display: none; flex-direction: column; height: 500px; max-height: 80vh; }
+.chat-header { background: rgba(29,219,128,0.1); padding: 15px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(29,219,128,0.2); }
+.chat-header i { color: var(--p); font-size: 20px; }
+.chat-header h4 { color: var(--txt); font-size: 15px; font-weight: 700; margin: 0; }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 13.5px; line-height: 1.5; animation: msgIn 0.3s ease; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.msg.ai { background: rgba(255,255,255,0.05); color: var(--txt); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.08); }
+.msg.user { background: linear-gradient(135deg, var(--p), var(--p2)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(29,219,128,0.2); }
+.chat-input-area { padding: 15px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px; background: rgba(0,0,0,0.2); }
+.chat-input-area input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 0 15px; color: #fff; font-size: 13px; outline: none; }
+.chat-input-area input:focus { border-color: var(--p); }
+.chat-send-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--p); color: #fff; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+.chat-send-btn:hover { background: var(--p2); transform: scale(1.05); }
+.quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.quick-reply-btn { background: rgba(29,219,128,0.1); border: 1px solid rgba(29,219,128,0.3); color: var(--p); padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: 0.2s; }
+.quick-reply-btn:hover { background: rgba(29,219,128,0.2); }
+.invite-premium-box { background: linear-gradient(145deg, #111f35, #060d1a); border: 1px solid rgba(29,219,128,0.3); box-shadow: 0 0 40px rgba(29,219,128,0.15); border-radius: 24px; padding: 25px; text-align: center; position: relative; overflow: hidden; }
+.invite-premium-box::before { content: ''; position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(29,219,128,0.2) 0%, transparent 70%); border-radius: 50%; }
+.invite-premium-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 5px; text-shadow: 0 2px 10px rgba(29,219,128,0.3); }
+.invite-premium-sub { font-size: 13px; color: var(--p); font-weight: 600; margin-bottom: 20px; letter-spacing: 0.5px; text-transform: uppercase; }
+.invite-card { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.invite-link { font-size: 14px; color: var(--orange); font-weight: 800; word-break: break-all; margin-bottom: 15px; }
+.bal-toggle-box { background: var(--surf); border: 1px solid var(--bord); border-radius: 14px; padding: 0; margin: 0 16px 16px; display: flex; flex-direction: column; transition: .3s; }
 .bal-toggle-box.active { border-color: var(--p); background: rgba(29,219,128,.05); }
 .bal-left { display: flex; align-items: center; gap: 10px; }
 .bal-left i { color: var(--orange); font-size: 18px; }
 .bal-left h4 { font-size: 14px; color: var(--txt); margin-bottom: 2px; }
 .bal-left p { font-size: 11px; color: var(--txt2); }
-.bal-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--bord); display: flex; justify-content: center; align-items: center; color: transparent; transition: .2s; }
+.bal-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--bord); display: flex; justify-content: center; align-items: center; color: transparent; transition: .2s; cursor: pointer; }
+.bal-check.active { background: var(--p); border-color: var(--p); color: #fff; }
 .bal-toggle-box.active .bal-check { background: var(--p); border-color: var(--p); color: #fff; }
 #screen-fee-payment { padding-bottom: 100px !important; }
 .pay-instr { margin-bottom: 80px; }
@@ -481,7 +513,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div id="loader"><div class="loader-ring"></div><div class="loader-text">Please wait...</div></div>
 
-<div class="hot-offer-floating" id="hotOfferBanner" onclick="openFomoModal()">
+<div class="hot-offer-floating" id="hotOfferBanner" onclick="handleHotOfferClick(event)">
   <div class="hot-offer-content">
     <span class="hot-icon">🔥</span>
     <div class="hot-text">
@@ -492,15 +524,17 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   </div>
 </div>
 
+<div class="global-back-btn" id="globalBackBtn" onclick="nav('screen-home')"><i class="fa-solid fa-arrow-left"></i></div>
+
 <div class="modal-overlay premium-popup" id="fomoModal">
   <div class="mc" style="max-width: 360px; text-align: center;">
-    <div class="fomo-fire-icon">🔥</div>
+    <div style="font-size:55px; animation:fire-shake 1.5s infinite; margin-bottom:10px; display:inline-block;">🔥</div>
     <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
     <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">প্রথম ৫০ জন ইউজারের মধ্যে থাকলে আপনার লোনের <b style="color:var(--orange);">১ম মাসের কিস্তি সম্পূর্ণ ফ্রি!</b> <br><span style="font-size: 11px; color: var(--p);">(১ম মাসের কিস্তি কোম্পানিই বহন করবে, ২য় মাস থেকে পরিশোধ শুরু)</span></p>
-    <div class="fomo-progress-wrap">
-      <div class="fomo-progress-header"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;">৩৮/৫০ জন</span></div>
-      <div class="fomo-progress-track"><div class="fomo-progress-fill" style="width: 76%;"></div></div>
-      <p class="fomo-warning"><i class="fa-solid fa-triangle-exclamation"></i> মাত্র ১২টি অফার বাকি!</p>
+    <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.08)">
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#fff;margin-bottom:8px"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;">৩৮/৫০ জন</span></div>
+      <div style="width:100%;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;margin-bottom:10px"><div style="height:100%;background:linear-gradient(90deg,#ff416c,#ff4b2b);width: 76%;border-radius:5px;"></div></div>
+      <p style="font-size:11px;color:var(--red);font-weight:700;margin:0;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fa-solid fa-triangle-exclamation"></i> মাত্র ১২টি অফার বাকি!</p>
     </div>
     <button class="mbtn-full" style="background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255,75,43,0.4); font-size: 16px; margin-bottom: 12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
     <button class="mbtn-cancel" style="width: 100%; border: none; background: transparent; color: var(--txt2);" onclick="closeFomoModal()">আমি পরে দেখব</button>
@@ -618,35 +652,37 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="calc-val" id="calcTermDisplay">6 Months</div>
     <input type="range" class="calc-slider" id="calcTerm" min="3" max="36" step="3" value="6" oninput="updateCalc()">
     <div class="calc-row"><span>Principal Amount</span><span id="calcPrincipal">৳ 10,000</span></div>
-    <div class="calc-row"><span>Interest (18% p.a)</span><span id="calcInterest">৳ 900</span></div>
-    <div class="calc-row"><span>Processing Fee</span><span>৳ 400</span></div>
+    <div class="calc-row"><span>Interest (<span id="calcRateLabel">18</span>% p.a)</span><span id="calcInterest">৳ 900</span></div>
+    <div class="calc-row"><span>Processing Fee</span><span id="calcFee">৳ 400</span></div>
     <div class="calc-row" style="border-top:1px solid var(--bord); margin-top:5px; padding-top:10px; font-weight:800; color:var(--txt); font-size:16px;"><span>Total Repayment</span><span id="calcTotal" style="color:var(--p);">৳ 11,300</span></div>
     <button class="mbtn-full" style="margin-top:20px;" onclick="closeModal('calcModal')">Got it</button>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="referModal">
-  <div class="mc" style="max-height: 90dvh; overflow-y: auto;">
-    <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
-    <div class="m-title">Refer &amp; Win Big!</div>
-    <p class="m-msg">বন্ধুদের রেফার করে জিতুন বিশাল সব পুরস্কার!</p>
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-      <div style="flex:1; background:var(--bg2); padding:12px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase;">Total Refers</p><h3 style="font-size:18px; color:var(--txt);" id="refTotalCount">0</h3></div>
-      <div style="flex:1; background:rgba(29,219,128,.1); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase;">Success</p><h3 style="font-size:18px; color:var(--p);" id="refSuccessCount">0</h3></div>
+  <div class="mc invite-premium-box" style="max-width: 380px;">
+    <div style="position:absolute; top:15px; right:15px; cursor:pointer;" onclick="closeModal('referModal')"><i class="fa-solid fa-xmark" style="color:var(--txt2); font-size:18px;"></i></div>
+    <div style="width: 70px; height: 70px; background: linear-gradient(135deg, var(--orange), var(--red)); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px; box-shadow: 0 10px 20px rgba(255,77,106,0.3);">
+      <i class="fa-solid fa-gift" style="font-size: 30px; color: #fff;"></i>
     </div>
-    <div style="background:var(--bg2); border:1px solid var(--bord); border-radius:14px; padding:15px; margin-bottom:15px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:13px; font-weight:700; color:var(--txt);">Current Status:</span><span style="font-size:14px; font-weight:800; color:var(--orange);" id="currentTierName">Starter</span></div>
-      <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:8px;"><div id="tierProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff8c42, #ff4b2b); border-radius:5px; transition: width 0.5s;"></div></div>
-      <p style="font-size:11px; color:var(--txt2); text-align:center;" id="tierProgressText">পরবর্তী পুরস্কার পেতে আরও রেফার করুন!</p>
-      <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px; border-top:1px dashed var(--bord); padding-top:15px;">
-        <div id="tierRow20" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥉</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">২০ জন রেফারেল</div><div style="font-size:11px; color:var(--orange);">৳১০,০০০ এর নিচে লোনে ১ম কিস্তি মাফ!</div></div><i class="fa-solid fa-lock" id="tierLock20" style="color:var(--txt2); font-size:12px;"></i></div>
-        <div id="tierRow50" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥈</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">৫০ জন রেফারেল</div><div style="font-size:11px; color:var(--blue);">৳৫,০০০ ফ্রি লোন! (শোধ করতে হবে না)</div></div><i class="fa-solid fa-lock" id="tierLock50" style="color:var(--txt2); font-size:12px;"></i></div>
-        <div id="tierRow100" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥇</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">১০০ জন রেফারেল</div><div style="font-size:11px; color:var(--red);">ইনস্ট্যান্ট ৳৫০,০০০ জ্যাকপট!</div></div><i class="fa-solid fa-lock" id="tierLock100" style="color:var(--txt2); font-size:12px;"></i></div>
+    <div class="invite-premium-title">Invite &amp; Win Big!</div>
+    <div class="invite-premium-sub">Exclusive Rewards Await</div>
+    
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+      <div style="flex:1; background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase; margin-bottom:5px;">Total Refers</p><h3 style="font-size:20px; color:var(--txt); margin:0;" id="refTotalCount">0</h3></div>
+      <div style="flex:1; background:rgba(29,219,128,.1); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase; margin-bottom:5px;">Success</p><h3 style="font-size:20px; color:var(--p); margin:0;" id="refSuccessCount">0</h3></div>
+    </div>
+
+    <div class="invite-card">
+      <p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Exclusive Referral Link</p>
+      <div class="invite-link" id="refLinkDisplay">Loading...</div>
+      <div style="display:flex; gap:10px;">
+        <button class="mbtn mbtn-cancel" style="flex:1; background:var(--surf2); font-size:13px;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button>
+        <button class="mbtn mbtn-ok" style="flex:2; font-size:13px;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button>
       </div>
     </div>
-    <div style="background:var(--bg2); border-radius:14px; padding:15px; border:1px dashed var(--p); text-align:center;"><p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Referral Link</p><div style="font-size:12px; color:var(--p); word-break:break-all; font-weight:700;" id="refLinkDisplay">Loading...</div></div>
-    <div style="display:flex; gap:10px; margin-top:15px;"><button class="mbtn mbtn-cancel" style="flex:1; background:var(--surf2);" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button><button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button></div>
-    <button class="mbtn-cancel" style="width:100%; margin-top:10px; border:none; background:transparent; color:var(--txt2);" onclick="closeModal('referModal')">Close</button>
+    
+    <button class="mbtn-cancel" style="width:100%; border:none; background:transparent; color:var(--txt2); margin-top:10px;" onclick="closeModal('referModal')">Close</button>
   </div>
 </div>
 
@@ -678,20 +714,80 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay premium-popup" id="csPopup" onclick="toggleCS(event)">
-  <div class="mc" onclick="event.stopPropagation()">
-    <div class="m-icon m-ic-suc" style="width:60px; height:60px; font-size:24px; margin-bottom:15px;"><i class="fa-solid fa-headset"></i></div>
-    <div class="m-title">How can we help?</div>
-    <div class="m-msg">Our support team is available 24/7.</div>
-    <div class="premium-cs-item" onclick="window.open('https://wa.me/8801700000000','_blank')"><div class="premium-cs-icon" style="background:rgba(37,211,102,.15); color:#25D366;"><i class="fa-brands fa-whatsapp"></i></div><div style="flex:1;"><h4 style="font-size:14px; color:var(--txt);">WhatsApp Support</h4><p style="font-size:12px; color:var(--txt2);">Tap to chat with us</p></div></div>
-    <div class="premium-cs-item" onclick="window.location.href='mailto:hello@synapsetech.cloud'"><div class="premium-cs-icon" style="background:rgba(77,143,255,.15); color:var(--blue);"><i class="fa-solid fa-envelope"></i></div><div style="flex:1;"><h4 style="font-size:14px; color:var(--txt);">Email Support</h4><p style="font-size:12px; color:var(--txt2);">hello@synapsetech.cloud</p></div></div>
-    <button class="mbtn-cancel" style="width:100%; margin-top:10px;" onclick="toggleCS()">Close</button>
+  <div class="mc" onclick="event.stopPropagation()" style="padding:0; overflow:hidden; border-radius:24px;">
+    <button class="cs-close-btn" onclick="toggleCS()" style="position:absolute; top:15px; right:15px; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--txt2); display:flex; justify-content:center; align-items:center; cursor:pointer; z-index:10;"><i class="fa-solid fa-xmark"></i></button>
+    
+    <div id="csMainMenu">
+      <div style="text-align: center; padding: 30px 20px 20px; background:linear-gradient(180deg, rgba(29,219,128,0.1) 0%, transparent 100%);">
+        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(29,219,128,0.2), rgba(29,219,128,0.05)); border: 1px solid var(--p); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px;">
+          <i class="fa-solid fa-headset" style="font-size: 30px; color: var(--p);"></i>
+        </div>
+        <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 5px;">How can we help?</h2>
+        <p style="font-size: 13px; color: var(--txt2);">Our support team is available 24/7.</p>
+      </div>
+
+      <div style="padding: 0 20px 25px; display: flex; flex-direction: column; gap: 12px;">
+        <div class="premium-cs-item" onclick="startAIChat()" style="border-color: rgba(29,219,128,0.4); background: rgba(29,219,128,0.05); cursor:pointer;">
+          <div class="premium-cs-icon" style="background: rgba(29,219,128,0.15); color: var(--p);"><i class="fa-solid fa-robot"></i></div>
+          <div style="flex:1;">
+            <h4 style="font-size:15px; font-weight:700; color:var(--txt);">AI Customer Chat</h4>
+            <p style="font-size:12px; color:var(--p);">Instant answers about loans & fees</p>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color:var(--p);"></i>
+        </div>
+
+        <div class="premium-cs-item" id="csWhatsAppBtn" onclick="window.open('https://wa.me/8801700000000','_blank')" style="cursor:pointer;">
+          <div class="premium-cs-icon" style="background:rgba(37,211,102,.15); color:#25D366;"><i class="fa-brands fa-whatsapp"></i></div>
+          <div style="flex:1;">
+            <h4 style="font-size:14px; color:var(--txt); font-weight:600;">WhatsApp Support</h4>
+            <p style="font-size:12px; color:var(--txt2);">Chat with a human agent</p>
+          </div>
+        </div>
+
+        <div class="premium-cs-item" id="csTelegramBtn" onclick="window.open('https://t.me/yourusername','_blank')" style="cursor:pointer;">
+          <div class="premium-cs-icon" style="background:rgba(0,136,204,.15); color:#0088cc;"><i class="fa-brands fa-telegram"></i></div>
+          <div style="flex:1;">
+            <h4 style="font-size:14px; color:var(--txt); font-weight:600;">Telegram Support</h4>
+            <p style="font-size:12px; color:var(--txt2);">Connect via Telegram</p>
+          </div>
+        </div>
+
+        <div class="premium-cs-item" id="csEmailBtn" onclick="window.location.href='mailto:hello@synapsetech.cloud'" style="cursor:pointer;">
+          <div class="premium-cs-icon" style="background:rgba(77,143,255,.15); color:var(--blue);"><i class="fa-solid fa-envelope"></i></div>
+          <div style="flex:1;">
+            <h4 style="font-size:14px; color:var(--txt); font-weight:600;">Email Support</h4>
+            <p style="font-size:12px; color:var(--txt2);">Send us an email</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="csChatInterface">
+      <div class="chat-header">
+        <button onclick="backToCsMenu()" style="background:none; border:none; color:#fff; margin-right:5px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
+        <i class="fa-solid fa-robot"></i>
+        <h4>Credit Up AI Assistant</h4>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg ai">Hello! I am your AI assistant. How can I help you today? (You can ask about loan limits, fees, or apply for a loan).</div>
+        <div class="quick-replies" id="quickReplies">
+          <div class="quick-reply-btn" onclick="sendQuickReply('What is the maximum loan limit?')">Max Loan Limit</div>
+          <div class="quick-reply-btn" onclick="sendQuickReply('What are the processing fees?')">Processing Fees</div>
+          <div class="quick-reply-btn" onclick="sendQuickReply('I have a complaint')">Complaint</div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+        <button class="chat-send-btn" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
   </div>
 </div>
 
 <div id="splash">
   <div class="sp-logo"><div class="sp-c"></div><div class="sp-bars"><div class="sp-bar"></div><div class="sp-bar"></div><div class="sp-bar"></div></div><div class="sp-curve"><div class="sp-curve-txt">Credit <span>Up</span></div></div></div>
   <div class="sp-title">CreditUp – Smart Credit &amp; Loans</div>
-  <div class="sp-sub" id="splashSubtitle">...</div> <!-- পরিবর্তন করা হয়েছে -->
+  <div class="sp-sub" id="splashSubtitle">...</div>
   <div class="sp-pay-title">Supported Payments</div>
   <div class="sp-pay-row"><div class="sp-logo-chip"><img src="https://premiumedutools.com/uploads/payment.png" alt="payments" style="height:18px;width:auto"></div><div class="sp-logo-chip"><i class="fa-solid fa-dollar-sign" style="color:#15803d;font-size:13px;font-weight:800;margin-right:2px"></i><span style="font-size:11px;font-weight:800;color:#15803d">USD</span></div></div>
   <div class="sp-badge"><i class="fa-solid fa-shield-check"></i> 100% Authentic &amp; Verified</div>
@@ -699,7 +795,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="sp-foot"><i class="fa-solid fa-lock"></i> 256-bit SSL Encrypted | Safe &amp; Secure</div>
 </div>
 
-<!-- Maintenance Screen -->
 <div id="maintenanceScreen" style="display:none; position:fixed; inset:0; background:#060d1a; z-index:999999; flex-direction:column; justify-content:center; align-items:center; color:#fff; text-align:center; padding:20px;">
   <i class="fa-solid fa-screwdriver-wrench" style="font-size:50px; color:var(--p); margin-bottom:20px;"></i>
   <h2 style="font-size:22px; font-weight:800; margin-bottom:10px;">Under Maintenance</h2>
@@ -708,25 +803,24 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div id="app">
 
-<!-- HOME -->
 <div id="screen-home" class="screen active" style="padding:0;">
   <div class="ticker-wrap" id="tickerWrap" style="display:none;"><div class="ticker-title">Notice</div><div class="ticker" id="tickerContent"></div></div>
   <div class="home-hdr">
     <div class="home-top-bar">
       <div class="home-greeting">
-        <h3 id="userGreeting">Hello, User 👋</h3>
+        <h3 id="userGreeting">Welcome to Credit Up</h3>
         <div class="balance-pill" id="balanceContainer" style="display:none;"><span style="font-size:12px; color:var(--p);"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
       </div>
       <div style="display:flex; gap:10px;">
-        <!-- Notification button container -->
+        <div class="notif-btn" id="logoutBtnContainer" onclick="logoutUser()" style="display:none;"><i class="fa-solid fa-power-off"></i></div>
         <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
         <div class="notif-btn" onclick="toggleCS()"><i class="fa-solid fa-headset"></i></div>
       </div>
     </div>
     <div class="h-logo">Credit <span>Up</span></div>
-    <div class="bonus-banner" id="bonusBanner" style="display:none;"><span class="shake-icon">🎁</span><span id="bonusBannerText">...</span></div> <!-- পরিবর্তন করা হয়েছে -->
+    <div class="bonus-banner" id="bonusBanner" style="display:none;"><span class="shake-icon">🎁</span><span id="bonusBannerText">...</span></div>
     <div class="h-label">Borrow up to (BDT)</div>
-    <div class="h-amount" id="homeMaxBorrow">...</div> <!-- পরিবর্তন করা হয়েছে -->
+    <div class="h-amount" id="homeMaxBorrow">...</div>
     <div class="h-feats">
       <div class="h-feat"><div class="h-feat-ic"><i class="fa fa-shield-halved"></i></div><div class="h-feat-txt">Easy Approval</div></div>
       <div class="h-feat"><div class="h-feat-ic"><i class="fa fa-bolt"></i></div><div class="h-feat-txt">Fast Funding</div></div>
@@ -734,6 +828,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     </div>
     <div class="dual-btn-wrap">
       <button class="btn-borrow" id="mainBorrowBtn" onclick="handleMainAction()"><span id="mainBorrowBtnText">Borrow Now</span> <span class="bn-div"></span> <span class="bn-bn">লোন নিন</span><span class="bn-hand">👉</span></button>
+      <button class="btn-borrow secondary" id="secondaryApplyBtn" onclick="startNewApplication()" style="display:none;"><i class="fa-solid fa-plus"></i> Apply for Another Loan</button>
       <div style="text-align:center; margin-top:12px;" id="loginRegisterLink"><span style="font-size:13px; color:rgba(255,255,255,.7);">Already have an account? </span><a href="javascript:void(0)" onclick="nav('screen-login')" style="color:#fff; font-weight:700; text-decoration:underline;">Login / Register</a></div>
     </div>
   </div>
@@ -750,7 +845,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       <div class="qa-item" onclick="openProfileModal()"><div class="qa-icon qa-green"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
     </div>
     <div class="info-card">
-      <div class="info-card-title" id="homeTagline">...</div> <!-- পরিবর্তন করা হয়েছে -->
+      <div class="info-card-title" id="homeTagline">...</div>
       <div class="step-row"><div class="step-ic bg-g"><i class="fa-regular fa-comment-dots"></i></div><div class="step-cont"><span class="step-badge bd-g">Step 1</span><div class="step-title">Apply Online</div><div class="step-desc">Fill basic info in under a minute — no complex documents needed.</div></div></div>
       <div class="step-row"><div class="step-ic bg-o"><i class="fa-solid fa-clipboard-check"></i></div><div class="step-cont"><span class="step-badge bd-o">Step 2</span><div class="step-title">Fast Approval</div><div class="step-desc">Automated review with instant results and funding in minutes.</div></div></div>
       <div class="step-row"><div class="step-ic bg-b"><i class="fa-solid fa-credit-card"></i></div><div class="step-cont"><span class="step-badge bd-b">Step 3</span><div class="step-title">Receive Funds</div><div class="step-desc">Approved funds deposited directly into your mobile wallet.</div></div></div>
@@ -772,11 +867,11 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     </div>
   </div>
 </div>
-<!-- POLICY -->
+
 <div id="screen-policy" class="screen">
   <div class="pol-hdr">Privacy Policy</div>
   <div class="pol-body">
-    <div class="pol-updated" id="policyDateText">...</div> <!-- পরিবর্তন করা হয়েছে -->
+    <div class="pol-updated" id="policyDateText">...</div>
     <p>This Privacy Agreement explains how we collect, use, store, share and protect your personal information when you use Credit Up services.</p>
     <div class="pol-h">How we collect and use your personal information</div>
     <p>We only collect and use your personal information to the extent necessary to provide loan services and improve your experience.</p>
@@ -788,12 +883,11 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <ul><li><strong>Right to review:</strong> Review your personal information collected and used by us.</li><li><strong>Right to correction:</strong> Request correction of inaccurate or incomplete information.</li><li><strong>Right to delete:</strong> Request deletion of your account and personal information.</li></ul>
     <div class="pol-h">Fraud prevention reminder</div>
     <p>Be cautious of messages, websites or people impersonating Credit Up. Never disclose your passwords or OTP codes to anyone.</p>
-    <div style="margin-top:22px;"><p style="font-weight:700;color:var(--txt);">Contact Us</p><p>Email: <a href="mailto:stormltdgames@gmail.com" style="color:var(--blue)">stormltdgames@gmail.com</a></p><p>Address: STORM SKIN LTD, 12 Constance Street, London, E16 2DQ</p></div>
+    <div style="margin-top:22px;"><p style="font-weight:700;color:var(--txt);">Contact Us</p><p>Email: <a href="mailto:stormltdgames@gmail.com" id="policyEmailLink" style="color:var(--blue)">stormltdgames@gmail.com</a></p><p id="policyAddressText">Address: STORM SKIN LTD, 12 Constance Street, London, E16 2DQ</p></div>
   </div>
   <div class="pol-foot"><label class="agree-wrap"><input type="checkbox" id="policyCheck"><span>I have read and agree to the Privacy Policy and Terms &amp; Conditions.</span></label><button class="btn-pol" onclick="acceptPolicy()">OK, I Agree</button></div>
 </div>
 
-<!-- LOGIN -->
 <div id="screen-login" class="screen">
   <div class="auth-hdr"><div class="auth-logo">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
   <div class="auth-title">Hello!</div>
@@ -806,7 +900,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <label class="auth-check"><input type="checkbox" class="ck" checked><span>By continuing you agree to our <span class="green-link">Privacy Policy</span></span></label>
 </div>
 
-<!-- REGISTER -->
 <div id="screen-register" class="screen">
   <div class="auth-hdr"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer;color:var(--txt2)" onclick="nav('screen-login')"></i><div class="auth-logo" style="font-size:24px;position:absolute;left:50%;transform:translateX(-50%)">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
   <div class="auth-title" style="font-size:26px;margin-top:8px;margin-bottom:26px">Create Account</div>
@@ -817,7 +910,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <label class="auth-check"><input type="checkbox" class="ck" checked><span>By continuing you agree to our <span class="green-link">Privacy Policy</span></span></label>
 </div>
 
-<!-- APPLICATION PROGRESS -->
 <div id="screen-application-progress" class="screen" style="padding-bottom:40px">
   <div class="dash-hdr"><i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-home')"></i><div class="logo">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
   <div class="suc-banner"><div class="suc-left"><i class="fa-solid fa-circle-check suc-icon"></i><span id="dashSuccessText">Welcome!</span></div><span class="suc-icon">🎉</span></div>
@@ -834,7 +926,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <button class="btn-apply" onclick="openStep(currentDashboardStep + 1)">Apply Now</button>
 </div>
 
-<!-- STEP 1: BASIC INFO -->
 <div id="screen-basic-info" class="screen">
   <div class="form-top"><h2>Application</h2><span>Step 1 / 5</span></div>
   <div class="step-track"><div class="step-fill s1"></div></div>
@@ -849,7 +940,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <button class="btn-next" id="btnStep1" onclick="showConfirmModal()">NEXT</button>
 </div>
 
-<!-- STEP 2: PERSONAL INFO -->
 <div id="screen-personal-info" class="screen">
   <div class="form-top"><h2>Application</h2><span>Step 2 / 5</span></div>
   <div class="step-track"><div class="step-fill s2"></div></div>
@@ -867,7 +957,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <button class="btn-next" id="btnStep2" onclick="submitStep2()">NEXT</button>
 </div>
 
-<!-- STEP 3: EMERGENCY CONTACT -->
 <div id="screen-emergency-contact" class="screen">
   <div class="form-top"><h2>Application</h2><span>Step 3 / 5</span></div>
   <div class="step-track"><div class="step-fill s3"></div></div>
@@ -889,12 +978,11 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <button class="btn-next" id="btnStep3" onclick="submitStep3()">NEXT</button>
 </div>
 
-<!-- STEP 4: BANK INFO -->
 <div id="screen-bank-info" class="screen">
   <div class="form-top"><h2>Application</h2><span>Step 4 / 5</span></div>
   <div class="step-track"><div class="step-fill s4"></div></div>
   <h3 class="form-sec-title">Bank Information</h3>
-  <div class="bank-warn"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>We've pre-filled your registered phone number. Tap the edit icon to change it.</div>
+  <div class="bank-warn" style="border-color:var(--red); background:rgba(255,77,106,0.08); color:var(--red);"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px"></i><strong>Important:</strong> Ensure the wallet number is correct and registered in your own name. Incorrect details will result in failed disbursement.</div>
   <div class="ph-lbl">Select Wallet Type <span>*</span></div>
   <div class="wallet-grid" id="walletGrid">
     <div class="w-card sel" id="wBkash" onclick="selectWallet('Bkash')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="Bkash"><span>Bkash</span></div>
@@ -913,7 +1001,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <button class="btn-next on" id="btnStep4" onclick="submitStep4()" style="margin-top:20px">NEXT</button>
 </div>
 
-<!-- STEP 5: NID UPLOAD -->
 <div id="screen-nid-upload" class="screen">
   <div class="form-top"><h2>Application</h2><span>Step 5 / 5</span></div>
   <div class="step-track"><div class="step-fill s5"></div></div>
@@ -938,7 +1025,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <button class="btn-next" id="btnStep5" onclick="submitApplication()">SUBMIT APPLICATION</button>
 </div>
 
-<!-- REVIEW PROGRESS -->
 <div id="screen-review-progress" class="screen">
   <div class="rv-green"></div>
   <div class="rv-hdr"><h2>All documents submitted successfully ✓</h2></div>
@@ -951,10 +1037,9 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="rv-track"><div class="rv-bar" id="rvBar"></div><div class="rv-knob" id="rvKnob"></div></div>
     <div class="rv-pct" id="rvPct">0%</div>
   </div>
-  <div class="rv-foot">Need help? Contact us:<br><a href="mailto:hello@synapsetech.cloud">hello@synapsetech.cloud</a></div>
+  <div class="rv-foot">Need help? Contact us:<br><a href="mailto:hello@synapsetech.cloud" id="rvFootEmail">hello@synapsetech.cloud</a></div>
 </div>
 
-<!-- APPROVED -->
 <div id="screen-approved" class="screen">
   <div class="apv-hdr">
     <i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-home')"></i>
@@ -996,12 +1081,20 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="apv-foot"><button class="btn-final" onclick="goToFeePayment()">Proceed to Pay Fee</button></div>
 </div>
 
-<!-- FEE PAYMENT -->
 <div id="screen-fee-payment" class="screen">
   <div class="fee-hdr">
     <i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-approved')"></i>
     <div class="title">Fee Payment</div>
   </div>
+  
+  <div class="timer-box">
+    <i class="fa-solid fa-hourglass-half"></i> Complete payment within <span class="timer-val" id="payTimer">15:00</span>
+  </div>
+  
+  <div style="background:rgba(255,77,106,0.1); border:1px dashed var(--red); border-radius:12px; padding:10px 15px; margin:0 16px 16px; color:var(--red); font-size:12px; text-align:center;">
+    <i class="fa-solid fa-triangle-exclamation"></i> <strong>Careful:</strong> Send exact amount. Incorrect TrxID will cause delay.
+  </div>
+
   <div class="fee-sum">
     <div class="fee-row"><span>Loan Amount (You Receive)</span><span id="payAmount">-</span></div>
     <div class="fee-row"><span>Origination Fee</span><span class="red" id="payOrgFee">-</span></div>
@@ -1010,16 +1103,23 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="fee-row total"><span>Total Fee to Pay Now</span><span class="grn" id="payTotal">-</span></div>
   </div>
 
-  <!-- নতুন ব্যালেন্স অ্যাডজাস্টমেন্ট সিস্টেম -->
-  <div class="bal-toggle-box" id="balanceApplyBox" onclick="toggleBalanceApply()" style="display: none;">
-    <div class="bal-left">
-      <i class="fa-solid fa-wallet"></i>
-      <div>
-        <h4>Use Account Balance</h4>
-        <p>Available: <strong id="dispAvailBalance">৳ 0</strong></p>
+  <div class="bal-toggle-box" id="balanceApplyBox" onclick="toggleBalanceApply()" style="display: flex; flex-direction: column; padding: 0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px;" id="balToggleHeader">
+      <div class="bal-left">
+        <i class="fa-solid fa-wallet"></i>
+        <div>
+          <h4>Use Account Balance</h4>
+          <p>Available: <strong id="dispAvailBalance">৳ 0</strong></p>
+        </div>
+      </div>
+      <i class="fa-solid fa-plus" id="balToggleIcon" style="color:var(--txt2); transition:0.3s;"></i>
+    </div>
+    <div id="balanceDetails" style="display:none; padding:0 15px 15px; border-top:1px dashed rgba(255,255,255,0.1); margin-top:5px; padding-top:15px; width:100%;">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="font-size:13px; color:var(--txt);">Apply balance to fee?</div>
+        <div class="bal-check" id="balCheckIcon" onclick="applyBalanceCheck(event)"><i class="fa-solid fa-check"></i></div>
       </div>
     </div>
-    <div class="bal-check" id="balCheckIcon"><i class="fa-solid fa-check"></i></div>
   </div>
 
   <div class="pm-title">Select Payment Method</div>
@@ -1031,7 +1131,10 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="pay-instr">
     <h4><i class="fa-solid fa-circle-info"></i> Payment Instructions</h4>
     <p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> amount using <strong style="color:var(--txt)">Send Money</strong> to:</p>
-    <div class="pay-num" id="adminNumber">-</div>
+    <div class="pay-num-wrap">
+      <div class="pay-num" id="adminNumber">-</div>
+      <button class="copy-btn" onclick="copyPayNumber()"><i class="fa-regular fa-copy"></i></button>
+    </div>
     <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS.</p>
     <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>
   </div>
@@ -1042,7 +1145,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="fee-foot"><button class="btn-pay" id="btnTrx" onclick="submitTrx()">Submit Transaction ID</button></div>
 </div>
 
-<!-- WAITING -->
 <div id="screen-waiting" class="screen" style="align-items:center;justify-content:center;text-align:center">
   <div class="wait-ic"><i class="fa-solid fa-hourglass-half"></i></div>
   <h2 class="wait-title">Verification Pending</h2>
@@ -1055,10 +1157,9 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <button class="btn-home" onclick="nav('screen-home')">Back to Home</button>
 </div>
 
-</div><!-- #app -->
+</div>
 
 <script>
-// ─── CONFIG & INITIALIZATION ─────────────────────────────────
 const BASE_URL = window.location.origin + window.location.pathname;
 const refCode = new URLSearchParams(window.location.search).get('ref');
 if(refCode) localStorage.setItem('referrerPhone', refCode);
@@ -1070,7 +1171,9 @@ const ADMIN = {
     Bkash:  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png',
     Nagad:  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png',
     Rocket: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png'
-  }
+  },
+  maxLoanLimit: 60000,
+  maxTerm: 36
 };
 
 let currentDashboardStep = 0;
@@ -1092,34 +1195,24 @@ let pendingLoginUser=null, modalCloseCb=null;
 let currentNidTarget='';
 window._userRealBalance = 0;
 window._isBalanceHidden = true;
+let timerInterval = null;
 
-// ─── SPLASH & LOADER ─────────────────────────────────────────
 window.isConfigLoaded = false;
-
 const splashCheck = setInterval(() => {
   if(window.isConfigLoaded) {
     clearInterval(splashCheck);
     const s = document.getElementById('splash');
-    if(s) { 
-      s.classList.add('out'); 
-      setTimeout(()=>s.remove(), 750); 
-    }
+    if(s) { s.classList.add('out'); setTimeout(()=>s.remove(), 750); }
   }
 }, 100);
-
-// সর্বোচ্চ ৫ সেকেন্ড অপেক্ষা করবে (যদি ইন্টারনেট স্লো হয়)
 setTimeout(() => {
   clearInterval(splashCheck);
   const s = document.getElementById('splash');
-  if(s && !s.classList.contains('out')) {
-    s.classList.add('out'); 
-    setTimeout(()=>s.remove(), 750);
-  }
+  if(s && !s.classList.contains('out')) { s.classList.add('out'); setTimeout(()=>s.remove(), 750); }
 }, 5000);
 
 function showLoader(on){ document.getElementById('loader').classList.toggle('on',on); }
 
-// ─── HOT OFFER LOGIC ─────────────────────────────────────────
 function initHotOffer() {
   setTimeout(() => {
     const banner = document.getElementById('hotOfferBanner');
@@ -1128,54 +1221,127 @@ function initHotOffer() {
     }
   }, 3500);
 }
-
+function handleHotOfferClick(e) {
+  if(e.target.closest('.hot-close')) return;
+  const banner = document.getElementById('hotOfferBanner');
+  if(banner.classList.contains('peek')) {
+    nav('screen-home');
+    banner.classList.remove('peek');
+  } else {
+    openFomoModal();
+  }
+}
 function openFomoModal() { document.getElementById('fomoModal').classList.add('on'); }
 function closeFomoModal() { document.getElementById('fomoModal').classList.remove('on'); }
 function closeHotOffer() {
   document.getElementById('hotOfferBanner').style.display = 'none';
   localStorage.setItem('hotOfferClosed', 'true');
 }
-
 function claimFomoOffer() {
-  closeFomoModal();
-  closeHotOffer();
+  closeFomoModal(); closeHotOffer();
   const u = _getUser();
   if (u) {
-    showAlert('অফার একটিভেটেড! 🎉', 'অভিনন্দন! আপনি ১ম মাসের ফ্রি কিস্তির অফার পেয়েছেন। আপনার লোন অ্যাপ্রুভ হলে ১ম মাসের কিস্তি কোম্পানিই দিয়ে দিবে!', 'success', () => {
-      startNewApplication();
-    });
+    showAlert('অফার একটিভেটেড! 🎉', 'অভিনন্দন! আপনি ১ম মাসের ফ্রি কিস্তির অফার পেয়েছেন। আপনার লোন অ্যাপ্রুভ হলে ১ম মাসের কিস্তি কোম্পানিই দিয়ে দিবে!', 'success', () => { startNewApplication(); });
   } else {
-    showAlert('অফারটি আপনার জন্য অপেক্ষা করছে! 🎁', 'এই অফারটি পেতে দ্রুত একটি অ্যাকাউন্ট তৈরি করুন এবং আবেদন করুন।', 'info', () => {
-      nav('screen-login');
-    });
+    showAlert('অফারটি আপনার জন্য অপেক্ষা করছে! 🎁', 'এই অফারটি পেতে দ্রুত একটি অ্যাকাউন্ট তৈরি করুন এবং আবেদন করুন।', 'info', () => { nav('screen-login'); });
   }
+}
+
+// ─── AI CHAT LOGIC ───────────────────────────────────────────
+function toggleCS(e) { 
+  if(e) e.stopPropagation(); 
+  const popup = document.getElementById('csPopup');
+  if(popup.classList.contains('on')) {
+    popup.classList.remove('on');
+    setTimeout(() => { backToCsMenu(); }, 300);
+  } else {
+    popup.classList.add('on');
+  }
+}
+function backToCsMenu() {
+  document.getElementById('csMainMenu').style.display = 'block';
+  document.getElementById('csChatInterface').style.display = 'none';
+}
+function startAIChat() {
+  document.getElementById('csMainMenu').style.display = 'none';
+  document.getElementById('csChatInterface').style.display = 'flex';
+  document.getElementById('chatInput').focus();
+}
+function sendQuickReply(text) {
+  document.getElementById('chatInput').value = text;
+  sendChatMessage();
+}
+function addChatMessage(text, sender) {
+  const container = document.getElementById('chatMessages');
+  const msg = document.createElement('div');
+  msg.className = `msg ${sender}`;
+  msg.innerText = text;
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+}
+async function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  addChatMessage(text, 'user');
+  input.value = '';
+  document.getElementById('quickReplies').style.display = 'none';
+  
+  const typingId = 'typing_' + Date.now();
+  const container = document.getElementById('chatMessages');
+  const typingMsg = document.createElement('div');
+  typingMsg.className = 'msg ai';
+  typingMsg.id = typingId;
+  typingMsg.innerHTML = '<i class="fa-solid fa-ellipsis fa-fade"></i>';
+  container.appendChild(typingMsg);
+  container.scrollTop = container.scrollHeight;
+
+  setTimeout(async () => {
+    const el = document.getElementById(typingId); if(el) el.remove();
+    const lowerText = text.toLowerCase();
+    let reply = "";
+    if (lowerText.includes('limit') || lowerText.includes('max') || lowerText.includes('borrow')) {
+      reply = `Our current maximum loan limit is ৳${document.getElementById('homeMaxBorrow').innerText}. You can apply for any amount up to this limit.`;
+    } 
+    else if (lowerText.includes('fee') || lowerText.includes('charge') || lowerText.includes('cost')) {
+      const totalFeeVal = (ADMIN.orgFee || 0) + (ADMIN.serviceCharge || 0) + (ADMIN.processingFee || 0);
+      reply = `Our standard fees include an Origination Fee (৳${ADMIN.orgFee}), Service Charge (৳${ADMIN.serviceCharge}), and Processing Fee (৳${ADMIN.processingFee}). The total upfront fee is ৳${totalFeeVal}, plus advance interest.`;
+    }
+    else if (lowerText.includes('complain') || lowerText.includes('problem') || lowerText.includes('admin') || lowerText.includes('help')) {
+      reply = "I understand you need human assistance. I have escalated this chat to our Admin team. They will review your message and contact you shortly.";
+      await escalateToAdmin(text);
+    }
+    else {
+      reply = "I am a smart assistant. For detailed queries, you can contact our WhatsApp or Telegram support, or type 'complaint' to reach an admin.";
+    }
+    addChatMessage(reply, 'ai');
+  }, 1000);
+}
+async function escalateToAdmin(userMessage) {
+  const user = _getUser();
+  if(!user || !user.phone) return;
+  if(typeof window._saveSupportTicket !== 'function') { console.log('Support ticket function not ready'); return; }
+  try {
+    await window._saveSupportTicket(user.phone, userMessage);
+  } catch(e) { console.error('Support ticket error:', e); }
 }
 
 // ─── FORM AUTO-SAVE LOGIC ────────────────────────────────────
 function saveFormState(){
   const state = {
-    infoName: document.getElementById('infoName')?.value || '',
-    infoEmail: document.getElementById('infoEmail')?.value || '',
-    infoId: document.getElementById('infoId')?.value || '',
-    infoCompany: document.getElementById('infoCompany')?.value || '',
-    infoAddress: document.getElementById('infoAddress')?.value || '',
-    c1Name: document.getElementById('c1Name')?.value || '',
-    c1Phone: document.getElementById('c1Phone')?.value || '',
-    c2Name: document.getElementById('c2Name')?.value || '',
-    c2Phone: document.getElementById('c2Phone')?.value || '',
-    bankPhone: document.getElementById('bankPhone')?.value || '',
-    selGender, selDob, selIncome, selPurpose, selAmount, selTerm,
-    selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2,
-    selWallet, currentDashboardStep
+    infoName: document.getElementById('infoName')?.value || '', infoEmail: document.getElementById('infoEmail')?.value || '',
+    infoId: document.getElementById('infoId')?.value || '', infoCompany: document.getElementById('infoCompany')?.value || '',
+    infoAddress: document.getElementById('infoAddress')?.value || '', c1Name: document.getElementById('c1Name')?.value || '',
+    c1Phone: document.getElementById('c1Phone')?.value || '', c2Name: document.getElementById('c2Name')?.value || '',
+    c2Phone: document.getElementById('c2Phone')?.value || '', bankPhone: document.getElementById('bankPhone')?.value || '',
+    selGender, selDob, selIncome, selPurpose, selAmount, selTerm, selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2, selWallet, currentDashboardStep
   };
   localStorage.setItem('creditUpFormDraft', JSON.stringify(state));
 }
-
 function restoreFormState(){
   try {
     const draft = JSON.parse(localStorage.getItem('creditUpFormDraft'));
     if(!draft) return;
-    
     if(document.getElementById('infoName')) document.getElementById('infoName').value = draft.infoName || '';
     if(document.getElementById('infoEmail')) document.getElementById('infoEmail').value = draft.infoEmail || '';
     if(document.getElementById('infoId')) document.getElementById('infoId').value = draft.infoId || '';
@@ -1186,85 +1352,44 @@ function restoreFormState(){
     if(document.getElementById('c2Name')) document.getElementById('c2Name').value = draft.c2Name || '';
     if(document.getElementById('c2Phone')) document.getElementById('c2Phone').value = draft.c2Phone || '';
     if(document.getElementById('bankPhone') && draft.bankPhone) document.getElementById('bankPhone').value = draft.bankPhone;
-
     selGender = draft.selGender || ''; selDob = draft.selDob || ''; selIncome = draft.selIncome || '';
     selPurpose = draft.selPurpose || ''; selAmount = draft.selAmount || ''; selTerm = draft.selTerm || '';
     selEdu = draft.selEdu || ''; selMarital = draft.selMarital || ''; selChildren = draft.selChildren || '';
     selOccupation = draft.selOccupation || ''; selRel1 = draft.selRel1 || ''; selRel2 = draft.selRel2 || '';
     selWallet = draft.selWallet || 'Bkash';
-    
     const setDisp = (id, val, wrapperId) => {
       if(!val) return;
       const el = document.getElementById(wrapperId);
       if(el) { el.querySelector('span').innerText = val; el.classList.add('filled'); }
     };
-    setDisp('dGender', selGender, 'dGender');
-    setDisp('dDob', selDob, 'dDob');
-    setDisp('dIncome', selIncome, 'dIncome');
-    setDisp('dPurpose', selPurpose, 'dPurpose');
-    setDisp('dAmount', selAmount, 'dAmount');
-    setDisp('dTerm', selTerm, 'dTerm');
-    setDisp('dEdu', selEdu, 'dEdu');
-    setDisp('dMarital', selMarital, 'dMarital');
-    setDisp('dChildren', selChildren, 'dChildren');
-    setDisp('dOccupation', selOccupation, 'dOccupation');
-    setDisp('dRel1', selRel1, 'dRel1');
-    setDisp('dRel2', selRel2, 'dRel2');
-    
+    setDisp('dGender', selGender, 'dGender'); setDisp('dDob', selDob, 'dDob'); setDisp('dIncome', selIncome, 'dIncome');
+    setDisp('dPurpose', selPurpose, 'dPurpose'); setDisp('dAmount', selAmount, 'dAmount'); setDisp('dTerm', selTerm, 'dTerm');
+    setDisp('dEdu', selEdu, 'dEdu'); setDisp('dMarital', selMarital, 'dMarital'); setDisp('dChildren', selChildren, 'dChildren');
+    setDisp('dOccupation', selOccupation, 'dOccupation'); setDisp('dRel1', selRel1, 'dRel1'); setDisp('dRel2', selRel2, 'dRel2');
     selectWallet(selWallet);
-
-    if(draft.currentDashboardStep > 0 && draft.currentDashboardStep < 5) {
-       currentDashboardStep = draft.currentDashboardStep;
-       updateProgressUI();
-    }
+    if(draft.currentDashboardStep > 0 && draft.currentDashboardStep < 5) { currentDashboardStep = draft.currentDashboardStep; updateProgressUI(); }
   } catch(e) { console.error('Error restoring form:', e); }
 }
-
 function clearFormState(){
   localStorage.removeItem('creditUpFormDraft');
-  ['infoName','infoEmail','infoId','infoCompany','infoAddress','c1Name','c1Phone','c2Name','c2Phone','trxInput'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = '';
-  });
+  ['infoName','infoEmail','infoId','infoCompany','infoAddress','c1Name','c1Phone','c2Name','c2Phone','trxInput'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   selGender = selDob = selIncome = selPurpose = selAmount = selTerm = selEdu = selMarital = selChildren = selOccupation = selRel1 = selRel2 = '';
   currentDashboardStep = 0;
   document.querySelectorAll('.sel-disp, .sel-box').forEach(el => { el.querySelector('span').innerText = ''; el.classList.remove('filled'); });
 }
-
 function updateProgressUI(){
   document.getElementById('progText').innerText=`${currentDashboardStep} / 5`;
   document.getElementById('progFill').style.width=(currentDashboardStep*20)+'%';
   for(let i=1; i<=5; i++){
-    const card = document.getElementById('sc'+i);
-    const num = document.getElementById('sn'+i);
-    const icon = document.getElementById('si'+i);
-    if(i <= currentDashboardStep){
-      card.className = 'scard done'; num.innerHTML = '<i class="fa-solid fa-check"></i>'; icon.className = 'fa-solid fa-check scard-arr';
-    } else if(i === currentDashboardStep + 1){
-      card.className = 'scard active'; num.innerText = i; icon.className = 'fa-solid fa-chevron-right scard-arr';
-    } else {
-      card.className = 'scard locked'; num.innerText = i; icon.className = 'fa-solid fa-lock scard-arr';
-    }
+    const card = document.getElementById('sc'+i); const num = document.getElementById('sn'+i); const icon = document.getElementById('si'+i);
+    if(i <= currentDashboardStep){ card.className = 'scard done'; num.innerHTML = '<i class="fa-solid fa-check"></i>'; icon.className = 'fa-solid fa-check scard-arr'; }
+    else if(i === currentDashboardStep + 1){ card.className = 'scard active'; num.innerText = i; icon.className = 'fa-solid fa-chevron-right scard-arr'; }
+    else { card.className = 'scard locked'; num.innerText = i; icon.className = 'fa-solid fa-lock scard-arr'; }
   }
 }
-
 document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach(inp => {
-  if(inp.id !== 'loginPhone' && inp.id !== 'regPhone' && inp.id !== 'regPassword' && inp.id !== 'regConfirmPassword' && inp.id !== 'trxInput') {
-    inp.addEventListener('input', saveFormState);
-  }
+  if(inp.id !== 'loginPhone' && inp.id !== 'regPhone' && inp.id !== 'regPassword' && inp.id !== 'regConfirmPassword' && inp.id !== 'trxInput') inp.addEventListener('input', saveFormState);
 });
-
-// ─── BALANCE DISPLAY ─────────────────────────────────────────
-function toggleBalanceVisibility() {
-  const balEl = document.getElementById('headerBalance');
-  const icon  = document.getElementById('balanceToggleBtn');
-  window._isBalanceHidden = !window._isBalanceHidden;
-  if(window._isBalanceHidden) {
-    balEl.innerText = '৳ ••••'; icon.className = 'fa-solid fa-eye-slash';
-  } else {
-    balEl.innerText = '৳ ' + window._userRealBalance.toLocaleString(); icon.className = 'fa-solid fa-eye';
-  }
-}
 
 // ─── NAVIGATION & UI ─────────────────────────────────────────
 function nav(id){
@@ -1273,108 +1398,84 @@ function nav(id){
   if(t){
     t.classList.add('active');
     document.getElementById('app').scrollTo({top: 0, behavior: 'instant'});
+    
+    const hotOffer = document.getElementById('hotOfferBanner');
+    if(hotOffer.style.display === 'block') {
+      if(id === 'screen-home') hotOffer.classList.remove('peek');
+      else hotOffer.classList.add('peek');
+    }
+
+    const backBtn = document.getElementById('globalBackBtn');
+    if(id === 'screen-home' || id === 'screen-login' || id === 'screen-register') backBtn.classList.remove('show');
+    else backBtn.classList.add('show');
+
     if(id === 'screen-home'){
       const u = _getUser();
-      if(u && typeof window.loadUserDashboardData === 'function'){
-        setTimeout(()=>window.loadUserDashboardData(), 100);
-      }
+      if(u && typeof window.loadUserDashboardData === 'function') setTimeout(()=>window.loadUserDashboardData(), 100);
       if(typeof updateUIForUser === 'function') updateUIForUser();
     }
   }
 }
-
-function toggleCS(e){ if(e)e.stopPropagation(); document.getElementById('csPopup').classList.toggle('on'); }
 function closeModal(id){ document.getElementById(id).classList.remove('on'); }
 function togglePasswordVisibility(){
-  const i=document.getElementById('loginPassInput');
-  const ic=document.getElementById('passToggleIcon');
-  const show=i.type==='password';
-  i.type=show?'text':'password';
-  ic.className=show?'fa-solid fa-eye pass-eye':'fa-solid fa-eye-slash pass-eye';
+  const i=document.getElementById('loginPassInput'); const ic=document.getElementById('passToggleIcon'); const show=i.type==='password';
+  i.type=show?'text':'password'; ic.className=show?'fa-solid fa-eye pass-eye':'fa-solid fa-eye-slash pass-eye';
 }
-function contactSupportForForgot(){
-  document.getElementById('globalModal').classList.remove('on');
-  toggleCS();
-}
-
+function contactSupportForForgot(){ document.getElementById('globalModal').classList.remove('on'); toggleCS(); }
 function _showModal(pass,alert,err){
   ['modal-password','modal-alert','modal-error'].forEach(id=>{ document.getElementById(id).style.display='none'; });
-  if(pass)  document.getElementById('modal-password').style.display='flex';
+  if(pass) document.getElementById('modal-password').style.display='flex';
   if(alert) document.getElementById('modal-alert').style.display='flex';
-  if(err)   document.getElementById('modal-error').style.display='flex';
+  if(err) document.getElementById('modal-error').style.display='flex';
   document.getElementById('globalModal').classList.add('on');
 }
-
-function openPasswordModal() {
-  _showModal(true, false, false);
-  const passInput = document.getElementById('loginPassInput');
-  if(passInput) {
-    passInput.value = '';
-    setTimeout(() => passInput.focus(), 100);
-  }
-}
-
+function openPasswordModal() { _showModal(true, false, false); const passInput = document.getElementById('loginPassInput'); if(passInput) { passInput.value = ''; setTimeout(() => passInput.focus(), 100); } }
 function showAlert(title,msg,type='info',cb=null){
-  _showModal(false,true,false);
-  document.getElementById('m-title').innerText=title;
-  document.getElementById('m-msg').innerText=msg;
+  _showModal(false,true,false); document.getElementById('m-title').innerText=title; document.getElementById('m-msg').innerText=msg;
   const w=document.getElementById('m-icon-wrap'); const i=document.getElementById('m-icon');
   const types={ success:['m-ic-suc','fa-solid fa-check'], error:['m-ic-err','fa-solid fa-xmark'], info:['m-ic-lock','fa-solid fa-circle-info'] };
-  const[cls,icn]=types[type]||types.info;
-  w.className='m-icon '+cls; i.className=icn;
-  modalCloseCb=cb;
+  const[cls,icn]=types[type]||types.info; w.className='m-icon '+cls; i.className=icn; modalCloseCb=cb;
 }
-function showErrorModal(title,msg){
-  _showModal(false,false,true);
-  document.getElementById('err-title').innerText=title;
-  document.getElementById('err-msg').innerText=msg;
-}
-function closeGlobalModal(clearLogin=false){
-  document.getElementById('globalModal').classList.remove('on');
-  if(clearLogin) pendingLoginUser=null;
-  const cb=modalCloseCb; modalCloseCb=null;
-  if(cb) cb();
-}
-function acceptPolicy(){
-  if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; }
-  nav('screen-login');
+function showErrorModal(title,msg){ _showModal(false,false,true); document.getElementById('err-title').innerText=title; document.getElementById('err-msg').innerText=msg; }
+function closeGlobalModal(clearLogin=false){ document.getElementById('globalModal').classList.remove('on'); if(clearLogin) pendingLoginUser=null; const cb=modalCloseCb; modalCloseCb=null; if(cb) cb(); }
+
+// ─── BUG FIX: acceptPolicy handles logged-in users ──────────────
+function acceptPolicy(){ 
+  if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; } 
+  const u = _getUser();
+  if(u && u.phone) {
+    nav('screen-application-progress');
+  } else {
+    nav('screen-login');
+  }
 }
 
 // ─── AUTH INPUTS ──────────────────────────────────────────────
 function checkLoginInput(el){ el.value=el.value.replace(/\D/g,''); document.getElementById('loginNextBtn').classList.toggle('go',el.value.length===10); }
 function checkRegisterInputs(){
-  const ph=document.getElementById('regPhone').value;
-  const pw=document.getElementById('regPassword').value;
-  const cp=document.getElementById('regConfirmPassword').value;
+  const ph=document.getElementById('regPhone').value; const pw=document.getElementById('regPassword').value; const cp=document.getElementById('regConfirmPassword').value;
   document.getElementById('registerBtn').classList.toggle('go', ph.length===10 && pw.length>=6 && pw===cp);
 }
 function isValidBDPhone(p){ return /^1[0-9]{9}$/.test(p); }
 
 // ─── PICKER & DOB ──────────────────────────────────────────────
 const OPTS = {
-  gender:     ['Male','Female','Other'],
-  income:     ['Under 10,000','10,000 – 25,000','25,001 – 49,000','49,001 – 75,000','75,001 – 98,000','98,001+'],
+  gender: ['Male','Female','Other'],
+  income: ['Under 10,000','10,000 – 25,000','25,001 – 49,000','49,001 – 75,000','75,001 – 98,000','98,001+'],
   loanPurpose:['Business','Education','Personal/Consumption','Medical','Home Repair','Others'],
   loanAmount: ['1,000','2,500','5,000','10,000','25,000','50,000','60,000'],
-  term:       ['3','6','12','24','36'],
-  education:  ['SSC / O-Level','HSC / A-Level','Honours / Bachelor','Masters','PhD','Other'],
-  marital:    ['Single','Married','Divorced','Widowed'],
-  children:   ['0','1','2','3','4','5+'],
+  term: ['3','6','12','24','36'],
+  education: ['SSC / O-Level','HSC / A-Level','Honours / Bachelor','Masters','PhD','Other'],
+  marital: ['Single','Married','Divorced','Widowed'],
+  children: ['0','1','2','3','4','5+'],
   occupation: ['Salaried Employee','Business Owner','Self-Employed','Student','Freelancer','Unemployed'],
-  rel1:       ['Parents','Spouse','Friend','Sibling','Relative','Colleague'],
-  rel2:       ['Parents','Spouse','Friend','Sibling','Relative','Colleague'],
+  rel1: ['Parents','Spouse','Friend','Sibling','Relative','Colleague'],
+  rel2: ['Parents','Spouse','Friend','Sibling','Relative','Colleague'],
 };
-const DISP_MAP={
-  gender:'dGender',income:'dIncome',loanPurpose:'dPurpose',loanAmount:'dAmount',
-  term:'dTerm',education:'dEdu',marital:'dMarital',children:'dChildren',
-  occupation:'dOccupation',rel1:'dRel1',rel2:'dRel2'
-};
-
+const DISP_MAP={ gender:'dGender',income:'dIncome',loanPurpose:'dPurpose',loanAmount:'dAmount',term:'dTerm',education:'dEdu',marital:'dMarital',children:'dChildren',occupation:'dOccupation',rel1:'dRel1',rel2:'dRel2' };
 function openPicker(type,title){
-  pickerType=type; pickerVal='';
-  document.getElementById('pickerTitle').innerText=title;
-  const list=document.getElementById('pickerList');
-  list.innerHTML='';
+  pickerType=type; pickerVal=''; document.getElementById('pickerTitle').innerText=title;
+  const list=document.getElementById('pickerList'); list.innerHTML='';
   (OPTS[type]||[]).forEach(opt=>{
     const d=document.createElement('div'); d.className='pick-item'; d.innerText=opt;
     d.onclick=()=>{ list.querySelectorAll('.pick-item').forEach(e=>e.classList.remove('sel')); d.classList.add('sel'); pickerVal=opt; };
@@ -1385,240 +1486,144 @@ function openPicker(type,title){
 function closePicker(){ document.getElementById('pickerModal').classList.remove('on'); }
 function confirmPicker(){
   if(!pickerVal){ closePicker(); return; }
-  const dispId=DISP_MAP[pickerType];
-  if(dispId){
-    const el=document.getElementById(dispId);
-    if(el){ el.querySelector('span').innerText=pickerVal; el.classList.add('filled'); }
-  }
+  const dispId=DISP_MAP[pickerType]; if(dispId){ const el=document.getElementById(dispId); if(el){ el.querySelector('span').innerText=pickerVal; el.classList.add('filled'); } }
   switch(pickerType){
-    case 'gender':      selGender=pickerVal;     checkStep1(); break;
-    case 'income':      selIncome=pickerVal;     checkStep1(); break;
-    case 'loanPurpose': selPurpose=pickerVal;    checkStep2(); break;
-    case 'loanAmount':  selAmount=pickerVal;     checkStep2(); break;
-    case 'term':        selTerm=pickerVal;       checkStep2(); break;
-    case 'education':   selEdu=pickerVal;        checkStep2(); break;
-    case 'marital':     selMarital=pickerVal;    checkStep2(); break;
-    case 'children':    selChildren=pickerVal;   checkStep2(); break;
-    case 'occupation':  selOccupation=pickerVal; checkStep2(); break;
-    case 'rel1':        selRel1=pickerVal;       checkStep3(); break;
-    case 'rel2':        selRel2=pickerVal;       checkStep3(); break;
+    case 'gender': selGender=pickerVal; checkStep1(); break; case 'income': selIncome=pickerVal; checkStep1(); break;
+    case 'loanPurpose': selPurpose=pickerVal; checkStep2(); break; case 'loanAmount': selAmount=pickerVal; checkStep2(); break;
+    case 'term': selTerm=pickerVal; checkStep2(); break; case 'education': selEdu=pickerVal; checkStep2(); break;
+    case 'marital': selMarital=pickerVal; checkStep2(); break; case 'children': selChildren=pickerVal; checkStep2(); break;
+    case 'occupation': selOccupation=pickerVal; checkStep2(); break; case 'rel1': selRel1=pickerVal; checkStep3(); break;
+    case 'rel2': selRel2=pickerVal; checkStep3(); break;
   }
   closePicker(); saveFormState();
 }
-
 function openDobPicker(){ document.getElementById('dobModal').classList.add('on'); buildDob(); }
 function closeDob(){ document.getElementById('dobModal').classList.remove('on'); }
 function buildDob(){
-  const yC=document.getElementById('yearCol'), mC=document.getElementById('monthCol'), dC=document.getElementById('dayCol');
-  if(yC.children.length) return;
+  const yC=document.getElementById('yearCol'), mC=document.getElementById('monthCol'), dC=document.getElementById('dayCol'); if(yC.children.length) return;
   for(let y=1970;y<=2008;y++){ const e=document.createElement('div'); e.className='dob-item'; e.innerText=y; e.onclick=()=>{ yC.querySelectorAll('.dob-item').forEach(x=>x.classList.remove('sel')); e.classList.add('sel'); pickerYear=y; }; yC.appendChild(e); }
   for(let m=1;m<=12;m++){ const e=document.createElement('div'); e.className='dob-item'; e.innerText=String(m).padStart(2,'0'); e.onclick=()=>{ mC.querySelectorAll('.dob-item').forEach(x=>x.classList.remove('sel')); e.classList.add('sel'); pickerMonth=String(m).padStart(2,'0'); }; mC.appendChild(e); }
   for(let d=1;d<=31;d++){ const e=document.createElement('div'); e.className='dob-item'; e.innerText=String(d).padStart(2,'0'); e.onclick=()=>{ dC.querySelectorAll('.dob-item').forEach(x=>x.classList.remove('sel')); e.classList.add('sel'); pickerDay=String(d).padStart(2,'0'); }; dC.appendChild(e); }
 }
-function confirmDob(){
-  selDob=`${pickerYear}-${pickerMonth}-${pickerDay}`;
-  const d=document.getElementById('dDob'); d.querySelector('span').innerText=selDob; d.classList.add('filled');
-  closeDob(); checkStep1(); saveFormState();
-}
+function confirmDob(){ selDob=`${pickerYear}-${pickerMonth}-${pickerDay}`; const d=document.getElementById('dDob'); d.querySelector('span').innerText=selDob; d.classList.add('filled'); closeDob(); checkStep1(); saveFormState(); }
 
 // ─── VALIDATION ──────────────────────────────────────────────
-function checkStep1(){
-  const ok=document.getElementById('infoName').value.trim()&&document.getElementById('infoEmail').value.trim()&&document.getElementById('infoId').value.trim()&&selGender&&selDob&&selIncome;
-  document.getElementById('btnStep1').classList.toggle('on',!!ok);
-}
-function checkStep2(){
-  const ok=document.getElementById('infoCompany').value.trim()&&document.getElementById('infoAddress').value.trim()&&selPurpose&&selAmount&&selTerm&&selEdu&&selMarital&&selChildren&&selOccupation;
-  document.getElementById('btnStep2').classList.toggle('on',!!ok);
-}
-function checkStep3(){
-  const ok=document.getElementById('c1Name').value.trim()&&isValidBDPhone(document.getElementById('c1Phone').value)&&selRel1&&document.getElementById('c2Name').value.trim()&&isValidBDPhone(document.getElementById('c2Phone').value)&&selRel2;
-  document.getElementById('btnStep3').classList.toggle('on',!!ok);
-}
+function checkStep1(){ const ok=document.getElementById('infoName').value.trim()&&document.getElementById('infoEmail').value.trim()&&document.getElementById('infoId').value.trim()&&selGender&&selDob&&selIncome; document.getElementById('btnStep1').classList.toggle('on',!!ok); }
+function checkStep2(){ const ok=document.getElementById('infoCompany').value.trim()&&document.getElementById('infoAddress').value.trim()&&selPurpose&&selAmount&&selTerm&&selEdu&&selMarital&&selChildren&&selOccupation; document.getElementById('btnStep2').classList.toggle('on',!!ok); }
+function checkStep3(){ const ok=document.getElementById('c1Name').value.trim()&&isValidBDPhone(document.getElementById('c1Phone').value)&&selRel1&&document.getElementById('c2Name').value.trim()&&isValidBDPhone(document.getElementById('c2Phone').value)&&selRel2; document.getElementById('btnStep3').classList.toggle('on',!!ok); }
 
 // ─── STEP SUBMISSIONS ────────────────────────────────────────
 function showConfirmModal(){
-  document.getElementById('cName').innerText   = document.getElementById('infoName').value;
-  document.getElementById('cEmail').innerText  = document.getElementById('infoEmail').value;
-  document.getElementById('cGender').innerText = selGender;
-  document.getElementById('cDob').innerText    = selDob;
-  document.getElementById('cId').innerText     = document.getElementById('infoId').value;
-  document.getElementById('cIncome').innerText = selIncome;
+  document.getElementById('cName').innerText = document.getElementById('infoName').value; document.getElementById('cEmail').innerText = document.getElementById('infoEmail').value;
+  document.getElementById('cGender').innerText = selGender; document.getElementById('cDob').innerText = selDob;
+  document.getElementById('cId').innerText = document.getElementById('infoId').value; document.getElementById('cIncome').innerText = selIncome;
   document.getElementById('confirmModal').classList.add('on');
 }
-function submitConfirmedInfo(){
-  document.getElementById('confirmModal').classList.remove('on');
-  showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); showAlert('Step 1 Complete ✓','Basic Information saved successfully!','success',()=>nav('screen-personal-info')); }, 900);
-}
-function submitStep2(){
-  showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); showAlert('Step 2 Complete ✓','Personal Information saved successfully!','success',()=>nav('screen-emergency-contact')); }, 900);
-}
+function submitConfirmedInfo(){ document.getElementById('confirmModal').classList.remove('on'); showLoader(true); setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); showAlert('Step 1 Complete ✓','Basic Information saved successfully!','success',()=>nav('screen-personal-info')); }, 900); }
+function submitStep2(){ showLoader(true); setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); showAlert('Step 2 Complete ✓','Personal Information saved successfully!','success',()=>nav('screen-emergency-contact')); }, 900); }
 function submitStep3(){
   if(!isValidBDPhone(document.getElementById('c1Phone').value)||!isValidBDPhone(document.getElementById('c2Phone').value)){ showErrorModal('Invalid Phone Number','Phone must be 10 digits starting with 1.'); return; }
   showLoader(true);
-  setTimeout(()=>{
-    showLoader(false); currentDashboardStep=3; updateProgressUI();
-    const u=_getUser(); if(u?.phone) document.getElementById('bankPhone').value='0'+u.phone;
-    showAlert('Step 3 Complete ✓','Emergency Contact saved successfully!','success',()=>nav('screen-bank-info'));
-  }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=3; updateProgressUI(); const u=_getUser(); if(u?.phone) document.getElementById('bankPhone').value='0'+u.phone; showAlert('Step 3 Complete ✓','Emergency Contact saved successfully!','success',()=>nav('screen-bank-info')); }, 900);
 }
-function submitStep4(){
-  showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); showAlert('Step 4 Complete ✓','Bank Information saved successfully!','success',()=>nav('screen-nid-upload')); }, 900);
-}
-function selectWallet(w){
-  selWallet=w; saveFormState();
-  ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('w'+x); if(el) el.classList.remove('sel'); });
-  const target=document.getElementById('w'+w); if(target) target.classList.add('sel');
-}
-function enableBankEdit(){
-  const i=document.getElementById('bankPhone');
-  if(i.readOnly){ i.removeAttribute('readonly'); i.focus(); } else { i.setAttribute('readonly',true); saveFormState(); }
-}
+function submitStep4(){ showLoader(true); setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); showAlert('Step 4 Complete ✓','Bank Information saved successfully!','success',()=>nav('screen-nid-upload')); }, 900); }
+function selectWallet(w){ selWallet=w; saveFormState(); ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('w'+x); if(el) el.classList.remove('sel'); }); const target=document.getElementById('w'+w); if(target) target.classList.add('sel'); }
+function enableBankEdit(){ const i=document.getElementById('bankPhone'); if(i.readOnly){ i.removeAttribute('readonly'); i.focus(); } else { i.setAttribute('readonly',true); saveFormState(); } }
 
 // ─── NID UPLOAD ──────────────────────────────────────────────
-function openNidSheet(target){
-  currentNidTarget=target;
-  document.getElementById('nidSheetTitle').innerText=target==='front'?'Upload Front Side':'Upload Back Side';
-  document.getElementById('nidSheetBack').classList.add('on'); document.getElementById('nidSheet').classList.add('on');
-}
+function openNidSheet(target){ currentNidTarget=target; document.getElementById('nidSheetTitle').innerText=target==='front'?'Upload Front Side':'Upload Back Side'; document.getElementById('nidSheetBack').classList.add('on'); document.getElementById('nidSheet').classList.add('on'); }
 function closeNidSheet(){ document.getElementById('nidSheetBack').classList.remove('on'); document.getElementById('nidSheet').classList.remove('on'); }
 function triggerNidCapture(type){
-  closeNidSheet();
-  const id=currentNidTarget==='front'?'nidFrontInput':'nidBackInput'; const inp=document.getElementById(id);
+  closeNidSheet(); const id=currentNidTarget==='front'?'nidFrontInput':'nidBackInput'; const inp=document.getElementById(id);
   if(type==='camera') inp.setAttribute('capture','environment'); else inp.removeAttribute('capture');
   setTimeout(()=>inp.click(),380);
 }
 async function handleFileUpload(inputId, boxId){
-  const inp = document.getElementById(inputId); const box = document.getElementById(boxId);
-  if(!inp.files?.length) return;
-  const file = inp.files[0];
-  const thumbId = boxId === 'boxNidFront' ? 'thumbFront' : 'thumbBack'; const thumb = document.getElementById(thumbId);
-
+  const inp = document.getElementById(inputId); const box = document.getElementById(boxId); if(!inp.files?.length) return;
+  const file = inp.files[0]; const thumbId = boxId === 'boxNidFront' ? 'thumbFront' : 'thumbBack'; const thumb = document.getElementById(thumbId);
   if(file.size > 5 * 1024 * 1024){ showErrorModal('File Too Large', 'Maximum image size is 5 MB.'); inp.value = ''; return; }
   if(!['image/jpeg','image/jpg','image/png','image/webp'].includes(file.type)){ showErrorModal('Invalid Format', 'Please upload a JPG, PNG or WebP image.'); inp.value = ''; return; }
-
   const localUrl = URL.createObjectURL(file); if(thumb) thumb.style.backgroundImage = `url(${localUrl})`;
   const user = _getUser(); if(!user?.phone){ showErrorModal('Session Expired', 'Please login again.'); return; }
   if(typeof window._uploadNidImage !== 'function'){ showErrorModal('Upload Error', 'Storage is not ready.'); return; }
-
-  const hintEl = box.querySelector('.upload-hint'); const oldHint = hintEl ? hintEl.innerText : '';
-  if(hintEl) hintEl.innerText = 'Uploading...';
-
+  const hintEl = box.querySelector('.upload-hint'); const oldHint = hintEl ? hintEl.innerText : ''; if(hintEl) hintEl.innerText = 'Uploading...';
   try{
     const side = inputId === 'nidFrontInput' ? 'front' : 'back';
-    const url  = await window._uploadNidImage(user.phone, side, file);
-    if(inputId === 'nidFrontInput'){ nidFrontUrl = url; nidFrontOk = true; }
-    if(inputId === 'nidBackInput') { nidBackUrl  = url; nidBackOk  = true; }
-    box.classList.add('up');
-    if(nidFrontOk && nidBackOk){ document.getElementById('btnStep5').classList.add('on'); }
+    const url = await window._uploadNidImage(user.phone, side, file);
+    if(inputId === 'nidFrontInput'){ nidFrontUrl = url; nidFrontOk = true; } if(inputId === 'nidBackInput') { nidBackUrl = url; nidBackOk = true; }
+    box.classList.add('up'); if(nidFrontOk && nidBackOk){ document.getElementById('btnStep5').classList.add('on'); }
   }catch(e){
-    showErrorModal('Upload Failed', e.message || 'Could not upload image.');
-    if(thumb) thumb.style.backgroundImage = ''; box.classList.remove('up'); inp.value = '';
-  }finally{
-    if(hintEl) hintEl.innerText = oldHint; URL.revokeObjectURL(localUrl);
-  }
+    showErrorModal('Upload Failed', e.message || 'Could not upload image.'); if(thumb) thumb.style.backgroundImage = ''; box.classList.remove('up'); inp.value = '';
+  }finally{ if(hintEl) hintEl.innerText = oldHint; URL.revokeObjectURL(localUrl); }
 }
 
 // ─── SUBMIT APPLICATION ──────────────────────────────────────
 function _fmt(n){ return Number(n).toLocaleString('en-US'); }
-function _calcDates(months){
-  const s=new Date(), d=new Date(s); d.setMonth(d.getMonth()+months);
-  const f=x=>x.toISOString().split('T')[0];
-  return{start:f(s),due:f(d)};
-}
+function _calcDates(months){ const s=new Date(), d=new Date(s); d.setMonth(d.getMonth()+months); const f=x=>x.toISOString().split('T')[0]; return{start:f(s),due:f(d)}; }
 function submitApplication(){
-  if(!nidFrontOk || !nidBackOk || !nidFrontUrl || !nidBackUrl){
-    showErrorModal('Missing Documents', 'Please upload both front and back images of your NID card.'); return;
-  }
-  const amt=Number(selAmount.replace(/,/g,'')); const months=Number(selTerm);
-  const interest=Math.round(amt*(ADMIN.annualRate/100)*(months/12));
-  totalFee=ADMIN.orgFee+ADMIN.serviceCharge+ADMIN.processingFee+interest;
-  const{start,due}=_calcDates(months);
-
-  document.getElementById('finalAmount').innerText    =_fmt(amt);
-  document.getElementById('finalTerm').innerText      =months;
-  document.getElementById('finalWalletName').innerText=selWallet;
+  if(!nidFrontOk || !nidBackOk || !nidFrontUrl || !nidBackUrl){ showErrorModal('Missing Documents', 'Please upload both front and back images of your NID card.'); return; }
+  const amt=Number(selAmount.replace(/,/g,'')); const months=Number(selTerm); const interest=Math.round(amt*(ADMIN.annualRate/100)*(months/12));
+  totalFee=ADMIN.orgFee+ADMIN.serviceCharge+ADMIN.processingFee+interest; const{start,due}=_calcDates(months);
+  document.getElementById('finalAmount').innerText=_fmt(amt); document.getElementById('finalTerm').innerText=months; document.getElementById('finalWalletName').innerText=selWallet;
   document.getElementById('finalWalletLogo').src = (window._activeWallet && window._activeWallet.logoUrl) ? window._activeWallet.logoUrl : (ADMIN.walletLogos[selWallet] || '');
   const u=_getUser(); if(u?.phone) document.getElementById('approvedPhone').innerText='0'+u.phone;
-
-  document.getElementById('ldAmount').innerText  =_fmt(amt);
-  document.getElementById('ldTerm').innerText    =months;
-  document.getElementById('ldInterest').innerText=_fmt(interest)+' BDT';
-  document.getElementById('ldOrgFee').innerText  =_fmt(ADMIN.orgFee)+' BDT';
-  document.getElementById('ldService').innerText =_fmt(ADMIN.serviceCharge+ADMIN.processingFee)+' BDT';
-  document.getElementById('ldStart').innerText   =start;
-  document.getElementById('ldDue').innerText     =due;
-  document.getElementById('ldReceive').innerText =_fmt(amt)+' BDT';
-  document.getElementById('ldTotal').innerText   =_fmt(amt+totalFee)+' BDT';
-
+  document.getElementById('ldAmount').innerText=_fmt(amt); document.getElementById('ldTerm').innerText=months; document.getElementById('ldInterest').innerText=_fmt(interest)+' BDT';
+  document.getElementById('ldOrgFee').innerText=_fmt(ADMIN.orgFee)+' BDT'; document.getElementById('ldService').innerText=_fmt(ADMIN.serviceCharge+ADMIN.processingFee)+' BDT';
+  document.getElementById('ldStart').innerText=start; document.getElementById('ldDue').innerText=due; document.getElementById('ldReceive').innerText=_fmt(amt)+' BDT'; document.getElementById('ldTotal').innerText=_fmt(amt+totalFee)+' BDT';
   if(typeof saveApplicationToFirebase==='function') saveApplicationToFirebase();
-
   nav('screen-review-progress');
-  _runReviewAnim(()=>{ 
-    clearFormState();
-    nav('screen-approved'); 
-  });
+  _runReviewAnim(()=>{ clearFormState(); nav('screen-approved'); });
 }
-
 function _runReviewAnim(onDone){
-  const bar=document.getElementById('rvBar'), knob=document.getElementById('rvKnob'), pct=document.getElementById('rvPct'), txt=document.getElementById('rvText');
-  let p=0; txt.innerText='Reviewing...';
+  const bar=document.getElementById('rvBar'), knob=document.getElementById('rvKnob'), pct=document.getElementById('rvPct'), txt=document.getElementById('rvText'); let p=0; txt.innerText='Reviewing...';
   const iv=setInterval(()=>{
-    p+=2; bar.style.width=p+'%'; knob.style.left=p+'%'; pct.innerText=p+'%';
-    if(p===40) txt.innerText='Verifying identity...';
-    if(p===75) txt.innerText='Calculating offer...';
+    p+=2; bar.style.width=p+'%'; knob.style.left=p+'%'; pct.innerText=p+'%'; if(p===40) txt.innerText='Verifying identity...'; if(p===75) txt.innerText='Calculating offer...';
     if(p>=100){ clearInterval(iv); txt.innerText='Approved! ✓'; setTimeout(onDone,800); }
   },30);
 }
 
 // ─── REPAYMENT SCHEDULE ───────────────────────────────────────
 function openRepaymentSchedule(){
-  const p = Number(String(selAmount).replace(/,/g,'')) || 0;
-  const n = Number(selTerm) || 0;
-  if(!p || !n) return;
-  const annualRate = ADMIN.annualRate;
-  const r = annualRate / 100 / 12;
-  const emi = Math.round(p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
+  const p = Number(String(selAmount).replace(/,/g,'')) || 0; const n = Number(selTerm) || 0; if(!p || !n) return;
+  const annualRate = ADMIN.annualRate; const r = annualRate / 100 / 12; const emi = Math.round(p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
   document.getElementById('emiAmount').innerText = '৳ ' + _fmt(emi);
-  const list = document.getElementById('repScheduleList');
-  let bal = p;
+  const list = document.getElementById('repScheduleList'); let bal = p;
   let html = `<div class="rep-row header"><span>Month</span><span>EMI (৳)</span><span>Principal (৳)</span><span>Balance (৳)</span></div>`;
   for(let i = 1; i <= n; i++){
-    const interest = Math.round(bal * r);
-    const principal = emi - interest;
-    bal = Math.max(0, bal - principal);
+    const interest = Math.round(bal * r); const principal = emi - interest; bal = Math.max(0, bal - principal);
     html += `<div class="rep-row"><span>${i}</span><span>${_fmt(emi)}</span><span>${_fmt(principal)}</span><span style="color:var(--orange)">${_fmt(Math.round(bal))}</span></div>`;
   }
-  list.innerHTML = html;
-  document.getElementById('repaymentModal').classList.add('on');
+  list.innerHTML = html; document.getElementById('repaymentModal').classList.add('on');
 }
 
-// ─── LOAN DETAILS & FEE (UPDATED FOR BALANCE) ─────────────────
-function openLoanDetails()  { document.getElementById('loanDetailsModal').classList.add('on'); }
-
+// ─── LOAN DETAILS & FEE ─────────────────
+function openLoanDetails() { document.getElementById('loanDetailsModal').classList.add('on'); }
+function startTimer(duration, display) {
+  let timer = duration, minutes, seconds;
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(function () {
+    minutes = parseInt(timer / 60, 10); seconds = parseInt(timer % 60, 10);
+    minutes = minutes < 10 ? "0" + minutes : minutes; seconds = seconds < 10 ? "0" + seconds : seconds;
+    display.textContent = minutes + ":" + seconds;
+    if (--timer < 0) {
+      clearInterval(timerInterval);
+      display.textContent = "00:00";
+      showErrorModal('Session Expired', 'Your payment session has expired. Please go back and try again.');
+    }
+  }, 1000);
+}
 function goToFeePayment(){
   if(!selAmount || selAmount == '0') {
-      if(window._latestApp) {
-          selAmount = window._latestApp.loanAmount;
-          selTerm = window._latestApp.term;
-          selWallet = window._latestApp.wallet;
-      }
+      if(window._latestApp) { selAmount = window._latestApp.loanAmount; selTerm = window._latestApp.term; selWallet = window._latestApp.wallet; }
   }
-
-  const amt    = Number(String(selAmount).replace(/,/g,'')) || 0;
-  const months = Number(selTerm) || 0;
-  
+  const amt = Number(String(selAmount).replace(/,/g,'')) || 0; const months = Number(selTerm) || 0;
   const interest = Math.round(amt * (ADMIN.annualRate/100) * (months/12));
   originalTotalFee = ADMIN.orgFee + ADMIN.serviceCharge + ADMIN.processingFee + interest;
-  
-  document.getElementById('payAmount').innerText   = _fmt(amt);
-  document.getElementById('payOrgFee').innerText   = '- '+_fmt(ADMIN.orgFee);
-  document.getElementById('payService').innerText  = '- '+_fmt(ADMIN.serviceCharge + ADMIN.processingFee);
+  document.getElementById('payAmount').innerText = _fmt(amt);
+  document.getElementById('payOrgFee').innerText = '- '+_fmt(ADMIN.orgFee);
+  document.getElementById('payService').innerText = '- '+_fmt(ADMIN.serviceCharge + ADMIN.processingFee);
   document.getElementById('payInterest').innerText = '- '+_fmt(interest);
   
-  const u = _getUser();
   const userBalance = window._userRealBalance || 0;
   if(userBalance > 0) {
       document.getElementById('balanceApplyBox').style.display = 'flex';
@@ -1626,28 +1631,43 @@ function goToFeePayment(){
   } else {
       document.getElementById('balanceApplyBox').style.display = 'none';
   }
-
-  isBalanceApplied = false;
-  appliedBalance = 0;
-  document.getElementById('balanceApplyBox').classList.remove('active');
+  isBalanceApplied = false; appliedBalance = 0;
+  document.getElementById('balCheckIcon').classList.remove('active');
+  document.getElementById('balanceDetails').style.display = 'none';
+  document.getElementById('balToggleIcon').className = 'fa-solid fa-plus';
   
   updateFeeDisplay();
-  
   document.getElementById('adminNumber').innerText = ADMIN.paymentNumbers[selPayMethod] || '-';
+  
+  const fifteenMinutes = 60 * 15;
+  const display = document.querySelector('#payTimer');
+  startTimer(fifteenMinutes, display);
+
   nav('screen-fee-payment');
 }
 
 function toggleBalanceApply() {
+  const details = document.getElementById('balanceDetails');
+  const icon = document.getElementById('balToggleIcon');
+  if(details.style.display === 'none') {
+    details.style.display = 'block';
+    icon.className = 'fa-solid fa-minus';
+  } else {
+    details.style.display = 'none';
+    icon.className = 'fa-solid fa-plus';
+  }
+}
+
+function applyBalanceCheck(e) {
+  if(e) e.stopPropagation();
   const userBalance = window._userRealBalance || 0;
-  const box = document.getElementById('balanceApplyBox');
-  
+  const checkIcon = document.getElementById('balCheckIcon');
   isBalanceApplied = !isBalanceApplied;
-  
   if(isBalanceApplied) {
-      box.classList.add('active');
+      checkIcon.classList.add('active');
       appliedBalance = Math.min(userBalance, originalTotalFee);
   } else {
-      box.classList.remove('active');
+      checkIcon.classList.remove('active');
       appliedBalance = 0;
   }
   updateFeeDisplay();
@@ -1656,7 +1676,6 @@ function toggleBalanceApply() {
 function updateFeeDisplay() {
   const finalTotal = originalTotalFee - appliedBalance;
   document.getElementById('payTotal').innerText = _fmt(finalTotal) + ' BDT';
-  
   if(finalTotal <= 0) {
       document.getElementById('trxInput').placeholder = "Balance covers full fee. No TrxID needed.";
       document.getElementById('trxInput').value = "PAID_BY_BALANCE";
@@ -1671,68 +1690,40 @@ function updateFeeDisplay() {
 }
 
 function selectPayMethod(m){
-  selPayMethod=m;
-  ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('pm'+x); if(el) el.classList.remove('sel'); });
-  const target=document.getElementById('pm'+m); if(target) target.classList.add('sel');
-  document.getElementById('adminNumber').innerText=ADMIN.paymentNumbers[m]||'-';
+  selPayMethod=m; ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('pm'+x); if(el) el.classList.remove('sel'); });
+  const target=document.getElementById('pm'+m); if(target) target.classList.add('sel'); document.getElementById('adminNumber').innerText=ADMIN.paymentNumbers[m]||'-';
 }
 function checkTrx(){ const ok=document.getElementById('trxInput').value.trim().length>=4; document.getElementById('btnTrx').classList.toggle('on',ok); }
 
+function copyPayNumber() {
+  const num = document.getElementById('adminNumber').innerText;
+  if(!num || num === '-') return;
+  navigator.clipboard.writeText(num).then(() => { showAlert('Copied!', 'Payment number copied to clipboard.', 'success'); });
+}
+
 async function submitTrx(){
-  const trx = document.getElementById('trxInput').value.trim();
-  const finalTotal = originalTotalFee - appliedBalance;
-  
-  if(finalTotal > 0 && trx.length < 4){ 
-      showErrorModal('Invalid TrxID', 'Please enter a valid Transaction ID.'); 
-      return; 
-  }
-  
+  const trx = document.getElementById('trxInput').value.trim(); const finalTotal = originalTotalFee - appliedBalance;
+  if(finalTotal > 0 && trx.length < 4){ showErrorModal('Invalid TrxID', 'Please enter a valid Transaction ID.'); return; }
   const user = _getUser(); if(!user?.phone){ showErrorModal('Session Expired', 'Please login again.'); nav('screen-login'); return; }
   const btn = document.getElementById('btnTrx'); const originalHtml = btn.innerHTML;
-  
   btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Submitting...';
-  
   try{
-    if(finalTotal > 0) {
-        const existing = await window.checkTrxExists(trx);
-        if(existing){ showErrorModal('Already Submitted','This Transaction ID has already been used.'); return; }
-    }
-
+    if(finalTotal > 0) { const existing = await window.checkTrxExists(trx); if(existing){ showErrorModal('Already Submitted','This Transaction ID has already been used.'); return; } }
+    const trxId = trx || 'BALANCE_PAYMENT';
     await window.saveTransactionToFirebase({
-      uid: user.phone, 
-      trxId: trx || 'BALANCE_PAYMENT', 
-      payMethod: selPayMethod, 
-      amount: finalTotal,
-      totalFee: originalTotalFee,
-      appliedBalance: appliedBalance,
-      loanAmount: Number(String(selAmount).replace(/,/g,'')) || 0, 
-      term: Number(selTerm) || 0, 
-      wallet: selWallet, 
-      status: 'Pending', 
-      submittedAt: new Date().toISOString()
+      uid: user.phone, trxId: trxId, payMethod: selPayMethod, amount: finalTotal, totalFee: originalTotalFee, appliedBalance: appliedBalance,
+      loanAmount: Number(String(selAmount).replace(/,/g,'')) || 0, term: Number(selTerm) || 0, wallet: selWallet, status: 'Pending', submittedAt: new Date().toISOString()
     });
-    
     const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted');
-    
-    document.getElementById('dispTrx').innerText = trx || 'Balance Adjustment';
-    document.getElementById('dispMethod').innerText = finalTotal > 0 ? selPayMethod : 'Account Balance';
-    
-    document.getElementById('trxInput').value = '';
-    document.getElementById('btnTrx').classList.remove('on');
-    
-    nav('screen-waiting');
-  }catch(e){
-    console.error('submitTrx failed:', e); 
-    showErrorModal('Submission Failed', e.message || 'Could not submit your transaction.');
-  }finally{ 
-    btn.disabled = false; 
-    btn.innerHTML = originalHtml; 
-  }
+    if(timerInterval) clearInterval(timerInterval);
+    document.getElementById('dispTrx').innerText = trxId; document.getElementById('dispMethod').innerText = finalTotal > 0 ? selPayMethod : 'Account Balance';
+    document.getElementById('trxInput').value = ''; document.getElementById('btnTrx').classList.remove('on'); nav('screen-waiting');
+  }catch(e){ console.error(e); showErrorModal('Submission Failed', e.message || 'Could not submit.'); }
+  finally{ btn.disabled = false; btn.innerHTML = originalHtml; }
 }
 
 function _getUser(){ try{ return JSON.parse(localStorage.getItem('creditUpUser')); }catch{ return null; } }
 
-// ─── UI UPDATE FOR USER STATE ─────────────────────────
 function updateUIForUser() {
   const u = _getUser();
   const mainBtnText = document.getElementById('mainBorrowBtnText');
@@ -1740,20 +1731,21 @@ function updateUIForUser() {
   const balanceContainer = document.getElementById('balanceContainer');
   const bonusBanner = document.getElementById('bonusBanner');
   const notifBtnContainer = document.getElementById('notifBtnContainer');
+  const logoutBtnContainer = document.getElementById('logoutBtnContainer');
   
   if (u) {
-    // Logged in state
     if(balanceContainer) balanceContainer.style.display = 'inline-flex';
     if(notifBtnContainer) notifBtnContainer.style.display = 'flex';
+    if(logoutBtnContainer) logoutBtnContainer.style.display = 'flex';
     if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
     if(loginLink) loginLink.style.display = 'none';
     if(bonusBanner) bonusBanner.style.display = 'none';
     const greet = document.getElementById('userGreeting');
-    if(greet) greet.innerText = `Hello, ${u.phone.slice(-4)} 👋`;
+    if(greet) greet.innerText = `Hello, ${u.phone}`;
   } else {
-    // Visitor state (Not logged in)
     if(balanceContainer) balanceContainer.style.display = 'none';
     if(notifBtnContainer) notifBtnContainer.style.display = 'none';
+    if(logoutBtnContainer) logoutBtnContainer.style.display = 'none';
     if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
     if(loginLink) loginLink.style.display = 'block';
     if(bonusBanner) bonusBanner.style.display = 'flex';
@@ -1766,23 +1758,11 @@ function updateUIForUser() {
 
 function handleMainAction() {
   const u = _getUser();
-  if (!u) {
-    showAlert('Login Required', 'Please login or register to apply for a loan.', 'info', () => {
-      nav('screen-login');
-    });
-  } else {
-    if(typeof startNewApplication === 'function') startNewApplication();
-    else nav('screen-policy');
-  }
+  if (!u) { showAlert('Login Required', 'Please login or register to apply for a loan.', 'info', () => { nav('screen-login'); }); }
+  else { if(typeof startNewApplication === 'function') startNewApplication(); else nav('screen-policy'); }
 }
 
-// ─── PROFILE & LOGOUT ─────────────────────────
-function openProfileModal() {
-  const u = _getUser();
-  if (!u) { nav('screen-login'); return; }
-  document.getElementById('profPhone').innerText = '+880 ' + u.phone;
-  document.getElementById('profileModal').classList.add('on');
-}
+function openProfileModal() { const u = _getUser(); if (!u) { nav('screen-login'); return; } document.getElementById('profPhone').innerText = '+880 ' + u.phone; document.getElementById('profileModal').classList.add('on'); }
 function logoutUser() {
   localStorage.removeItem('creditUpUser');
   closeModal('profileModal');
@@ -1791,48 +1771,37 @@ function logoutUser() {
   showAlert('Logged Out', 'You have been successfully logged out.', 'success');
 }
 
-// ─── REFERRAL / NOTIFICATION ─────────────────────────────────
 function startNewApplication(){
-  if(window.siteFlags && window.siteFlags.loans === false) {
-    showAlert('Loans Paused', 'Loan applications are temporarily paused. Please try again later.', 'info');
-    return;
-  }
-  const u = _getUser();
-  if(!u) { nav('screen-login'); return; }
-  if(window._latestApp && window._latestApp.status === 'Pending Fee Payment') {
-    showAlert('Action Required', 'Please pay the fee for your previous application first.', 'error');
-    return;
-  }
-  if(window._latestApp && window._latestApp.status === 'TrxID Submitted') {
-    showAlert('Verification Pending', 'Please wait for your current payment to be verified.', 'info');
-    return;
-  }
-  currentDashboardStep = 0; updateProgressUI(); clearFormState();
-  nav('screen-policy');
+  if(window.siteFlags && window.siteFlags.loans === false) { showAlert('Loans Paused', 'Loan applications are temporarily paused.', 'info'); return; }
+  const u = _getUser(); if(!u) { nav('screen-login'); return; }
+  if(window._latestApp && window._latestApp.status === 'Pending Fee Payment') { showAlert('Action Required', 'Please pay the fee for your previous application first.', 'error'); return; }
+  if(window._latestApp && window._latestApp.status === 'TrxID Submitted') { showAlert('Verification Pending', 'Please wait for your current payment to be verified.', 'info'); return; }
+  
+  currentDashboardStep = 0; updateProgressUI(); clearFormState(); nav('screen-policy');
 }
 function openNotificationModal() { const badge = document.getElementById('notifBadge'); if(badge) badge.style.display = 'none'; document.getElementById('notifModal').classList.add('on'); }
 function openCalculator() { document.getElementById('calcModal').classList.add('on'); updateCalc(); }
 function openReferModal() {
-  const u = _getUser();
-  if(!u || !u.phone) { showAlert('Login Required', 'Please login to access the referral program.', 'error'); return; }
+  const u = _getUser(); if(!u || !u.phone) { showAlert('Login Required', 'Please login to access the referral program.', 'error'); return; }
   const link = `${BASE_URL}?ref=${u.phone}`;
-  document.getElementById('refLinkDisplay').innerText = link;
-  document.getElementById('referModal').classList.add('on');
+  document.getElementById('refLinkDisplay').innerText = link; document.getElementById('referModal').classList.add('on');
   if(typeof window.loadReferralStats === 'function') window.loadReferralStats(u.phone);
 }
 function openHistoryModal() { document.getElementById('historyModal').classList.add('on'); if (typeof window.loadTransactionHistory === 'function') window.loadTransactionHistory(); }
+
 function copyRefLink() {
   const user = _getUser(); if(!user) return;
   const link = `${BASE_URL}?ref=${user.phone}`;
-  const done = () => showAlert('Copied!', 'Referral link copied.', 'success');
-  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(link).then(done).catch(done); } 
-  else { const tmp = document.createElement('textarea'); tmp.value = link; document.body.appendChild(tmp); tmp.select(); document.execCommand('copy'); document.body.removeChild(tmp); done(); }
+  const premiumText = `🎉 *Exclusive Invitation!* 🎉\n\nHello! I am using *Credit Up* to get instant personal loans with amazing features.\n\n🎁 *Why join?*\n✅ Instant Approval\n✅ Lowest Interest Rates\n✅ 100% Secure & Trusted\n\n🎁 Sign up using my link and we both get special bonuses!\n\n👉 *Click here to join:* ${link}`;
+  const done = () => showAlert('Copied!', 'Premium invitation message copied. Share it with your friends!', 'success');
+  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(premiumText).then(done).catch(done); } 
+  else { const tmp = document.createElement('textarea'); tmp.value = premiumText; document.body.appendChild(tmp); tmp.select(); document.execCommand('copy'); document.body.removeChild(tmp); done(); }
 }
 function shareRefLink() {
   const user = _getUser(); if(!user) return;
   const link = `${BASE_URL}?ref=${user.phone}`;
-  const text = `🎉 Hey! I am using Credit Up to get instant personal loans. Join using my link and we both get bonuses! 💸\n\nClick here: ${link}`;
-  if (navigator.share) { navigator.share({ title: 'Join Credit Up', text: text, url: link }).catch(console.error); } 
+  const premiumText = `🎉 *Exclusive Invitation!* 🎉\n\nHello! I am using *Credit Up* to get instant personal loans with amazing features.\n\n🎁 *Why join?*\n✅ Instant Approval\n✅ Lowest Interest Rates\n✅ 100% Secure & Trusted\n\n🎁 Sign up using my link and we both get special bonuses!\n\n👉 *Click here to join:* ${link}`;
+  if (navigator.share) { navigator.share({ title: 'Join Credit Up', text: premiumText }).catch(console.error); } 
   else { copyRefLink(); }
 }
 
@@ -1866,41 +1835,44 @@ function openAppStatusModal() {
 function updateCalc() {
   const amt = parseInt(document.getElementById('calcAmount').value);
   const term = parseInt(document.getElementById('calcTerm').value);
-  const rate = 18;
+  const rate = ADMIN.annualRate || 18; 
+  const procFee = (ADMIN.orgFee || 0) + (ADMIN.serviceCharge || 0) + (ADMIN.processingFee || 0);
   document.getElementById('calcAmountDisplay').innerText = '৳ ' + amt.toLocaleString();
   document.getElementById('calcTermDisplay').innerText = term + ' Months';
   const interest = Math.round(amt * (rate / 100) * (term / 12));
-  const procFee = 400;
   const total = amt + interest + procFee;
   document.getElementById('calcPrincipal').innerText = '৳ ' + amt.toLocaleString();
   document.getElementById('calcInterest').innerText = '৳ ' + interest.toLocaleString();
   document.getElementById('calcTotal').innerText = '৳ ' + total.toLocaleString();
+  const feeEl = document.getElementById('calcFee'); if(feeEl) feeEl.innerText = '৳ ' + procFee.toLocaleString();
 }
 
 function _restoreAppState(app){
   if(!app) return;
   selAmount = app.loanAmount || selAmount; selTerm = app.term || selTerm; selWallet = app.wallet || selWallet;
-  const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0;
-  const months = Number(app.term) || 0;
-  const interest = Math.round(amt * (ADMIN.annualRate/100) * (months/12));
-  totalFee = ADMIN.orgFee + ADMIN.serviceCharge + ADMIN.processingFee + interest;
+  const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0; const months = Number(app.term) || 0;
+  const interest = Math.round(amt * (ADMIN.annualRate/100) * (months/12)); totalFee = ADMIN.orgFee + ADMIN.serviceCharge + ADMIN.processingFee + interest;
 }
 function _populateApprovedScreen(app){
   if(!app) return;
-  const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0;
-  const months = Number(app.term) || 0;
-  document.getElementById('finalAmount').innerText = _fmt(amt);
-  document.getElementById('finalTerm').innerText = months;
+  const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0; const months = Number(app.term) || 0;
+  document.getElementById('finalAmount').innerText = _fmt(amt); document.getElementById('finalTerm').innerText = months;
   document.getElementById('finalWalletName').innerText = app.wallet || selWallet;
   document.getElementById('finalWalletLogo').src = (window._activeWallet && window._activeWallet.logoUrl) ? window._activeWallet.logoUrl : (ADMIN.walletLogos[app.wallet] || ADMIN.walletLogos[selWallet] || '');
   const u = _getUser(); if(u?.phone) document.getElementById('approvedPhone').innerText = '0' + u.phone;
 }
-function openStep(n){
-  if(n > currentDashboardStep + 1) return;
-  const map = { 1:'screen-basic-info', 2:'screen-personal-info', 3:'screen-emergency-contact', 4:'screen-bank-info', 5:'screen-nid-upload' };
-  if(map[n]) nav(map[n]);
-}
+function openStep(n){ if(n > currentDashboardStep + 1) return; const map = { 1:'screen-basic-info', 2:'screen-personal-info', 3:'screen-emergency-contact', 4:'screen-bank-info', 5:'screen-nid-upload' }; if(map[n]) nav(map[n]); }
 
+function toggleBalanceVisibility() {
+  const balEl = document.getElementById('headerBalance');
+  const icon  = document.getElementById('balanceToggleBtn');
+  window._isBalanceHidden = !window._isBalanceHidden;
+  if(window._isBalanceHidden) {
+    balEl.innerText = '৳ ••••'; icon.className = 'fa-solid fa-eye-slash';
+  } else {
+    balEl.innerText = '৳ ' + window._userRealBalance.toLocaleString(); icon.className = 'fa-solid fa-eye';
+  }
+}
 </script>
 
 <script type="module">
@@ -1949,85 +1921,65 @@ async function loadWallets(){
 function _selWalletDyn(w,ui=true){ selWallet=w.name; window._activeWallet=w; if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); } }
 function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=w.paymentNumber||'-'; }
 
-// ─── DYNAMIC SITE CONFIG LOADER ─────────────────────────
+// ─── BUG FIX: Support ticket helper exposed globally ─────────
+window._saveSupportTicket = async function(uid, userMessage) {
+  if(!db) throw new Error('Database unavailable.');
+  await addDoc(collection(db, 'support_tickets'), {
+    uid: uid, name: 'User', message: userMessage, status: 'Pending', 
+    type: 'AI Chat Escalation', createdAt: new Date().toISOString()
+  });
+  await addDoc(collection(db, 'user_notifications'), {
+    uid: uid, title: 'Support Ticket Created', 
+    message: 'Your issue has been forwarded to the admin. We will contact you soon.', 
+    type: 'info', createdAt: new Date().toISOString()
+  });
+};
+
 async function loadDynamicConfig() {
   if(!db) { window.isConfigLoaded = true; return; }
   try {
     const cfgSnap = await getDoc(doc(db, 'siteConfig', 'main'));
     if(cfgSnap.exists()) {
       const cfg = cfgSnap.data();
+      window.siteFlags = { registration: cfg.flags?.registrationOpen !== false, loans: cfg.flags?.loansOpen !== false, maintenance: cfg.flags?.maintenance === true };
+      if(window.siteFlags.maintenance) { document.getElementById('app').style.display = 'none'; document.getElementById('maintenanceScreen').style.display = 'flex'; }
       
-      // ফ্ল্যাগগুলো গ্লোবালি সেভ করে রাখা
-      window.siteFlags = {
-        registration: cfg.flags?.registrationOpen !== false,
-        loans: cfg.flags?.loansOpen !== false,
-        maintenance: cfg.flags?.maintenance === true
-      };
-
-      // মেইনটেন্যান্স মোড চেক
-      if(window.siteFlags.maintenance) {
-        document.getElementById('app').style.display = 'none';
-        document.getElementById('maintenanceScreen').style.display = 'flex';
-      }
-
-      // ১. Max Borrow Display আপডেট
       if(cfg.maxBorrowAmount) {
-        const mbEl = document.getElementById('homeMaxBorrow');
-        if(mbEl) mbEl.innerText = cfg.maxBorrowAmount;
+        ADMIN.maxLoanLimit = Number(String(cfg.maxBorrowAmount).replace(/,/g,''));
+        document.getElementById('homeMaxBorrow').innerText = cfg.maxBorrowAmount;
+        document.getElementById('calcAmount').max = ADMIN.maxLoanLimit;
       }
-
-      // ২. সাইন-আপ বোনাস টেক্সট আপডেট
-      if(cfg.newUserBonus !== undefined) {
-        const bonusEl = document.getElementById('bonusBannerText');
-        if(bonusEl) bonusEl.innerHTML = `নতুন ইউজারদের জন্য <b style="color:var(--orange);">${cfg.newUserBonus} টাকা</b> সাইন-আপ বোনাস!`;
-      }
-
-      // ৩. ADMIN ফি ও রেট আপডেট
+      if(cfg.newUserBonus !== undefined) { document.getElementById('bonusBannerText').innerHTML = `নতুন ইউজারদের জন্য <b style="color:var(--orange);">${cfg.newUserBonus} টাকা</b> সাইন-আপ বোনাস!`; }
       if(cfg.orgFee !== undefined) ADMIN.orgFee = Number(cfg.orgFee);
       if(cfg.serviceCharge !== undefined) ADMIN.serviceCharge = Number(cfg.serviceCharge);
       if(cfg.processingFee !== undefined) ADMIN.processingFee = Number(cfg.processingFee);
-      if(cfg.annualInterestRate !== undefined) ADMIN.annualRate = Number(cfg.annualInterestRate);
-
-      // ৪. পেমেন্ট নাম্বার আপডেট
+      if(cfg.annualInterestRate !== undefined) {
+        ADMIN.annualRate = Number(cfg.annualInterestRate);
+        document.getElementById('calcRateLabel').innerText = ADMIN.annualRate;
+      }
       if(cfg.paymentNumbers) {
         if(cfg.paymentNumbers.Bkash) ADMIN.paymentNumbers.Bkash = cfg.paymentNumbers.Bkash;
         if(cfg.paymentNumbers.Nagad) ADMIN.paymentNumbers.Nagad = cfg.paymentNumbers.Nagad;
         if(cfg.paymentNumbers.Rocket) ADMIN.paymentNumbers.Rocket = cfg.paymentNumbers.Rocket;
       }
+      if(cfg.loanAmounts && cfg.loanAmounts.length > 0) OPTS.loanAmount = cfg.loanAmounts.map(a => Number(String(a).replace(/,/g,'')).toLocaleString('en-US'));
+      if(cfg.loanTerms && cfg.loanTerms.length > 0) { OPTS.term = cfg.loanTerms.map(t => String(t)); ADMIN.maxTerm = Math.max(...OPTS.term.map(Number)); document.getElementById('calcTerm').max = ADMIN.maxTerm; }
+      if(cfg.loanPurposes && cfg.loanPurposes.length > 0) OPTS.loanPurpose = cfg.loanPurposes;
+      if(cfg.occupations && cfg.occupations.length > 0) OPTS.occupation = cfg.occupations;
 
-      // ৫. লোন সিলেক্ট করার অপশনগুলো আপডেট (OPTS)
-      if(cfg.loanAmounts && cfg.loanAmounts.length > 0) {
-        OPTS.loanAmount = cfg.loanAmounts.map(a => Number(String(a).replace(/,/g,'')).toLocaleString('en-US'));
-      }
-      if(cfg.loanTerms && cfg.loanTerms.length > 0) {
-        OPTS.term = cfg.loanTerms.map(t => String(t));
-      }
-      if(cfg.loanPurposes && cfg.loanPurposes.length > 0) {
-        OPTS.loanPurpose = cfg.loanPurposes;
-      }
-      if(cfg.occupations && cfg.occupations.length > 0) {
-        OPTS.occupation = cfg.occupations;
-      }
-
-      // ৬. সাইট টেক্সট ও ব্র্যান্ডিং আপডেট
-      if(cfg.splashSubtitle) {
-        const splEl = document.getElementById('splashSubtitle');
-        if(splEl) splEl.innerText = cfg.splashSubtitle;
-      }
-      if(cfg.tagline) {
-        const tagEl = document.getElementById('homeTagline');
-        if(tagEl) tagEl.innerText = cfg.tagline;
-      }
-      if(cfg.policyDate) {
-        const polEl = document.getElementById('policyDateText');
-        if(polEl) polEl.innerText = 'Last updated: ' + cfg.policyDate;
-      }
+      if(cfg.splashSubtitle) document.getElementById('splashSubtitle').innerText = cfg.splashSubtitle;
+      if(cfg.tagline) document.getElementById('homeTagline').innerText = cfg.tagline;
+      if(cfg.policyDate) document.getElementById('policyDateText').innerText = 'Last updated: ' + cfg.policyDate;
+      if(cfg.policyEmail) { const polEm = document.getElementById('policyEmailLink'); if(polEm) { polEm.href = 'mailto:' + cfg.policyEmail; polEm.innerText = cfg.policyEmail; } }
+            if(cfg.companyAddress) { const polAd = document.getElementById('policyAddressText'); if(polAd) polAd.innerText = 'Address: ' + cfg.companyAddress; }
+      
+      // AI Chat Links
+      if(cfg.contact?.whatsapp) { const waBtn = document.getElementById('csWhatsAppBtn'); if(waBtn) waBtn.onclick = () => window.open('https://wa.me/' + cfg.contact.whatsapp, '_blank'); }
+      if(cfg.contact?.email) { const emBtn = document.getElementById('csEmailBtn'); if(emBtn) emBtn.onclick = () => window.location.href = 'mailto:' + cfg.contact.email; }
+      if(cfg.contact?.telegram) { const tgBtn = document.getElementById('csTelegramBtn'); if(tgBtn) tgBtn.onclick = () => window.open('https://t.me/' + cfg.contact.telegram, '_blank'); }
+      const rvEm = document.getElementById('rvFootEmail'); if(rvEm && cfg.contact?.email) { rvEm.href = 'mailto:' + cfg.contact.email; rvEm.innerText = cfg.contact.email; }
     }
-  } catch(e) {
-    console.error("Dynamic Config Error:", e);
-  } finally {
-    window.isConfigLoaded = true;
-  }
+  } catch(e) { console.error("Dynamic Config Error:", e); } finally { window.isConfigLoaded = true; }
 }
 
 window.checkPhoneAndProceed=async function(){
@@ -2051,17 +2003,14 @@ window.submitLoginPassword=function(){
     localStorage.setItem('creditUpUser',JSON.stringify(pendingLoginUser));
     closeGlobalModal();
     document.getElementById('dashSuccessText').innerText='Welcome back! 👋';
-    nav('screen-application-progress');
+    nav('screen-home');
     if(typeof updateUIForUser === 'function') updateUIForUser();
     setTimeout(() => { if(typeof window.loadUserDashboardData === 'function') window.loadUserDashboardData(); }, 500);
   } else { showAlert('Incorrect Password','The password you entered is incorrect.','error'); }
 };
 
 window.registerUser=async function(){
-  if(window.siteFlags && window.siteFlags.registration === false) {
-      showAlert('Registration Closed', 'New user registration is currently disabled.', 'error');
-      return;
-  }
+  if(window.siteFlags && window.siteFlags.registration === false) { showAlert('Registration Closed', 'New user registration is currently disabled.', 'error'); return; }
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('regPhone').value, pw=document.getElementById('regPassword').value, cp=document.getElementById('regConfirmPassword').value;
   if(ph.length!==10){ showAlert('Invalid Number','Enter a valid 10-digit number.','error'); return; }
@@ -2084,7 +2033,7 @@ window.registerUser=async function(){
     showLoader(false);
     showAlert('Account Created! 🎉', `Welcome! You received ৳${bonusAmt} bonus.`, 'success', () => {
       document.getElementById('dashSuccessText').innerText = 'Registration Successful! 🎉';
-      nav('screen-application-progress');
+      nav('screen-home');
       if(typeof updateUIForUser === 'function') updateUIForUser();
       if(typeof window.loadUserDashboardData === 'function') window.loadUserDashboardData();
     });
@@ -2138,26 +2087,21 @@ window.updateApplicationStatusByPhone = async function(phone, status){
   }catch(e){ return false; }
 };
 
-// ─── GLOBAL NOTICES & TICKER (FIXED FOR ALL USERS) ───────────
+// ─── GLOBAL NOTICES & TICKER ───────────────────────────
 window.loadTicker = async function() {
   if(!db) return;
   try {
     const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
     let notices = gSnap.docs.map(d => d.data());
-    
-    // If user is logged in, add their personal notifications to the ticker
     const user = _getUser();
     if (user && user.phone) {
       const pSnap = await getDocs(query(collection(db, 'user_notifications'), where('uid', '==', user.phone)));
-      const pNotifs = pSnap.docs.map(d => ({...d.data(), isPersonal: true}));
-      notices = [...pNotifs, ...notices]; // Show personal first
+      notices = [...pSnap.docs.map(d => ({...d.data(), isPersonal: true})), ...notices];
     }
-
     if(notices.length > 0) {
       const ticker = document.getElementById('tickerContent');
-      ticker.innerHTML = notices.slice(0, 5).map(n =>
-        `<span class="ticker-item"><i class="fa-solid fa-circle"></i> <b>${n.title}:</b> ${(n.message || '').substring(0, 40)}...</span>`
-      ).join('');
+      let htmlContent = notices.slice(0, 5).map(n => `<span class="ticker-item"><i class="fa-solid fa-circle"></i> <b>${n.title}:</b> ${(n.message || '').substring(0, 40)}...</span>`).join('');
+      ticker.innerHTML = htmlContent + htmlContent;
       document.getElementById('tickerWrap').style.display = 'flex';
     }
   } catch(e) { console.log("Ticker Load Error:", e); }
@@ -2165,8 +2109,6 @@ window.loadTicker = async function() {
 
 window.loadUserDashboardData = async function() {
   const user = _getUser(); if(!user || !user.phone || !db) return;
-  document.getElementById('userGreeting').innerText = `Hello, ${user.phone.slice(-4)} 👋`;
-  
   try {
     const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
     if(!uSnap.empty) {
@@ -2175,12 +2117,11 @@ window.loadUserDashboardData = async function() {
     }
   } catch(e) {}
 
-  // Load Notifications ONLY for logged in user
+  // Notifications
   try {
     const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
     const pSnap = await getDocs(query(collection(db, 'user_notifications'), where('uid', '==', user.phone)));
     const allNotifs = [...gSnap.docs.map(d => ({...d.data(), isPersonal: false})), ...pSnap.docs.map(d => ({...d.data(), isPersonal: true}))].sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
-    
     if(allNotifs.length > 0) {
       document.getElementById('notifBadge').style.display = 'block';
       document.getElementById('notifListContainer').innerHTML = allNotifs.map(n => `
@@ -2193,22 +2134,25 @@ window.loadUserDashboardData = async function() {
     }
   } catch(e) {}
 
-  // Load User's Application Status
+  // Multiple Loans Logic
   try {
     const appSnap = await getDocs(query(collection(db, 'applications'), where('uid', '==', user.phone)));
     const card = document.getElementById('userStatusCard'), mainBtn = document.getElementById('mainBorrowBtn');
+    const secondaryBtn = document.getElementById('secondaryApplyBtn');
     const title = document.getElementById('statusCardTitle'), desc = document.getElementById('statusCardDesc');
     const iconEl = document.getElementById('statusCardIcon'), iconBox = card.querySelector('.status-icon-box');
-    card.style.display = 'none'; mainBtn.style.display = 'flex'; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
+    
+    card.style.display = 'none'; mainBtn.style.display = 'flex'; secondaryBtn.style.display = 'none'; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
+    
     if(!appSnap.empty) {
       const apps = appSnap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
       const latestApp = apps[0]; window._latestApp = latestApp;
       const statusMap = {
         'Pending Fee Payment': { icon: 'fa-hourglass-half', title: 'Fee Payment Pending', desc: 'Tap to pay processing fee', color: 'var(--orange)', bg: 'rgba(255,140,66,.15)' },
-        'TrxID Submitted':     { icon: 'fa-circle-check',   title: 'Verification Pending', desc: 'Tap to view verification status', color: 'var(--blue)',   bg: 'rgba(77,143,255,.15)' },
-        'Approved':            { icon: 'fa-money-bill-wave',title: 'Loan Active',            desc: 'Tap to view loan details',       color: 'var(--p)',      bg: 'rgba(29,219,128,.15)' },
-        'Disbursed':           { icon: 'fa-money-bill-wave',title: 'Loan Disbursed',         desc: 'Tap to view loan details',       color: 'var(--p)',      bg: 'rgba(29,219,128,.15)' },
-        'Rejected':            { icon: 'fa-circle-xmark',   title: 'Application Rejected',  desc: 'Tap to reapply',                 color: 'var(--red)',    bg: 'rgba(255,77,106,.15)' },
+        'TrxID Submitted': { icon: 'fa-circle-check', title: 'Verification Pending', desc: 'Tap to view verification status', color: 'var(--blue)', bg: 'rgba(77,143,255,.15)' },
+        'Approved': { icon: 'fa-money-bill-wave',title: 'Loan Active', desc: 'Tap to view loan details', color: 'var(--p)', bg: 'rgba(29,219,128,.15)' },
+        'Disbursed': { icon: 'fa-money-bill-wave',title: 'Loan Disbursed', desc: 'Tap to view loan details', color: 'var(--p)', bg: 'rgba(29,219,128,.15)' },
+        'Rejected': { icon: 'fa-circle-xmark', title: 'Application Rejected', desc: 'Tap to reapply', color: 'var(--red)', bg: 'rgba(255,77,106,.15)' },
       };
       const info = statusMap[latestApp.status];
       if(info) {
@@ -2216,10 +2160,16 @@ window.loadUserDashboardData = async function() {
         if(iconEl) iconEl.className = `fa-solid ${info.icon}`;
         if(iconBox){ iconBox.style.color = info.color; iconBox.style.background = info.bg; }
         card.style.display = 'flex';
+        
         if(['Pending Fee Payment', 'TrxID Submitted'].includes(latestApp.status)) {
           mainBtn.style.display = 'none';
-        } else if (['Approved', 'Disbursed', 'Rejected'].includes(latestApp.status)) {
-          document.getElementById('mainBorrowBtnText').innerText = 'Apply for Another';
+          secondaryBtn.style.display = 'none';
+        } else if (['Approved', 'Disbursed'].includes(latestApp.status)) {
+          mainBtn.style.display = 'none';
+          secondaryBtn.style.display = 'flex';
+        } else if (latestApp.status === 'Rejected') {
+          mainBtn.style.display = 'flex';
+          mainBtn.innerText = 'Borrow Now';
         }
       }
     }
@@ -2233,44 +2183,10 @@ window.loadReferralStats = async function(phone) {
   try {
     const snap = await getDocs(query(collection(db, 'users'), where('referredBy', '==', phone)));
     const activeCount = snap.docs.filter(d => d.data().status === 'active').length;
-    document.getElementById('refTotalCount').innerText = snap.size;
-    document.getElementById('refSuccessCount').innerText = activeCount;
-    let tierName = 'Starter', pct = 0, txt = '';
-    if (activeCount >= 100) {
-      tierName = 'Jackpot Winner 🏆'; pct = 100;
-      txt = 'অভিনন্দন! আপনি ৫০,০০০ টাকার জ্যাকপট জিতেছেন!';
-    } else if (activeCount >= 50) {
-      tierName = 'Silver 🥈'; pct = (activeCount / 100) * 100;
-      txt = `জ্যাকপট পেতে আরও ${100 - activeCount} জন রেফার করুন!`;
-    } else if (activeCount >= 20) {
-      tierName = 'Bronze 🥉'; pct = (activeCount / 50) * 100;
-      txt = `ফ্রি লোন পেতে আরও ${50 - activeCount} জন রেফার করুন!`;
-    } else {
-      tierName = 'Starter'; pct = (activeCount / 20) * 100;
-      txt = `১ম কিস্তি মাফ পেতে আরও ${20 - activeCount} জন রেফার করুন!`;
-    }
-    document.getElementById('currentTierName').innerText = tierName;
-    document.getElementById('tierProgressBar').style.width = pct + '%';
-    document.getElementById('tierProgressText').innerText = txt;
-    const updateTierRow = (rowId, lockId, unlocked) => {
-      const row  = document.getElementById(rowId);
-      const lock = document.getElementById(lockId);
-      if (!row || !lock) return;
-      if (unlocked) {
-        row.style.border  = '1px solid var(--p)';
-        row.style.background = 'rgba(29,219,128,.06)';
-        lock.className    = 'fa-solid fa-circle-check';
-        lock.style.color  = 'var(--p)';
-      } else {
-        row.style.border  = '1px solid transparent';
-        row.style.background = 'rgba(255,255,255,0.03)';
-        lock.className    = 'fa-solid fa-lock';
-        lock.style.color  = 'var(--txt2)';
-      }
-    };
-    updateTierRow('tierRow20',  'tierLock20',  activeCount >= 20);
-    updateTierRow('tierRow50',  'tierLock50',  activeCount >= 50);
-    updateTierRow('tierRow100', 'tierLock100', activeCount >= 100);
+    const totalEl = document.getElementById('refTotalCount');
+    const successEl = document.getElementById('refSuccessCount');
+    if(totalEl) totalEl.innerText = snap.size;
+    if(successEl) successEl.innerText = activeCount;
   } catch(e) { console.log('Referral stats error:', e); }
 };
 
@@ -2284,12 +2200,9 @@ window.loadTransactionHistory = async function() {
     const trxs = snap.docs.map(d => d.data()).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
     container.innerHTML = trxs.map(t => `
       <div class="notif-item" style="border-left:3px solid ${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">
-        <div class="notif-icon" style="background:${t.status === 'Verified' ? 'rgba(29,219,128,.1)' : 'rgba(255,140,66,.1)'}; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">
-          <i class="fa-solid fa-money-bill-transfer"></i>
-        </div>
+        <div class="notif-icon" style="background:${t.status === 'Verified' ? 'rgba(29,219,128,.1)' : 'rgba(255,140,66,.1)'}; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};"><i class="fa-solid fa-money-bill-transfer"></i></div>
         <div class="notif-content"><h4 style="display:flex; justify-content:space-between;">৳ ${t.amount} <span style="font-size:10px; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">${t.status}</span></h4>
-          <p>TrxID: <strong>${t.trxId}</strong> via ${t.payMethod}</p>
-          <div class="notif-date">${new Date(t.submittedAt).toLocaleString()}</div>
+          <p>TrxID: <strong>${t.trxId}</strong> via ${t.payMethod}</p><div class="notif-date">${new Date(t.submittedAt).toLocaleString()}</div>
         </div>
       </div>`).join('');
   } catch(e) { container.innerHTML = '<p style="text-align:center; color:var(--red); font-size:13px;">Failed to load history.</p>'; }
@@ -2312,14 +2225,10 @@ window.loadLiveFeed = async function() {
       return;
     }
     container.innerHTML = approvedApps.map(a => {
-      let name = a.name || 'User';
-      if(name.length > 4) name = name.substring(0, 4) + '***';
-      const diffMs = new Date() - new Date(a.submittedAt || Date.now());
-      const diffMins = Math.floor(diffMs / 60000);
+      let name = a.name || 'User'; if(name.length > 4) name = name.substring(0, 4) + '***';
+      const diffMs = new Date() - new Date(a.submittedAt || Date.now()); const diffMins = Math.floor(diffMs / 60000);
       let timeText = diffMins < 60 ? `${diffMins} মিনিট আগে` : `${Math.floor(diffMins/60)} ঘন্টা আগে`;
-      return `
-        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>${name}</h4><p>${timeText}</p></div></div><div class="live-amount">+ ৳ ${Number(String(a.loanAmount).replace(/,/g,'')).toLocaleString()}</div></div>
-      `;
+      return `<div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>${name}</h4><p>${timeText}</p></div></div><div class="live-amount">+ ৳ ${Number(String(a.loanAmount).replace(/,/g,'')).toLocaleString()}</div></div>`;
     }).join('');
   } catch(e) {
     console.error("Live Feed Error:", e);
@@ -2333,8 +2242,8 @@ loadDynamicConfig();
 
 document.addEventListener("DOMContentLoaded", () => {
   if(typeof window.loadTicker === 'function') window.loadTicker();
-  if(typeof window.loadLiveFeed === 'function')    window.loadLiveFeed();
-  if(typeof initHotOffer === 'function')           initHotOffer();
+  if(typeof window.loadLiveFeed === 'function') window.loadLiveFeed();
+  if(typeof initHotOffer === 'function') initHotOffer();
 });
 
 if(document.readyState !== 'loading'){
