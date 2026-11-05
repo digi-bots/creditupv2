@@ -355,6 +355,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="nav" id="n-config" onclick="gS('config',this)"><i class="fa-solid fa-sliders"></i>Site Config</div>
   <div class="nav" id="n-broadcast" onclick="gS('broadcast',this)"><i class="fa-solid fa-bullhorn"></i>Broadcast</div>
   <div class="sb-sec">System</div>
+  <div class="nav" id="n-support" onclick="gS('support',this)"><i class="fa-solid fa-headset"></i>Support Tickets<span class="nb nb-r" id="nb-st">0</span></div>
   <div class="nav" id="n-actlog" onclick="gS('actlog',this)"><i class="fa-solid fa-scroll"></i>Activity Log</div>
   <div class="nav" id="n-settings" onclick="gS('settings',this)"><i class="fa-solid fa-shield-halved"></i>Admin Settings</div>
   <div class="sb-foot">
@@ -521,17 +522,18 @@ tr:hover td{background:rgba(255,255,255,.015)}
   </div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-headset"></i>Contact & Support</div>
     <div class="fgrid">
-      <div class="fg"><label>WhatsApp / Support</label><input id="c-wa" placeholder="hello@example.com"></div>
+      <div class="fg"><label>WhatsApp Number (e.g. 88017...)</label><input id="c-wa" placeholder="88017XXXXXXXX"></div>
+      <div class="fg"><label>Telegram Username (e.g. yourusername)</label><input id="c-tg" placeholder="username"></div>
       <div class="fg"><label>Support Email</label><input id="c-em" placeholder="support@example.com"></div>
       <div class="fg"><label>Privacy Policy Email</label><input id="c-pe" placeholder="legal@example.com"></div>
-      <div class="fg"><label>Company Address</label><input id="c-ad" placeholder="Company address..."></div>
+      <div class="fg full"><label>Company Address</label><input id="c-ad" placeholder="Company address..."></div>
     </div>
   </div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-pen-to-square"></i>Site Text & Branding</div>
     <div class="fgrid">
       <div class="fg"><label>Splash Subtitle</label><input id="c-ss" placeholder="Build Credit. Move Up."></div>
       <div class="fg"><label>Policy Last Updated</label><input id="c-pd" placeholder="2026/10/09"></div>
-      <div class="fg"><label>Home Tagline (info card)</label><input id="c-tg" placeholder="Your Loan, Simplified"></div>
+      <div class="fg"><label>Home Tagline (info card)</label><input id="c-tag" placeholder="Your Loan, Simplified"></div>
     </div>
   </div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-toggle-on"></i>Feature Flags</div>
@@ -562,6 +564,15 @@ tr:hover td{background:rgba(255,255,255,.015)}
   </div>
 </div>
 
+<!-- SUPPORT TICKETS (NEW) -->
+<div class="sec" id="sec-support">
+  <div class="sec-head"><h2>Support Tickets</h2></div>
+  <div class="tc">
+    <div class="tc-hdr"><div class="tc-title">AI Chat Escalations</div></div>
+    <div class="tw"><table><thead><tr><th>Phone / UID</th><th>Message</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="stb"></tbody></table></div>
+  </div>
+</div>
+
 <!-- ACTIVITY LOG -->
 <div class="sec" id="sec-actlog">
   <div class="sec-head"><h2>Activity Log</h2><button class="btn btn-sm btn-s" onclick="loadActLog()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
@@ -581,7 +592,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-database"></i>System Info</div>
       <div class="dg">
         <div class="dr"><div class="dl">Firebase Project</div><div class="dv mono">creditup-fc7fe</div></div>
-        <div class="dr"><div class="dl">Panel Version</div><div class="dv">v5.0 Final</div></div>
+        <div class="dr"><div class="dl">Panel Version</div><div class="dv">v5.1</div></div>
         <div class="dr full"><div class="dl">Firebase Console</div><div class="dv"><a href="https://console.firebase.google.com/project/creditup-fc7fe" target="_blank" style="color:var(--blue)">Open Console ↗</a></div></div>
       </div>
     </div>
@@ -593,8 +604,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div><!-- AP -->
 
 <!-- ===== MODALS ===== -->
-
-<!-- USER MODAL -->
 <div class="mov" id="moUser">
 <div class="mo mo-lg">
   <div class="mo-h"><h3>User Details</h3><button class="mo-x" onclick="closeMo('moUser')">✕</button></div>
@@ -635,7 +644,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 </div>
 
-<!-- APP MODAL -->
 <div class="mov" id="moApp">
 <div class="mo mo-xl">
   <div class="mo-h"><h3>Application Details</h3><button class="mo-x" onclick="closeMo('moApp')">✕</button></div>
@@ -661,7 +669,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 </div>
 
-<!-- TRX MODAL -->
 <div class="mov" id="moTrx">
 <div class="mo mo-md">
   <div class="mo-h"><h3>Transaction Details</h3><button class="mo-x" onclick="closeMo('moTrx')">✕</button></div>
@@ -676,7 +683,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 </div>
 
-<!-- WALLET MODAL -->
 <div class="mov" id="moWallet">
 <div class="mo mo-md">
   <div class="mo-h"><h3 id="wmoT">Add Wallet</h3><button class="mo-x" onclick="closeMo('moWallet')">✕</button></div>
@@ -696,7 +702,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 </div>
 
-<!-- BULK MODAL -->
 <div class="mov" id="moBulk">
 <div class="mo mo-sm">
   <div class="mo-h"><h3>Bulk Action</h3><button class="mo-x" onclick="closeMo('moBulk')">✕</button></div>
@@ -708,7 +713,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 </div>
 
-<!-- CONFIRM MODAL -->
 <div class="mov" id="moConfirm">
 <div class="mo mo-sm">
   <div class="mo-h"><h3>Confirm Action</h3><button class="mo-x" onclick="closeMo('moConfirm')">✕</button></div>
@@ -723,13 +727,13 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <script>
 // ══ CONFIG ══════════════════════════════════════════
 const PG = 20;
-const TITLES = {dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',emi:'EMI Calculator',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',actlog:'Activity Log',settings:'Admin Settings'};
+const TITLES = {dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',emi:'EMI Calculator',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Admin Settings'};
 const PIPE_STEPS = ['Applied','Fee Pending','Fee Submitted','Approved','Disbursed','Active','Repaid'];
 const PIPE_MAP = {'Pending Fee Payment':1,'TrxID Submitted':2,'Approved':3,'Disbursed':4,'Active':5,'Repaid':6};
 
 // ══ STATE ════════════════════════════════════════════
 let _db=null, _sec='dashboard', _docId='', _userId='';
-let _D={users:[],applications:[],transactions:[],wallets:[],broadcasts:[],actlog:[],portfolio:[]};
+let _D={users:[],applications:[],transactions:[],wallets:[],broadcasts:[],actlog:[],portfolio:[],support:[]};
 let _pg={users:0,applications:0,transactions:0,portfolio:0};
 let _charts={}, _selApps=new Set();
 
@@ -756,8 +760,8 @@ function gS(id,el){
 function refreshCur(){ loadSec(_sec); }
 function exportCur(){ exportCSV(_sec); }
 async function loadSec(id){
-  if(!window._db) return; // ✅ এখানে window._db করা হয়েছে
-  const map={dashboard:loadDash,users:loadUsers,applications:loadApps,transactions:loadTrx,portfolio:loadPortfolio,analytics:loadAnalytics,wallets:loadWallets,config:loadConfig,broadcast:loadBC,actlog:loadActLog};
+  if(!window._db) return;
+  const map={dashboard:loadDash,users:loadUsers,applications:loadApps,transactions:loadTrx,portfolio:loadPortfolio,analytics:loadAnalytics,wallets:loadWallets,config:loadConfig,broadcast:loadBC,support:loadSupport,actlog:loadActLog};
   if(map[id]) await map[id]();
 }
 
@@ -817,9 +821,9 @@ function globalSearch(v){ if(!v)return; const vl=v.toLowerCase(); const f=[..._D
 // ══ DASHBOARD ════════════════════════════════════════
 async function loadDash(){
   showL(true);
-  const[u,a,t]=await Promise.all([_get('users'),_get('applications','submittedAt'),_get('transactions','submittedAt')]);
+  const[u,a,t,s]=await Promise.all([_get('users'),_get('applications','submittedAt'),_get('transactions','submittedAt'),_get('support_tickets','createdAt')]);
   showL(false);
-  _D.users=u;_D.applications=a;_D.transactions=t;
+  _D.users=u;_D.applications=a;_D.transactions=t;_D.support=s;
   const pend=t.filter(x=>!x.status||x.status==='Pending').length;
   const appr=a.filter(x=>['Approved','Disbursed','Active','Repaid'].includes(x.status)).length;
   const rev=t.filter(x=>x.status==='Verified').length*400;
@@ -835,6 +839,8 @@ async function loadDash(){
   document.getElementById('nb-u').innerText=u.length;
   document.getElementById('nb-a').innerText=a.filter(x=>x.status==='Pending Fee Payment'||x.status==='TrxID Submitted').length;
   document.getElementById('nb-t').innerText=pend;
+  document.getElementById('nb-st').innerText=s.filter(x=>x.status==='Pending').length;
+  
   const rA=[...a].sort((x,y)=>new Date(y.submittedAt||0)-new Date(x.submittedAt||0)).slice(0,8);
   document.getElementById('dApps').innerHTML=rA.length?rA.map(r=>`<tr><td class="mono">${r.uid||'-'}</td><td>${r.name||'-'}</td><td style="color:var(--p);font-weight:700">৳${fa(r.loanAmount)}</td><td>${riskBadge(riskScore(r))}</td><td>${sb(r.status)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td></tr>`).join(''):'<tr class="empty"><td colspan="6">No applications yet</td></tr>';
   const pT=t.filter(x=>!x.status||x.status==='Pending').slice(0,6);
@@ -949,7 +955,6 @@ async function applyBulk(){
   await logAct(`Bulk ${action} on ${_selApps.size} apps`,'application','bulk');
   toast(`Bulk action applied: ${action}`); closeMo('moBulk'); loadApps();
 }
-
 function viewApp(id){
   const a=findById('applications',id); if(!a){toast('Not found','e');return;} _docId=a._id;
   const pi=PIPE_MAP[a.status]||0;
@@ -966,7 +971,6 @@ function viewApp(id){
   ];
   document.getElementById('aGrid').innerHTML=fields.map(f=>`<div class="dr${f.full?' full':''}"><div class="dl">${f.l}</div><div class="dv ${f.c||''}">${f.v||'-'}</div></div>`).join('');
   
-  // NID Viewer
   const nv=document.getElementById('nidViewer');
   if(a.nidFrontUrl||a.nidBackUrl){
     nv.innerHTML=`<div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border)"><div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px"><i class="fa-solid fa-id-card" style="color:var(--p);margin-right:5px"></i>NID Documents</div><div class="nid-grid">${a.nidFrontUrl?`<div><div style="font-size:10px;color:var(--txt2);margin-bottom:5px">Front Side</div><img class="nid-img" src="${a.nidFrontUrl}" onclick="window.open('${a.nidFrontUrl}','_blank')" onerror="this.parentElement.innerHTML='<div style=color:var(--txt3);font-size:11px;padding:10px;text-align:center>Image not available</div>'"></div>`:'<div><div style="font-size:10px;color:var(--txt2)">Front Side</div><div style="color:var(--txt3);font-size:11px;padding:10px;text-align:center">Not uploaded</div></div>'}${a.nidBackUrl?`<div><div style="font-size:10px;color:var(--txt2);margin-bottom:5px">Back Side</div><img class="nid-img" src="${a.nidBackUrl}" onclick="window.open('${a.nidBackUrl}','_blank')" onerror="this.parentElement.innerHTML='<div style=color:var(--txt3);font-size:11px;padding:10px;text-align:center>Image not available</div>'"></div>`:'<div><div style="font-size:10px;color:var(--txt2)">Back Side</div><div style="color:var(--txt3);font-size:11px;padding:10px;text-align:center">Not uploaded</div></div>'}</div></div>`;
@@ -1002,7 +1006,6 @@ async function syncAppOnTrx(uid,newStatus){
     if(newStatus==='Approved') upd.approvedAt=new Date().toISOString();
     await window._updateDoc(active[0]._id,'applications',upd);
     
-    // Referral bonus on approval
     if(newStatus==='Approved'){
       const users=await _get('users');
       const applicant=users.find(u=>u.phone===uid);
@@ -1051,7 +1054,6 @@ function viewTrx(id){
   ].map(f=>`<div class="dr"><div class="dl">${f.l}</div><div class="dv ${f.c||''}">${f.v||'-'}</div></div>`).join('');
   openMo('moTrx');
 }
-
 async function deductBalanceIfApplied(trx) {
   if(trx?.appliedBalance && Number(trx.appliedBalance) > 0 && trx.uid) {
     try {
@@ -1065,7 +1067,6 @@ async function deductBalanceIfApplied(trx) {
     } catch(e) { console.error("Balance deduct error:", e); }
   }
 }
-
 async function trxAct(status){
   if(!_docId)return;
   showL(true);
@@ -1073,28 +1074,23 @@ async function trxAct(status){
     const trx=findById('transactions',_docId);
     await window._updateDoc(_docId,'transactions',{status,verifiedAt:status==='Verified'?new Date().toISOString():null});
     let synced=false;
-    
     if(status === 'Verified') {
       await deductBalanceIfApplied(trx);
       if(trx?.uid){ synced = await syncAppOnTrx(trx.uid, 'Approved'); }
     } else {
       if(trx?.uid){ synced = await syncAppOnTrx(trx.uid, 'Rejected'); }
     }
-
     await logAct(`TrxID ${status}${synced?' + app synced':''}`,'transaction',_docId);
     toast(`Transaction ${status}${synced?' & app updated':''}`,status==='Verified'?'s':'e');
     closeMo('moTrx'); loadTrx();
   }catch(e){toast(e.message,'e');}
   showL(false);
 }
-
 async function qVTrx(id){
   showL(true);
   const trx=findById('transactions',id)||{_id:id};
   await window._updateDoc(id,'transactions',{status:'Verified',verifiedAt:new Date().toISOString()});
-  
   await deductBalanceIfApplied(trx);
-  
   const synced=trx.uid?await syncAppOnTrx(trx.uid,'Approved'):false;
   await logAct(`TrxID verified${synced?' + app approved':''}`,'transaction',id);
   toast(synced?'Verified, balance deducted & app approved!':'Verified ✓'); showL(false); loadTrx();
@@ -1207,16 +1203,15 @@ async function loadConfig(){
   s('c-mb',cfg.maxBorrowAmount);s('c-ir',cfg.annualInterestRate);s('c-of',cfg.orgFee);s('c-sc',cfg.serviceCharge);s('c-pf',cfg.processingFee);s('c-nb',cfg.newUserBonus);
   s('c-la',(cfg.loanAmounts||[]).join(', '));s('c-lt',(cfg.loanTerms||[]).join(', '));s('c-lp',(cfg.loanPurposes||[]).join(', '));s('c-oc',(cfg.occupations||[]).join(', '));
   s('c-bk',cfg.paymentNumbers?.Bkash);s('c-ng',cfg.paymentNumbers?.Nagad);s('c-rk',cfg.paymentNumbers?.Rocket);
-  s('c-wa',cfg.contact?.whatsapp);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
-  s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tg',cfg.tagline);
+  s('c-wa',cfg.contact?.whatsapp);s('c-tg',cfg.contact?.telegram);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
+  s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
   cb('c-ro',cfg.flags?.registrationOpen!==false);cb('c-lo',cfg.flags?.loansOpen!==false);cb('c-mn',cfg.flags?.maintenance);
 }
-
 async function saveConfig(){
   const g=id=>document.getElementById(id)?.value.trim();
   const sl=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
   const cb=id=>document.getElementById(id)?.checked;
-  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:parseFloat(g('c-nb'))||100,loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:{Bkash:g('c-bk'),Nagad:g('c-ng'),Rocket:g('c-rk')},contact:{whatsapp:g('c-wa'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tg'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
+  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:parseFloat(g('c-nb'))||100,loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:{Bkash:g('c-bk'),Nagad:g('c-ng'),Rocket:g('c-rk')},contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
   showL(true); await window._setDoc('siteConfig','main',cfg); showL(false);
   await logAct('Site config saved','config','main'); toast('Configuration saved ✓');
 }
@@ -1224,6 +1219,14 @@ async function saveConfig(){
 // ══ BROADCAST ════════════════════════════════════════
 async function loadBC(){ _D.broadcasts=await _get('broadcasts','createdAt','desc'); const l=document.getElementById('bcList'); l.innerHTML=_D.broadcasts.length?_D.broadcasts.slice(0,20).map(b=>`<div class="bc-item"><div class="bc-hdr"><div class="bc-title">${b.title||'Broadcast'}</div><div class="bc-date">${fd(b.createdAt)}</div></div><div class="bc-msg">${b.message||''}</div></div>`).join(''):'<div style="text-align:center;color:var(--txt2);padding:16px;font-size:12px">No broadcasts yet.</div>'; }
 async function sendBC(){ const t=document.getElementById('bc-t').value.trim(),m=document.getElementById('bc-m').value.trim(),ty=document.getElementById('bc-ty').value; if(!t||!m){toast('Title and message required','w');return;} showL(true); await window._addDoc('broadcasts',{title:t,message:m,type:ty,createdAt:new Date().toISOString()}); showL(false); document.getElementById('bc-t').value='';document.getElementById('bc-m').value=''; await logAct(`Broadcast: "${t}"`,'broadcast','new'); toast('Broadcast sent ✓'); loadBC(); }
+
+// ══ SUPPORT TICKETS ══════════════════════════════════
+async function loadSupport(){
+  showL(true); _D.support=await _get('support_tickets','createdAt'); showL(false);
+  const s=_D.support;
+  document.getElementById('stb').innerHTML=s.length?s.map(r=>`<tr><td class="mono">${r.uid||'-'}</td><td>${r.message||'-'}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.createdAt)}</td><td>${sb(r.status)}</td><td><div class="acts"><button class="ab ab-ok" onclick="resSupport('${r._id}')" title="Resolve"><i class="fa-solid fa-check"></i></button></div></td></tr>`).join(''):'<tr class="empty"><td colspan="5">No support tickets</td></tr>';
+}
+async function resSupport(id) { await window._updateDoc(id,'support_tickets',{status:'Resolved'}); toast('Ticket Resolved'); loadSupport(); }
 
 // ══ ACTIVITY LOG ═════════════════════════════════════
 async function loadActLog(){ _D.actlog=await _get('activityLog','at','desc'); const icons={user:'fa-user',application:'fa-file-contract',transaction:'fa-money-bill',wallet:'fa-wallet',config:'fa-sliders',broadcast:'fa-bullhorn'}; const clrs={user:'var(--blue)',application:'var(--p)',transaction:'var(--orange)',wallet:'var(--purple)',config:'var(--gold)',broadcast:'var(--red)'}; document.getElementById('actlogList').innerHTML=_D.actlog.length?_D.actlog.slice(0,50).map(a=>`<div class="alog-i"><div class="alog-ic" style="background:rgba(255,255,255,.04);color:${clrs[a.type]||'var(--txt2)'}"><i class="fa-solid ${icons[a.type]||'fa-shield-halved'}"></i></div><div><div class="alog-action">${a.action||'Action'}</div><div class="alog-meta">${fd(a.at)}${a.ref?' • '+a.ref:''}</div></div></div>`).join(''):'<div style="text-align:center;color:var(--txt2);padding:20px;font-size:12px">No activity yet.</div>'; }
@@ -1270,7 +1273,6 @@ window._getDocs = async function(col, orderF='createdAt', dir='desc'){
   try{
     const snap = await getDocs(collection(db,col));
     const data = snap.docs.map(d=>({_id:d.id, ...d.data()}));
-    // Sort locally to prevent missing data due to missing fields
     return data.sort((a,b) => {
       const dateA = new Date(a.submittedAt || a.date || a.createdAt || a.at || a.verifiedAt || 0);
       const dateB = new Date(b.submittedAt || b.date || b.createdAt || b.at || b.verifiedAt || 0);
