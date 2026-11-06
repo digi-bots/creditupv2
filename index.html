@@ -1577,7 +1577,15 @@ function closeGlobalModal(clearLogin=false){
 }
 function acceptPolicy(){
   if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; }
-  nav('screen-login');
+  const u = _getUser();
+  if(u){
+    // User already logged in → সরাসরি application steps dashboard-এ পাঠাও
+    document.getElementById('dashSuccessText').innerText = "Let's get your application started ✅";
+    nav('screen-application-progress');
+  } else {
+    // নতুন / logged-out user → আগে login/register করতে হবে
+    nav('screen-login');
+  }
 }
 
 function checkLoginInput(el){ el.value=el.value.replace(/\D/g,''); document.getElementById('loginNextBtn').classList.toggle('go',el.value.length===10); }
