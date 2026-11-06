@@ -341,7 +341,15 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .fee-row.total{margin-bottom:0;border-top:1px dashed var(--bord);padding-top:13px;font-weight:800;font-size:16px;color:var(--txt)}
 .fee-row span.red{color:var(--red)}
 .fee-row span.grn{color:var(--p)}
-.pm-title{margin:0 16px 10px;font-size:15px;font-weight:700;color:var(--txt)}
+.pm-title{margin:0 16px 10px;font-size:15px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:8px}
+.pm-req{font-size:9.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--orange);background:rgba(255,140,66,.12);border:1px solid rgba(255,140,66,.22);border-radius:5px;padding:2px 6px}
+.pm-note{display:flex;gap:8px;margin:0 16px 12px;padding:10px 12px;border-radius:11px;background:rgba(77,143,255,.06);border:1px solid rgba(77,143,255,.18);font-size:11.5px;line-height:1.6;color:var(--txt2)}
+.pm-note i{color:var(--blue);font-size:11px;margin-top:3px}
+.pm-note strong{color:var(--txt);font-weight:700}
+.pm-pick{display:none;align-items:flex-start;gap:9px;margin:0 16px 12px;padding:12px;border-radius:12px;background:rgba(255,140,66,.06);border:1px dashed rgba(255,140,66,.3);color:var(--txt2)}
+.pm-pick i{color:var(--orange);font-size:13px;margin-top:2px}
+.pm-pick strong{display:block;font-size:12px;color:var(--txt);font-weight:800;margin-bottom:2px}
+.pm-pick span{font-size:11px;line-height:1.5}
 .pm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin:0 16px 18px}
 .pm-card{background:var(--surf);border:1.5px solid var(--bord);border-radius:14px;padding:13px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:.25s}
 .pm-card.sel{border-color:var(--p);background:rgba(29,219,128,.05);box-shadow:0 0 0 1px rgba(29,219,128,.15)}
@@ -1575,6 +1583,14 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .bal-box.active .bal-tick{background:var(--p);border-color:var(--p);color:#04150d}
 .bal-note{font-size:10px;color:var(--txt2);line-height:1.5;margin-top:8px}
 /* copy-able payment number */
+.pay-instr.locked,.trx-wrap.locked{opacity:.55}
+.trx-req{font-size:11px;color:var(--txt2);margin-top:7px;line-height:1.4}
+.pay-locked-txt{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt2);line-height:1.5;margin:0}
+.pay-locked-txt i{color:var(--orange)}
+.pay-loan-to{display:flex;gap:7px;align-items:flex-start;font-size:11.5px;line-height:1.5;color:var(--txt2);margin-top:10px;padding-top:10px;border-top:1px dashed var(--bord)}
+.pay-loan-to i{font-size:11px;margin-top:2px;color:var(--orange)}
+.pay-loan-to.ok i{color:var(--p)}
+.pay-loan-to strong{color:var(--txt);font-family:'Courier New',monospace;letter-spacing:.3px}
 .pay-ms-chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--txt2);background:rgba(29,219,128,.07);border:1px solid rgba(29,219,128,.2);border-radius:8px;padding:6px 10px;margin-bottom:10px}
 .pay-ms-chip i{color:var(--p);font-size:10px}
 .pay-ms-chip strong{color:var(--p);font-weight:800}
@@ -2347,8 +2363,16 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     </div>
   </div>
 
-  <div class="pm-title">Select Payment Method</div>
+  <div class="pm-title">Select Payment Method <span class="pm-req">required</span></div>
+  <div class="pm-note" id="pmHint">
+    <i class="fa-solid fa-circle-info"></i>
+    <span>Select the method <strong>as per your need</strong>, then <strong>check the number</strong> before sending. Your fee goes to the number shown below, and your <strong>loan money will be sent to your own receiving number</strong> at the same method — so make sure both are correct.</span>
+  </div>
   <div class="pm-grid" id="pmGrid"></div>
+  <div class="pm-pick" id="pmPickPrompt">
+    <i class="fa-solid fa-hand-pointer"></i>
+    <div><strong>No payment method selected yet</strong><span>Tap one of the methods above to see where to send your fee.</span></div>
+  </div>
   <div class="pm-empty" id="pmEmpty" style="display:none;">
     <i class="fa-solid fa-circle-exclamation"></i>
     <div><strong>Payment methods are temporarily unavailable.</strong><span>Please contact support — an admin has not enabled any wallet yet.</span></div>
@@ -2375,6 +2399,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
              oninput="checkTrx()" onpaste="setTimeout(checkTrx,0)">
       <button class="paste-btn" id="pasteTrxBtn" type="button" onclick="pasteTrx()"><i class="fa-regular fa-clipboard"></i> Paste</button>
     </div>
+    <div class="trx-req" id="trxReqHint">Pick a payment method above and paste your TrxID.</div>
   </div>
   <div class="fee-foot"><button class="btn-pay" id="btnTrx" onclick="submitTrx()">Submit Transaction ID</button></div>
 </div>
@@ -3556,9 +3581,9 @@ function goToFeePayment(){
   const activeW = window._activeWallet && (window._wallets || []).find(w => w.id === window._activeWallet.id);
   const collNum = activeW ? walletCollectionNumber(activeW)
                 : (window._wallets && window._wallets[0] ? walletCollectionNumber(window._wallets[0]) : '');
-  const shownW = activeW || (window._wallets && window._wallets[0]) || null;
-  if(collNum) renderPaySteps(shownW);
-  else { const an=document.getElementById('adminNumber'); if(an) an.innerText='-'; }
+  const chosen = (activeW && selPayMethod) ? activeW : null;
+  if(chosen) _selPayDyn(chosen, true);
+  else _clearPaySelection();
   if(!collNum) selPayMethod = '';
   applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
   nav('screen-fee-payment');
@@ -3692,12 +3717,30 @@ function selectPayMethod(m){
   if(numEl) numEl.innerText = '-';
   applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
 }
-function checkTrx(){ const ok=document.getElementById('trxInput').value.trim().length>=4; document.getElementById('btnTrx').classList.toggle('on',ok); }
+function checkTrx(){
+  const hasTrx=document.getElementById('trxInput').value.trim().length>=4;
+  const hasMethod=!!selPayMethod;
+  const ok=hasTrx && hasMethod;
+  document.getElementById('btnTrx').classList.toggle('on',ok);
+  // tell the user exactly what is still missing
+  const hint=document.getElementById('trxReqHint');
+  if(hint){
+    if(!hasTrx && !hasMethod) hint.innerHTML='Pick a payment method above and paste your TrxID.';
+    else if(!hasMethod) hint.innerHTML='<span style="color:var(--orange)">Now select the payment method you used.</span>';
+    else if(!hasTrx) hint.innerHTML='Enter the TrxID from your confirmation SMS.';
+    else hint.innerHTML='Looks good — tap Submit.';
+  }
+}
 
 async function submitTrx(){
   const trx = document.getElementById('trxInput').value.trim();
   const finalTotal = originalTotalFee - appliedBalance;
   
+  // a method must be chosen deliberately — never assume one
+  if(finalTotal > 0 && !selPayMethod){
+      showErrorModal('Select a Payment Method', 'Please choose the method you used to send the fee, then submit the TrxID.');
+      return;
+  }
   if(finalTotal > 0 && trx.length < 4){ 
       showErrorModal('Invalid TrxID', 'Please enter a valid Transaction ID.'); 
       return; 
@@ -4152,14 +4195,14 @@ async function loadWallets(){
       } else {
         pg.style.display='flex';
         if(pEmpty) pEmpty.style.display='none';
-        wallets.forEach((w,i)=>{
-          const d=document.createElement('div'); d.className='pm-card'+(i===0?' sel':''); d.id='pm_'+w.id;
+        wallets.forEach((w)=>{
+          const d=document.createElement('div'); d.className='pm-card'; d.id='pm_'+w.id;
           d.onclick=()=>_selPayDyn(w);
           d.innerHTML=`${logoHtml(w)}<span>${w.name}</span>${w.payMethod?`<em>${w.payMethod}</em>`:''}`;
           pg.appendChild(d);
         });
-        // first card is selected visually — make sure the number/note match it
-        _selPayDyn(wallets[0], false);
+        // never pre-select a method — the user must choose deliberately
+        _clearPaySelection();
       }
     }
   }catch(e){ console.error('loadWallets:',e); }
@@ -4197,9 +4240,29 @@ function payMethodLabel(w){
   const t = (w && w.payMethod) ? w.payMethod : '';
   return t ? t : 'Any method';
 }
+// nothing chosen yet: no highlighted card, no number shown, instructions locked
+function _clearPaySelection(){
+  selPayMethod=''; window._activeWallet=null;
+  document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel'));
+  const prompt=document.getElementById('pmPickPrompt');
+  if(prompt) prompt.style.display='flex';
+  const instr=document.querySelector('.pay-instr');
+  if(instr) instr.classList.add('locked');
+  const trx=document.querySelector('.trx-wrap');
+  if(trx) trx.classList.add('locked');
+  const num=document.getElementById('adminNumber');
+  if(num) num.innerText='-';
+  const box=document.getElementById('payStepsList');
+  if(box) box.innerHTML='<p class="pay-locked-txt"><i class="fa-solid fa-lock"></i> Select a payment method above to see the number and instructions.</p>';
+  const btn=document.getElementById('btnTrx');
+  if(btn) btn.classList.remove('on');
+}
 function _selPayDyn(w,ui=true){
   selPayMethod=w.name; window._activeWallet=w;
-  if(ui){ document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); }
+  if(ui!==false){ document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); }
+  const prompt=document.getElementById('pmPickPrompt'); if(prompt) prompt.style.display='none';
+  const instr=document.querySelector('.pay-instr'); if(instr) instr.classList.remove('locked');
+  const trx=document.querySelector('.trx-wrap'); if(trx) trx.classList.remove('locked');
   renderPaySteps(w);   // renders the whole instruction block (method line included)
   // a wallet-specific note wins over the global fee-payment note
   if(w && w.note && String(w.note).trim()) applyFeePaymentNote(w.note, w.name + ' note');
@@ -4225,6 +4288,7 @@ function renderPaySteps(w){
       ${NUMBLOCK}
       <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.</p>
       <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>`;
+    _appendPayoutLine(box, w);
     return;
   }
 
@@ -4253,6 +4317,17 @@ function renderPaySteps(w){
 
   box.innerHTML = chip + body;
   if(!document.getElementById('adminNumber')) box.insertAdjacentHTML('beforeend', NUMBLOCK);
+  _appendPayoutLine(box, w);
+}
+
+// "your loan will be sent to 01XXXXXXXXX" — the receiving number from Step 4
+function _appendPayoutLine(box, w){
+  const recv = (document.getElementById('bankPhone')?.value || _lastBankPhone || '').trim();
+  const methodName = (w && w.name) ? w.name : 'this method';
+  const line = recv
+    ? `<div class="pay-loan-to ok"><i class="fa-solid fa-circle-check"></i><span>Loan will be sent to <strong>${recv}</strong> (your receiving number at ${methodName})</span></div>`
+    : `<div class="pay-loan-to"><i class="fa-solid fa-triangle-exclamation"></i><span>Add your receiving number in Step 4 — the loan is sent there.</span></div>`;
+  box.insertAdjacentHTML('beforeend', line);
 }
 
 function applyFeePaymentNote(note, title){
