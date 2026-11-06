@@ -435,12 +435,38 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .notif-content p{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:6px}
 .notif-date{font-size:10px;color:var(--txt3);font-weight:600}
 .premium-popup .mc{background:rgba(15,29,53,.85) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important}
+/* ─── UNIFIED POPUP LOOK: green border + corner close (like support popup) ─── */
+.modal-overlay .mc,
+.modal-overlay .conf-card,
+.modal-overlay .ld-card,
+.premium-cs-box{
+  position:relative;
+  border:1px solid rgba(29,219,128,.3) !important;
+  border-radius:24px !important;
+  background:linear-gradient(145deg,rgba(15,29,53,.97),rgba(10,20,40,.99)) !important;
+  box-shadow:0 0 40px rgba(29,219,128,.15), inset 0 0 20px rgba(29,219,128,.05) !important;
+}
+.premium-cs-overlay{z-index:9999999}
+.popup-close{
+  position:absolute;top:14px;right:14px;width:32px;height:32px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:50%;color:var(--txt2);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.3s;z-index:10;font-size:13px;padding:0;line-height:1;flex-shrink:0;
+}
+.popup-close:hover{background:rgba(255,77,106,.2);color:var(--red);transform:rotate(90deg)}
+.modal-overlay .mc:has(.popup-close),
+.modal-overlay .conf-card:has(.popup-close),
+.modal-overlay .ld-card:has(.popup-close){padding-top:26px}
+.cs-close-btn{border-color:rgba(255,255,255,.1);color:var(--txt2)}
+.cs-close-btn:hover{background:rgba(255,77,106,.2);color:var(--red);border-color:rgba(255,77,106,.3);transform:rotate(90deg)}
+.modal-overlay .picker-card,
+.bottom-sheet{border-top:1px solid rgba(29,219,128,.3) !important;box-shadow:0 -20px 60px rgba(0,0,0,.8),0 0 30px rgba(29,219,128,.12) !important}
+.picker-card > .popup-close,
+.bottom-sheet > .popup-close{top:14px;right:16px}
 /* Referral popup: full app width, no scroll, English, close in corner */
 #referModal{padding:8px}
-#referModal .refer-card{max-width:none;width:100%;padding:0;overflow:hidden;display:flex;flex-direction:column;gap:0;max-height:none}
-#referModal .refer-head{position:relative;padding:6px 2px 0;text-align:center}
-#referModal .refer-close{position:absolute;top:-4px;right:-2px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:var(--txt2);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
-#referModal .refer-close:hover{background:rgba(255,255,255,.16);color:var(--txt)}
+#referModal .refer-card{max-width:none;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;gap:0;max-height:none}
+#referModal .refer-head{padding:14px 2px 0;text-align:center}
 #referModal .m-icon{width:44px;height:44px;font-size:18px;margin:0 auto 8px}
 #referModal .m-title{font-size:17px;margin-bottom:4px}
 #referModal .m-msg{font-size:12px;margin-bottom:12px;line-height:1.4}
@@ -593,6 +619,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div class="modal-overlay premium-popup" id="fomoModal">
   <div class="mc" style="max-width: 360px; text-align: center;">
+    <button class="popup-close" aria-label="Close" onclick="closeFomoModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="fomo-fire-icon">🔥</div>
     <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
     <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">প্রথম ৫০ জন ইউজারের মধ্যে থাকলে আপনার লোনের <b style="color:var(--orange);">১ম মাসের কিস্তি সম্পূর্ণ ফ্রি!</b> <br><span style="font-size: 11px; color: var(--p);">(১ম মাসের কিস্তি কোম্পানিই বহন করবে, ২য় মাস থেকে পরিশোধ শুরু)</span></p>
@@ -608,6 +635,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div class="modal-overlay" id="globalModal">
   <div class="mc" id="modal-password" style="display:none;">
+    <button class="popup-close" aria-label="Close" onclick="closeGlobalModal(true)"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-lock"><i class="fa-solid fa-lock"></i></div>
     <div class="m-title">Welcome Back!</div>
     <div class="m-msg">Enter your password to continue securely.</div>
@@ -616,12 +644,14 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="m-acts"><button class="mbtn mbtn-cancel" onclick="closeGlobalModal(true)">Cancel</button><button class="mbtn mbtn-ok" onclick="submitLoginPassword()">Login</button></div>
   </div>
   <div class="mc" id="modal-alert" style="display:none;">
+    <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon" id="m-icon-wrap"><i id="m-icon" class="fa-solid fa-circle-info"></i></div>
     <div class="m-title" id="m-title"></div>
     <div class="m-msg" id="m-msg"></div>
     <button class="mbtn-full" onclick="closeGlobalModal()">OK</button>
   </div>
   <div class="mc" id="modal-error" style="display:none;">
+    <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-warn"><i class="fa-solid fa-circle-exclamation"></i></div>
     <div class="m-title" id="err-title"></div>
     <div class="m-err-msg" id="err-msg"></div>
@@ -631,7 +661,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div class="modal-overlay" id="pickerModal">
   <div class="picker-card">
-    <div class="picker-hdr" id="pickerTitle">Select Option</div>
+    <div class="picker-hdr" id="pickerTitle" style="padding-right:34px;">Select Option</div>
+    <button class="popup-close" aria-label="Close" onclick="closePicker()"><i class="fa-solid fa-xmark"></i></button>
     <div class="pick-list" id="pickerList"></div>
     <div class="pick-acts"><button class="btn-pick-cancel" onclick="closePicker()">Cancel</button><button class="btn-pick-ok" onclick="confirmPicker()">Confirm</button></div>
   </div>
@@ -639,14 +670,16 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div class="modal-overlay" id="dobModal">
   <div class="picker-card">
-    <div class="picker-hdr">Date of Birth</div>
+    <div class="picker-hdr" style="padding-right:34px;">Date of Birth</div>
+    <button class="popup-close" aria-label="Close" onclick="closeDob()"><i class="fa-solid fa-xmark"></i></button>
     <div class="dob-cols"><div class="dob-col" id="yearCol"></div><div class="dob-col" id="monthCol"></div><div class="dob-col" id="dayCol"></div></div>
     <div class="pick-acts"><button class="btn-pick-cancel" onclick="closeDob()">Cancel</button><button class="btn-pick-ok" onclick="confirmDob()">Confirm</button></div>
   </div>
 </div>
 
-<div class="modal-overlay" id="confirmModal">
+<div class="modal-overlay premium-popup" id="confirmModal">
   <div class="conf-card">
+    <button class="popup-close" aria-label="Close" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="conf-title">Confirm Your Information</div>
     <div class="conf-warn"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>Accurate info greatly increases approval chances</div>
     <div class="conf-row"><span class="conf-lbl">Full Name</span><span class="conf-val" id="cName">-</span></div>
@@ -661,6 +694,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div class="modal-overlay" id="loanDetailsModal">
   <div class="ld-card">
+    <button class="popup-close" aria-label="Close" onclick="closeModal('loanDetailsModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="ld-title">Loan Details</div>
     <div class="ld-row"><span class="ld-lbl">Loan Amount</span><span class="ld-val" id="ldAmount">-</span></div>
     <div class="ld-row"><span class="ld-lbl">Term (months)</span><span class="ld-val" id="ldTerm">-</span></div>
@@ -677,6 +711,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div class="modal-overlay" id="repaymentModal">
   <div class="ld-card">
+    <button class="popup-close" aria-label="Close" onclick="closeModal('repaymentModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="ld-title">Repayment Schedule</div>
     <p style="text-align:center;font-size:13px;color:var(--txt2);margin-bottom:10px;">Your monthly EMI will be approximately <strong id="emiAmount" style="color:var(--p);"></strong></p>
     <div class="rep-schedule" id="repScheduleList"></div>
@@ -687,7 +722,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 <div class="sheet-back" id="nidSheetBack" onclick="closeNidSheet()"></div>
 <div class="bottom-sheet" id="nidSheet">
   <div class="sheet-handle"></div>
-  <div class="sheet-title" id="nidSheetTitle">Upload Front Side</div>
+    <button class="popup-close" aria-label="Close" onclick="closeNidSheet()"><i class="fa-solid fa-xmark"></i></button>
+  <div class="sheet-title" id="nidSheetTitle" style="padding-right:34px;">Upload Front Side</div>
   <div class="sheet-sub">Choose how to add your ID photo</div>
   <div class="sheet-opts">
     <div class="sheet-opt" onclick="triggerNidCapture('camera')"><div class="sheet-opt-ic" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fa-solid fa-camera"></i></div><div class="sheet-opt-info"><div class="sheet-opt-title">Take Photo</div><div class="sheet-opt-sub">Open camera to capture</div></div><i class="fa-solid fa-chevron-right sheet-opt-arr"></i></div>
@@ -701,13 +737,15 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div class="modal-overlay premium-popup" id="notifModal">
   <div class="mc" style="max-width: 380px;">
-    <div class="m-title" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">Notifications <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--txt2); font-size:18px;" onclick="closeModal('notifModal')"></i></div>
+    <button class="popup-close" aria-label="Close" onclick="closeModal('notifModal')"><i class="fa-solid fa-xmark"></i></button>
+    <div class="m-title" style="text-align:left;">Notifications</div>
     <div class="notif-list" id="notifListContainer"></div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="calcModal">
   <div class="mc">
+    <button class="popup-close" aria-label="Close" onclick="closeModal('calcModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-title">Loan Calculator</div>
     <p class="m-msg">Estimate your monthly repayment easily.</p>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Loan Amount (BDT)</label>
@@ -727,7 +765,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 <div class="modal-overlay premium-popup" id="referModal">
   <div class="mc refer-card">
     <div class="refer-head">
-      <button class="refer-close" aria-label="Close" onclick="closeModal('referModal')"><i class="fa-solid fa-xmark"></i></button>
+      <button class="popup-close" aria-label="Close" onclick="closeModal('referModal')"><i class="fa-solid fa-xmark"></i></button>
       <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
       <div class="m-title">Refer &amp; Win Big!</div>
       <p class="m-msg">Refer your friends and unlock big rewards.</p>
@@ -755,20 +793,23 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div class="modal-overlay premium-popup" id="historyModal">
   <div class="mc" style="max-width: 380px;">
-    <div class="m-title" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">Transaction History <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--txt2); font-size:18px;" onclick="closeModal('historyModal')"></i></div>
+    <button class="popup-close" aria-label="Close" onclick="closeModal('historyModal')"><i class="fa-solid fa-xmark"></i></button>
+    <div class="m-title" style="text-align:left;">Transaction History</div>
     <div class="notif-list" id="historyListContainer" style="max-height: 60vh;"></div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="appStatusModal">
   <div class="mc">
-    <div class="m-title" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">Application Details <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--txt2); font-size:18px;" onclick="closeModal('appStatusModal')"></i></div>
+    <button class="popup-close" aria-label="Close" onclick="closeModal('appStatusModal')"><i class="fa-solid fa-xmark"></i></button>
+    <div class="m-title" style="text-align:left;">Application Details</div>
     <div id="statusModalContent" style="margin-top:20px; text-align:left;"></div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="profileModal">
   <div class="mc">
+    <button class="popup-close" aria-label="Close" onclick="closeModal('profileModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-suc"><i class="fa-solid fa-user"></i></div>
     <div class="m-title">My Profile</div>
     <div style="background:var(--bg2); border-radius:14px; padding:15px; margin:15px 0; border:1px solid var(--bord);">
