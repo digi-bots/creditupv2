@@ -520,6 +520,25 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .quick-reply-btn { background: rgba(29,219,128,0.1); border: 1px solid rgba(29,219,128,0.3); color: var(--p); padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: 0.2s; }
 .quick-reply-btn:hover { background: rgba(29,219,128,0.2); }
+
+/* === Support Chat Styles === */
+.cs-unread-badge{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;background:var(--red);border-radius:10px;border:2px solid #0a5c2f;color:#fff;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px;z-index:10}
+.cs-unread-badge.on{display:flex}
+.cs-menu-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:18px;text-align:center;display:none}
+.cs-new-msg-banner{display:none;background:rgba(255,77,106,.15);border:1px solid rgba(255,77,106,.35);border-radius:12px;padding:10px 14px;margin:0 20px 12px;align-items:center;gap:10px;cursor:pointer}
+.cs-new-msg-banner.on{display:flex}
+.support-msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;margin-bottom:10px;animation:msgIn .3s ease;word-wrap:break-word}
+.support-msg.user{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;align-self:flex-end;margin-left:auto;border-bottom-right-radius:4px;box-shadow:0 4px 10px rgba(29,219,128,.2)}
+.support-msg.admin{background:rgba(77,143,255,.13);color:var(--txt);align-self:flex-start;border-bottom-left-radius:4px;border:1px solid rgba(77,143,255,.25)}
+.support-msg-meta{font-size:9px;opacity:.7;margin-top:3px}
+
+/* END CONVERSATION STYLES */
+.cs-end-btn{background:rgba(255,77,106,.15);border:1px solid rgba(255,77,106,.3);color:var(--red);padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;margin-left:auto;display:flex;align-items:center;gap:5px;transition:.2s}
+.cs-end-btn:hover{background:rgba(255,77,106,.3)}
+.cs-closed-banner{background:rgba(123,144,180,.12);border:1px dashed var(--txt2);color:var(--txt2);border-radius:12px;padding:14px;text-align:center;font-size:12px;margin:10px 15px;display:none;flex-direction:column;gap:8px;align-items:center}
+.cs-closed-banner.on{display:flex}
+.cs-closed-banner strong{color:var(--txt);font-size:13px}
+.cs-new-chat-btn{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:var(--glow)}
 </style>
 </head>
 <body>
@@ -729,6 +748,10 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     
     <!-- MAIN MENU -->
     <div id="csMainMenu">
+      <div class="cs-new-msg-banner" id="csNewMsgBanner" onclick="openSupportChat()">
+        <i class="fa-solid fa-bell shake-icon" style="color:var(--red);"></i>
+        <span style="font-size:12px; color:var(--txt); font-weight:600;">Support reply পেয়েছেন! <strong id="csNewMsgCount" style="color:var(--red);">0</strong> নতুন message(s) — দেখতে ক্লিক করুন</span>
+      </div>
       <div style="text-align: center; padding: 30px 20px 20px;">
         <div style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(29,219,128,0.2), rgba(29,219,128,0.05)); border: 1px solid var(--p); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px;">
           <i class="fa-solid fa-headset" style="font-size: 30px; color: var(--p);"></i>
@@ -745,6 +768,16 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
             <p style="font-size:12px; color:var(--p);">Instant answers about loans & fees</p>
           </div>
           <i class="fa-solid fa-chevron-right" style="color:var(--p);"></i>
+        </div>
+
+        <div class="premium-cs-item" id="csAdminChatBtn" onclick="openSupportChat()" style="border-color:rgba(77,143,255,.35); background:rgba(77,143,255,.04);">
+          <div class="premium-cs-icon" style="background:rgba(77,143,255,.15); color:var(--blue);"><i class="fa-solid fa-user-tie"></i></div>
+          <div style="flex:1;">
+            <h4 style="font-size:15px; font-weight:700; color:var(--txt);">Admin Support Chat</h4>
+            <p style="font-size:12px; color:var(--txt2);">Chat directly with our support team</p>
+          </div>
+          <span class="cs-menu-badge" id="csMenuBadge">0</span>
+          <i class="fa-solid fa-chevron-right" style="color:var(--txt2); margin-left:6px;"></i>
         </div>
 
         <div class="premium-cs-item" id="csWhatsAppBtn" onclick="window.open('https://wa.me/8801700000000','_blank')">
@@ -793,6 +826,27 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
         <button class="chat-send-btn" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
     </div>
+
+    <!-- ADMIN SUPPORT CHAT INTERFACE -->
+    <div id="csSupportChatInterface" style="display:none; flex-direction:column; height:500px; max-height:80vh;">
+      <div class="chat-header">
+        <button onclick="backToCsMenu()" style="background:none; border:none; color:#fff; margin-right:5px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
+        <i class="fa-solid fa-user-tie"></i>
+        <h4>Admin Support</h4>
+        <button class="cs-end-btn" id="csEndChatBtn" onclick="endSupportConversation()"><i class="fa-solid fa-circle-stop"></i> End</button>
+      </div>
+      <div class="chat-messages" id="supportChatMessages"></div>
+      <div class="cs-closed-banner" id="csClosedBanner">
+        <i class="fa-solid fa-circle-check" style="font-size:24px; color:var(--p);"></i>
+        <strong>Conversation Ended</strong>
+        <span id="csClosedMsg">This chat has been closed.</span>
+        <button class="cs-new-chat-btn" onclick="startNewSupportChat()"><i class="fa-solid fa-plus"></i> Start New Chat</button>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="supportChatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendSupportMsg()">
+        <button class="chat-send-btn" onclick="sendSupportMsg()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -825,7 +879,10 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       </div>
       <div style="display:flex; gap:10px;">
         <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
-        <div class="notif-btn" onclick="toggleCS()"><i class="fa-solid fa-headset"></i></div>
+        <div class="notif-btn" onclick="toggleCS()" style="position:relative;">
+          <i class="fa-solid fa-headset"></i>
+          <div class="cs-unread-badge" data-support-badge>0</div>
+        </div>
       </div>
     </div>
     <div class="h-logo">Credit <span>Up</span></div>
@@ -1354,9 +1411,10 @@ function toggleBalanceVisibility() {
 
 function nav(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  const t=document.getElementById(id);
-  if(t){
-    t.classList.add('active');
+  const t=document.getElementById('screen-'+id.replace('screen-',''));
+  const target = document.getElementById(id) || t;
+  if(target){
+    target.classList.add('active');
     document.getElementById('app').scrollTo({top: 0, behavior: 'instant'});
     if(id === 'screen-home'){
       const u = _getUser();
@@ -1383,6 +1441,8 @@ function toggleCS(e) {
 function backToCsMenu() {
   document.getElementById('csMainMenu').style.display = 'block';
   document.getElementById('csChatInterface').style.display = 'none';
+  const si = document.getElementById('csSupportChatInterface');
+  if (si) si.style.display = 'none';
 }
 
 function startAIChat() {
@@ -1454,14 +1514,13 @@ async function sendChatMessage() {
 async function escalateToAdmin(userMessage) {
   const user = _getUser();
   if(!user || !user.phone) return;
-  if(typeof window._saveSupportTicket !== 'function') {
-    console.log('Support ticket function not ready yet');
-    return;
+  // Save legacy ticket
+  if(typeof window._saveSupportTicket === 'function') {
+    try { await window._saveSupportTicket(user.phone, userMessage); } catch(e) { console.error(e); }
   }
-  try {
-    await window._saveSupportTicket(user.phone, userMessage);
-  } catch(e) {
-    console.error("Failed to save support ticket:", e);
+  // Save into support_chats (two-way chat)
+  if(typeof window._supportSendMessage === 'function') {
+    try { await window._supportSendMessage(user.phone, userMessage); } catch(e) { console.error(e); }
   }
 }
 
@@ -1921,6 +1980,11 @@ function updateUIForUser() {
     if(bonusBanner) bonusBanner.style.display = 'none';
     const greet = document.getElementById('userGreeting');
     if(greet) greet.innerText = `Hello, ${u.phone.slice(-4)} 👋`;
+    // Start support chat real-time listener
+    if (typeof window._startSupportListener === 'function' && !window._supportListenerStarted) {
+      window._startSupportListener(u.phone);
+      window._supportListenerStarted = true;
+    }
   } else {
     if(balanceContainer) balanceContainer.style.display = 'none';
     if(notifBtnContainer) notifBtnContainer.style.display = 'none';
@@ -1931,6 +1995,10 @@ function updateUIForUser() {
     if(greet) greet.innerText = 'Welcome to Credit Up';
     const statusCard = document.getElementById('userStatusCard');
     if(statusCard) statusCard.style.display = 'none';
+    // Stop support listener on logout
+    if (window._supportUnsubscribe) { window._supportUnsubscribe(); window._supportUnsubscribe = null; }
+    window._supportListenerStarted = false;
+    if (typeof updateSupportBadges === 'function') updateSupportBadges(0);
   }
 }
 
@@ -2075,11 +2143,162 @@ function openStep(n){
   const map = { 1:'screen-basic-info', 2:'screen-personal-info', 3:'screen-emergency-contact', 4:'screen-bank-info', 5:'screen-nid-upload' };
   if(map[n]) nav(map[n]);
 }
+
+// ═══════════════════════════════════════════════════════
+//  ADMIN SUPPORT CHAT (User Side)
+// ═══════════════════════════════════════════════════════
+window._supportChatUnread = 0;
+
+function updateSupportBadges(count) {
+  window._supportChatUnread = count;
+  document.querySelectorAll('[data-support-badge]').forEach(b => {
+    if (count > 0) { b.textContent = count > 9 ? '9+' : count; b.classList.add('on'); }
+    else { b.classList.remove('on'); }
+  });
+  const menuBadge = document.getElementById('csMenuBadge');
+  if (menuBadge) {
+    if (count > 0) { menuBadge.textContent = count > 9 ? '9+' : count; menuBadge.style.display = 'inline-block'; }
+    else { menuBadge.style.display = 'none'; }
+  }
+  const banner = document.getElementById('csNewMsgBanner');
+  const bannerCount = document.getElementById('csNewMsgCount');
+  if (banner && bannerCount) {
+    if (count > 0) { bannerCount.textContent = count; banner.classList.add('on'); }
+    else { banner.classList.remove('on'); }
+  }
+}
+
+function escapeSupportHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
+}
+
+async function openSupportChat() {
+  const u = _getUser();
+  if (!u || !u.phone) { showAlert('Login Required', 'Please login to chat with support.', 'info'); return; }
+  document.getElementById('csMainMenu').style.display = 'none';
+  document.getElementById('csChatInterface').style.display = 'none';
+  const si = document.getElementById('csSupportChatInterface');
+  if (si) si.style.display = 'flex';
+  await loadSupportChatMessages();
+  await markSupportReadByUser();
+}
+
+async function loadSupportChatMessages() {
+  const u = _getUser();
+  if (!u || !u.phone || typeof window._supportGetUserChat !== 'function') return;
+  const container = document.getElementById('supportChatMessages');
+  if (!container) return;
+  const closedBanner = document.getElementById('csClosedBanner');
+  const endBtn = document.getElementById('csEndChatBtn');
+  const inputArea = document.querySelector('#csSupportChatInterface .chat-input-area');
+
+  try {
+    const chat = await window._supportGetUserChat(u.phone);
+    
+    // Handle closed state
+    if (chat && chat.status === 'closed') {
+      if (closedBanner) {
+        const byAdmin = chat.closedBy === 'admin';
+        document.getElementById('csClosedMsg').innerText = byAdmin 
+          ? 'Support has closed this conversation.' 
+          : 'You ended this conversation.';
+        closedBanner.classList.add('on');
+      }
+      if (endBtn) endBtn.style.display = 'none';
+      if (inputArea) inputArea.style.display = 'none';
+    } else {
+      if (closedBanner) closedBanner.classList.remove('on');
+      if (endBtn) endBtn.style.display = 'flex';
+      if (inputArea) inputArea.style.display = 'flex';
+    }
+
+    if (!chat || !chat.messages || !chat.messages.length) {
+      container.innerHTML = '<div style="text-align:center; color:var(--txt2); font-size:12px; padding:20px; line-height:1.6;">No messages yet.<br>Type below to start a conversation with our support team.</div>';
+      return;
+    }
+    container.innerHTML = chat.messages.map(m => {
+      const time = new Date(m.at).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+      const label = m.sender === 'admin' ? '👤 Support' : 'You';
+      if (m.sender === 'system') {
+        return `<div style="text-align:center; font-size:11px; color:var(--txt2); background:rgba(255,255,255,.03); padding:8px 10px; border-radius:8px; margin:6px auto; max-width:90%; font-style:italic;"><i class="fa-solid fa-circle-info"></i> ${escapeSupportHtml(m.text)}</div>`;
+      }
+      return `<div class="support-msg ${m.sender}">${escapeSupportHtml(m.text)}<div class="support-msg-meta">${label} • ${time}</div></div>`;
+    }).join('');
+    container.scrollTop = container.scrollHeight;
+  } catch(e) {
+    console.error('Load support chat:', e);
+    container.innerHTML = '<div style="text-align:center; color:var(--red); font-size:12px; padding:20px;">Failed to load messages.</div>';
+  }
+}
+
+async function sendSupportMsg() {
+  const u = _getUser();
+  if (!u || !u.phone) return;
+  const input = document.getElementById('supportChatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  try {
+    if (typeof window._supportSendMessage === 'function') {
+      await window._supportSendMessage(u.phone, text);
+    }
+    await loadSupportChatMessages();
+  } catch(e) {
+    console.error('Send support msg:', e);
+    showAlert('Error', e.message || 'Failed to send message. Please try again.', 'error');
+  }
+}
+
+async function markSupportReadByUser() {
+  const u = _getUser();
+  if (!u || !u.phone) return;
+  try {
+    if (typeof window._supportMarkRead === 'function') await window._supportMarkRead(u.phone);
+    updateSupportBadges(0);
+  } catch(e) { console.warn(e); }
+}
+
+async function endSupportConversation() {
+  const u = _getUser();
+  if (!u || !u.phone) return;
+  
+  // Confirm dialog
+  if (!confirm('Are you sure you want to end this conversation?\n\nYou will need to start a new chat to message support again.')) return;
+  
+  try {
+    if (typeof window._supportEndConversation === 'function') {
+      await window._supportEndConversation(u.phone, 'user');
+    }
+    await loadSupportChatMessages();
+    showAlert('Conversation Ended', 'Your support chat has been closed. Thanks for reaching out!', 'success');
+  } catch(e) {
+    console.error('End conversation:', e);
+    showAlert('Error', 'Failed to end conversation. Please try again.', 'error');
+  }
+}
+
+async function startNewSupportChat() {
+  const u = _getUser();
+  if (!u || !u.phone) return;
+  
+  try {
+    if (typeof window._supportStartNewChat === 'function') {
+      await window._supportStartNewChat(u.phone);
+    }
+    await loadSupportChatMessages();
+    document.getElementById('supportChatInput').focus();
+  } catch(e) {
+    console.error('Start new chat:', e);
+    showAlert('Error', 'Failed to start new conversation.', 'error');
+  }
+}
 </script>
 
 <script type="module">
 import{initializeApp} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,doc,orderBy} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,doc,orderBy,onSnapshot} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
 const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
 const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
@@ -2249,6 +2468,150 @@ window._saveSupportTicket = async function(uid, userMessage) {
     type: 'info', 
     createdAt: new Date().toISOString()
   });
+};
+
+// ═══ TWO-WAY SUPPORT CHAT (User side) ═══
+window._supportGetUserChat = async function(uid) {
+  try {
+    const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+    const snap = await getDocs(q);
+    if (snap.empty) return null;
+    return { id: snap.docs[0].id, ...snap.docs[0].data() };
+  } catch(e) { console.warn('Get support chat:', e); return null; }
+};
+
+window._supportSendMessage = async function(uid, text) {
+  if(!db) throw new Error('Database unavailable.');
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+  
+  // ✅ Prevent sending if closed
+  if (!snap.empty) {
+    const existing = snap.docs[0].data();
+    if (existing.status === 'closed') {
+      throw new Error('This conversation is closed. Please start a new chat.');
+    }
+  }
+  
+  const newMsg = { sender: 'user', text, at: new Date().toISOString(), readByUser: true, readByAdmin: false };
+  if (snap.empty) {
+    await addDoc(collection(db, 'support_chats'), {
+      uid, userName: uid, messages: [newMsg],
+      lastMessage: text, lastSender: 'user',
+      unreadByUser: 0, unreadByAdmin: 1,
+      status: 'open',
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+    });
+  } else {
+    const docRef = snap.docs[0].ref;
+    const existing = snap.docs[0].data();
+    const messages = [...(existing.messages || []), newMsg];
+    await updateDoc(docRef, {
+      messages, lastMessage: text, lastSender: 'user',
+      unreadByAdmin: (Number(existing.unreadByAdmin) || 0) + 1,
+      status: 'open', updatedAt: new Date().toISOString()
+    });
+  }
+};
+
+window._supportMarkRead = async function(uid) {
+  if(!db) return;
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+  if (snap.empty) return;
+  const docRef = snap.docs[0].ref;
+  const data = snap.docs[0].data();
+  if (!data.unreadByUser || Number(data.unreadByUser) === 0) return;
+  const messages = (data.messages || []).map(m => m.sender === 'admin' ? {...m, readByUser: true} : m);
+  await updateDoc(docRef, { messages, unreadByUser: 0 });
+};
+
+// ═══ END CONVERSATION (User or Admin) ═══
+window._supportEndConversation = async function(uid, endedBy) {
+  if(!db) throw new Error('Database unavailable.');
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+  if (snap.empty) return;
+  const docRef = snap.docs[0].ref;
+  const data = snap.docs[0].data();
+  
+  // Add system message
+  const systemMsg = { 
+    sender: 'system', 
+    text: endedBy === 'admin' 
+      ? '🛑 Support has ended this conversation.' 
+      : '✅ You ended this conversation.', 
+    at: new Date().toISOString() 
+  };
+  const messages = [...(data.messages || []), systemMsg];
+  
+  await updateDoc(docRef, {
+    messages,
+    status: 'closed',
+    closedBy: endedBy,
+    closedAt: new Date().toISOString(),
+    lastMessage: systemMsg.text,
+    lastSender: 'system',
+    updatedAt: new Date().toISOString()
+  });
+};
+
+// ═══ START NEW CONVERSATION (reopens or creates fresh) ═══
+window._supportStartNewChat = async function(uid) {
+  if(!db) throw new Error('Database unavailable.');
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+  
+  const welcomeMsg = { 
+    sender: 'system', 
+    text: '🆕 New conversation started. Our team will reply soon.', 
+    at: new Date().toISOString() 
+  };
+  
+  if (snap.empty) {
+    await addDoc(collection(db, 'support_chats'), {
+      uid, userName: uid, 
+      messages: [welcomeMsg],
+      lastMessage: welcomeMsg.text, lastSender: 'system',
+      unreadByUser: 0, unreadByAdmin: 0,
+      status: 'open',
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+    });
+  } else {
+    const docRef = snap.docs[0].ref;
+    const data = snap.docs[0].data();
+    const messages = [...(data.messages || []), welcomeMsg];
+    await updateDoc(docRef, {
+      messages, 
+      lastMessage: welcomeMsg.text, lastSender: 'system',
+      unreadByUser: 0, unreadByAdmin: 0,
+      status: 'open', 
+      closedBy: null, closedAt: null,
+      updatedAt: new Date().toISOString()
+    });
+  }
+};
+
+window._supportUnsubscribe = null;
+window._supportListenerStarted = false;
+
+window._startSupportListener = function(uid) {
+  if (!db) return;
+  if (window._supportUnsubscribe) window._supportUnsubscribe();
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  window._supportUnsubscribe = onSnapshot(q, (snap) => {
+    let unread = 0;
+    snap.forEach(d => unread += (Number(d.data().unreadByUser) || 0));
+    if (typeof window.updateSupportBadges === 'function') window.updateSupportBadges(unread);
+    const chatView = document.getElementById('csSupportChatInterface');
+    if (chatView && chatView.style.display === 'flex') {
+      if (typeof window.loadSupportChatMessages === 'function') {
+        window.loadSupportChatMessages().then(() => {
+          if (typeof window.markSupportReadByUser === 'function') window.markSupportReadByUser();
+        });
+      }
+    }
+  }, (err) => { console.warn('Support listener error:', err); });
 };
 
 window.checkPhoneAndProceed=async function(){
@@ -2465,9 +2828,9 @@ window.loadReferralStats = async function(phone) {
       tierName = 'Starter'; pct = (activeCount / 20) * 100;
       txt = `১ম কিস্তি মাফ পেতে আরও ${20 - activeCount} জন রেফার করুন!`;
     }
-    document.getElementById('currentTierName').innerText = tierName;
-    document.getElementById('tierProgressBar').style.width = pct + '%';
-    document.getElementById('tierProgressText').innerText = txt;
+    const ctEl = document.getElementById('currentTierName'); if(ctEl) ctEl.innerText = tierName;
+    const pbEl = document.getElementById('tierProgressBar'); if(pbEl) pbEl.style.width = pct + '%';
+    const ptEl = document.getElementById('tierProgressText'); if(ptEl) ptEl.innerText = txt;
     const updateTierRow = (rowId, lockId, unlocked) => {
       const row  = document.getElementById(rowId);
       const lock = document.getElementById(lockId);
