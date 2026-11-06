@@ -435,6 +435,44 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .notif-content p{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:6px}
 .notif-date{font-size:10px;color:var(--txt3);font-weight:600}
 .premium-popup .mc{background:rgba(15,29,53,.85) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important}
+/* ─── PREFILL / SAVED-DATA HINTS ─── */
+.prefill-banner{
+  display:flex;align-items:flex-start;gap:10px;
+  margin:12px 14px 0;padding:11px 12px;
+  background:linear-gradient(135deg,rgba(29,219,128,.12),rgba(29,219,128,.04));
+  border:1px solid rgba(29,219,128,.28);border-radius:14px;
+}
+.prefill-banner .pf-ic{
+  width:28px;height:28px;flex:0 0 28px;border-radius:9px;
+  background:rgba(29,219,128,.16);color:var(--p);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.prefill-banner .pf-txt{flex:1;min-width:0}
+.prefill-banner .pf-title{font-size:12.5px;font-weight:800;color:var(--p);margin-bottom:2px}
+.prefill-banner .pf-desc{font-size:11px;color:var(--txt2);line-height:1.45}
+.prefill-banner .pf-nid{display:flex;gap:6px;align-items:flex-start;font-size:10.5px;color:var(--txt2);margin-top:6px;line-height:1.4}
+.prefill-banner .pf-nid i{color:var(--p);font-size:10.5px;margin-top:2px}
+.prefill-banner .pf-clear{
+  flex:0 0 auto;font-size:10.5px;font-weight:800;color:var(--txt2);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:9px;padding:6px 8px;cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;transition:.2s;
+}
+.prefill-banner .pf-clear:hover{color:var(--red);border-color:rgba(255,77,106,.35);background:rgba(255,77,106,.12)}
+/* fields that came from the previous application */
+input.pf-filled,.sel-disp.pf-filled,.sel-box.pf-filled{
+  border-color:rgba(29,219,128,.4) !important;
+  background:rgba(29,219,128,.055) !important;
+  box-shadow:inset 0 0 0 1px rgba(29,219,128,.12);
+  border-radius:8px;
+}
+input.pf-filled{padding-left:8px;padding-right:8px}
+.nid-saved-note{
+  display:flex;align-items:center;gap:7px;
+  font-size:11px;color:var(--p);line-height:1.45;
+  background:rgba(29,219,128,.09);border:1px solid rgba(29,219,128,.22);
+  border-radius:11px;padding:8px 10px;margin-bottom:14px;
+}
 /* ─── PREMIUM POPUP SYSTEM ─────────────────────────────────────────────
    one shared shell: glass gradient card, green glow border,
    sticky top-right close button that stays visible while scrolling.
@@ -1192,6 +1230,15 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div id="screen-policy" class="screen">
   <div class="pol-hdr">Privacy Policy</div>
+  <div class="prefill-banner" id="prefillBanner" style="display:none;">
+    <div class="pf-ic"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+    <div class="pf-txt">
+      <div class="pf-title">Welcome back!</div>
+      <div class="pf-desc" id="prefillDesc"></div>
+      <div class="pf-nid" id="prefillNid" style="display:none;"><i class="fa-solid fa-id-card"></i> Your NID photos are saved — they will be reused unless you upload new ones.</div>
+    </div>
+    <button class="pf-clear" onclick="clearApplicationForm()"><i class="fa-solid fa-eraser"></i> Clear all</button>
+  </div>
   <div class="pol-body">
     <div class="pol-updated" id="policyDateText">...</div>
     <p>This Privacy Agreement explains how we collect, use, store, share and protect your personal information when you use Credit Up services.</p>
@@ -1328,6 +1375,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="step-track"><div class="step-fill s5"></div></div>
   <h3 class="form-sec-title">Identity Verification</h3>
   <div class="nid-desc"><i class="fa-solid fa-triangle-exclamation"></i>Please upload a clear, complete photo of your National ID Card. Blurry or cropped images will delay approval.</div>
+  <div class="nid-saved-note" id="nidSavedNote" style="display:none;"><i class="fa-solid fa-circle-check"></i>Your previous NID photos are already on file. Tap a photo to replace it.</div>
   <div class="upload-wrap">
     <div class="upload-box" id="boxNidFront" onclick="openNidSheet('front')">
       <div class="upload-thumb" id="thumbFront"></div>
@@ -1484,6 +1532,10 @@ let selRel1='', selRel2='';
 let selWallet='Bkash';
 let nidFrontOk=false, nidBackOk=false;
 let nidFrontUrl='', nidBackUrl='';
+// last submitted application of this user (Firestore) — used to prefill the form
+let _savedApp=null;
+// values restored from the previous application (shown with a green "filled" mark)
+let _prefilled={};
 let selPayMethod='Bkash';
 let totalFee=0;
 let originalTotalFee = 0;
@@ -1551,7 +1603,7 @@ function claimFomoOffer() {
   }
 }
 
-function saveFormState(){
+function saveFormState(isSubmitted){
   const state = {
     infoName: document.getElementById('infoName')?.value || '',
     infoEmail: document.getElementById('infoEmail')?.value || '',
@@ -1565,14 +1617,16 @@ function saveFormState(){
     bankPhone: document.getElementById('bankPhone')?.value || '',
     selGender, selDob, selIncome, selPurpose, selAmount, selTerm,
     selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2,
-    selWallet, currentDashboardStep
+    selWallet, currentDashboardStep,
+    _nidFront: nidFrontUrl || '', _nidBack: nidBackUrl || '',
+    _submitted: isSubmitted === true
   };
   localStorage.setItem('creditUpFormDraft', JSON.stringify(state));
 }
 
-function restoreFormState(){
+function restoreFormState(src){
   try {
-    const draft = JSON.parse(localStorage.getItem('creditUpFormDraft'));
+    const draft = src || JSON.parse(localStorage.getItem('creditUpFormDraft'));
     if(!draft) return;
     
     if(document.getElementById('infoName')) document.getElementById('infoName').value = draft.infoName || '';
@@ -1612,6 +1666,14 @@ function restoreFormState(){
     
     selectWallet(selWallet);
 
+    // NID photos already on file (re-used unless the user uploads a new one)
+    if(draft._nidFront || draft._nidBack) applySavedNid(draft._nidFront || '', draft._nidBack || '');
+
+    // re-validate every step so NEXT buttons are enabled again
+    if(typeof checkStep1 === 'function') checkStep1();
+    if(typeof checkStep2 === 'function') checkStep2();
+    if(typeof checkStep3 === 'function') checkStep3();
+
     if(draft.currentDashboardStep > 0 && draft.currentDashboardStep < 5) {
        currentDashboardStep = draft.currentDashboardStep;
        updateProgressUI();
@@ -1619,15 +1681,156 @@ function restoreFormState(){
   } catch(e) { console.error('Error restoring form:', e); }
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+//  PREFILL FROM THE USER'S PREVIOUS APPLICATION
+//  Every field keeps its old value so returning users only change what
+//  they want (e.g. only the loan amount). Anything can still be edited or
+//  cleared field-by-field, and "Clear all" starts a blank form.
+//  Privacy Policy / Terms must be accepted again on every application.
+// ═══════════════════════════════════════════════════════════════════════
+function _mapAppToForm(a){
+  if(!a) return null;
+  const e1 = a.emergency1 || {}, e2 = a.emergency2 || {};
+  return {
+    infoName: a.name || '', infoEmail: a.email || '', infoId: a.nid || a.infoId || '',
+    infoCompany: a.company || '', infoAddress: a.address || '',
+    c1Name: e1.name || '', c1Phone: e1.phone || '', c2Name: e2.name || '', c2Phone: e2.phone || '',
+    bankPhone: a.bankPhone || '',
+    selGender: a.gender || '', selDob: a.dob || '', selIncome: a.income || '',
+    selPurpose: a.loanPurpose || '', selAmount: a.loanAmount || '', selTerm: a.term || '',
+    selEdu: a.education || '', selMarital: a.marital || '', selChildren: a.children || '',
+    selOccupation: a.occupation || '', selRel1: e1.relation || '', selRel2: e2.relation || '',
+    selWallet: a.wallet || 'Bkash',
+    _nidFront: a.nidFrontUrl || '', _nidBack: a.nidBackUrl || ''
+  };
+}
+
+window._prefillFromLastApp = function(){
+  const u = _getUser();
+  const localDraft = (()=>{ try { return JSON.parse(localStorage.getItem('creditUpFormDraft')); } catch(e){ return null; } })();
+  const remote = _mapAppToForm(window._latestApp || _savedApp);
+  const hasRemote = !!(remote && (remote.infoName || remote.selAmount || remote.selDob));
+
+  // an in-progress (unsubmitted) draft is more recent than the last submitted app
+  const draftStep = localDraft ? (Number(localDraft.currentDashboardStep) || 0) : 0;
+  const draftInProgress = !!localDraft && !localDraft._submitted && draftStep > 0;
+  const useDraft = draftInProgress || (!!localDraft && !hasRemote);
+  const source = useDraft ? localDraft : remote;
+
+  if(!source) return false;
+  clearFormFields();          // reset first, so nothing stale is left behind
+  restoreFormState(source);   // then fill everything in
+  _markPrefilled(useDraft ? localDraft : remote, useDraft ? 'draft' : 'server');
+  showPrefillBanner(useDraft ? 'draft' : 'server', u?.phone);
+  return true;
+};
+
+function _showFill(id, val){
+  if(!val) return;
+  const el = document.getElementById(id);
+  if(el){ const sp = el.querySelector('span'); if(sp) sp.innerText = val; el.classList.add('filled'); }
+}
+
+function _markPrefilled(src, kind){
+  _prefilled = {};
+  if(src){
+    if(src.infoName) _prefilled.infoName = true;
+    if(src.infoEmail) _prefilled.infoEmail = true;
+    if(src.infoId) _prefilled.infoId = true;
+    if(src.infoCompany) _prefilled.infoCompany = true;
+    if(src.infoAddress) _prefilled.infoAddress = true;
+    if(src.c1Name) _prefilled.c1Name = true;
+    if(src.c1Phone) _prefilled.c1Phone = true;
+    if(src.c2Name) _prefilled.c2Name = true;
+    if(src.c2Phone) _prefilled.c2Phone = true;
+    if(src.bankPhone) _prefilled.bankPhone = true;
+    Object.keys(src).forEach(k => { if(k.indexOf('sel') === 0 && src[k]) _prefilled[k] = true; });
+  }
+  _refreshPrefillMarks();
+}
+
+function _refreshPrefillMarks(){
+  // text inputs
+  Object.keys(_prefilled).forEach(k => {
+    if(k.indexOf('sel') === 0) return;
+    const el = document.getElementById(k);
+    if(!el) return;
+    const shown = !!el.value && _prefilled[k];
+    el.classList.toggle('pf-filled', shown);
+  });
+  // picker fields (values live in JS vars) → map var name to its display box
+  const map = { selGender:'dGender', selDob:'dDob', selIncome:'dIncome', selPurpose:'dPurpose',
+                selAmount:'dAmount', selTerm:'dTerm', selEdu:'dEdu', selMarital:'dMarital',
+                selChildren:'dChildren', selOccupation:'dOccupation', selRel1:'dRel1', selRel2:'dRel2' };
+  Object.keys(map).forEach(k => {
+    const box = document.getElementById(map[k]);
+    if(!box) return;
+    const hasVal = !!box.querySelector('span')?.innerText.trim();
+    box.classList.toggle('pf-filled', !!(_prefilled[k] && hasVal));
+  });
+}
+
+function clearFormFields(){
+  ['infoName','infoEmail','infoId','infoCompany','infoAddress','c1Name','c1Phone','c2Name','c2Phone','bankPhone','trxInput'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el && id !== 'bankPhone') el.value = '';
+  });
+  selGender = selDob = selIncome = selPurpose = selAmount = selTerm = '';
+  selEdu = selMarital = selChildren = selOccupation = selRel1 = selRel2 = '';
+  selWallet = 'Bkash';
+  currentDashboardStep = 0;
+  document.querySelectorAll('.sel-disp, .sel-box').forEach(el => {
+    const sp = el.querySelector('span'); if(sp) sp.innerText = '';
+    el.classList.remove('filled', 'pf-filled');
+  });
+  document.querySelectorAll('.pf-filled').forEach(el => el.classList.remove('pf-filled'));
+  resetNidUpload();
+  selectWallet('Bkash');
+  updateProgressUI();
+}
+
+// start from a completely blank form (explicit user choice)
+window.clearApplicationForm = function(){
+  localStorage.removeItem('creditUpFormDraft');
+  clearFormFields();
+  _prefilled = {};
+  hidePrefillBanner();
+  const u = _getUser();
+  const bp = document.getElementById('bankPhone');
+  if(bp) bp.value = u?.phone ? '0' + u.phone : '';
+  if(u?.phone) _prefilled.bankPhone = true;
+  _refreshPrefillMarks();
+  if(typeof checkStep1 === 'function') checkStep1();
+  if(typeof checkStep2 === 'function') checkStep2();
+  if(typeof checkStep3 === 'function') checkStep3();
+  saveFormState();
+  showAlert('Form Cleared', 'All fields are empty now. Enter your new information to continue.', 'success');
+};
+
+function showPrefillBanner(kind, phone){
+  const el = document.getElementById('prefillBanner');
+  if(!el) return;
+  const desc = document.getElementById('prefillDesc');
+  const isDraft = kind === 'draft';
+  if(desc){
+    desc.innerText = isDraft
+      ? 'Your unfinished application is restored. Review it and continue where you left off.'
+      : 'We filled in your last application details. Change only what you need — for example the loan amount.';
+  }
+  showPrefillBannerNidHint();
+  el.style.display = 'flex';
+  el.dataset.kind = kind;
+}
+function hidePrefillBanner(){
+  const el = document.getElementById('prefillBanner');
+  if(el) el.style.display = 'none';
+}
+
 function clearFormState(){
   localStorage.removeItem('creditUpFormDraft');
-  ['infoName','infoEmail','infoId','infoCompany','infoAddress','c1Name','c1Phone','c2Name','c2Phone','trxInput'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = '';
-  });
-  selGender = selDob = selIncome = selPurpose = selAmount = selTerm = selEdu = selMarital = selChildren = selOccupation = selRel1 = selRel2 = '';
-  currentDashboardStep = 0;
-  document.querySelectorAll('.sel-disp, .sel-box').forEach(el => { el.querySelector('span').innerText = ''; el.classList.remove('filled'); });
+  clearFormFields();
+  _prefilled = {};
+  hidePrefillBanner();
 }
 
 function updateProgressUI(){
@@ -1830,6 +2033,10 @@ function closeGlobalModal(clearLogin=false){
   const cb=modalCloseCb; modalCloseCb=null;
   if(cb) cb();
 }
+function resetPolicyCheck(){
+  const c = document.getElementById('policyCheck');
+  if(c) c.checked = false;
+}
 function acceptPolicy(){
   if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; }
   const u = _getUser();
@@ -1921,6 +2128,7 @@ function confirmDob(){
 }
 
 function checkStep1(){
+  if(typeof _refreshPrefillMarks === 'function') _refreshPrefillMarks();
   const ok=document.getElementById('infoName').value.trim()&&document.getElementById('infoEmail').value.trim()&&document.getElementById('infoId').value.trim()&&selGender&&selDob&&selIncome;
   document.getElementById('btnStep1').classList.toggle('on',!!ok);
 }
@@ -1956,7 +2164,10 @@ function submitStep3(){
   showLoader(true);
   setTimeout(()=>{
     showLoader(false); currentDashboardStep=3; updateProgressUI();
-    const u=_getUser(); if(u?.phone) document.getElementById('bankPhone').value='0'+u.phone;
+    const bpEl=document.getElementById('bankPhone');
+    const u=_getUser();
+    // keep the receiving number from the previous application; only fall back to the login number
+    if(bpEl && !bpEl.value.trim() && u?.phone) bpEl.value='0'+u.phone;
     showAlert('Step 3 Complete ✓','Emergency Contact saved successfully!','success',()=>nav('screen-bank-info'));
   }, 900);
 }
@@ -2017,6 +2228,44 @@ async function handleFileUpload(inputId, boxId){
   }
 }
 
+// show the NID photos already on file ("already uploaded" state)
+function applySavedNid(front, back){
+  const put = (boxId, thumbId, url) => {
+    if(!url) return;
+    const box = document.getElementById(boxId), thumb = document.getElementById(thumbId);
+    if(box) box.classList.add('up');
+    if(thumb) thumb.style.backgroundImage = `url(${url})`;
+    const chg = box?.querySelector('.upload-change');
+    if(chg) chg.innerText = 'Tap to update';
+  };
+  if(front){ nidFrontUrl = front; nidFrontOk = true; put('boxNidFront','thumbFront',front); }
+  if(back) { nidBackUrl  = back;  nidBackOk  = true; put('boxNidBack','thumbBack',back);  }
+  const b5 = document.getElementById('btnStep5');
+  if(b5) b5.classList.toggle('on', !!(nidFrontOk && nidBackOk));
+  const note = document.getElementById('nidSavedNote');
+  if(note) note.style.display = (nidFrontOk || nidBackOk) ? 'flex' : 'none';
+  showPrefillBannerNidHint();
+}
+
+// the policy-screen banner mentions saved NID photos when there are any
+function showPrefillBannerNidHint(){
+  const nid = document.getElementById('prefillNid');
+  if(nid) nid.style.display = (nidFrontUrl || nidBackUrl) ? 'flex' : 'none';
+}
+
+function resetNidUpload(){
+  nidFrontOk = nidBackOk = false;
+  nidFrontUrl = nidBackUrl = '';
+  ['boxNidFront','boxNidBack'].forEach(id => document.getElementById(id)?.classList.remove('up'));
+  ['thumbFront','thumbBack'].forEach(id => { const t = document.getElementById(id); if(t) t.style.backgroundImage = ''; });
+  document.querySelectorAll('.upload-change').forEach(el => el.innerText = 'Tap to change');
+  const b5 = document.getElementById('btnStep5');
+  if(b5) b5.classList.remove('on');
+  const note = document.getElementById('nidSavedNote');
+  if(note) note.style.display = 'none';
+  ['nidFrontInput','nidBackInput'].forEach(id => { const i = document.getElementById(id); if(i) i.value = ''; });
+}
+
 function _fmt(n){ return Number(n).toLocaleString('en-US'); }
 function _calcDates(months){
   const s=new Date(), d=new Date(s); d.setMonth(d.getMonth()+months);
@@ -2052,7 +2301,9 @@ function submitApplication(){
 
   nav('screen-review-progress');
   _runReviewAnim(()=>{ 
-    clearFormState();
+    // keep the details (and NID photos) for the next application instead of wiping them
+    saveFormState(true);
+    hidePrefillBanner();
     nav('screen-approved'); 
   });
 }
@@ -2304,7 +2555,10 @@ function startNewApplication(){
     showAlert('Verification Pending', 'Please wait for your current payment to be verified.', 'info');
     return;
   }
-  currentDashboardStep = 0; updateProgressUI(); clearFormState();
+  // returning users keep their previous details — policy must still be accepted
+  const hadData = window._prefillFromLastApp();
+  if(!hadData){ currentDashboardStep = 0; updateProgressUI(); clearFormFields(); }
+  resetPolicyCheck();   // every new application needs a fresh consent
   nav('screen-policy');
 }
 function openNotificationModal() { const badge = document.getElementById('notifBadge'); if(badge) badge.style.display = 'none'; document.getElementById('notifModal').classList.add('on'); }
@@ -2932,6 +3186,7 @@ window.saveApplicationToFirebase=async function(){
   try{
     await addDoc(collection(db,'applications'),{
       uid: u?.phone||'unknown', name: document.getElementById('infoName').value, email: document.getElementById('infoEmail').value,
+      nid: document.getElementById('infoId').value,
       gender: selGender, dob:selDob, income:selIncome, loanPurpose: selPurpose, loanAmount:selAmount, term:selTerm,
       education: selEdu, marital:selMarital, children:selChildren, occupation:selOccupation, company: document.getElementById('infoCompany').value,
       address: document.getElementById('infoAddress').value,
@@ -3027,6 +3282,11 @@ window.loadUserDashboardData = async function() {
 
   try {
     const appSnap = await getDocs(query(collection(db, 'applications'), where('uid', '==', user.phone)));
+    // remember the latest submitted application so the form can be pre-filled
+    try {
+      const all = appSnap.docs.map(d => d.data()).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
+      if(all.length) _savedApp = all[0];
+    } catch(e) {}
     const card = document.getElementById('userStatusCard'), mainBtn = document.getElementById('mainBorrowBtn');
     const title = document.getElementById('statusCardTitle'), desc = document.getElementById('statusCardDesc');
     const iconEl = document.getElementById('statusCardIcon'), iconBox = card.querySelector('.status-icon-box');
