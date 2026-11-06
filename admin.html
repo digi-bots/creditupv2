@@ -300,6 +300,18 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .lt{color:var(--txt2);font-size:12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* === Support Chat === */
+.support-layout{display:grid;grid-template-columns:320px 1fr;gap:14px}
+.support-layout .tc{max-height:calc(100dvh - 160px)}
+.admin-thread-item{padding:11px;border-radius:9px;background:rgba(255,255,255,.02);border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:.15s}
+.admin-thread-item:hover{background:rgba(255,255,255,.04)}
+.admin-thread-item.active{border-color:var(--p);background:rgba(29,219,128,.05)}
+.admin-msg{max-width:70%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;animation:sIn .2s ease;word-wrap:break-word}
+.admin-msg.user{background:rgba(255,255,255,.05);color:var(--txt);align-self:flex-start;border-bottom-left-radius:4px;border:1px solid rgba(255,255,255,.08)}
+.admin-msg.admin{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;align-self:flex-end;border-bottom-right-radius:4px;box-shadow:0 3px 10px rgba(29,219,128,.15)}
+.admin-msg-meta{font-size:10px;opacity:.75;margin-top:3px}
+@media(max-width:900px){.support-layout{grid-template-columns:1fr}.support-layout .tc{max-height:400px}}
+
 /* MOBILE */
 @media(max-width:900px){
   #sidebar{position:fixed;top:0;left:0;height:100%;z-index:200;transform:translateX(-100%)}
@@ -564,12 +576,29 @@ tr:hover td{background:rgba(255,255,255,.015)}
   </div>
 </div>
 
-<!-- SUPPORT TICKETS (NEW) -->
+<!-- SUPPORT CHAT -->
 <div class="sec" id="sec-support">
-  <div class="sec-head"><h2>Support Tickets</h2></div>
-  <div class="tc">
-    <div class="tc-hdr"><div class="tc-title">AI Chat Escalations</div></div>
-    <div class="tw"><table><thead><tr><th>Phone / UID</th><th>Message</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="stb"></tbody></table></div>
+  <div class="sec-head"><h2>Support Chat</h2><div class="sec-head-r"><button class="btn btn-sm btn-s" onclick="loadSupport()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div></div>
+  <div class="support-layout">
+    <div class="tc" style="display:flex;flex-direction:column;">
+      <div class="tc-hdr"><div class="tc-title">Chat Threads</div><span class="b b-pending" id="supportUnreadTotal" style="display:none">0</span></div>
+      <div id="supportThreadList" style="flex:1;overflow-y:auto;padding:8px;">
+        <div style="text-align:center;color:var(--txt2);font-size:12px;padding:20px;">Loading...</div>
+      </div>
+    </div>
+    <div class="tc" style="display:flex;flex-direction:column;">
+      <div id="supportChatEmpty" style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:13px;">
+        <div style="text-align:center;"><i class="fa-solid fa-comments" style="font-size:32px;opacity:.3;margin-bottom:10px;display:block;"></i>Select a chat to view messages</div>
+      </div>
+      <div id="supportChatView" style="display:none;flex-direction:column;height:100%;">
+        <div class="tc-hdr"><div class="tc-title" id="supportChatHeader">Chat</div><div class="tc-r"><button class="btn btn-sm btn-s" onclick="closeAdminChat()"><i class="fa-solid fa-xmark"></i>Close</button><button class="btn btn-sm btn-p" onclick="resolveSupportChat()"><i class="fa-solid fa-check"></i>Resolve</button></div></div>
+        <div id="adminChatMessages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;"></div>
+        <div style="padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;">
+          <input type="text" id="adminChatInput" placeholder="Type your reply..." style="flex:1;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:13px;outline:none;" onkeypress="if(event.key==='Enter') sendAdminChatMsg()">
+          <button class="btn btn-p" onclick="sendAdminChatMsg()" style="padding:10px 18px;"><i class="fa-solid fa-paper-plane"></i>Send</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -740,7 +769,14 @@ let _charts={}, _selApps=new Set();
 // ══ LOGIN ════════════════════════════════════════════
 function doLogin(){ const p=document.getElementById('lPass').value.trim(); if(!p){lErr('Enter password');return;} window._login&&window._login(p); }
 function lErr(m){ const e=document.getElementById('lErr'); e.innerText=m; e.style.display='block'; setTimeout(()=>e.innerText='',3000); }
-function loginOK(){ document.getElementById('loginScreen').style.display='none'; document.getElementById('AP').style.display='flex'; gS('dashboard',document.getElementById('n-dashboard')); }
+function loginOK(){ 
+  document.getElementById('loginScreen').style.display='none'; 
+  document.getElementById('AP').style.display='flex'; 
+  gS('dashboard',document.getElementById('n-dashboard')); 
+  setTimeout(() => {
+    if (typeof window._startAdminSupportBadgeListener === 'function') window._startAdminSupportBadgeListener();
+  }, 600);
+}
 function doLogout(){ localStorage.removeItem('aOK'); location.reload(); }
 
 // ══ SIDEBAR ══════════════════════════════════════════
@@ -775,7 +811,7 @@ function closeMo(id){ document.getElementById(id).classList.remove('on'); }
 function confirm2(msg,fn){ document.getElementById('cfMsg').innerText=msg; document.getElementById('cfOk').onclick=()=>{ closeMo('moConfirm'); fn(); }; openMo('moConfirm'); }
 
 function sb(s){
-  const m={'active':'b-active','inactive':'b-inactive','suspended':'b-suspended','banned':'b-banned','Pending Fee Payment':'b-pending','TrxID Submitted':'b-submitted','Approved':'b-approved','Disbursed':'b-disbursed','Active':'b-approved','Repaid':'b-repaid','Overdue':'b-overdue','Defaulted':'b-defaulted','Rejected':'b-rejected','Pending':'b-pending','Verified':'b-verified','Under Review':'b-review'};
+  const m={'active':'b-active','inactive':'b-inactive','suspended':'b-suspended','banned':'b-banned','Pending Fee Payment':'b-pending','TrxID Submitted':'b-submitted','Approved':'b-approved','Disbursed':'b-disbursed','Active':'b-approved','Repaid':'b-repaid','Overdue':'b-overdue','Defaulted':'b-defaulted','Rejected':'b-rejected','Pending':'b-pending','Verified':'b-verified','Under Review':'b-review','Resolved':'b-verified','resolved':'b-verified','open':'b-pending'};
   return s?`<span class="b ${m[s]||'b-inactive'}">${s}</span>`:'';
 }
 
@@ -821,7 +857,7 @@ function globalSearch(v){ if(!v)return; const vl=v.toLowerCase(); const f=[..._D
 // ══ DASHBOARD ════════════════════════════════════════
 async function loadDash(){
   showL(true);
-  const[u,a,t,s]=await Promise.all([_get('users'),_get('applications','submittedAt'),_get('transactions','submittedAt'),_get('support_tickets','createdAt')]);
+  const[u,a,t,s]=await Promise.all([_get('users'),_get('applications','submittedAt'),_get('transactions','submittedAt'),_get('support_chats','updatedAt')]);
   showL(false);
   _D.users=u;_D.applications=a;_D.transactions=t;_D.support=s;
   const pend=t.filter(x=>!x.status||x.status==='Pending').length;
@@ -839,7 +875,7 @@ async function loadDash(){
   document.getElementById('nb-u').innerText=u.length;
   document.getElementById('nb-a').innerText=a.filter(x=>x.status==='Pending Fee Payment'||x.status==='TrxID Submitted').length;
   document.getElementById('nb-t').innerText=pend;
-  document.getElementById('nb-st').innerText=s.filter(x=>x.status==='Pending').length;
+  refreshSupportUnreadBadge();
   
   const rA=[...a].sort((x,y)=>new Date(y.submittedAt||0)-new Date(x.submittedAt||0)).slice(0,8);
   document.getElementById('dApps').innerHTML=rA.length?rA.map(r=>`<tr><td class="mono">${r.uid||'-'}</td><td>${r.name||'-'}</td><td style="color:var(--p);font-weight:700">৳${fa(r.loanAmount)}</td><td>${riskBadge(riskScore(r))}</td><td>${sb(r.status)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td></tr>`).join(''):'<tr class="empty"><td colspan="6">No applications yet</td></tr>';
@@ -1220,13 +1256,145 @@ async function saveConfig(){
 async function loadBC(){ _D.broadcasts=await _get('broadcasts','createdAt','desc'); const l=document.getElementById('bcList'); l.innerHTML=_D.broadcasts.length?_D.broadcasts.slice(0,20).map(b=>`<div class="bc-item"><div class="bc-hdr"><div class="bc-title">${b.title||'Broadcast'}</div><div class="bc-date">${fd(b.createdAt)}</div></div><div class="bc-msg">${b.message||''}</div></div>`).join(''):'<div style="text-align:center;color:var(--txt2);padding:16px;font-size:12px">No broadcasts yet.</div>'; }
 async function sendBC(){ const t=document.getElementById('bc-t').value.trim(),m=document.getElementById('bc-m').value.trim(),ty=document.getElementById('bc-ty').value; if(!t||!m){toast('Title and message required','w');return;} showL(true); await window._addDoc('broadcasts',{title:t,message:m,type:ty,createdAt:new Date().toISOString()}); showL(false); document.getElementById('bc-t').value='';document.getElementById('bc-m').value=''; await logAct(`Broadcast: "${t}"`,'broadcast','new'); toast('Broadcast sent ✓'); loadBC(); }
 
-// ══ SUPPORT TICKETS ══════════════════════════════════
-async function loadSupport(){
-  showL(true); _D.support=await _get('support_tickets','createdAt'); showL(false);
-  const s=_D.support;
-  document.getElementById('stb').innerHTML=s.length?s.map(r=>`<tr><td class="mono">${r.uid||'-'}</td><td>${r.message||'-'}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.createdAt)}</td><td>${sb(r.status)}</td><td><div class="acts"><button class="ab ab-ok" onclick="resSupport('${r._id}')" title="Resolve"><i class="fa-solid fa-check"></i></button></div></td></tr>`).join(''):'<tr class="empty"><td colspan="5">No support tickets</td></tr>';
+// ══ SUPPORT CHAT (Admin) ══════════════════════════════
+window._supportChatsCache = {};
+window._activeSupportUid = null;
+
+function escapeSupportAdmin(text) {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
 }
-async function resSupport(id) { await window._updateDoc(id,'support_tickets',{status:'Resolved'}); toast('Ticket Resolved'); loadSupport(); }
+
+async function loadSupport() {
+  if (Object.keys(window._supportChatsCache).length > 0) {
+    renderSupportThreads(Object.values(window._supportChatsCache));
+    return;
+  }
+  showL(true);
+  try {
+    const chats = await _get('support_chats', 'updatedAt');
+    window._supportChatsCache = {};
+    chats.forEach(c => { window._supportChatsCache[c.uid] = c; });
+    renderSupportThreads(chats);
+  } catch(e) { console.error(e); toast('Failed to load chats', 'e'); }
+  showL(false);
+}
+
+function renderSupportThreads(chats) {
+  const list = document.getElementById('supportThreadList');
+  if (!list) return;
+  if (!chats.length) {
+    list.innerHTML = '<div style="text-align:center;color:var(--txt2);font-size:12px;padding:20px;">No support chats yet.</div>';
+    return;
+  }
+  chats.sort((a,b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+  list.innerHTML = chats.map(c => {
+    const unread = Number(c.unreadByAdmin) || 0;
+    const isActive = window._activeSupportUid === c.uid;
+    const preview = (c.lastMessage || '').substring(0, 40);
+    const time = c.updatedAt ? new Date(c.updatedAt).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) : '';
+    const statusColor = c.status === 'resolved' ? 'var(--txt3)' : 'var(--p)';
+    return `<div class="admin-thread-item ${isActive ? 'active' : ''}" onclick="openAdminSupportChat('${c.uid}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:12px;font-weight:700;color:var(--txt);">${c.uid || '-'}</div>
+        ${unread > 0 ? `<span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;">${unread}</span>` : ''}
+      </div>
+      <div style="font-size:11px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeSupportAdmin(preview)}${preview.length >= 40 ? '...' : ''}</div>
+      <div style="font-size:9px;color:var(--txt3);margin-top:3px;">${time} <span style="color:${statusColor};">• ${c.status || 'open'}</span></div>
+    </div>`;
+  }).join('');
+}
+
+async function openAdminSupportChat(uid) {
+  window._activeSupportUid = uid;
+  const chat = window._supportChatsCache[uid];
+  if (!chat) { toast('Chat not found', 'e'); return; }
+  document.getElementById('supportChatEmpty').style.display = 'none';
+  document.getElementById('supportChatView').style.display = 'flex';
+  document.getElementById('supportChatHeader').textContent = 'Chat with ' + uid;
+  renderAdminMessages(chat);
+  renderSupportThreads(Object.values(window._supportChatsCache));
+  if (Number(chat.unreadByAdmin) > 0) {
+    try {
+      await window._adminMarkSupportRead(uid);
+      window._supportChatsCache[uid].unreadByAdmin = 0;
+      let total = 0;
+      Object.values(window._supportChatsCache).forEach(c => total += (Number(c.unreadByAdmin) || 0));
+      const tb = document.getElementById('nb-st');
+      if (tb) { tb.textContent = total; tb.style.display = total > 0 ? 'inline-block' : 'none'; }
+      const ut = document.getElementById('supportUnreadTotal');
+      if (ut) { ut.textContent = total + ' new'; ut.style.display = total > 0 ? 'inline-block' : 'none'; }
+      renderSupportThreads(Object.values(window._supportChatsCache));
+    } catch(e) { console.warn(e); }
+  }
+}
+
+function renderAdminMessages(chat) {
+  const container = document.getElementById('adminChatMessages');
+  if (!container) return;
+  const messages = chat.messages || [];
+  if (!messages.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--txt2);font-size:12px;padding:20px;">No messages yet.</div>';
+    return;
+  }
+  container.innerHTML = messages.map(m => {
+    const time = new Date(m.at).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+    const label = m.sender === 'admin' ? '👤 Admin (You)' : '👤 User';
+    return `<div class="admin-msg ${m.sender}">${escapeSupportAdmin(m.text)}<div class="admin-msg-meta">${label} • ${time}</div></div>`;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+async function sendAdminChatMsg() {
+  const uid = window._activeSupportUid;
+  if (!uid) { toast('No chat selected', 'w'); return; }
+  const input = document.getElementById('adminChatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  try {
+    await window._adminSupportSendMessage(uid, text);
+    const chat = await window._adminGetSupportChat(uid);
+    if (chat) {
+      window._supportChatsCache[uid] = chat;
+      renderAdminMessages(chat);
+      renderSupportThreads(Object.values(window._supportChatsCache));
+    }
+    toast('Reply sent ✓');
+  } catch(e) { console.error(e); toast('Failed to send', 'e'); }
+}
+
+function closeAdminChat() {
+  window._activeSupportUid = null;
+  document.getElementById('supportChatView').style.display = 'none';
+  document.getElementById('supportChatEmpty').style.display = 'flex';
+  renderSupportThreads(Object.values(window._supportChatsCache));
+}
+
+async function resolveSupportChat() {
+  const uid = window._activeSupportUid;
+  if (!uid) return;
+  try {
+    await window._adminResolveSupport(uid);
+    toast('Chat resolved ✓');
+    const chats = await _get('support_chats', 'updatedAt');
+    window._supportChatsCache = {};
+    chats.forEach(c => { window._supportChatsCache[c.uid] = c; });
+    renderSupportThreads(chats);
+    if (window._supportChatsCache[uid]) renderAdminMessages(window._supportChatsCache[uid]);
+  } catch(e) { toast('Error', 'e'); }
+}
+
+async function refreshSupportUnreadBadge() {
+  try {
+    const chats = await _get('support_chats', 'updatedAt');
+    let total = 0;
+    chats.forEach(c => total += (Number(c.unreadByAdmin) || 0));
+    const tb = document.getElementById('nb-st');
+    if (tb) { tb.textContent = total; tb.style.display = total > 0 ? 'inline-block' : 'none'; }
+  } catch(e) {}
+}
 
 // ══ ACTIVITY LOG ═════════════════════════════════════
 async function loadActLog(){ _D.actlog=await _get('activityLog','at','desc'); const icons={user:'fa-user',application:'fa-file-contract',transaction:'fa-money-bill',wallet:'fa-wallet',config:'fa-sliders',broadcast:'fa-bullhorn'}; const clrs={user:'var(--blue)',application:'var(--p)',transaction:'var(--orange)',wallet:'var(--purple)',config:'var(--gold)',broadcast:'var(--red)'}; document.getElementById('actlogList').innerHTML=_D.actlog.length?_D.actlog.slice(0,50).map(a=>`<div class="alog-i"><div class="alog-ic" style="background:rgba(255,255,255,.04);color:${clrs[a.type]||'var(--txt2)'}"><i class="fa-solid ${icons[a.type]||'fa-shield-halved'}"></i></div><div><div class="alog-action">${a.action||'Action'}</div><div class="alog-meta">${fd(a.at)}${a.ref?' • '+a.ref:''}</div></div></div>`).join(''):'<div style="text-align:center;color:var(--txt2);padding:20px;font-size:12px">No activity yet.</div>'; }
@@ -1256,7 +1424,7 @@ async function _get(col,orderF='createdAt',dir='desc'){
 
 <script type="module">
 import{initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import{getFirestore,collection,doc,getDocs,getDoc,addDoc,updateDoc,deleteDoc,setDoc,query,orderBy} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import{getFirestore,collection,doc,getDocs,getDoc,addDoc,updateDoc,deleteDoc,setDoc,query,where,orderBy,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
 const FB={
   apiKey: "AIzaSyA6FTCSfXhNxPkpq2WCnz_EiaJFJWYYc8Q",
@@ -1289,6 +1457,78 @@ window._addDoc=async function(col,data){return await addDoc(collection(db,col),d
 window._updateDoc=async function(id,col,data){await updateDoc(doc(db,col,id),data);};
 window._deleteDoc=async function(id,col){await deleteDoc(doc(db,col,id));};
 window._setDoc=async function(col,id,data){await setDoc(doc(db,col,id),data,{merge:true});};
+
+// ═══ TWO-WAY SUPPORT CHAT (Admin side) ═══
+window._adminGetSupportChat = async function(uid) {
+  try {
+    const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+    const snap = await getDocs(q);
+    if (snap.empty) return null;
+    return { _id: snap.docs[0].id, ...snap.docs[0].data() };
+  } catch(e) { console.warn(e); return null; }
+};
+
+window._adminSupportSendMessage = async function(uid, text) {
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+  if (snap.empty) throw new Error('Chat not found');
+  const docRef = snap.docs[0].ref;
+  const existing = snap.docs[0].data();
+  const newMsg = { sender: 'admin', text, at: new Date().toISOString(), readByUser: false, readByAdmin: true };
+  const messages = [...(existing.messages || []), newMsg];
+  await updateDoc(docRef, {
+    messages,
+    lastMessage: text,
+    lastSender: 'admin',
+    unreadByUser: (Number(existing.unreadByUser) || 0) + 1,
+    updatedAt: new Date().toISOString()
+  });
+};
+
+window._adminMarkSupportRead = async function(uid) {
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+  if (snap.empty) return;
+  const docRef = snap.docs[0].ref;
+  const data = snap.docs[0].data();
+  if (!data.unreadByAdmin || Number(data.unreadByAdmin) === 0) return;
+  const messages = (data.messages || []).map(m => m.sender === 'user' ? {...m, readByAdmin: true} : m);
+  await updateDoc(docRef, { messages, unreadByAdmin: 0 });
+};
+
+window._adminResolveSupport = async function(uid) {
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+  if (snap.empty) return;
+  await updateDoc(snap.docs[0].ref, { status: 'resolved', updatedAt: new Date().toISOString() });
+};
+
+window._adminSupportBadgeUnsub = null;
+window._startAdminSupportBadgeListener = function() {
+  if (!db) return;
+  if (window._adminSupportBadgeUnsub) window._adminSupportBadgeUnsub();
+  const q = query(collection(db, 'support_chats'));
+  window._adminSupportBadgeUnsub = onSnapshot(q, (snap) => {
+    let total = 0;
+    const chats = [];
+    snap.forEach(d => {
+      const data = d.data();
+      chats.push({ _id: d.id, ...data });
+      total += (Number(data.unreadByAdmin) || 0);
+    });
+    const tb = document.getElementById('nb-st');
+    if (tb) { tb.textContent = total; tb.style.display = total > 0 ? 'inline-block' : 'none'; }
+    window._supportChatsCache = {};
+    chats.forEach(c => { window._supportChatsCache[c.uid] = c; });
+    if (typeof _sec !== 'undefined' && _sec === 'support') {
+      renderSupportThreads(chats);
+      if (window._activeSupportUid) {
+        const active = chats.find(c => c.uid === window._activeSupportUid);
+        if (active) renderAdminMessages(active);
+      }
+    }
+  }, (err) => { console.warn('Support listener:', err); });
+};
 
 const DEF='admin@creditup';
 window._login=async function(pass){
