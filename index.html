@@ -435,6 +435,23 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .notif-content p{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:6px}
 .notif-date{font-size:10px;color:var(--txt3);font-weight:600}
 .premium-popup .mc{background:rgba(15,29,53,.85) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important}
+/* Referral popup: wider card, scrollable body, pinned footer */
+#referModal{padding:14px}
+#referModal .refer-card{max-width:420px;width:100%;max-height:88dvh;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.refer-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:22px 20px 18px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+.refer-scroll::-webkit-scrollbar{width:5px}
+.refer-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:10px}
+.refer-scroll::-webkit-scrollbar-track{background:transparent}
+.refer-foot{flex-shrink:0;padding:12px 18px 16px;border-top:1px solid rgba(255,255,255,.08);background:rgba(13,24,41,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+#referModal .m-icon{width:56px;height:56px;font-size:22px;margin:0 auto 12px}
+#referModal .m-title{font-size:18px;margin-bottom:6px}
+#referModal .m-msg{font-size:12.5px;margin-bottom:16px}
+@media (max-width:390px){
+  #referModal{padding:10px}
+  #referModal .refer-card{max-height:92dvh}
+  .refer-scroll{padding:18px 14px 14px}
+  .refer-foot{padding:10px 14px 14px}
+}
 .premium-cs-item{display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.03);padding:15px;border-radius:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);transition:.2s}
 .premium-cs-icon{width:40px;height:40px;border-radius:12px;display:flex;justify-content:center;align-items:center;font-size:18px}
 .detail-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--bord)}
@@ -689,27 +706,31 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay premium-popup" id="referModal">
-  <div class="mc" style="max-height: 90dvh; overflow-y: auto;">
-    <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
-    <div class="m-title">Refer &amp; Win Big!</div>
-    <p class="m-msg">বন্ধুদের রেফার করে জিতুন বিশাল সব পুরস্কার!</p>
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-      <div style="flex:1; background:var(--bg2); padding:12px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase;">Total Refers</p><h3 style="font-size:18px; color:var(--txt);" id="refTotalCount">0</h3></div>
-      <div style="flex:1; background:rgba(29,219,128,.1); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase;">Success</p><h3 style="font-size:18px; color:var(--p);" id="refSuccessCount">0</h3></div>
-    </div>
-    <div style="background:var(--bg2); border:1px solid var(--bord); border-radius:14px; padding:15px; margin-bottom:15px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:13px; font-weight:700; color:var(--txt);">Current Status:</span><span style="font-size:14px; font-weight:800; color:var(--orange);" id="currentTierName">Starter</span></div>
-      <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:8px;"><div id="tierProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff8c42, #ff4b2b); border-radius:5px; transition: width 0.5s;"></div></div>
-      <p style="font-size:11px; color:var(--txt2); text-align:center;" id="tierProgressText">পরবর্তী পুরস্কার পেতে আরও রেফার করুন!</p>
-      <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px; border-top:1px dashed var(--bord); padding-top:15px;">
-        <div id="tierRow20" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥉</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">২০ জন রেফারেল</div><div style="font-size:11px; color:var(--orange);">৳১০,০০০ এর নিচে লোনে ১ম কিস্তি মাফ!</div></div><i class="fa-solid fa-lock" id="tierLock20" style="color:var(--txt2); font-size:12px;"></i></div>
-        <div id="tierRow50" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥈</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">৫০ জন রেফারেল</div><div style="font-size:11px; color:var(--blue);">৳৫,০০০ ফ্রি লোন! (শোধ করতে হবে না)</div></div><i class="fa-solid fa-lock" id="tierLock50" style="color:var(--txt2); font-size:12px;"></i></div>
-        <div id="tierRow100" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥇</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">১০০ জন রেফারেল</div><div style="font-size:11px; color:var(--red);">ইনস্ট্যান্ট ৳৫০,০০০ জ্যাকপট!</div></div><i class="fa-solid fa-lock" id="tierLock100" style="color:var(--txt2); font-size:12px;"></i></div>
+  <div class="mc refer-card">
+    <div class="refer-scroll">
+      <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
+      <div class="m-title">Refer &amp; Win Big!</div>
+      <p class="m-msg">বন্ধুদের রেফার করে জিতুন বিশাল সব পুরস্কার!</p>
+      <div style="display:flex; gap:10px; margin-bottom:14px;">
+        <div style="flex:1; background:var(--bg2); padding:10px 8px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase; margin-bottom:2px;">Total Refers</p><h3 style="font-size:17px; color:var(--txt);" id="refTotalCount">0</h3></div>
+        <div style="flex:1; background:rgba(29,219,128,.1); padding:10px 8px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase; margin-bottom:2px;">Success</p><h3 style="font-size:17px; color:var(--p);" id="refSuccessCount">0</h3></div>
       </div>
+      <div style="background:var(--bg2); border:1px solid var(--bord); border-radius:14px; padding:14px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:9px;"><span style="font-size:13px; font-weight:700; color:var(--txt);">Current Status:</span><span style="font-size:14px; font-weight:800; color:var(--orange);" id="currentTierName">Starter</span></div>
+        <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:8px;"><div id="tierProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff8c42, #ff4b2b); border-radius:5px; transition: width 0.5s;"></div></div>
+        <p style="font-size:11px; color:var(--txt2); text-align:center;" id="tierProgressText">পরবর্তী পুরস্কার পেতে আরও রেফার করুন!</p>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:12px; border-top:1px dashed var(--bord); padding-top:12px;">
+          <div id="tierRow20" style="display:flex; align-items:center; gap:9px; background:rgba(255,255,255,0.03); padding:9px 10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:20px;">🥉</div><div style="flex:1; min-width:0;"><div style="font-size:12.5px; font-weight:700; color:var(--txt);">২০ জন রেফারেল</div><div style="font-size:11px; color:var(--orange); line-height:1.45;">৳১০,০০০ এর নিচে লোনে ১ম কিস্তি মাফ!</div></div><i class="fa-solid fa-lock" id="tierLock20" style="color:var(--txt2); font-size:12px;"></i></div>
+          <div id="tierRow50" style="display:flex; align-items:center; gap:9px; background:rgba(255,255,255,0.03); padding:9px 10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:20px;">🥈</div><div style="flex:1; min-width:0;"><div style="font-size:12.5px; font-weight:700; color:var(--txt);">৫০ জন রেফারেল</div><div style="font-size:11px; color:var(--blue); line-height:1.45;">৳৫,০০০ ফ্রি লোন! (শোধ করতে হবে না)</div></div><i class="fa-solid fa-lock" id="tierLock50" style="color:var(--txt2); font-size:12px;"></i></div>
+          <div id="tierRow100" style="display:flex; align-items:center; gap:9px; background:rgba(255,255,255,0.03); padding:9px 10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:20px;">🥇</div><div style="flex:1; min-width:0;"><div style="font-size:12.5px; font-weight:700; color:var(--txt);">১০০ জন রেফারেল</div><div style="font-size:11px; color:var(--red); line-height:1.45;">ইনস্ট্যান্ট ৳৫০,০০০ জ্যাকপট!</div></div><i class="fa-solid fa-lock" id="tierLock100" style="color:var(--txt2); font-size:12px;"></i></div>
+        </div>
+      </div>
+      <div style="background:var(--bg2); border-radius:14px; padding:12px; border:1px dashed var(--p); text-align:center;"><p style="font-size:11.5px; color:var(--txt2); margin-bottom:6px;">Your Referral Link</p><div style="font-size:11.5px; color:var(--p); word-break:break-all; font-weight:700; line-height:1.5;" id="refLinkDisplay">Loading...</div></div>
     </div>
-    <div style="background:var(--bg2); border-radius:14px; padding:15px; border:1px dashed var(--p); text-align:center;"><p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Referral Link</p><div style="font-size:12px; color:var(--p); word-break:break-all; font-weight:700;" id="refLinkDisplay">Loading...</div></div>
-    <div style="display:flex; gap:10px; margin-top:15px;"><button class="mbtn mbtn-cancel" style="flex:1; background:var(--surf2);" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button><button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button></div>
-    <button class="mbtn-cancel" style="width:100%; margin-top:10px; border:none; background:transparent; color:var(--txt2);" onclick="closeModal('referModal')">Close</button>
+    <div class="refer-foot">
+      <div style="display:flex; gap:10px;"><button class="mbtn mbtn-cancel" style="flex:1; height:46px; background:var(--surf2);" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button><button class="mbtn mbtn-ok" style="flex:2; height:46px;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button></div>
+      <button class="mbtn-cancel" style="width:100%; margin-top:6px; padding:8px 0; border:none; background:transparent; color:var(--txt2); font-size:13px; cursor:pointer;" onclick="closeModal('referModal')">Close</button>
+    </div>
   </div>
 </div>
 
