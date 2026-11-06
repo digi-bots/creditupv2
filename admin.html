@@ -1306,7 +1306,10 @@ function renderSupportThreads(chats) {
         ${unread > 0 ? `<span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;">${unread}</span>` : ''}
       </div>
       <div style="font-size:11px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeSupportAdmin(preview)}${preview.length >= 40 ? '...' : ''}</div>
-      <div style="font-size:9px;color:var(--txt3);margin-top:3px;">${time} <span style="color:${statusColor};">• ${c.status || 'open'}</span></div>
+      <div style="font-size:9px;color:var(--txt3);margin-top:3px;display:flex;align-items:center;justify-content:space-between;">
+        <span>${time} <span style="color:${statusColor};">• ${c.status || 'open'}</span></span>
+        ${c.status !== 'closed' ? `<button onclick="event.stopPropagation();adminEndConversation('${c._id}')" style="background:rgba(255,77,106,.15);color:var(--red);border:1px solid rgba(255,77,106,.25);padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;cursor:pointer;"><i class="fa-solid fa-circle-stop"></i> End</button>` : ''}
+      </div>
     </div>`;
   }).join('');
 }
@@ -1422,12 +1425,41 @@ function toggleAdminChatInput(disabled) {
   }
 }
 
+// ══ Flexible End (accepts chatDocId OR falls back to active chat) ══
+async function adminEndConversation(chatDocId) {
+  // Resolve uid from doc ID (or use currently-open chat)
+  let uid = window._activeSupportUid;
+  if (chatDocId) {
+    const found = Object.values(window._supportChatsCache || {}).find(c => c._id === chatDocId);
+    if (found) uid = found.uid;
+  }
+  if (!uid) { toast('No chat selected', 'w'); return; }
+
+  if (!confirm('End this conversation? User will need to start a new chat.')) return;
+
+  try {
+    await window._supportEndConversation(uid, 'admin');
+    const updated = await window._adminGetSupportChat(uid);
+    if (updated) {
+      window._supportChatsCache[uid] = updated;
+      renderAdminMessages(updated);
+      updateSupportChatHeaderButtons(updated);
+      toggleAdminChatInput(true);
+      renderSupportThreads(Object.values(window._supportChatsCache));
+    }
+    toast('Conversation ended', 'w');
+  } catch(e) {
+    console.error(e);
+    toast('Failed to end conversation', 'e');
+  }
+}
+
 async function endActiveSupportChat() {
   const uid = window._activeSupportUid;
   if (!uid) { toast('No chat selected', 'w'); return; }
-  if (!confirm('End this conversation? User cannot reply until they start a new chat.')) return;
+  if (!confirm('End this conversation? User will need to start a new chat.')) return;
   try {
-    await window._adminEndSupportChat(uid);
+    await window._supportEndConversation(uid, 'admin');
     const updated = await window._adminGetSupportChat(uid);
     if (updated) {
       window._supportChatsCache[uid] = updated;
@@ -1574,7 +1606,8 @@ window._adminResolveSupport = async function(uid) {
   await updateDoc(snap.docs[0].ref, { status: 'resolved', updatedAt: new Date().toISOString() });
 };
 
-window._adminEndSupportChat = async function(uid) {
+// ═══ End Conversation (new canonical API with closedBy) ═══
+window._supportEndConversation = async function(uid, closedBy = 'admin') {
   const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
   const snap = await getDocs(q);
   if (snap.empty) throw new Error('Chat not found');
@@ -1585,13 +1618,16 @@ window._adminEndSupportChat = async function(uid) {
   await updateDoc(docRef, {
     messages,
     status: 'closed',
-    closedBy: 'admin',
+    closedBy,
     closedAt: new Date().toISOString(),
     lastMessage: systemMsg.text,
     lastSender: 'system',
     updatedAt: new Date().toISOString()
   });
 };
+
+// Backward-compatible alias (old name still works)
+window._adminEndSupportChat = window._supportEndConversation;
 
 window._adminReopenSupportChat = async function(uid) {
   const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
