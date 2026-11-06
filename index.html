@@ -236,12 +236,14 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .cs-lbl{width:105px;font-size:13px;color:var(--txt);flex-shrink:0;font-weight:500}
 .cs-lbl span.req{color:var(--red)}
 .sel-box{flex:1;background:var(--bg2);border:1px solid var(--bord);color:var(--txt);padding:11px 14px;border-radius:10px;font-size:13.5px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:.2s}
-.bank-warn{border:1px solid rgba(255,140,66,.25);background:rgba(255,140,66,.07);color:#fb923c;border-radius:12px;padding:14px;font-size:13px;line-height:1.6;margin-bottom:22px}
-.wallet-grid{display:flex;gap:10px;margin-bottom:20px}
-.w-card{flex:1;background:var(--surf);border:1.5px solid var(--bord);border-radius:13px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;transition:.25s}
+.bank-warn{border:1px solid rgba(255,140,66,.25);background:rgba(255,140,66,.07);color:#fb923c;border-radius:12px;padding:11px 13px;font-size:12px;line-height:1.55;margin-bottom:18px}
+.wallet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin-bottom:20px}
+.w-card{background:var(--surf);border:1.5px solid var(--bord);border-radius:13px;padding:13px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:.25s}
 .w-card.sel{border-color:var(--p);background:rgba(29,219,128,.05);box-shadow:0 0 0 1px rgba(29,219,128,.15)}
-.w-card img{width:36px;height:36px;object-fit:contain}
+.w-card img{width:34px;height:34px;object-fit:contain}
 .w-card span{font-size:12.5px;font-weight:700;color:var(--txt)}
+.w-card em{font-size:9.5px;font-style:normal;color:var(--txt2);font-weight:600;letter-spacing:.2px;text-align:center;line-height:1.2}
+.w-card.sel em{color:var(--p)}
 .ph-lbl{font-size:13px;color:var(--txt2);margin-bottom:8px;font-weight:500}
 .ph-lbl span{color:var(--red)}
 .ph-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid var(--surf2);padding-bottom:10px;margin-bottom:26px}
@@ -340,11 +342,13 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .fee-row span.red{color:var(--red)}
 .fee-row span.grn{color:var(--p)}
 .pm-title{margin:0 16px 10px;font-size:15px;font-weight:700;color:var(--txt)}
-.pm-grid{display:flex;gap:10px;margin:0 16px 18px}
-.pm-card{flex:1;background:var(--surf);border:1.5px solid var(--bord);border-radius:14px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:.25s}
+.pm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin:0 16px 18px}
+.pm-card{background:var(--surf);border:1.5px solid var(--bord);border-radius:14px;padding:13px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:.25s}
 .pm-card.sel{border-color:var(--p);background:rgba(29,219,128,.05);box-shadow:0 0 0 1px rgba(29,219,128,.15)}
-.pm-card img{width:40px;height:40px;object-fit:contain}
+.pm-card img{width:34px;height:34px;object-fit:contain}
 .pm-card span{font-size:12px;font-weight:700;color:var(--txt)}
+.pm-card em{font-size:9.5px;font-style:normal;color:var(--txt2);font-weight:600;letter-spacing:.2px;text-align:center;line-height:1.2}
+.pm-card.sel em{color:var(--p)}
 .pay-instr{background:var(--surf);border-radius:16px;padding:18px;margin:0 16px 18px;border:1px solid var(--bord)}
 .pay-instr h4{font-size:14px;color:var(--txt);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .pay-instr h4 i{color:var(--p)}
@@ -1507,6 +1511,9 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 @keyframes sdIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 
 /* ─── STEP 4: receiving number ─── */
+.rcv-cat{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt2);background:rgba(29,219,128,.05);border:1px solid rgba(29,219,128,.16);border-radius:9px;padding:8px 10px;margin-bottom:10px;line-height:1.4}
+.rcv-cat + .ph-row{margin-bottom:12px}
+.rcv-cat strong{color:var(--p);font-weight:800}
 .bank-hint{
   font-size:11px;color:var(--txt2);margin:-16px 0 20px;line-height:1.5;
   display:flex;align-items:center;gap:6px;
@@ -2198,7 +2205,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <div class="form-top"><h2>Application</h2><span>Step 4 / 5</span></div>
   <div class="step-track"><div class="step-fill s4"></div></div>
   <h3 class="form-sec-title">Bank Information</h3>
-  <div class="bank-warn"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>We've pre-filled your registered phone number. Tap the edit icon to change it.</div>
+  <div class="bank-warn"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>We've pre-filled your registered number — edit it if the loan should be sent elsewhere.</div>
   <div class="ph-lbl">Select Wallet Type <span>*</span></div>
   <div class="wallet-grid" id="walletGrid"></div>
   <div class="pm-empty" id="walletEmpty" style="display:none;">
@@ -2206,6 +2213,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div><strong>No wallet is enabled right now.</strong><span>Please contact support and try again later.</span></div>
   </div>
   <div class="ph-lbl">Receiving Account Number <span>*</span></div>
+  <div class="rcv-cat" id="rcvCat" style="display:none;"></div>
   <div class="ph-row" id="bankPhoneRow">
     <input type="tel" id="bankPhone" inputmode="numeric" maxlength="11" placeholder="01XXXXXXXXX"
            oninput="onBankPhoneInput(this)" onblur="onBankPhoneBlur()">
@@ -2214,10 +2222,9 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <div class="bank-hint" id="bankPhoneHint">Tap the icon to edit your receiving number.</div>
   <div class="tips-card">
     <h4><i class="fa-solid fa-lightbulb"></i> Tips</h4>
-    <p>1. Use your own wallet account to receive your loan.</p>
-    <p>2. Your account details are encrypted and safely protected.</p>
-    <p>3. Receiving account cannot be changed once a loan is active.</p>
-    <p>4. Make sure the wallet is active and registered in your name.</p>
+    <p>1. Use your own wallet account to receive the loan.</p>
+    <p>2. The number cannot be changed once the loan is active.</p>
+    <p>3. Make sure the wallet is active and registered in your name.</p>
   </div>
   <button class="btn-next on" id="btnStep4" onclick="submitStep4()" style="margin-top:20px">NEXT</button>
 </div>
@@ -2345,12 +2352,12 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   </div>
   <div class="pay-instr">
     <h4><i class="fa-solid fa-circle-info"></i> Payment Instructions</h4>
-    <p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> amount using <strong style="color:var(--txt)">Send Money</strong> to:</p>
+    <p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> using <strong style="color:var(--txt)" id="payMethodLine">Send Money</strong> to:</p>
     <div class="pay-num-wrap">
       <div class="pay-num" id="adminNumber">-</div>
       <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
     </div>
-    <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS.</p>
+    <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.</p>
     <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>
   </div>
   <div class="admin-note" id="payNoteCard" style="display:none;">
@@ -3547,6 +3554,11 @@ function goToFeePayment(){
                 : (window._wallets && window._wallets[0] ? walletCollectionNumber(window._wallets[0]) : '');
   document.getElementById('adminNumber').innerText = collNum || '-';
   if(!collNum) selPayMethod = '';
+  const ml = document.getElementById('payMethodLine');
+  if(ml){
+    const shown = activeW || (window._wallets && window._wallets[0]) || null;
+    ml.innerText = shown ? payMethodLabel(shown) : 'Send Money';
+  }
   applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
   nav('screen-fee-payment');
 }
@@ -4117,7 +4129,7 @@ async function loadWallets(){
         wallets.forEach((w,i)=>{
           const d=document.createElement('div'); d.className='w-card'+(i===0?' sel':''); d.id='w_'+w.id;
           d.onclick=()=>_selWalletDyn(w);
-          d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:36px;height:36px;object-fit:contain"><span>${w.name}</span>`;
+          d.innerHTML=`${logoHtml(w)}<span>${w.name}</span>${w.accountCategory?`<em>${w.accountCategory}</em>`:''}`;
           wg.appendChild(d);
         });
         _selWalletDyn(wallets[0], false);
@@ -4141,9 +4153,11 @@ async function loadWallets(){
         wallets.forEach((w,i)=>{
           const d=document.createElement('div'); d.className='pm-card'+(i===0?' sel':''); d.id='pm_'+w.id;
           d.onclick=()=>_selPayDyn(w);
-          d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:40px;height:40px;object-fit:contain"><span>${w.name}</span>`;
+          d.innerHTML=`${logoHtml(w)}<span>${w.name}</span>${w.payMethod?`<em>${w.payMethod}</em>`:''}`;
           pg.appendChild(d);
         });
+        // first card is selected visually — make sure the number/note match it
+        _selPayDyn(wallets[0], false);
       }
     }
   }catch(e){ console.error('loadWallets:',e); }
@@ -4151,6 +4165,13 @@ async function loadWallets(){
 function _selWalletDyn(w,ui=true){
   selWallet=w.name; window._activeWallet=w;
   if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); }
+  // tell the user which kind of account this wallet expects (personal / agent …)
+  const cat=document.getElementById('rcvCat');
+  if(cat){
+    const c=(w && w.accountCategory) ? String(w.accountCategory) : '';
+    if(c){ cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--p)"></i><span>Use your own <strong>${c}</strong> account of ${w.name} to receive the loan.</span>`; }
+    else cat.style.display='none';
+  }
   // keep the receiving number in step with the chosen wallet when the user has not typed one
   const el = document.getElementById('bankPhone');
   if(ui && el && !el.value.trim()){
@@ -4158,7 +4179,27 @@ function _selWalletDyn(w,ui=true){
     if(wn){ el.value = wn; onBankPhoneInput(el); }
   }
 }
-function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=walletCollectionNumber(w)||'-';
+function logoHtml(w){
+  // a broken logo URL must never leave an empty card — fall back to an icon
+  return `<img src="${w.logoUrl || ''}" alt="${w.name}" onerror="logoFallback(this)">`;
+}
+function logoFallback(img){
+  img.style.display='none';
+  if(img.nextElementSibling && img.nextElementSibling.classList.contains('logo-fb')) return;
+  const ic=document.createElement('i');
+  ic.className='fa-solid fa-wallet logo-fb';
+  ic.style.fontSize='22px'; ic.style.color='var(--txt2)';
+  img.insertAdjacentElement('afterend', ic);
+}
+function payMethodLabel(w){
+  const t = (w && w.payMethod) ? w.payMethod : '';
+  return t ? t : 'Any method';
+}
+function _selPayDyn(w,ui=true){
+  selPayMethod=w.name; window._activeWallet=w;
+  if(ui){ document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); }
+  document.getElementById('adminNumber').innerText=walletCollectionNumber(w)||'-';
+  const ml=document.getElementById('payMethodLine'); if(ml) ml.innerText=payMethodLabel(w);
   // a wallet-specific note wins over the global fee-payment note
   if(w && w.note && String(w.note).trim()) applyFeePaymentNote(w.note, w.name + ' note');
   else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
