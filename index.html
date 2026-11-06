@@ -531,6 +531,497 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .modal-overlay .pp-bar{
   position:sticky;top:-2px;z-index:19;
   display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:16px 18px 12px;
+  min-height:56px;box-sizing:border-box;
+  background:linear-gradient(180deg,#12233d 0%,rgba(18,35,61,.97) 74%,rgba(18,35,61,0) 100%);
+  border-bottom:1px solid rgba(29,219,128,.12);
+  border-radius:26px 26px 0 0;
+}
+.modal-overlay .pp-bar-title{
+  font-size:16px;font-weight:800;color:var(--txt);
+  letter-spacing:-.2px;text-shadow:0 2px 14px rgba(29,219,128,.2);
+  line-height:1.25;padding-left:1px;
+}
+.modal-overlay .pp-bar .popup-close{position:static !important;float:none !important;margin:0 0 0 auto !important;flex:0 0 32px}
+/* safety net: a close button can never drift to the left edge */
+.modal-overlay .mc > .popup-close,
+.modal-overlay .ld-card > .popup-close,
+.modal-overlay .conf-card > .popup-close{position:sticky;margin-left:auto !important;margin-right:-6px;align-self:flex-end}
+.modal-overlay .pp-bar > .pp-bar-title{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-overlay .mc:has(.pp-bar),
+.modal-overlay .ld-card:has(.pp-bar),
+.modal-overlay .conf-card:has(.pp-bar){padding:0 !important}
+.modal-overlay .mc:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .ld-card:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .conf-card:has(.pp-bar) > :not(.pp-bar){
+  margin-left:16px;margin-right:16px;
+}
+.modal-overlay .mc:has(.pp-bar) > .notif-list{margin-bottom:22px}
+.modal-overlay .ld-card:has(.pp-bar) > .mbtn-full{margin-top:16px;margin-bottom:22px}
+
+/* body + pinned footer: buttons never touch the card edge */
+.modal-overlay .pp-body{padding:2px 16px 6px}
+.modal-overlay .pp-body .detail-row:first-child{padding-top:4px}
+.modal-overlay .pp-foot{
+  flex-shrink:0;padding:14px 16px 22px;
+  border-top:1px solid rgba(29,219,128,.14);
+  background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55));
+}
+.modal-overlay .pp-foot .mbtn-full,
+.modal-overlay .pp-foot .mbtn{margin:0 !important}
+.modal-overlay .pp-foot:empty{display:none}
+.modal-overlay .pp-body > *,
+#referModal .refer-body > *{max-width:100%}
+/* status popup: scrolling rows, fixed header + footer */
+#appStatusModal .mc.pp{
+  max-height:min(86dvh,560px);
+  display:flex !important;flex-direction:column;overflow:hidden;
+}
+#appStatusModal #statusModalContent{
+  margin:0 !important;padding:0 !important;
+  display:flex;flex-direction:column;min-height:0;flex:1 1 auto;
+}
+#appStatusModal .pp-body{flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent}
+#appStatusModal .pp-body::-webkit-scrollbar{width:5px}
+#appStatusModal .pp-body::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#appStatusModal .pp-body::-webkit-scrollbar-track{background:transparent}
+/* tidy rows: aligned labels, tighter dividers */
+.modal-overlay .detail-row{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.modal-overlay .detail-row:last-child{border-bottom:none}
+.modal-overlay .detail-lbl{font-size:12.5px;color:var(--txt2);letter-spacing:.1px}
+.modal-overlay .detail-val{font-size:13px;font-weight:700;color:var(--txt)}
+.modal-overlay .detail-val.color-p{color:var(--p);font-weight:800}
+.modal-overlay .detail-val.fw8{font-weight:800}
+.modal-overlay .notif-list{margin-top:2px}
+.modal-overlay .m-title,.modal-overlay .conf-title,.modal-overlay .ld-title{
+  text-shadow:0 2px 14px rgba(29,219,128,.2);letter-spacing:-.35px;
+}
+.modal-overlay .m-icon{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 10px 26px rgba(0,0,0,.4),0 0 24px rgba(29,219,128,.1)}
+/* ── sticky corner close button ── */
+.popup-close{
+  position:sticky;top:12px;
+  align-self:flex-end;
+  margin:-4px -6px -34px 12px;
+  width:32px;height:32px;flex:0 0 32px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;color:var(--txt2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.25s;z-index:20;
+  font-size:13px;padding:0;line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(0,0,0,.35);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.popup-close:hover{background:rgba(255,77,106,.22);color:var(--red);border-color:rgba(255,77,106,.4);transform:rotate(90deg)}
+.popup-close:active{transform:scale(.92)}
+/* status popup + forms: close pinned in the corner, title gets out of its way */
+.modal-overlay .mc.pp > .m-title{padding-top:18px}
+/* global modal holds 3 panels; only one is shown at a time and always full width */
+#globalModal{flex-wrap:wrap}
+#globalModal > .mc{flex:0 0 auto;width:100%;max-width:340px;align-self:center}
+.modal-overlay .mc.pp[style*="text-align: center"] > .m-title{padding-top:8px}
+/* support popup keeps the same look, just anchored in its corner */
+.cs-close-btn{
+  position:sticky;top:10px;align-self:flex-end;
+  margin:-4px 12px -30px 0;width:32px;height:32px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;color:var(--txt2);display:flex;justify-content:center;align-items:center;
+  cursor:pointer;transition:.25s;z-index:12;font-size:13px;padding:0;line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(0,0,0,.35);
+}
+.cs-close-btn:hover{background:rgba(255,77,106,.22);color:var(--red);border-color:rgba(255,77,106,.4);transform:rotate(90deg)}
+/* the close button always occupies the top-right corner: reserve the space */
+.modal-overlay .mc:has(.popup-close),
+.modal-overlay .conf-card:has(.popup-close),
+.modal-overlay .ld-card:has(.popup-close){padding:18px 20px 24px}
+.modal-overlay .mc:has(.popup-close) > .m-title,
+.modal-overlay .mc:has(.popup-close) > .ld-title,
+.modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:38px}
+#referModal .refer-card > .popup-close{position:absolute;top:14px;right:14px;float:none;margin:0}
+#referModal .refer-head{padding-top:14px}
+#referModal .refer-head{padding-right:0}
+/* ── premium buttons ── */
+.mbtn-full,.mbtn-ok{
+  background:linear-gradient(135deg,#26e891 0%,#12bd6d 55%,#0ea35d 100%) !important;
+  box-shadow:0 10px 26px rgba(29,219,128,.24),inset 0 1px 0 rgba(255,255,255,.28) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  letter-spacing:.3px;transition:transform .15s ease,box-shadow .22s ease,filter .2s ease;
+}
+.mbtn-full:hover,.mbtn-ok:hover{filter:brightness(1.05);box-shadow:0 12px 30px rgba(29,219,128,.32),inset 0 1px 0 rgba(255,255,255,.3) !important}
+.mbtn-full:active,.mbtn-ok:active{transform:scale(.975)}
+.mbtn-full.premium-danger{
+  background:linear-gradient(135deg,#ff5d7d 0%,#ff416c 45%,#ec2c4f 100%) !important;
+  box-shadow:0 10px 26px rgba(255,65,108,.26),inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+.mbtn-cancel{background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.1) !important;color:var(--txt2) !important}
+.mbtn-cancel:hover{color:var(--txt) !important;background:rgba(255,255,255,.09) !important}
+.btn-pick-ok,.btn-pick-cancel{
+  background:linear-gradient(135deg,#26e891,#12bd6d) !important;color:#04150d !important;font-weight:800 !important;
+  box-shadow:0 10px 24px rgba(29,219,128,.22),inset 0 1px 0 rgba(255,255,255,.28) !important;border:none !important;
+}
+.btn-pick-cancel{background:rgba(255,255,255,.06) !important;color:var(--txt2) !important;box-shadow:none !important;border:1px solid rgba(255,255,255,.1) !important}
+/* ── tight, clean inner spacing (no wasted space) ── */
+.modal-overlay .m-icon{width:56px;height:56px;font-size:22px;margin:0 auto 12px}
+.modal-overlay .m-title{font-size:17.5px;margin-bottom:6px}
+.modal-overlay .m-msg{font-size:13px;margin-bottom:16px;line-height:1.5}
+.modal-overlay .conf-title,.modal-overlay .ld-title{font-size:17.5px;margin-bottom:14px}
+.modal-overlay .conf-row,.modal-overlay .ld-row{margin-bottom:0;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.modal-overlay .conf-row:last-of-type,.modal-overlay .ld-row.total{border-bottom:none}
+.modal-overlay .ld-row.total{margin-top:2px;padding-top:12px;border-top:1px solid rgba(29,219,128,.22);border-bottom:none}
+.modal-overlay .mbtn-full{height:46px;border-radius:14px;font-size:14.5px;margin-top:16px}
+.modal-overlay .mc.pp > .mbtn-full:last-child{margin-bottom:4px}
+.modal-overlay .mc.pp > .m-acts:last-child{margin-bottom:4px}
+.modal-overlay .mbtn-cancel{padding:0}
+.modal-overlay .notif-item .notif-content h4{line-height:1.35}
+.modal-overlay .notif-item .notif-content p{line-height:1.5}
+.modal-overlay .mbtn{height:46px;border-radius:14px;font-size:14.5px}
+.modal-overlay .m-acts{margin-top:18px}
+.modal-overlay .detail-row{padding:11px 0}
+.modal-overlay .notif-list{max-height:min(58vh,430px);gap:10px;padding-right:2px}
+.modal-overlay .notif-item{padding:13px 14px;border-radius:13px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.06)}
+.modal-overlay .notif-item.unread{border-left:3px solid var(--p);background:rgba(29,219,128,.045)}
+.modal-overlay .notif-content h4{font-size:13.5px;margin-bottom:3px}
+.modal-overlay .notif-content p{font-size:11.5px;margin-bottom:5px}
+.modal-overlay .calc-row{padding:9px 0;font-size:13.5px}
+.modal-overlay .rep-schedule{max-height:min(42vh,300px);border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+/* bottom sheets: same accent, sticky close */
+/* bottom sheets share the same premium accent */
+.modal-overlay .picker-card,
+.bottom-sheet{
+  border-top:1px solid rgba(29,219,128,.28) !important;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(29,219,128,.12), rgba(29,219,128,0) 60%),
+    linear-gradient(160deg,#12233d,#0b1526) !important;
+  box-shadow:0 -22px 60px rgba(0,0,0,.8),0 0 34px rgba(29,219,128,.12) !important;
+}
+.picker-card > .popup-close,
+.bottom-sheet > .popup-close{position:absolute;top:14px;right:16px;float:none;margin:0}
+/* Referral popup: full app width, no scroll, English, close in corner */
+#referModal{padding:8px}
+#referModal .refer-card{max-width:none;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;gap:0;max-height:min(94dvh,720px)}
+/* head/body/footer: content scrolls, close + actions stay put */
+#referModal .refer-head{flex-shrink:0;position:relative;padding:16px 18px 0;text-align:center}
+#referModal .refer-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:0 18px 4px;scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent}
+#referModal .refer-body::-webkit-scrollbar{width:5px}
+#referModal .refer-body::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#referModal .refer-body::-webkit-scrollbar-track{background:transparent}
+#referModal .refer-card > .popup-close{top:14px;right:14px}
+#referModal .m-icon{width:44px;height:44px;font-size:18px;margin:0 auto 8px}
+#referModal .m-title{font-size:17px;margin-bottom:4px}
+#referModal .m-msg{font-size:12px;margin-bottom:12px;line-height:1.4}
+#referModal .ref-stats{display:flex;gap:10px;margin-bottom:10px}
+#referModal .ref-stat{flex:1;background:var(--bg2);padding:8px;border-radius:12px;text-align:center;border:1px solid var(--bord)}
+#referModal .ref-stat.success{background:rgba(29,219,128,.1);border-color:rgba(29,219,128,.2)}
+#referModal .ref-stat p{font-size:9.5px;text-transform:uppercase;color:var(--txt2);margin-bottom:1px;letter-spacing:.4px}
+#referModal .ref-stat.success p{color:var(--p)}
+#referModal .ref-stat h3{font-size:16px;color:var(--txt);line-height:1.2}
+#referModal .ref-stat.success h3{color:var(--p)}
+#referModal .ref-status{background:var(--bg2);border:1px solid var(--bord);border-radius:14px;padding:11px 12px;margin-bottom:10px}
+#referModal .ref-status-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+#referModal .ref-status-top span:first-child{font-size:12px;font-weight:700;color:var(--txt)}
+#referModal .ref-status-top span:last-child{font-size:12.5px;font-weight:800;color:var(--orange)}
+#referModal .ref-progress{width:100%;height:7px;background:rgba(255,255,255,.1);border-radius:5px;overflow:hidden}
+#referModal .ref-progress i{display:block;height:100%;width:0%;border-radius:5px;background:linear-gradient(90deg,#ff8c42,#ff4b2b);transition:width .5s}
+#referModal .ref-progress-text{font-size:10.5px;color:var(--txt2);text-align:center;margin-top:6px}
+#referModal .ref-tiers{display:flex;flex-direction:column;gap:6px;margin-top:9px;border-top:1px dashed var(--bord);padding-top:9px}
+#referModal .ref-tier{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);padding:7px 9px;border-radius:10px;border:1px solid transparent;transition:.3s;white-space:nowrap;overflow:hidden}
+#referModal .ref-tier .em{font-size:16px;flex-shrink:0;line-height:1}
+#referModal .ref-tier .tx{flex:1;min-width:0;font-size:11.5px;font-weight:700;color:var(--txt);overflow:hidden;text-overflow:ellipsis}
+#referModal .ref-tier .tx b{font-weight:800}
+#referModal .ref-tier .tx em{font-style:normal;font-weight:600}
+#referModal .ref-tier .lk{color:var(--txt2);font-size:11px;flex-shrink:0}
+#referModal .refer-foot{display:flex;gap:8px;flex-shrink:0;padding:14px 18px 22px;border-top:1px solid rgba(29,219,128,.14);background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55))}
+#referModal .refer-foot .mbtn{height:44px;font-size:13.5px;border-radius:13px;margin:0}
+@media (max-width:360px){
+  #referModal .ref-tier .tx{font-size:10.5px}
+  #referModal .m-title{font-size:16px}
+}
+.premium-cs-item{display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.03);padding:15px;border-radius:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);transition:.2s}
+.premium-cs-icon{width:40px;height:40px;border-radius:12px;display:flex;justify-content:center;align-items:center;font-size:18px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--bord)}
+.detail-row:last-of-type{border-bottom:none}
+.detail-lbl{color:var(--txt2);font-size:13px}
+.detail-val{color:var(--txt);font-weight:600;font-size:13px;text-align:right}
+.color-p{color:var(--p) !important}
+.fw8{font-weight:800 !important}
+.rep-schedule{max-height:40vh;overflow-y:auto;margin-top:15px;border:1px solid var(--bord);border-radius:10px}
+.rep-row{display:flex;justify-content:space-between;padding:10px 15px;border-bottom:1px solid var(--bord);font-size:13px}
+.rep-row:last-child{border-bottom:none}
+.rep-row.header{background:var(--surf2);font-weight:700;color:var(--p)}
+.bonus-banner{background:linear-gradient(90deg,rgba(255,140,66,.15),rgba(255,77,106,.15));border:1px dashed var(--orange);border-radius:12px;padding:10px 15px;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;position:relative;z-index:2}
+.bonus-banner span{font-size:13px;font-weight:700;color:#fff}
+.shake-icon{font-size:20px;animation:shake 2s infinite cubic-bezier(.36,.07,.19,.97) both;display:inline-block}
+@keyframes shake{10%,90%{transform:translate3d(-2px,0,0) rotate(-10deg)}20%,80%{transform:translate3d(4px,0,0) rotate(10deg)}30%,50%,70%{transform:translate3d(-6px,0,0) rotate(-10deg)}40%,60%{transform:translate3d(6px,0,0) rotate(10deg)}}
+.hot-offer-floating{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 30px);max-width:380px;background:linear-gradient(90deg,#ff4d6a,#ff8c42);border-radius:14px;padding:10px 15px;box-shadow:0 10px 30px rgba(255,77,106,0.4),0 0 0 2px rgba(255,255,255,0.2) inset;z-index:99999;cursor:pointer;animation:floatBounce 3s ease-in-out infinite;display:none}
+.hot-offer-content{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hot-icon{font-size:22px;animation:fire-shake 1.5s infinite}
+.hot-text h4{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;text-shadow:0 2px 4px rgba(0,0,0,0.2);margin-bottom:2px}
+.hot-text p{font-size:11px;font-weight:600;color:rgba(255,255,255,0.95);margin:0;line-height:1.3}
+.hot-close{background:rgba(0,0,0,0.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:12px;cursor:pointer;flex-shrink:0}
+@keyframes floatBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+@keyframes fire-shake{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.2) rotate(10deg)}}
+.fomo-fire-icon{font-size:55px;animation:fire-shake 1.5s infinite;margin-bottom:10px;display:inline-block}
+.fomo-progress-wrap{background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.08)}
+.fomo-progress-header{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#fff;margin-bottom:8px}
+.fomo-progress-track{width:100%;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;margin-bottom:10px}
+.fomo-progress-fill{height:100%;background:linear-gradient(90deg,#ff416c,#ff4b2b);border-radius:5px;transition:width 1s ease}
+.fomo-warning{font-size:11px;color:var(--red);font-weight:700;margin:0;display:flex;align-items:center;justify-content:center;gap:5px}
+.bal-toggle-box { background: var(--surf); border: 1px solid var(--bord); border-radius: 14px; padding: 15px; margin: 0 16px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: .3s; }
+.bal-toggle-box.active { border-color: var(--p); background: rgba(29,219,128,.05); }
+.bal-left { display: flex; align-items: center; gap: 10px; }
+.bal-left i { color: var(--orange); font-size: 18px; }
+.bal-left h4 { font-size: 14px; color: var(--txt); margin-bottom: 2px; }
+.bal-left p { font-size: 11px; color: var(--txt2); }
+.bal-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--bord); display: flex; justify-content: center; align-items: center; color: transparent; transition: .2s; }
+.bal-toggle-box.active .bal-check { background: var(--p); border-color: var(--p); color: #fff; }
+#screen-fee-payment { padding-bottom: 100px !important; }
+.pay-instr { margin-bottom: 80px; }
+
+/* ─── SUPER PREMIUM SUPPORT POPUP ─── */
+.premium-cs-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.premium-cs-overlay.on { display: flex; opacity: 1; }
+
+.premium-cs-box {
+  background: linear-gradient(145deg, rgba(15,29,53,0.95), rgba(10,20,40,0.98));
+  border: 1px solid rgba(29,219,128,0.3); border-radius: 24px;
+  width: 100%; max-width: 380px; position: relative;
+  max-height: 88dvh;
+  box-shadow: 0 0 40px rgba(29,219,128,0.15), inset 0 0 20px rgba(29,219,128,0.05);
+  transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden;
+}
+.premium-cs-overlay.on .premium-cs-box { transform: scale(1) translateY(0); }
+
+.cs-close-btn {
+  position: absolute; top: 15px; right: 15px; width: 32px; height: 32px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%; color: var(--txt2); display: flex; justify-content: center;
+  align-items: center; cursor: pointer; transition: 0.3s; z-index: 10;
+}
+.cs-close-btn:hover { background: rgba(255,77,106,0.2); color: var(--red); transform: rotate(90deg); }
+
+#csChatInterface { display: none; flex-direction: column; height: 500px; max-height: 80vh; }
+.chat-header { background: rgba(29,219,128,0.1); padding: 15px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(29,219,128,0.2); }
+.chat-header i { color: var(--p); font-size: 20px; }
+.chat-header h4 { color: var(--txt); font-size: 15px; font-weight: 700; margin: 0; }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 13.5px; line-height: 1.5; animation: msgIn 0.3s ease; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.msg.ai { background: rgba(255,255,255,0.05); color: var(--txt); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.08); }
+.msg.user { background: linear-gradient(135deg, var(--p), var(--p2)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(29,219,128,0.2); }
+.chat-input-area { padding: 15px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px; background: rgba(0,0,0,0.2); align-items: center; }
+.chat-input-area input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 0 15px; height: 42px; color: #fff; font-size: 13px; outline: none; }
+.chat-input-area input:focus { border-color: var(--p); }
+.chat-send-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--p); color: #fff; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; flex-shrink:0; }
+.chat-send-btn:hover { background: var(--p2); transform: scale(1.05); }
+.quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.quick-reply-btn { background: rgba(29,219,128,0.1); border: 1px solid rgba(29,219,128,0.3); color: var(--p); padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: 0.2s; }
+.quick-reply-btn:hover { background: rgba(29,219,128,0.2); }
+
+/* === Support Chat Styles === */
+.cs-unread-badge{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;background:var(--red);border-radius:10px;border:2px solid #0a5c2f;color:#fff;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px;z-index:10}
+.cs-unread-badge.on{display:flex}
+.cs-menu-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:18px;text-align:center;display:none}
+.support-msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;margin-bottom:10px;animation:msgIn .3s ease;word-wrap:break-word}
+.support-msg.user{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;align-self:flex-end;margin-left:auto;border-bottom-right-radius:4px;box-shadow:0 4px 10px rgba(29,219,128,.2)}
+.support-msg.admin{background:rgba(77,143,255,.13);color:var(--txt);align-self:flex-start;border-bottom-left-radius:4px;border:1px solid rgba(77,143,255,.25)}
+.support-msg-meta{font-size:9px;opacity:.7;margin-top:3px}
+
+/* END CONVERSATION STYLES */
+.cs-end-btn-inline{width:42px;height:42px;flex-shrink:0;border-radius:50%;background:rgba(255,77,106,.14);border:1px solid rgba(255,77,106,.3);color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:.2s}
+.cs-end-btn-inline:hover{background:rgba(255,77,106,.24)}
+.cs-closed-banner{background:rgba(123,144,180,.12);border:1px dashed var(--txt2);color:var(--txt2);border-radius:12px;padding:14px;text-align:center;font-size:12px;margin:10px 15px;display:none;flex-direction:column;gap:8px;align-items:center}
+.cs-closed-banner.on{display:flex}
+.cs-closed-banner strong{color:var(--txt);font-size:13px}
+.cs-new-chat-btn{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:var(--glow)}
+
+/* ─── REPAYMENT SCHEDULE (premium table) ─── */
+#repaymentModal .rep-card{max-width:470px;width:100%}
+#repaymentModal .pp-bar{padding:15px 18px 12px}
+#repaymentModal .pp-body{padding:0}
+/* summary */
+#repaymentModal .rep-summary{padding:2px 18px 14px}
+#repaymentModal .rep-sum-hero{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px 14px;margin-bottom:10px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(29,219,128,.03));
+  border:1px solid rgba(29,219,128,.24);
+}
+#repaymentModal .rep-sum-left{display:flex;flex-direction:column;gap:2px;min-width:0}
+#repaymentModal .rep-sum-k{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--txt2);font-weight:800}
+#repaymentModal .rep-sum-note{font-size:10.5px;color:var(--txt2);opacity:.85}
+#repaymentModal .rep-sum-v{
+  font-size:26px;font-weight:900;color:var(--p);letter-spacing:-.7px;line-height:1;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+#repaymentModal .rep-sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 9px}
+#repaymentModal .rep-sum-cell{
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:8px 10px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;
+}
+#repaymentModal .rep-sum-cell span{font-size:10.5px;color:var(--txt2);white-space:nowrap}
+#repaymentModal .rep-sum-cell b{font-size:12px;color:var(--txt);font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+#repaymentModal .rep-sum-cell b.grn{color:var(--p)}
+#repaymentModal .rep-sum-cell b.orng{color:var(--orange)}
+/* table */
+#repaymentModal .rep-schedule{
+  margin:0 18px;max-height:min(50vh,390px);overflow:auto;
+  border-radius:13px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.022);
+  scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+}
+#repaymentModal .rep-schedule::-webkit-scrollbar{width:5px;height:5px}
+#repaymentModal .rep-schedule::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#repaymentModal .rep-schedule::-webkit-scrollbar-track{background:transparent}
+#repaymentModal .rep-table{
+  width:100%;min-width:400px;border-collapse:separate;border-spacing:0;table-layout:fixed;
+}
+#repaymentModal .rep-table th,
+#repaymentModal .rep-table td{padding:9px 8px;font-size:12px;line-height:1.25}
+/* one width scale for head, body and foot → nothing is clipped or staggered */
+#repaymentModal .rep-table col.c-month{width:34px}
+#repaymentModal .rep-table thead th{
+  position:sticky;top:0;z-index:2;background:#102036;color:var(--p);
+  font-weight:800;font-size:9px;text-transform:uppercase;letter-spacing:.35px;
+  text-align:right;white-space:nowrap;border-bottom:1px solid rgba(29,219,128,.22);
+}
+#repaymentModal .rep-table thead th:first-child{text-align:center}
+#repaymentModal .rep-table td{
+  text-align:right;color:var(--txt);font-variant-numeric:tabular-nums;
+  border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap;
+}
+#repaymentModal .rep-table td:first-child{text-align:center;color:var(--txt2);font-weight:700}
+#repaymentModal .rep-table td.num{font-weight:600}
+#repaymentModal .rep-table td.int{color:var(--orange);font-weight:600}
+#repaymentModal .rep-table td.bal{color:var(--blue);font-weight:700}
+#repaymentModal .rep-table td.bal.zero{color:var(--txt3)}
+#repaymentModal .rep-table tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+#repaymentModal .rep-table tbody tr:hover{background:rgba(29,219,128,.06)}
+#repaymentModal .rep-table tbody tr:last-child td{border-bottom:none}
+#repaymentModal .rep-table tbody tr.last td{background:rgba(29,219,128,.05)}
+#repaymentModal .rep-table tfoot td{
+  position:sticky;bottom:0;z-index:2;background:#102036;
+  font-weight:800;font-size:11.5px;color:var(--txt);
+  border-top:1px solid rgba(29,219,128,.22);text-align:right;
+  font-variant-numeric:tabular-nums;padding:10px 8px;
+}
+#repaymentModal .rep-table tfoot td:first-child{
+  text-align:center;color:var(--txt2);font-size:8.5px;text-transform:uppercase;letter-spacing:.2px;
+}
+#repaymentModal .rep-foot-note{
+  display:flex;gap:6px;align-items:flex-start;
+  margin:0;font-size:10px;color:var(--txt2);line-height:1.45;
+}
+#repaymentModal .rep-foot-note i{font-size:10px;margin-top:2px;flex-shrink:0}
+@media (max-width:390px){
+  #repaymentModal .rep-table th,#repaymentModal .rep-table td{padding:8px 6px;font-size:11px}
+  #repaymentModal .rep-table{min-width:360px}
+  #repaymentModal .rep-sum-v{font-size:23px}
+  #repaymentModal .rep-sum-cell{padding:7px 8px}
+  #repaymentModal .rep-sum-cell span{font-size:9.5px}
+  #repaymentModal .rep-sum-cell b{font-size:11px}
+}
+/* ─── PREFILL / SAVED-DATA HINTS ─── */
+.prefill-banner{
+  display:flex;align-items:flex-start;gap:10px;
+  margin:12px 14px 0;padding:11px 12px;
+  background:linear-gradient(135deg,rgba(29,219,128,.12),rgba(29,219,128,.04));
+  border:1px solid rgba(29,219,128,.28);border-radius:14px;
+}
+.prefill-banner .pf-ic{
+  width:28px;height:28px;flex:0 0 28px;border-radius:9px;
+  background:rgba(29,219,128,.16);color:var(--p);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.prefill-banner .pf-txt{flex:1;min-width:0}
+.prefill-banner .pf-title{font-size:12.5px;font-weight:800;color:var(--p);margin-bottom:2px}
+.prefill-banner .pf-desc{font-size:11px;color:var(--txt2);line-height:1.45}
+.prefill-banner .pf-nid{display:flex;gap:6px;align-items:flex-start;font-size:10.5px;color:var(--txt2);margin-top:6px;line-height:1.4}
+.prefill-banner .pf-nid i{color:var(--p);font-size:10.5px;margin-top:2px}
+.prefill-banner .pf-clear{
+  flex:0 0 auto;font-size:10.5px;font-weight:800;color:var(--txt2);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:9px;padding:6px 8px;cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;transition:.2s;
+}
+.prefill-banner .pf-clear:hover{color:var(--red);border-color:rgba(255,77,106,.35);background:rgba(255,77,106,.12)}
+/* fields that came from the previous application */
+input.pf-filled,.sel-disp.pf-filled,.sel-box.pf-filled{
+  border-color:rgba(29,219,128,.4) !important;
+  background:rgba(29,219,128,.055) !important;
+  box-shadow:inset 0 0 0 1px rgba(29,219,128,.12);
+  border-radius:8px;
+}
+input.pf-filled{padding-left:8px;padding-right:8px}
+.nid-saved-note{
+  display:flex;align-items:center;gap:7px;
+  font-size:11px;color:var(--p);line-height:1.45;
+  background:rgba(29,219,128,.09);border:1px solid rgba(29,219,128,.22);
+  border-radius:11px;padding:8px 10px;margin-bottom:14px;
+}
+/* ─── PREMIUM POPUP SYSTEM ─────────────────────────────────────────────
+   one shared shell: glass gradient card, green glow border,
+   sticky top-right close button that stays visible while scrolling.
+   ──────────────────────────────────────────────────────────────────── */
+.modal-overlay .mc,
+.modal-overlay .conf-card,
+.modal-overlay .ld-card,
+.premium-cs-box{
+  position:relative;
+  border:1px solid rgba(29,219,128,.22) !important;
+  border-radius:26px !important;
+  background:
+    radial-gradient(125% 80% at 50% -14%, rgba(29,219,128,.13), rgba(29,219,128,0) 60%),
+    radial-gradient(85% 65% at 100% 106%, rgba(77,143,255,.09), rgba(77,143,255,0) 64%),
+    linear-gradient(165deg,#12233d 0%,#0c1729 58%,#0a121f 100%) !important;
+  box-shadow:
+    0 26px 70px rgba(0,0,0,.75),
+    0 0 0 1px rgba(29,219,128,.04),
+    0 0 42px rgba(29,219,128,.12),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 0 24px rgba(29,219,128,.045) !important;
+  backdrop-filter:blur(22px) !important;
+  -webkit-backdrop-filter:blur(22px) !important;
+}
+/* slim, clean scrollbar inside popups */
+.modal-overlay .mc,
+.modal-overlay .conf-card,
+.modal-overlay .ld-card,
+.premium-cs-box{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(29,219,128,.35) transparent;
+}
+.modal-overlay .mc::-webkit-scrollbar,
+.modal-overlay .conf-card::-webkit-scrollbar,
+.modal-overlay .ld-card::-webkit-scrollbar,
+.modal-overlay .notif-list::-webkit-scrollbar,
+.modal-overlay .rep-schedule::-webkit-scrollbar,
+.premium-cs-box::-webkit-scrollbar{width:5px}
+.modal-overlay .mc::-webkit-scrollbar-thumb,
+.modal-overlay .conf-card::-webkit-scrollbar-thumb,
+.modal-overlay .ld-card::-webkit-scrollbar-thumb,
+.modal-overlay .notif-list::-webkit-scrollbar-thumb,
+.modal-overlay .rep-schedule::-webkit-scrollbar-thumb,
+.premium-cs-box::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+.modal-overlay .mc::-webkit-scrollbar-track,
+.modal-overlay .notif-list::-webkit-scrollbar-track,
+.modal-overlay .rep-schedule::-webkit-scrollbar-track{background:transparent}
+/* single clean header (no duplicated sticky header = no ghost text) */
+.modal-overlay .mc.pp > .m-title,
+.modal-overlay .mc.pp > .ld-title,
+.modal-overlay .conf-card > .conf-title{position:static}
+.modal-overlay .mc.pp:has(.popup-close) > .m-title,
+.modal-overlay .mc.pp:has(.popup-close) > .ld-title,
+.modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:44px}
+/* panels with their own inner scroll keep the ✕ always visible */
+.modal-overlay .pp-bar{
+  position:sticky;top:-2px;z-index:19;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:14px 16px 10px;
   background:linear-gradient(180deg,#12233d 0%,rgba(18,35,61,.97) 74%,rgba(18,35,61,0) 100%);
   border-bottom:1px solid rgba(29,219,128,.12);
@@ -1174,22 +1665,31 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 
 <div class="modal-overlay" id="repaymentModal">
   <div class="ld-card pp rep-card">
-    <div class="pp-bar"><span class="pp-bar-title">Repayment Schedule</span><button class="popup-close" aria-label="Close" onclick="closeModal('repaymentModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="pp-bar">
+      <span class="pp-bar-title">Repayment Schedule</span>
+      <button class="popup-close" aria-label="Close" onclick="closeModal('repaymentModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
     <div class="rep-summary">
       <div class="rep-sum-hero">
-        <span class="rep-sum-k">Monthly EMI</span>
+        <div class="rep-sum-left">
+          <span class="rep-sum-k">Monthly EMI</span>
+          <span class="rep-sum-note" id="repSumNote">6 installments</span>
+        </div>
         <strong class="rep-sum-v" id="emiAmount">৳ 0</strong>
-        <span class="rep-sum-note" id="repSumNote">Equal monthly installments</span>
       </div>
       <div class="rep-sum-grid">
         <div class="rep-sum-cell"><span>Loan Amount</span><b id="repLoanAmount">৳ 0</b></div>
         <div class="rep-sum-cell"><span>Term</span><b id="repTermText">0</b></div>
-        <div class="rep-sum-cell"><span>Total Interest</span><b id="repTotalInterest">৳ 0</b></div>
+        <div class="rep-sum-cell"><span>Interest</span><b id="repTotalInterest" class="orng">৳ 0</b></div>
         <div class="rep-sum-cell"><span>Total Payable</span><b id="repTotalPayable" class="grn">৳ 0</b></div>
       </div>
     </div>
-    <div class="rep-schedule" id="repScheduleList"></div>
-    <p class="rep-foot-note"><i class="fa-solid fa-circle-info"></i> EMI = principal + interest. Balance is the outstanding principal after each installment.</p>
+    <div class="pp-body" style="padding:0;">
+      <div class="rep-schedule" id="repScheduleList"></div>
+    </div>
+    <div class="pp-foot" style="padding-top:10px;">
+      <p class="rep-foot-note"><i class="fa-solid fa-circle-info"></i><span>EMI = principal + interest · Balance = outstanding principal after each installment</span></p>
+    </div>
   </div>
 </div>
 
@@ -2799,17 +3299,21 @@ function openRepaymentSchedule(){
   set('repTermText', n + (n === 1 ? ' Month' : ' Months'));
   set('repTotalInterest', '৳ ' + _fmt(totalInterest));
   set('repTotalPayable', '৳ ' + _fmt(totalPayable));
-  set('repSumNote', `${n} installments · ${annualRate}% annual interest`);
+  set('repSumNote', `${n} installments · ${annualRate}% p.a.`);
 
+  // shared column widths keep the header, rows and totals perfectly aligned
   document.getElementById('repScheduleList').innerHTML = `
     <table class="rep-table">
+      <colgroup>
+        <col class="c-month"><col><col><col><col>
+      </colgroup>
       <thead>
-        <tr><th>#</th><th>EMI (৳)</th><th>Principal (৳)</th><th>Interest (৳)</th><th>Balance (৳)</th></tr>
+        <tr><th>#</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
       </thead>
       <tbody>${rows}</tbody>
       <tfoot>
         <tr>
-          <td>Total</td>
+          <td>Σ</td>
           <td>${_fmt(totalPayable)}</td>
           <td>${_fmt(p)}</td>
           <td style="color:var(--orange)">${_fmt(totalInterest)}</td>
