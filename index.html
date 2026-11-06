@@ -978,26 +978,41 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 #confirmModal .conf-val{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
 
 /* ─── STEP COMPLETE BANNER (replaces the blocking popup) ─── */
-.stepdone-banner{
-  display:flex;align-items:flex-start;gap:10px;
-  margin:12px 14px 2px;padding:11px 12px;border-radius:14px;
-  background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(29,219,128,.04));
-  border:1px solid rgba(29,219,128,.3);
-  animation:sdIn .32s ease both;
+/* ─── STEP COMPLETE SCREEN (no modal, no ✕) ─── */
+#screen-step-complete{display:none;min-height:100dvh;padding:0 18px 30px;align-items:center;justify-content:center}
+#screen-step-complete.active{display:flex}
+.stc-wrap{width:100%;max-width:360px;text-align:center;animation:sdIn .35s ease both}
+.stc-badge{
+  width:78px;height:78px;margin:0 auto 16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--p);
+  background:radial-gradient(circle at 50% 40%,rgba(29,219,128,.22),rgba(29,219,128,.06));
+  border:1px solid rgba(29,219,128,.32);
+  box-shadow:0 0 0 8px rgba(29,219,128,.05),0 14px 40px rgba(29,219,128,.16);
 }
-.stepdone-banner .sd-ic{
-  width:28px;height:28px;flex:0 0 28px;border-radius:9px;
-  background:rgba(29,219,128,.18);color:var(--p);
-  display:flex;align-items:center;justify-content:center;font-size:13px;
+.stc-title{font-size:20px;font-weight:900;color:var(--txt);letter-spacing:-.4px;margin-bottom:6px}
+.stc-msg{font-size:12.5px;color:var(--txt2);line-height:1.55;margin-bottom:20px}
+.stc-track{width:100%;height:7px;background:rgba(255,255,255,.09);border-radius:5px;overflow:hidden}
+.stc-fill{height:100%;width:0%;border-radius:5px;background:linear-gradient(90deg,#26e891,#12bd6d);transition:width .45s ease;box-shadow:0 0 12px rgba(29,219,128,.5)}
+.stc-count{font-size:10.5px;color:var(--txt2);margin:8px 0 22px;letter-spacing:.4px;text-transform:uppercase;font-weight:700}
+.stc-btn{margin:0 !important;height:50px}
+.stc-back{
+  display:block;width:100%;margin-top:12px;background:transparent;border:none;
+  color:var(--txt2);font-size:12px;cursor:pointer;padding:8px;
 }
-.stepdone-banner .sd-txt{flex:1;min-width:0}
-.stepdone-banner .sd-title{font-size:12.5px;font-weight:800;color:var(--p);margin-bottom:2px}
-.stepdone-banner .sd-desc{font-size:11px;color:var(--txt2);line-height:1.45}
-.stepdone-banner .sd-x{
-  flex:0 0 auto;background:transparent;border:none;color:var(--txt2);
-  font-size:12px;cursor:pointer;padding:2px 2px 0;line-height:1;
+.stc-back:hover{color:var(--txt)}
+@keyframes sdIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+
+/* ─── STEP 4: receiving number ─── */
+.bank-hint{
+  font-size:11px;color:var(--txt2);margin:-16px 0 20px;line-height:1.5;
+  display:flex;align-items:center;gap:6px;
 }
-@keyframes sdIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.bank-hint.err{color:var(--orange)}
+.bank-hint.ok{color:var(--p)}
+.ph-row.editing{border-bottom-color:var(--p)}
+.ph-row.invalid{border-bottom-color:var(--orange)}
+.ph-row input::placeholder{color:var(--txt3);font-weight:600;font-size:15px}
+.ph-row i#bankEditIcon.active{color:var(--orange)}
 </style>
 </head>
 <body>
@@ -1482,15 +1497,19 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <label class="auth-check"><input type="checkbox" class="ck" checked><span>By continuing you agree to our <span class="green-link">Privacy Policy</span></span></label>
 </div>
 
-<div id="screen-application-progress" class="screen" style="padding-bottom:40px">
-  <div class="stepdone-banner" id="stepDoneBanner" style="display:none;">
-    <div class="sd-ic"><i class="fa-solid fa-circle-check"></i></div>
-    <button class="sd-x" aria-label="Dismiss" onclick="hideStepDoneBanner()"><i class="fa-solid fa-xmark"></i></button>
-      <div class="sd-txt">
-      <div class="sd-title" id="stepDoneTitle">Step complete</div>
-      <div class="sd-desc" id="stepDoneDesc"></div>
-    </div>
+<div id="screen-step-complete" class="screen">
+  <div class="stc-wrap">
+    <div class="stc-badge"><i class="fa-solid fa-circle-check"></i></div>
+    <div class="stc-title" id="stcTitle">Step complete</div>
+    <div class="stc-msg" id="stcMsg">Your information is saved.</div>
+    <div class="stc-track"><div class="stc-fill" id="stcFill"></div></div>
+    <div class="stc-count" id="stcCount">Step 0 of 5</div>
+    <button class="mbtn-full stc-btn" id="stcBtn" onclick="_continueAfterStep()">Continue <i class="fa-solid fa-arrow-right" style="font-size:12px;margin-left:7px"></i></button>
+    <button class="stc-back" onclick="_backToProgress()">Back to application overview</button>
   </div>
+</div>
+
+<div id="screen-application-progress" class="screen" style="padding-bottom:40px">
   <div class="dash-hdr"><i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-home')"></i><div class="logo">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
   <div class="suc-banner"><div class="suc-left"><i class="fa-solid fa-circle-check suc-icon"></i><span id="dashSuccessText">Welcome!</span></div><span class="suc-icon">🎉</span></div>
   <div class="warn-box"><i class="fa-solid fa-circle-exclamation"></i><p>Tap <strong style="color:var(--txt)">"APPLY"</strong> and complete each step in order.</p></div>
@@ -1570,7 +1589,12 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="w-card" id="wRocket" onclick="selectWallet('Rocket')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket"><span>Rocket</span></div>
   </div>
   <div class="ph-lbl">Receiving Account Number <span>*</span></div>
-  <div class="ph-row"><input type="tel" id="bankPhone" readonly inputmode="numeric"><i class="fa-regular fa-pen-to-square"  onclick="enableBankEdit()"></i></div>
+  <div class="ph-row" id="bankPhoneRow">
+    <input type="tel" id="bankPhone" inputmode="numeric" maxlength="11" placeholder="01XXXXXXXXX"
+           oninput="onBankPhoneInput(this)" onblur="onBankPhoneBlur()">
+    <i class="fa-regular fa-pen-to-square" id="bankEditIcon" onclick="enableBankEdit()"></i>
+  </div>
+  <div class="bank-hint" id="bankPhoneHint">Tap the icon to edit your receiving number.</div>
   <div class="tips-card">
     <h4><i class="fa-solid fa-lightbulb"></i> Tips</h4>
     <p>1. Use your own wallet account to receive your loan.</p>
@@ -1747,6 +1771,8 @@ let nidFrontUrl='', nidBackUrl='';
 let _savedApp=null;
 // NID number on file for this user (kept across applications)
 let _savedNid='';
+// last receiving account number typed by the user (survives navigation/refresh)
+let _lastBankPhone='';
 // values restored from the previous application (shown with a green "filled" mark)
 let _prefilled={};
 let selPayMethod='Bkash';
@@ -1827,7 +1853,8 @@ function saveFormState(isSubmitted){
     c1Phone: document.getElementById('c1Phone')?.value || '',
     c2Name: document.getElementById('c2Name')?.value || '',
     c2Phone: document.getElementById('c2Phone')?.value || '',
-    bankPhone: document.getElementById('bankPhone')?.value || '',
+    // keep the last known receiving number if the input is not on screen
+    bankPhone: (document.getElementById('bankPhone')?.value || '').trim() || _lastBankPhone || '',
     selGender, selDob, selIncome, selPurpose, selAmount, selTerm,
     selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2,
     selWallet, currentDashboardStep,
@@ -1851,7 +1878,10 @@ function restoreFormState(src){
     if(document.getElementById('c1Phone')) document.getElementById('c1Phone').value = draft.c1Phone || '';
     if(document.getElementById('c2Name')) document.getElementById('c2Name').value = draft.c2Name || '';
     if(document.getElementById('c2Phone')) document.getElementById('c2Phone').value = draft.c2Phone || '';
-    if(document.getElementById('bankPhone') && draft.bankPhone) document.getElementById('bankPhone').value = draft.bankPhone;
+    if(document.getElementById('bankPhone') && draft.bankPhone){
+      document.getElementById('bankPhone').value = draft.bankPhone;
+      _lastBankPhone = draft.bankPhone;
+    }
 
     selGender = draft.selGender || ''; selDob = draft.selDob || ''; selIncome = draft.selIncome || '';
     selPurpose = draft.selPurpose || ''; selAmount = draft.selAmount || ''; selTerm = draft.selTerm || '';
@@ -2016,6 +2046,7 @@ window.clearApplicationForm = function(){
   const u = _getUser();
   const bp = document.getElementById('bankPhone');
   if(bp) bp.value = u?.phone ? '0' + u.phone : '';
+  _lastBankPhone = bp ? bp.value : '';
   if(u?.phone) _prefilled.bankPhone = true;
   _refreshPrefillMarks();
   if(typeof checkStep1 === 'function') checkStep1();
@@ -2092,6 +2123,8 @@ function nav(id){
   if(target){
     target.classList.add('active');
     document.getElementById('app').scrollTo({top: 0, behavior: 'instant'});
+    // step 4: always show the stored receiving number when the screen opens
+    if(id === 'screen-bank-info' && typeof _syncBankPhoneField === 'function') setTimeout(_syncBankPhoneField, 30);
     if(id === 'screen-home'){
       const u = _getUser();
       if(u && typeof window.loadUserDashboardData === 'function'){
@@ -2273,38 +2306,37 @@ async function saveUserNid(nid){
   } catch(e) { console.warn('saveUserNid:', e?.message); }
 }
 
-// After a step is completed: an inline banner (no popup, no ✕) confirms it
-// and the user lands directly on the next step of the form.
+// After a step is completed we move to a dedicated success screen — never a
+// modal — so there is no ✕ to get stuck on. Continue advances the form.
 const _STEP_NAMES = {
-  1:['Basic Information','Your name, email, gender, DOB, NID and income are saved.'],
+  1:['Basic Information','Your name, email, gender, date of birth, NID and income are saved.'],
   2:['Personal Information','Loan purpose, amount, term and employment details are saved.'],
   3:['Emergency Contact','Both emergency contacts are saved.'],
   4:['Bank Information','Your receiving wallet and account number are saved.'],
   5:['Identity Verification','Your NID photos are saved.']
 };
+let _pendingStep = 0;
 function _afterStepComplete(step){
   const info = _STEP_NAMES[step] || ['Step complete','Your information is saved.'];
-  const banner = document.getElementById('stepDoneBanner');
-  if(banner){
-    const t = document.getElementById('stepDoneTitle');
-    const d = document.getElementById('stepDoneDesc');
-    if(t) t.innerText = `Step ${step} complete — ${info[0]} saved`;
-    if(d) d.innerText = info[1];
-    // re-trigger the entry animation
-    banner.style.animation = 'none';
-    void banner.offsetWidth;
-    banner.style.animation = '';
-    banner.style.display = 'flex';
-    clearTimeout(window._stepDoneTimer);
-    window._stepDoneTimer = setTimeout(()=>{ banner.style.display = 'none'; }, 6000);
-  }
+  _pendingStep = step;
+  const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.innerText=v; };
+  set('stcTitle', `Step ${step} Complete`);
+  set('stcMsg', `${info[0]} saved successfully.`);
+  set('stcCount', `Step ${step} of 5`);
+  const fill = document.getElementById('stcFill');
+  if(fill){ fill.style.width='0%'; setTimeout(()=>{ fill.style.width = (step*20)+'%'; }, 60); }
+  const btn = document.getElementById('stcBtn');
+  if(btn) btn.innerHTML = step >= 5
+    ? 'See your application <i class="fa-solid fa-arrow-right" style="font-size:12px;margin-left:7px"></i>'
+    : 'Continue to next step <i class="fa-solid fa-arrow-right" style="font-size:12px;margin-left:7px"></i>';
+  nav('screen-step-complete');
+}
+function _continueAfterStep(){
+  const step = _pendingStep;
   if(step >= 5){ nav('screen-application-progress'); return; }
   openStep(step + 1);
 }
-function hideStepDoneBanner(){
-  const b = document.getElementById('stepDoneBanner');
-  if(b) b.style.display = 'none';
-}
+function _backToProgress(){ nav('screen-application-progress'); }
 
 function resetPolicyCheck(){
   const c = document.getElementById('policyCheck');
@@ -2415,6 +2447,14 @@ function checkStep3(){
 }
 
 function showConfirmModal(){
+  const m1 = [];
+  if(!document.getElementById('infoName').value.trim()) m1.push('Full Name');
+  if(!document.getElementById('infoEmail').value.trim()) m1.push('E-mail');
+  if(!selGender) m1.push('Gender');
+  if(!selDob) m1.push('Date of Birth');
+  if(!document.getElementById('infoId').value.trim()) m1.push('NID number');
+  if(!selIncome) m1.push('Monthly Income');
+  if(m1.length){ showAlert('Incomplete Information', 'Please fill: ' + m1.join(', ') + '.', 'error'); return; }
   document.getElementById('cName').innerText   = document.getElementById('infoName').value;
   document.getElementById('cEmail').innerText  = document.getElementById('infoEmail').value;
   document.getElementById('cGender').innerText = selGender;
@@ -2430,11 +2470,38 @@ function submitConfirmedInfo(){
   setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); _afterStepComplete(1); }, 900);
 }
 function submitStep2(){
+  // guard: every step-2 field must be present before moving on
+  const missing = [];
+  if(!document.getElementById('infoCompany').value.trim()) missing.push('Company / Employer');
+  if(!document.getElementById('infoAddress').value.trim()) missing.push('Home Address');
+  if(!selPurpose) missing.push('Loan Purpose');
+  if(!selAmount) missing.push('Loan Amount');
+  if(!selTerm) missing.push('Repayment Term');
+  if(!selEdu) missing.push('Education Level');
+  if(!selMarital) missing.push('Marital Status');
+  if(!selChildren) missing.push('Number of Children');
+  if(!selOccupation) missing.push('Occupation');
+  if(missing.length){ showAlert('Incomplete Information', 'Please fill: ' + missing.join(', ') + '.', 'error'); return; }
   showLoader(true);
   setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); _afterStepComplete(2); }, 900);
 }
+// step 4 opens: always show the stored receiving number
+function _syncBankPhoneField(){
+  const el = document.getElementById('bankPhone');
+  if(!el) return;
+  const saved = _lastBankPhone || (document.getElementById('bankPhone')?.value || '');
+  if(!el.value.trim() && saved) el.value = saved;
+  if(el.value.trim()) onBankPhoneInput(el);
+}
 function submitStep3(){
-  if(!isValidBDPhone(document.getElementById('c1Phone').value)||!isValidBDPhone(document.getElementById('c2Phone').value)){ showErrorModal('Invalid Phone Number','Phone must be 10 digits starting with 1.'); return; }
+  const m3 = [];
+  if(!document.getElementById('c1Name').value.trim()) m3.push('First contact name');
+  if(!isValidBDPhone(document.getElementById('c1Phone').value)) m3.push('First contact phone');
+  if(!selRel1) m3.push('First contact relation');
+  if(!document.getElementById('c2Name').value.trim()) m3.push('Second contact name');
+  if(!isValidBDPhone(document.getElementById('c2Phone').value)) m3.push('Second contact phone');
+  if(!selRel2) m3.push('Second contact relation');
+  if(m3.length){ showAlert('Incomplete Information', 'Please check: ' + m3.join(', ') + '.', 'error'); return; }
   showLoader(true);
   setTimeout(()=>{
     showLoader(false); currentDashboardStep=3; updateProgressUI();
@@ -2446,6 +2513,28 @@ function submitStep3(){
   }, 900);
 }
 function submitStep4(){
+  const el = document.getElementById('bankPhone');
+  const val = _bankNormalize(el?.value || '');
+
+  // never let the form move on without a usable receiving number
+  if(!val){
+    _bankHint('err', 'Receiving account number is required.');
+    el?.focus();
+    return;
+  }
+  if(!_bankValid(val)){
+    _bankHint('err', 'Enter a valid 11-digit number starting with 01 (e.g. 01712345678).');
+    el?.focus();
+    return;
+  }
+  if(!selWallet){
+    showAlert('Wallet Required', 'Please select the wallet type that will receive your loan.', 'info');
+    return;
+  }
+  el.value = val;
+  _lastBankPhone = val;
+  saveFormState();
+
   showLoader(true);
   setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); _afterStepComplete(4); }, 900);
 }
@@ -2454,9 +2543,66 @@ function selectWallet(w){
   ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('w'+x); if(el) el.classList.remove('sel'); });
   const target=document.getElementById('w'+w); if(target) target.classList.add('sel');
 }
+// ── Step 4: the receiving account number must be editable + validated ──
+function _bankClean(v){ return String(v||'').replace(/[^0-9]/g,'').slice(0,11); }
+// accept 01712345678 / 1712345678 / +8801712345678 and store one clean local format
+function _bankNormalize(v){
+  let d = String(v||'').replace(/[^0-9]/g,'');
+  if(d.indexOf('880') === 0) d = '0' + d.slice(3);
+  else if(d.indexOf('88') === 0 && d.length > 11) d = '0' + d.slice(2);
+  if(d.length === 10 && d.charAt(0) === '1') d = '0' + d;
+  return d.slice(0,11);
+}
+function _bankValid(v){
+  const d = _bankClean(v);
+  return /^01[3-9][0-9]{8}$/.test(d) || /^1[3-9][0-9]{8}$/.test(d);
+}
+function _bankHint(state, text){
+  const h = document.getElementById('bankPhoneHint');
+  const row = document.getElementById('bankPhoneRow');
+  if(!h) return;
+  h.className = 'bank-hint' + (state ? ' ' + state : '');
+  h.innerHTML = (state === 'err' ? '<i class="fa-solid fa-circle-exclamation"></i>'
+               : state === 'ok'  ? '<i class="fa-solid fa-circle-check"></i>'
+               : '<i class="fa-solid fa-circle-info"></i>') + ' ' + text;
+  if(row) row.classList.toggle('invalid', state === 'err');
+}
+function onBankPhoneInput(el){
+  const caret = el.selectionStart;
+  el.value = _bankNormalize(el.value);
+  _lastBankPhone = el.value;
+  try { el.setSelectionRange(caret, caret); } catch(e){}
+  saveFormState();
+  const v = el.value;
+  if(!v) { _bankHint('', 'Enter the wallet number that should receive your loan.'); return; }
+  if(_bankValid(v)) _bankHint('ok', 'Valid receiving number.');
+  else _bankHint('', 'Format: 01XXXXXXXXX (11 digits).');
+}
+function onBankPhoneBlur(){
+  const el = document.getElementById('bankPhone');
+  if(el && el.value && !_bankValid(el.value)) _bankHint('err', 'That does not look like a valid BD mobile number.');
+  else if(el && _bankValid(el.value)) _bankHint('ok', 'Valid receiving number.');
+  saveFormState();
+}
 function enableBankEdit(){
-  const i=document.getElementById('bankPhone');
-  if(i.readOnly){ i.removeAttribute('readonly'); i.focus(); } else { i.setAttribute('readonly',true); saveFormState(); }
+  const i = document.getElementById('bankPhone');
+  const row = document.getElementById('bankPhoneRow');
+  const ic = document.getElementById('bankEditIcon');
+  if(!i) return;
+  // the field is always editable now — the icon just focuses it and highlights the row
+  i.classList.remove('bank-locked');
+  row?.classList.add('editing');
+  if(ic) ic.className = 'fa-solid fa-circle-check';
+  i.focus();
+  i.setSelectionRange(i.value.length, i.value.length);
+  setTimeout(()=>{
+    row?.classList.remove('editing');
+    if(ic) ic.className = 'fa-regular fa-pen-to-square';
+  }, 1600);
+  if(!i.value.trim()){
+    const u = _getUser();
+    if(u?.phone) { i.value = '0' + u.phone; onBankPhoneInput(i); }
+  }
 }
 
 function openNidSheet(target){
