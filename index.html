@@ -951,6 +951,31 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   #loanDetailsModal .ld-val{font-size:11.5px}
   #loanDetailsModal .ld-hero-v{font-size:22px}
 }
+
+/* ─── CLOSE BUTTON: always the top-right circle (never the left) ─── */
+.modal-overlay .popup-close,
+.modal-overlay .mc .popup-close,
+.modal-overlay .conf-card .popup-close,
+.modal-overlay .ld-card .popup-close{
+  margin-left:auto;margin-right:-6px;
+  align-self:flex-end;
+}
+/* confirm popup */
+#confirmModal .conf-card{max-width:360px}
+#confirmModal .pp-bar{padding:14px 16px 11px}
+#confirmModal .conf-warn{
+  margin:0 16px 6px;padding:10px 12px;text-align:left;
+  display:flex;align-items:flex-start;gap:7px;
+  font-size:11.5px;line-height:1.45;border-radius:12px;
+}
+#confirmModal .conf-warn i{margin-top:2px;flex-shrink:0}
+#confirmModal .conf-row{
+  margin:0;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.055);
+  font-size:12.5px;gap:12px;
+}
+#confirmModal .conf-row:last-of-type{border-bottom:none}
+#confirmModal .conf-lbl{font-size:11.5px;color:var(--txt2)}
+#confirmModal .conf-val{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -994,10 +1019,11 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="m-acts"><button class="mbtn mbtn-cancel" onclick="closeGlobalModal(true)">Cancel</button><button class="mbtn mbtn-ok" onclick="submitLoginPassword()">Login</button></div>
   </div>
   <div class="mc pp" id="modal-alert" style="display:none;">
-    <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
+    <button class="popup-close" id="alertCloseBtn" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon" id="m-icon-wrap"><i id="m-icon" class="fa-solid fa-circle-info"></i></div>
     <div class="m-title" id="m-title"></div>
     <div class="m-msg" id="m-msg"></div>
+    <button class="mbtn-full" id="alertOkBtn" onclick="closeGlobalModal()">OK</button>
   </div>
   <div class="mc pp" id="modal-error" style="display:none;">
     <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -1026,9 +1052,8 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 </div>
 
 <div class="modal-overlay premium-popup" id="confirmModal">
-  <div class="conf-card">
-    <button class="popup-close" aria-label="Close" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i></button>
-    <div class="conf-title">Confirm Your Information</div>
+  <div class="conf-card pp">
+    <div class="pp-bar"><span class="pp-bar-title">Confirm Your Information</span><button class="popup-close" aria-label="Close" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="conf-warn"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>Accurate info greatly increases approval chances</div>
     <div class="conf-row"><span class="conf-lbl">Full Name</span><span class="conf-val" id="cName">-</span></div>
     <div class="conf-row"><span class="conf-lbl">E-mail</span><span class="conf-val" id="cEmail">-</span></div>
@@ -1036,7 +1061,9 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="conf-row"><span class="conf-lbl">Date of Birth</span><span class="conf-val" id="cDob">-</span></div>
     <div class="conf-row"><span class="conf-lbl">NID / ID No.</span><span class="conf-val" id="cId">-</span></div>
     <div class="conf-row"><span class="conf-lbl">Monthly Income</span><span class="conf-val" id="cIncome">-</span></div>
-    <button class="mbtn-full" onclick="submitConfirmedInfo()" style="margin-top:18px;">Confirm &amp; Continue</button>
+    <div class="pp-foot" style="margin-top:14px;">
+      <button class="mbtn-full" onclick="submitConfirmedInfo()" style="margin:0;">Confirm &amp; Continue</button>
+    </div>
   </div>
 </div>
 
@@ -1688,6 +1715,8 @@ let nidFrontOk=false, nidBackOk=false;
 let nidFrontUrl='', nidBackUrl='';
 // last submitted application of this user (Firestore) — used to prefill the form
 let _savedApp=null;
+// NID number on file for this user (kept across applications)
+let _savedNid='';
 // values restored from the previous application (shown with a green "filled" mark)
 let _prefilled={};
 let selPayMethod='Bkash';
@@ -1785,7 +1814,7 @@ function restoreFormState(src){
     
     if(document.getElementById('infoName')) document.getElementById('infoName').value = draft.infoName || '';
     if(document.getElementById('infoEmail')) document.getElementById('infoEmail').value = draft.infoEmail || '';
-    if(document.getElementById('infoId')) document.getElementById('infoId').value = draft.infoId || '';
+    if(document.getElementById('infoId')) document.getElementById('infoId').value = draft.infoId || _savedNid || '';
     if(document.getElementById('infoCompany')) document.getElementById('infoCompany').value = draft.infoCompany || '';
     if(document.getElementById('infoAddress')) document.getElementById('infoAddress').value = draft.infoAddress || '';
     if(document.getElementById('c1Name')) document.getElementById('c1Name').value = draft.c1Name || '';
@@ -1846,7 +1875,7 @@ function _mapAppToForm(a){
   if(!a) return null;
   const e1 = a.emergency1 || {}, e2 = a.emergency2 || {};
   return {
-    infoName: a.name || '', infoEmail: a.email || '', infoId: a.nid || a.infoId || '',
+    infoName: a.name || '', infoEmail: a.email || '', infoId: a.nid || a.infoId || _savedNid || '',
     infoCompany: a.company || '', infoAddress: a.address || '',
     c1Name: e1.name || '', c1Phone: e1.phone || '', c2Name: e2.name || '', c2Phone: e2.phone || '',
     bankPhone: a.bankPhone || '',
@@ -1871,9 +1900,14 @@ window._prefillFromLastApp = function(){
   const useDraft = draftInProgress || (!!localDraft && !hasRemote);
   const source = useDraft ? localDraft : remote;
 
-  if(!source) return false;
+  if(!source && !_savedNid) return false;
   clearFormFields();          // reset first, so nothing stale is left behind
-  restoreFormState(source);   // then fill everything in
+  restoreFormState(source || {});   // then fill everything in
+  if(!document.getElementById('infoId')?.value.trim() && _savedNid){
+    document.getElementById('infoId').value = _savedNid;
+    _prefilled.infoId = true; _refreshPrefillMarks();
+    if(typeof checkStep1 === 'function') checkStep1();
+  }
   _markPrefilled(useDraft ? localDraft : remote, useDraft ? 'draft' : 'server');
   showPrefillBanner(useDraft ? 'draft' : 'server', u?.phone);
   return true;
@@ -2166,10 +2200,15 @@ function openPasswordModal() {
   }
 }
 
-function showAlert(title,msg,type='info',cb=null){
+function showAlert(title,msg,type='info',cb=null,okLabel=null){
   _showModal(false,true,false);
   document.getElementById('m-title').innerText=title;
   document.getElementById('m-msg').innerText=msg;
+  const okBtn = document.getElementById('alertOkBtn');
+  const closeBtn = document.getElementById('alertCloseBtn');
+  if(okBtn) okBtn.innerHTML = okLabel ? `${okLabel} <i class="fa-solid fa-arrow-right" style="font-size:11px;margin-left:6px"></i>` : 'OK';
+  // step-complete popups only offer OK / Next — no ✕ in the corner
+  if(closeBtn) closeBtn.style.display = okLabel ? 'none' : 'flex';
   const w=document.getElementById('m-icon-wrap'); const i=document.getElementById('m-icon');
   const types={ success:['m-ic-suc','fa-solid fa-check'], error:['m-ic-err','fa-solid fa-xmark'], info:['m-ic-lock','fa-solid fa-circle-info'] };
   const[cls,icn]=types[type]||types.info;
@@ -2187,6 +2226,31 @@ function closeGlobalModal(clearLogin=false){
   const cb=modalCloseCb; modalCloseCb=null;
   if(cb) cb();
 }
+// keep the NID on the user's profile so the next application has it already filled
+async function saveUserNid(nid){
+  const val = String(nid || '').trim();
+  if(!val) return;
+  _savedNid = val;
+  try {
+    const u = _getUser(); if(!u?.phone || !db) return;
+    if(window._userDocId){
+      await updateDoc(doc(db, 'users', window._userDocId), { nid: val, nidUpdatedAt: new Date().toISOString() });
+    } else {
+      const snap = await getDocs(query(collection(db, 'users'), where('phone', '==', u.phone)));
+      if(!snap.empty){
+        window._userDocId = snap.docs[0].id;
+        await updateDoc(snap.docs[0].ref, { nid: val, nidUpdatedAt: new Date().toISOString() });
+      }
+    }
+  } catch(e) { console.warn('saveUserNid:', e?.message); }
+}
+
+// After a step is completed the popup shows OK / Next (no ✕) and moves the user on.
+function _afterStepComplete(step){
+  if(step >= 5){ nav('screen-application-progress'); return; }
+  openStep(step + 1);
+}
+
 function resetPolicyCheck(){
   const c = document.getElementById('policyCheck');
   if(c) c.checked = false;
@@ -2306,12 +2370,13 @@ function showConfirmModal(){
 }
 function submitConfirmedInfo(){
   document.getElementById('confirmModal').classList.remove('on');
+  saveUserNid(document.getElementById('infoId').value);
   showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); showAlert('Step 1 Complete ✓','Basic Information saved successfully!','success',()=>nav('screen-personal-info')); }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); showAlert('Step 1 Complete ✓','Basic Information saved successfully!','success',()=>_afterStepComplete(1),'Next'); }, 900);
 }
 function submitStep2(){
   showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); showAlert('Step 2 Complete ✓','Personal Information saved successfully!','success',()=>nav('screen-emergency-contact')); }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); showAlert('Step 2 Complete ✓','Personal Information saved successfully!','success',()=>_afterStepComplete(2),'Next'); }, 900);
 }
 function submitStep3(){
   if(!isValidBDPhone(document.getElementById('c1Phone').value)||!isValidBDPhone(document.getElementById('c2Phone').value)){ showErrorModal('Invalid Phone Number','Phone must be 10 digits starting with 1.'); return; }
@@ -2322,12 +2387,12 @@ function submitStep3(){
     const u=_getUser();
     // keep the receiving number from the previous application; only fall back to the login number
     if(bpEl && !bpEl.value.trim() && u?.phone) bpEl.value='0'+u.phone;
-    showAlert('Step 3 Complete ✓','Emergency Contact saved successfully!','success',()=>nav('screen-bank-info'));
+    showAlert('Step 3 Complete ✓','Emergency Contact saved successfully!','success',()=>_afterStepComplete(3),'Next');
   }, 900);
 }
 function submitStep4(){
   showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); showAlert('Step 4 Complete ✓','Bank Information saved successfully!','success',()=>nav('screen-nid-upload')); }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); showAlert('Step 4 Complete ✓','Bank Information saved successfully!','success',()=>_afterStepComplete(4),'Next'); }, 900);
 }
 function selectWallet(w){
   selWallet=w; saveFormState();
@@ -3415,7 +3480,7 @@ window.saveApplicationToFirebase=async function(){
   try{
     await addDoc(collection(db,'applications'),{
       uid: u?.phone||'unknown', name: document.getElementById('infoName').value, email: document.getElementById('infoEmail').value,
-      nid: document.getElementById('infoId').value,
+      nid: document.getElementById('infoId').value || _savedNid,
       gender: selGender, dob:selDob, income:selIncome, loanPurpose: selPurpose, loanAmount:selAmount, term:selTerm,
       education: selEdu, marital:selMarital, children:selChildren, occupation:selOccupation, company: document.getElementById('infoCompany').value,
       address: document.getElementById('infoAddress').value,
@@ -3487,6 +3552,13 @@ window.loadUserDashboardData = async function() {
   try {
     const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
     if(!uSnap.empty) {
+      // NID kept on the profile so it survives every new application
+      try {
+        const uDoc = uSnap.docs[0];
+        const profileNid = uDoc.data().nid || '';
+        if(profileNid) _savedNid = profileNid;
+        window._userDocId = uDoc.id;
+      } catch(e) {}
       window._userRealBalance = uSnap.docs[0].data().balance || 0;
       document.getElementById('headerBalance').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + window._userRealBalance.toLocaleString();
     }
@@ -3514,7 +3586,12 @@ window.loadUserDashboardData = async function() {
     // remember the latest submitted application so the form can be pre-filled
     try {
       const all = appSnap.docs.map(d => d.data()).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
-      if(all.length) _savedApp = all[0];
+      if(all.length) {
+        _savedApp = all[0];
+        // newest application that carries an NID number (never lose it)
+        const withNid = all.find(x => x.nid && String(x.nid).trim());
+        if(withNid) _savedNid = String(withNid.nid).trim();
+      }
     } catch(e) {}
     const card = document.getElementById('userStatusCard'), mainBtn = document.getElementById('mainBorrowBtn');
     const title = document.getElementById('statusCardTitle'), desc = document.getElementById('statusCardDesc');
