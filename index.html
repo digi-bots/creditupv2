@@ -435,6 +435,44 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .notif-content p{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:6px}
 .notif-date{font-size:10px;color:var(--txt3);font-weight:600}
 .premium-popup .mc{background:rgba(15,29,53,.85) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important}
+/* ─── PREFILL / SAVED-DATA HINTS ─── */
+.prefill-banner{
+  display:flex;align-items:flex-start;gap:10px;
+  margin:12px 14px 0;padding:11px 12px;
+  background:linear-gradient(135deg,rgba(29,219,128,.12),rgba(29,219,128,.04));
+  border:1px solid rgba(29,219,128,.28);border-radius:14px;
+}
+.prefill-banner .pf-ic{
+  width:28px;height:28px;flex:0 0 28px;border-radius:9px;
+  background:rgba(29,219,128,.16);color:var(--p);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.prefill-banner .pf-txt{flex:1;min-width:0}
+.prefill-banner .pf-title{font-size:12.5px;font-weight:800;color:var(--p);margin-bottom:2px}
+.prefill-banner .pf-desc{font-size:11px;color:var(--txt2);line-height:1.45}
+.prefill-banner .pf-nid{display:flex;gap:6px;align-items:flex-start;font-size:10.5px;color:var(--txt2);margin-top:6px;line-height:1.4}
+.prefill-banner .pf-nid i{color:var(--p);font-size:10.5px;margin-top:2px}
+.prefill-banner .pf-clear{
+  flex:0 0 auto;font-size:10.5px;font-weight:800;color:var(--txt2);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:9px;padding:6px 8px;cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;transition:.2s;
+}
+.prefill-banner .pf-clear:hover{color:var(--red);border-color:rgba(255,77,106,.35);background:rgba(255,77,106,.12)}
+/* fields that came from the previous application */
+input.pf-filled,.sel-disp.pf-filled,.sel-box.pf-filled{
+  border-color:rgba(29,219,128,.4) !important;
+  background:rgba(29,219,128,.055) !important;
+  box-shadow:inset 0 0 0 1px rgba(29,219,128,.12);
+  border-radius:8px;
+}
+input.pf-filled{padding-left:8px;padding-right:8px}
+.nid-saved-note{
+  display:flex;align-items:center;gap:7px;
+  font-size:11px;color:var(--p);line-height:1.45;
+  background:rgba(29,219,128,.09);border:1px solid rgba(29,219,128,.22);
+  border-radius:11px;padding:8px 10px;margin-bottom:14px;
+}
 /* ─── PREMIUM POPUP SYSTEM ─────────────────────────────────────────────
    one shared shell: glass gradient card, green glow border,
    sticky top-right close button that stays visible while scrolling.
@@ -490,38 +528,49 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .modal-overlay .mc.pp:has(.popup-close) > .ld-title,
 .modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:44px}
 /* panels with their own inner scroll keep the ✕ always visible */
-.modal-overlay .mc.pp .pp-bar{
+.modal-overlay .pp-bar{
   position:sticky;top:-2px;z-index:19;
   display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:14px 16px 10px;
+  padding:16px 18px 12px;
+  min-height:56px;box-sizing:border-box;
   background:linear-gradient(180deg,#12233d 0%,rgba(18,35,61,.97) 74%,rgba(18,35,61,0) 100%);
   border-bottom:1px solid rgba(29,219,128,.12);
+  border-radius:26px 26px 0 0;
 }
-.modal-overlay .mc.pp .pp-bar-title{
-  font-size:16.5px;font-weight:800;color:var(--txt);
-  letter-spacing:-.3px;text-shadow:0 2px 14px rgba(29,219,128,.2);
+.modal-overlay .pp-bar-title{
+  font-size:16px;font-weight:800;color:var(--txt);
+  letter-spacing:-.2px;text-shadow:0 2px 14px rgba(29,219,128,.2);
+  line-height:1.25;padding-left:1px;
 }
-.modal-overlay .mc.pp .pp-bar .popup-close{position:static;float:none;margin:0;flex:0 0 32px}
-.modal-overlay :is(.mc,pp.ld-card,.ld-card.pp,.conf-card.pp):has(.pp-bar){padding:0 !important}
-.modal-overlay .mc.pp:has(.pp-bar) > :not(.pp-bar),
-.modal-overlay .ld-card.pp:has(.pp-bar) > :not(.pp-bar){
+.modal-overlay .pp-bar .popup-close{position:static !important;float:none !important;margin:0 0 0 auto !important;flex:0 0 32px}
+/* safety net: a close button can never drift to the left edge */
+.modal-overlay .mc > .popup-close,
+.modal-overlay .ld-card > .popup-close,
+.modal-overlay .conf-card > .popup-close{position:sticky;margin-left:auto !important;margin-right:-6px;align-self:flex-end}
+.modal-overlay .pp-bar > .pp-bar-title{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-overlay .mc:has(.pp-bar),
+.modal-overlay .ld-card:has(.pp-bar),
+.modal-overlay .conf-card:has(.pp-bar){padding:0 !important}
+.modal-overlay .mc:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .ld-card:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .conf-card:has(.pp-bar) > :not(.pp-bar){
   margin-left:16px;margin-right:16px;
 }
-.modal-overlay .mc.pp:has(.pp-bar) > .notif-list{margin-bottom:22px}
-.modal-overlay .ld-card.pp:has(.pp-bar) > .mbtn-full{margin-top:16px;margin-bottom:22px}
-.modal-overlay .ld-card.pp:has(.pp-bar) > .rep-schedule{margin-bottom:0}
+.modal-overlay .mc:has(.pp-bar) > .notif-list{margin-bottom:22px}
+.modal-overlay .ld-card:has(.pp-bar) > .mbtn-full{margin-top:16px;margin-bottom:22px}
+
 /* body + pinned footer: buttons never touch the card edge */
-.modal-overlay .mc.pp .pp-body{padding:2px 16px 6px}
-.modal-overlay .mc.pp .pp-body .detail-row:first-child{padding-top:4px}
-.modal-overlay .mc.pp .pp-foot{
+.modal-overlay .pp-body{padding:2px 16px 6px}
+.modal-overlay .pp-body .detail-row:first-child{padding-top:4px}
+.modal-overlay .pp-foot{
   flex-shrink:0;padding:14px 16px 22px;
   border-top:1px solid rgba(29,219,128,.14);
   background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55));
 }
-.modal-overlay .mc.pp .pp-foot .mbtn-full,
-.modal-overlay .mc.pp .pp-foot .mbtn{margin:0 !important}
-.modal-overlay .mc.pp .pp-foot:empty{display:none}
-.modal-overlay .mc.pp .pp-body > *,
+.modal-overlay .pp-foot .mbtn-full,
+.modal-overlay .pp-foot .mbtn{margin:0 !important}
+.modal-overlay .pp-foot:empty{display:none}
+.modal-overlay .pp-body > *,
 #referModal .refer-body > *{max-width:100%}
 /* status popup: scrolling rows, fixed header + footer */
 #appStatusModal .mc.pp{
@@ -790,6 +839,782 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .cs-closed-banner.on{display:flex}
 .cs-closed-banner strong{color:var(--txt);font-size:13px}
 .cs-new-chat-btn{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:var(--glow)}
+
+/* ─── REPAYMENT SCHEDULE (premium table) ─── */
+#repaymentModal .rep-card{max-width:470px;width:100%}
+#repaymentModal .pp-bar{padding:15px 18px 12px}
+#repaymentModal .pp-body{padding:0}
+/* summary */
+#repaymentModal .rep-summary{padding:2px 18px 14px}
+#repaymentModal .rep-sum-hero{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px 14px;margin-bottom:10px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(29,219,128,.03));
+  border:1px solid rgba(29,219,128,.24);
+}
+#repaymentModal .rep-sum-left{display:flex;flex-direction:column;gap:2px;min-width:0}
+#repaymentModal .rep-sum-k{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--txt2);font-weight:800}
+#repaymentModal .rep-sum-note{font-size:10.5px;color:var(--txt2);opacity:.85}
+#repaymentModal .rep-sum-v{
+  font-size:26px;font-weight:900;color:var(--p);letter-spacing:-.7px;line-height:1;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+#repaymentModal .rep-sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 9px}
+#repaymentModal .rep-sum-cell{
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:8px 10px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;
+}
+#repaymentModal .rep-sum-cell span{font-size:10.5px;color:var(--txt2);white-space:nowrap}
+#repaymentModal .rep-sum-cell b{font-size:12px;color:var(--txt);font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+#repaymentModal .rep-sum-cell b.grn{color:var(--p)}
+#repaymentModal .rep-sum-cell b.orng{color:var(--orange)}
+/* table */
+#repaymentModal .rep-schedule{
+  margin:0 18px;max-height:min(50vh,390px);overflow:auto;
+  border-radius:13px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.022);
+  scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+}
+#repaymentModal .rep-schedule::-webkit-scrollbar{width:5px;height:5px}
+#repaymentModal .rep-schedule::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#repaymentModal .rep-schedule::-webkit-scrollbar-track{background:transparent}
+#repaymentModal .rep-table{
+  width:100%;min-width:400px;border-collapse:separate;border-spacing:0;table-layout:fixed;
+}
+#repaymentModal .rep-table th,
+#repaymentModal .rep-table td{padding:9px 8px;font-size:12px;line-height:1.25}
+/* one width scale for head, body and foot → nothing is clipped or staggered */
+#repaymentModal .rep-table col.c-month{width:34px}
+#repaymentModal .rep-table thead th{
+  position:sticky;top:0;z-index:2;background:#102036;color:var(--p);
+  font-weight:800;font-size:9px;text-transform:uppercase;letter-spacing:.35px;
+  text-align:right;white-space:nowrap;border-bottom:1px solid rgba(29,219,128,.22);
+}
+#repaymentModal .rep-table thead th:first-child{text-align:center}
+#repaymentModal .rep-table td{
+  text-align:right;color:var(--txt);font-variant-numeric:tabular-nums;
+  border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap;
+}
+#repaymentModal .rep-table td:first-child{text-align:center;color:var(--txt2);font-weight:700}
+#repaymentModal .rep-table td.num{font-weight:600}
+#repaymentModal .rep-table td.int{color:var(--orange);font-weight:600}
+#repaymentModal .rep-table td.bal{color:var(--blue);font-weight:700}
+#repaymentModal .rep-table td.bal.zero{color:var(--txt3)}
+#repaymentModal .rep-table tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+#repaymentModal .rep-table tbody tr:hover{background:rgba(29,219,128,.06)}
+#repaymentModal .rep-table tbody tr:last-child td{border-bottom:none}
+#repaymentModal .rep-table tbody tr.last td{background:rgba(29,219,128,.05)}
+#repaymentModal .rep-table tfoot td{
+  position:sticky;bottom:0;z-index:2;background:#102036;
+  font-weight:800;font-size:11.5px;color:var(--txt);
+  border-top:1px solid rgba(29,219,128,.22);text-align:right;
+  font-variant-numeric:tabular-nums;padding:10px 8px;
+}
+#repaymentModal .rep-table tfoot td:first-child{
+  text-align:center;color:var(--txt2);font-size:8.5px;text-transform:uppercase;letter-spacing:.2px;
+}
+#repaymentModal .rep-foot-note{
+  display:flex;gap:6px;align-items:flex-start;
+  margin:0;font-size:10px;color:var(--txt2);line-height:1.45;
+}
+#repaymentModal .rep-foot-note i{font-size:10px;margin-top:2px;flex-shrink:0}
+@media (max-width:390px){
+  #repaymentModal .rep-table th,#repaymentModal .rep-table td{padding:8px 6px;font-size:11px}
+  #repaymentModal .rep-table{min-width:360px}
+  #repaymentModal .rep-sum-v{font-size:23px}
+  #repaymentModal .rep-sum-cell{padding:7px 8px}
+  #repaymentModal .rep-sum-cell span{font-size:9.5px}
+  #repaymentModal .rep-sum-cell b{font-size:11px}
+}
+/* ─── PREFILL / SAVED-DATA HINTS ─── */
+.prefill-banner{
+  display:flex;align-items:flex-start;gap:10px;
+  margin:12px 14px 0;padding:11px 12px;
+  background:linear-gradient(135deg,rgba(29,219,128,.12),rgba(29,219,128,.04));
+  border:1px solid rgba(29,219,128,.28);border-radius:14px;
+}
+.prefill-banner .pf-ic{
+  width:28px;height:28px;flex:0 0 28px;border-radius:9px;
+  background:rgba(29,219,128,.16);color:var(--p);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.prefill-banner .pf-txt{flex:1;min-width:0}
+.prefill-banner .pf-title{font-size:12.5px;font-weight:800;color:var(--p);margin-bottom:2px}
+.prefill-banner .pf-desc{font-size:11px;color:var(--txt2);line-height:1.45}
+.prefill-banner .pf-nid{display:flex;gap:6px;align-items:flex-start;font-size:10.5px;color:var(--txt2);margin-top:6px;line-height:1.4}
+.prefill-banner .pf-nid i{color:var(--p);font-size:10.5px;margin-top:2px}
+.prefill-banner .pf-clear{
+  flex:0 0 auto;font-size:10.5px;font-weight:800;color:var(--txt2);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:9px;padding:6px 8px;cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;transition:.2s;
+}
+.prefill-banner .pf-clear:hover{color:var(--red);border-color:rgba(255,77,106,.35);background:rgba(255,77,106,.12)}
+/* fields that came from the previous application */
+input.pf-filled,.sel-disp.pf-filled,.sel-box.pf-filled{
+  border-color:rgba(29,219,128,.4) !important;
+  background:rgba(29,219,128,.055) !important;
+  box-shadow:inset 0 0 0 1px rgba(29,219,128,.12);
+  border-radius:8px;
+}
+input.pf-filled{padding-left:8px;padding-right:8px}
+.nid-saved-note{
+  display:flex;align-items:center;gap:7px;
+  font-size:11px;color:var(--p);line-height:1.45;
+  background:rgba(29,219,128,.09);border:1px solid rgba(29,219,128,.22);
+  border-radius:11px;padding:8px 10px;margin-bottom:14px;
+}
+/* ─── PREMIUM POPUP SYSTEM ─────────────────────────────────────────────
+   one shared shell: glass gradient card, green glow border,
+   sticky top-right close button that stays visible while scrolling.
+   ──────────────────────────────────────────────────────────────────── */
+.modal-overlay .mc,
+.modal-overlay .conf-card,
+.modal-overlay .ld-card,
+.premium-cs-box{
+  position:relative;
+  border:1px solid rgba(29,219,128,.22) !important;
+  border-radius:26px !important;
+  background:
+    radial-gradient(125% 80% at 50% -14%, rgba(29,219,128,.13), rgba(29,219,128,0) 60%),
+    radial-gradient(85% 65% at 100% 106%, rgba(77,143,255,.09), rgba(77,143,255,0) 64%),
+    linear-gradient(165deg,#12233d 0%,#0c1729 58%,#0a121f 100%) !important;
+  box-shadow:
+    0 26px 70px rgba(0,0,0,.75),
+    0 0 0 1px rgba(29,219,128,.04),
+    0 0 42px rgba(29,219,128,.12),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 0 24px rgba(29,219,128,.045) !important;
+  backdrop-filter:blur(22px) !important;
+  -webkit-backdrop-filter:blur(22px) !important;
+}
+/* slim, clean scrollbar inside popups */
+.modal-overlay .mc,
+.modal-overlay .conf-card,
+.modal-overlay .ld-card,
+.premium-cs-box{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(29,219,128,.35) transparent;
+}
+.modal-overlay .mc::-webkit-scrollbar,
+.modal-overlay .conf-card::-webkit-scrollbar,
+.modal-overlay .ld-card::-webkit-scrollbar,
+.modal-overlay .notif-list::-webkit-scrollbar,
+.modal-overlay .rep-schedule::-webkit-scrollbar,
+.premium-cs-box::-webkit-scrollbar{width:5px}
+.modal-overlay .mc::-webkit-scrollbar-thumb,
+.modal-overlay .conf-card::-webkit-scrollbar-thumb,
+.modal-overlay .ld-card::-webkit-scrollbar-thumb,
+.modal-overlay .notif-list::-webkit-scrollbar-thumb,
+.modal-overlay .rep-schedule::-webkit-scrollbar-thumb,
+.premium-cs-box::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+.modal-overlay .mc::-webkit-scrollbar-track,
+.modal-overlay .notif-list::-webkit-scrollbar-track,
+.modal-overlay .rep-schedule::-webkit-scrollbar-track{background:transparent}
+/* single clean header (no duplicated sticky header = no ghost text) */
+.modal-overlay .mc.pp > .m-title,
+.modal-overlay .mc.pp > .ld-title,
+.modal-overlay .conf-card > .conf-title{position:static}
+.modal-overlay .mc.pp:has(.popup-close) > .m-title,
+.modal-overlay .mc.pp:has(.popup-close) > .ld-title,
+.modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:44px}
+/* panels with their own inner scroll keep the ✕ always visible */
+.modal-overlay .pp-bar{
+  position:sticky;top:-2px;z-index:19;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 16px 10px;
+  background:linear-gradient(180deg,#12233d 0%,rgba(18,35,61,.97) 74%,rgba(18,35,61,0) 100%);
+  border-bottom:1px solid rgba(29,219,128,.12);
+}
+.modal-overlay .pp-bar-title{
+  font-size:16.5px;font-weight:800;color:var(--txt);
+  letter-spacing:-.3px;text-shadow:0 2px 14px rgba(29,219,128,.2);
+}
+.modal-overlay .pp-bar .popup-close{position:static !important;float:none !important;margin:0 0 0 auto !important;flex:0 0 32px}
+/* safety net: a close button can never drift to the left edge */
+.modal-overlay .mc > .popup-close,
+.modal-overlay .ld-card > .popup-close,
+.modal-overlay .conf-card > .popup-close{position:sticky;margin-left:auto !important;margin-right:-6px;align-self:flex-end}
+.modal-overlay .pp-bar > .pp-bar-title{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-overlay .mc:has(.pp-bar),
+.modal-overlay .ld-card:has(.pp-bar),
+.modal-overlay .conf-card:has(.pp-bar){padding:0 !important}
+.modal-overlay .mc:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .ld-card:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .conf-card:has(.pp-bar) > :not(.pp-bar){
+  margin-left:16px;margin-right:16px;
+}
+.modal-overlay .mc:has(.pp-bar) > .notif-list{margin-bottom:22px}
+.modal-overlay .ld-card:has(.pp-bar) > .mbtn-full{margin-top:16px;margin-bottom:22px}
+
+/* body + pinned footer: buttons never touch the card edge */
+.modal-overlay .pp-body{padding:2px 16px 6px}
+.modal-overlay .pp-body .detail-row:first-child{padding-top:4px}
+.modal-overlay .pp-foot{
+  flex-shrink:0;padding:14px 16px 22px;
+  border-top:1px solid rgba(29,219,128,.14);
+  background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55));
+}
+.modal-overlay .pp-foot .mbtn-full,
+.modal-overlay .pp-foot .mbtn{margin:0 !important}
+.modal-overlay .pp-foot:empty{display:none}
+.modal-overlay .pp-body > *,
+#referModal .refer-body > *{max-width:100%}
+/* status popup: scrolling rows, fixed header + footer */
+#appStatusModal .mc.pp{
+  max-height:min(86dvh,560px);
+  display:flex !important;flex-direction:column;overflow:hidden;
+}
+#appStatusModal #statusModalContent{
+  margin:0 !important;padding:0 !important;
+  display:flex;flex-direction:column;min-height:0;flex:1 1 auto;
+}
+#appStatusModal .pp-body{flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent}
+#appStatusModal .pp-body::-webkit-scrollbar{width:5px}
+#appStatusModal .pp-body::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#appStatusModal .pp-body::-webkit-scrollbar-track{background:transparent}
+/* tidy rows: aligned labels, tighter dividers */
+.modal-overlay .detail-row{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.modal-overlay .detail-row:last-child{border-bottom:none}
+.modal-overlay .detail-lbl{font-size:12.5px;color:var(--txt2);letter-spacing:.1px}
+.modal-overlay .detail-val{font-size:13px;font-weight:700;color:var(--txt)}
+.modal-overlay .detail-val.color-p{color:var(--p);font-weight:800}
+.modal-overlay .detail-val.fw8{font-weight:800}
+.modal-overlay .notif-list{margin-top:2px}
+.modal-overlay .m-title,.modal-overlay .conf-title,.modal-overlay .ld-title{
+  text-shadow:0 2px 14px rgba(29,219,128,.2);letter-spacing:-.35px;
+}
+.modal-overlay .m-icon{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 10px 26px rgba(0,0,0,.4),0 0 24px rgba(29,219,128,.1)}
+/* ── sticky corner close button ── */
+.popup-close{
+  position:sticky;top:12px;
+  align-self:flex-end;
+  margin:-4px -6px -34px 12px;
+  width:32px;height:32px;flex:0 0 32px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;color:var(--txt2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.25s;z-index:20;
+  font-size:13px;padding:0;line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(0,0,0,.35);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.popup-close:hover{background:rgba(255,77,106,.22);color:var(--red);border-color:rgba(255,77,106,.4);transform:rotate(90deg)}
+.popup-close:active{transform:scale(.92)}
+/* status popup + forms: close pinned in the corner, title gets out of its way */
+.modal-overlay .mc.pp > .m-title{padding-top:18px}
+/* global modal holds 3 panels; only one is shown at a time and always full width */
+#globalModal{flex-wrap:wrap}
+#globalModal > .mc{flex:0 0 auto;width:100%;max-width:340px;align-self:center}
+.modal-overlay .mc.pp[style*="text-align: center"] > .m-title{padding-top:8px}
+/* support popup keeps the same look, just anchored in its corner */
+.cs-close-btn{
+  position:sticky;top:10px;align-self:flex-end;
+  margin:-4px 12px -30px 0;width:32px;height:32px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;color:var(--txt2);display:flex;justify-content:center;align-items:center;
+  cursor:pointer;transition:.25s;z-index:12;font-size:13px;padding:0;line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(0,0,0,.35);
+}
+.cs-close-btn:hover{background:rgba(255,77,106,.22);color:var(--red);border-color:rgba(255,77,106,.4);transform:rotate(90deg)}
+/* the close button always occupies the top-right corner: reserve the space */
+.modal-overlay .mc:has(.popup-close),
+.modal-overlay .conf-card:has(.popup-close),
+.modal-overlay .ld-card:has(.popup-close){padding:18px 20px 24px}
+.modal-overlay .mc:has(.popup-close) > .m-title,
+.modal-overlay .mc:has(.popup-close) > .ld-title,
+.modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:38px}
+#referModal .refer-card > .popup-close{position:absolute;top:14px;right:14px;float:none;margin:0}
+#referModal .refer-head{padding-top:14px}
+#referModal .refer-head{padding-right:0}
+/* ── premium buttons ── */
+.mbtn-full,.mbtn-ok{
+  background:linear-gradient(135deg,#26e891 0%,#12bd6d 55%,#0ea35d 100%) !important;
+  box-shadow:0 10px 26px rgba(29,219,128,.24),inset 0 1px 0 rgba(255,255,255,.28) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  letter-spacing:.3px;transition:transform .15s ease,box-shadow .22s ease,filter .2s ease;
+}
+.mbtn-full:hover,.mbtn-ok:hover{filter:brightness(1.05);box-shadow:0 12px 30px rgba(29,219,128,.32),inset 0 1px 0 rgba(255,255,255,.3) !important}
+.mbtn-full:active,.mbtn-ok:active{transform:scale(.975)}
+.mbtn-full.premium-danger{
+  background:linear-gradient(135deg,#ff5d7d 0%,#ff416c 45%,#ec2c4f 100%) !important;
+  box-shadow:0 10px 26px rgba(255,65,108,.26),inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+.mbtn-cancel{background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.1) !important;color:var(--txt2) !important}
+.mbtn-cancel:hover{color:var(--txt) !important;background:rgba(255,255,255,.09) !important}
+.btn-pick-ok,.btn-pick-cancel{
+  background:linear-gradient(135deg,#26e891,#12bd6d) !important;color:#04150d !important;font-weight:800 !important;
+  box-shadow:0 10px 24px rgba(29,219,128,.22),inset 0 1px 0 rgba(255,255,255,.28) !important;border:none !important;
+}
+.btn-pick-cancel{background:rgba(255,255,255,.06) !important;color:var(--txt2) !important;box-shadow:none !important;border:1px solid rgba(255,255,255,.1) !important}
+/* ── tight, clean inner spacing (no wasted space) ── */
+.modal-overlay .m-icon{width:56px;height:56px;font-size:22px;margin:0 auto 12px}
+.modal-overlay .m-title{font-size:17.5px;margin-bottom:6px}
+.modal-overlay .m-msg{font-size:13px;margin-bottom:16px;line-height:1.5}
+.modal-overlay .conf-title,.modal-overlay .ld-title{font-size:17.5px;margin-bottom:14px}
+.modal-overlay .conf-row,.modal-overlay .ld-row{margin-bottom:0;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.modal-overlay .conf-row:last-of-type,.modal-overlay .ld-row.total{border-bottom:none}
+.modal-overlay .ld-row.total{margin-top:2px;padding-top:12px;border-top:1px solid rgba(29,219,128,.22);border-bottom:none}
+.modal-overlay .mbtn-full{height:46px;border-radius:14px;font-size:14.5px;margin-top:16px}
+.modal-overlay .mc.pp > .mbtn-full:last-child{margin-bottom:4px}
+.modal-overlay .mc.pp > .m-acts:last-child{margin-bottom:4px}
+.modal-overlay .mbtn-cancel{padding:0}
+.modal-overlay .notif-item .notif-content h4{line-height:1.35}
+.modal-overlay .notif-item .notif-content p{line-height:1.5}
+.modal-overlay .mbtn{height:46px;border-radius:14px;font-size:14.5px}
+.modal-overlay .m-acts{margin-top:18px}
+.modal-overlay .detail-row{padding:11px 0}
+.modal-overlay .notif-list{max-height:min(58vh,430px);gap:10px;padding-right:2px}
+.modal-overlay .notif-item{padding:13px 14px;border-radius:13px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.06)}
+.modal-overlay .notif-item.unread{border-left:3px solid var(--p);background:rgba(29,219,128,.045)}
+.modal-overlay .notif-content h4{font-size:13.5px;margin-bottom:3px}
+.modal-overlay .notif-content p{font-size:11.5px;margin-bottom:5px}
+.modal-overlay .calc-row{padding:9px 0;font-size:13.5px}
+.modal-overlay .rep-schedule{max-height:min(42vh,300px);border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+/* bottom sheets: same accent, sticky close */
+/* bottom sheets share the same premium accent */
+.modal-overlay .picker-card,
+.bottom-sheet{
+  border-top:1px solid rgba(29,219,128,.28) !important;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(29,219,128,.12), rgba(29,219,128,0) 60%),
+    linear-gradient(160deg,#12233d,#0b1526) !important;
+  box-shadow:0 -22px 60px rgba(0,0,0,.8),0 0 34px rgba(29,219,128,.12) !important;
+}
+.picker-card > .popup-close,
+.bottom-sheet > .popup-close{position:absolute;top:14px;right:16px;float:none;margin:0}
+/* Referral popup: full app width, no scroll, English, close in corner */
+#referModal{padding:8px}
+#referModal .refer-card{max-width:none;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;gap:0;max-height:min(94dvh,720px)}
+/* head/body/footer: content scrolls, close + actions stay put */
+#referModal .refer-head{flex-shrink:0;position:relative;padding:16px 18px 0;text-align:center}
+#referModal .refer-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:0 18px 4px;scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent}
+#referModal .refer-body::-webkit-scrollbar{width:5px}
+#referModal .refer-body::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#referModal .refer-body::-webkit-scrollbar-track{background:transparent}
+#referModal .refer-card > .popup-close{top:14px;right:14px}
+#referModal .m-icon{width:44px;height:44px;font-size:18px;margin:0 auto 8px}
+#referModal .m-title{font-size:17px;margin-bottom:4px}
+#referModal .m-msg{font-size:12px;margin-bottom:12px;line-height:1.4}
+#referModal .ref-stats{display:flex;gap:10px;margin-bottom:10px}
+#referModal .ref-stat{flex:1;background:var(--bg2);padding:8px;border-radius:12px;text-align:center;border:1px solid var(--bord)}
+#referModal .ref-stat.success{background:rgba(29,219,128,.1);border-color:rgba(29,219,128,.2)}
+#referModal .ref-stat p{font-size:9.5px;text-transform:uppercase;color:var(--txt2);margin-bottom:1px;letter-spacing:.4px}
+#referModal .ref-stat.success p{color:var(--p)}
+#referModal .ref-stat h3{font-size:16px;color:var(--txt);line-height:1.2}
+#referModal .ref-stat.success h3{color:var(--p)}
+#referModal .ref-status{background:var(--bg2);border:1px solid var(--bord);border-radius:14px;padding:11px 12px;margin-bottom:10px}
+#referModal .ref-status-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+#referModal .ref-status-top span:first-child{font-size:12px;font-weight:700;color:var(--txt)}
+#referModal .ref-status-top span:last-child{font-size:12.5px;font-weight:800;color:var(--orange)}
+#referModal .ref-progress{width:100%;height:7px;background:rgba(255,255,255,.1);border-radius:5px;overflow:hidden}
+#referModal .ref-progress i{display:block;height:100%;width:0%;border-radius:5px;background:linear-gradient(90deg,#ff8c42,#ff4b2b);transition:width .5s}
+#referModal .ref-progress-text{font-size:10.5px;color:var(--txt2);text-align:center;margin-top:6px}
+#referModal .ref-tiers{display:flex;flex-direction:column;gap:6px;margin-top:9px;border-top:1px dashed var(--bord);padding-top:9px}
+#referModal .ref-tier{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);padding:7px 9px;border-radius:10px;border:1px solid transparent;transition:.3s;white-space:nowrap;overflow:hidden}
+#referModal .ref-tier .em{font-size:16px;flex-shrink:0;line-height:1}
+#referModal .ref-tier .tx{flex:1;min-width:0;font-size:11.5px;font-weight:700;color:var(--txt);overflow:hidden;text-overflow:ellipsis}
+#referModal .ref-tier .tx b{font-weight:800}
+#referModal .ref-tier .tx em{font-style:normal;font-weight:600}
+#referModal .ref-tier .lk{color:var(--txt2);font-size:11px;flex-shrink:0}
+#referModal .refer-foot{display:flex;gap:8px;flex-shrink:0;padding:14px 18px 22px;border-top:1px solid rgba(29,219,128,.14);background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55))}
+#referModal .refer-foot .mbtn{height:44px;font-size:13.5px;border-radius:13px;margin:0}
+@media (max-width:360px){
+  #referModal .ref-tier .tx{font-size:10.5px}
+  #referModal .m-title{font-size:16px}
+}
+.premium-cs-item{display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.03);padding:15px;border-radius:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);transition:.2s}
+.premium-cs-icon{width:40px;height:40px;border-radius:12px;display:flex;justify-content:center;align-items:center;font-size:18px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--bord)}
+.detail-row:last-of-type{border-bottom:none}
+.detail-lbl{color:var(--txt2);font-size:13px}
+.detail-val{color:var(--txt);font-weight:600;font-size:13px;text-align:right}
+.color-p{color:var(--p) !important}
+.fw8{font-weight:800 !important}
+.rep-schedule{max-height:40vh;overflow-y:auto;margin-top:15px;border:1px solid var(--bord);border-radius:10px}
+.rep-row{display:flex;justify-content:space-between;padding:10px 15px;border-bottom:1px solid var(--bord);font-size:13px}
+.rep-row:last-child{border-bottom:none}
+.rep-row.header{background:var(--surf2);font-weight:700;color:var(--p)}
+.bonus-banner{background:linear-gradient(90deg,rgba(255,140,66,.15),rgba(255,77,106,.15));border:1px dashed var(--orange);border-radius:12px;padding:10px 15px;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;position:relative;z-index:2}
+.bonus-banner span{font-size:13px;font-weight:700;color:#fff}
+.shake-icon{font-size:20px;animation:shake 2s infinite cubic-bezier(.36,.07,.19,.97) both;display:inline-block}
+@keyframes shake{10%,90%{transform:translate3d(-2px,0,0) rotate(-10deg)}20%,80%{transform:translate3d(4px,0,0) rotate(10deg)}30%,50%,70%{transform:translate3d(-6px,0,0) rotate(-10deg)}40%,60%{transform:translate3d(6px,0,0) rotate(10deg)}}
+.hot-offer-floating{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 30px);max-width:380px;background:linear-gradient(90deg,#ff4d6a,#ff8c42);border-radius:14px;padding:10px 15px;box-shadow:0 10px 30px rgba(255,77,106,0.4),0 0 0 2px rgba(255,255,255,0.2) inset;z-index:99999;cursor:pointer;animation:floatBounce 3s ease-in-out infinite;display:none}
+.hot-offer-content{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hot-icon{font-size:22px;animation:fire-shake 1.5s infinite}
+.hot-text h4{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;text-shadow:0 2px 4px rgba(0,0,0,0.2);margin-bottom:2px}
+.hot-text p{font-size:11px;font-weight:600;color:rgba(255,255,255,0.95);margin:0;line-height:1.3}
+.hot-close{background:rgba(0,0,0,0.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:12px;cursor:pointer;flex-shrink:0}
+@keyframes floatBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+@keyframes fire-shake{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.2) rotate(10deg)}}
+.fomo-fire-icon{font-size:55px;animation:fire-shake 1.5s infinite;margin-bottom:10px;display:inline-block}
+.fomo-progress-wrap{background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.08)}
+.fomo-progress-header{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#fff;margin-bottom:8px}
+.fomo-progress-track{width:100%;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;margin-bottom:10px}
+.fomo-progress-fill{height:100%;background:linear-gradient(90deg,#ff416c,#ff4b2b);border-radius:5px;transition:width 1s ease}
+.fomo-warning{font-size:11px;color:var(--red);font-weight:700;margin:0;display:flex;align-items:center;justify-content:center;gap:5px}
+.bal-toggle-box { background: var(--surf); border: 1px solid var(--bord); border-radius: 14px; padding: 15px; margin: 0 16px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: .3s; }
+.bal-toggle-box.active { border-color: var(--p); background: rgba(29,219,128,.05); }
+.bal-left { display: flex; align-items: center; gap: 10px; }
+.bal-left i { color: var(--orange); font-size: 18px; }
+.bal-left h4 { font-size: 14px; color: var(--txt); margin-bottom: 2px; }
+.bal-left p { font-size: 11px; color: var(--txt2); }
+.bal-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--bord); display: flex; justify-content: center; align-items: center; color: transparent; transition: .2s; }
+.bal-toggle-box.active .bal-check { background: var(--p); border-color: var(--p); color: #fff; }
+#screen-fee-payment { padding-bottom: 100px !important; }
+.pay-instr { margin-bottom: 80px; }
+
+/* ─── SUPER PREMIUM SUPPORT POPUP ─── */
+.premium-cs-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.premium-cs-overlay.on { display: flex; opacity: 1; }
+
+.premium-cs-box {
+  background: linear-gradient(145deg, rgba(15,29,53,0.95), rgba(10,20,40,0.98));
+  border: 1px solid rgba(29,219,128,0.3); border-radius: 24px;
+  width: 100%; max-width: 380px; position: relative;
+  max-height: 88dvh;
+  box-shadow: 0 0 40px rgba(29,219,128,0.15), inset 0 0 20px rgba(29,219,128,0.05);
+  transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden;
+}
+.premium-cs-overlay.on .premium-cs-box { transform: scale(1) translateY(0); }
+
+.cs-close-btn {
+  position: absolute; top: 15px; right: 15px; width: 32px; height: 32px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%; color: var(--txt2); display: flex; justify-content: center;
+  align-items: center; cursor: pointer; transition: 0.3s; z-index: 10;
+}
+.cs-close-btn:hover { background: rgba(255,77,106,0.2); color: var(--red); transform: rotate(90deg); }
+
+#csChatInterface { display: none; flex-direction: column; height: 500px; max-height: 80vh; }
+.chat-header { background: rgba(29,219,128,0.1); padding: 15px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(29,219,128,0.2); }
+.chat-header i { color: var(--p); font-size: 20px; }
+.chat-header h4 { color: var(--txt); font-size: 15px; font-weight: 700; margin: 0; }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 13.5px; line-height: 1.5; animation: msgIn 0.3s ease; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.msg.ai { background: rgba(255,255,255,0.05); color: var(--txt); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.08); }
+.msg.user { background: linear-gradient(135deg, var(--p), var(--p2)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(29,219,128,0.2); }
+.chat-input-area { padding: 15px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px; background: rgba(0,0,0,0.2); align-items: center; }
+.chat-input-area input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 0 15px; height: 42px; color: #fff; font-size: 13px; outline: none; }
+.chat-input-area input:focus { border-color: var(--p); }
+.chat-send-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--p); color: #fff; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; flex-shrink:0; }
+.chat-send-btn:hover { background: var(--p2); transform: scale(1.05); }
+.quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.quick-reply-btn { background: rgba(29,219,128,0.1); border: 1px solid rgba(29,219,128,0.3); color: var(--p); padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: 0.2s; }
+.quick-reply-btn:hover { background: rgba(29,219,128,0.2); }
+
+/* === Support Chat Styles === */
+.cs-unread-badge{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;background:var(--red);border-radius:10px;border:2px solid #0a5c2f;color:#fff;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px;z-index:10}
+.cs-unread-badge.on{display:flex}
+.cs-menu-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:18px;text-align:center;display:none}
+.support-msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;margin-bottom:10px;animation:msgIn .3s ease;word-wrap:break-word}
+.support-msg.user{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;align-self:flex-end;margin-left:auto;border-bottom-right-radius:4px;box-shadow:0 4px 10px rgba(29,219,128,.2)}
+.support-msg.admin{background:rgba(77,143,255,.13);color:var(--txt);align-self:flex-start;border-bottom-left-radius:4px;border:1px solid rgba(77,143,255,.25)}
+.support-msg-meta{font-size:9px;opacity:.7;margin-top:3px}
+
+/* END CONVERSATION STYLES */
+.cs-end-btn-inline{width:42px;height:42px;flex-shrink:0;border-radius:50%;background:rgba(255,77,106,.14);border:1px solid rgba(255,77,106,.3);color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:.2s}
+.cs-end-btn-inline:hover{background:rgba(255,77,106,.24)}
+.cs-closed-banner{background:rgba(123,144,180,.12);border:1px dashed var(--txt2);color:var(--txt2);border-radius:12px;padding:14px;text-align:center;font-size:12px;margin:10px 15px;display:none;flex-direction:column;gap:8px;align-items:center}
+.cs-closed-banner.on{display:flex}
+.cs-closed-banner strong{color:var(--txt);font-size:13px}
+.cs-new-chat-btn{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:var(--glow)}
+
+/* ─── REPAYMENT SCHEDULE (premium table) ─── */
+#repaymentModal .rep-card{max-width:410px;font-size:12px}
+#repaymentModal .rep-summary{padding:2px 16px 10px}
+#repaymentModal .rep-sum-hero{
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+  padding:10px 12px 12px;margin-bottom:10px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(29,219,128,.03));
+  border:1px solid rgba(29,219,128,.24);
+}
+#repaymentModal .rep-sum-k{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--txt2);font-weight:700}
+#repaymentModal .rep-sum-v{font-size:23px;font-weight:900;color:var(--p);letter-spacing:-.6px;line-height:1.15;font-variant-numeric:tabular-nums}
+#repaymentModal .rep-sum-note{font-size:9.5px;color:var(--txt2);opacity:.85}
+#repaymentModal .rep-sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+#repaymentModal .rep-sum-cell{
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;padding:7px 9px;
+}
+#repaymentModal .rep-sum-cell span{font-size:10.5px;color:var(--txt2);white-space:nowrap}
+#repaymentModal .rep-sum-cell b{font-size:11.5px;color:var(--txt);font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+#repaymentModal .rep-sum-cell b.grn{color:var(--p)}
+#repaymentModal .rep-schedule{
+  margin:0 16px;max-height:min(44vh,330px);overflow:auto;
+  border-radius:13px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.022);
+  scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+}
+#repaymentModal .rep-schedule::-webkit-scrollbar{width:5px;height:5px}
+#repaymentModal .rep-schedule::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#repaymentModal .rep-schedule::-webkit-scrollbar-track{background:transparent}
+#repaymentModal .rep-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+#repaymentModal .rep-table th,
+#repaymentModal .rep-table td{padding:8px 6px;font-size:11.5px;line-height:1.25}
+#repaymentModal .rep-table thead th{
+  position:sticky;top:0;z-index:2;background:#102036;color:var(--p);
+  font-weight:800;font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;
+  text-align:right;white-space:nowrap;border-bottom:1px solid rgba(29,219,128,.22);
+}
+#repaymentModal .rep-table thead th:first-child{text-align:center}
+#repaymentModal .rep-table th:nth-child(1),
+#repaymentModal .rep-table td:nth-child(1){width:30px}
+#repaymentModal .rep-table th:nth-child(5),
+#repaymentModal .rep-table td:nth-child(5){width:64px}
+#repaymentModal .rep-table td{
+  text-align:right;color:var(--txt);font-variant-numeric:tabular-nums;
+  border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap;
+}
+#repaymentModal .rep-table td:first-child{text-align:center;color:var(--txt2);font-weight:700}
+#repaymentModal .rep-table td.num{font-weight:600}
+#repaymentModal .rep-table td.int{color:var(--orange);font-weight:600}
+#repaymentModal .rep-table td.bal{color:var(--blue);font-weight:700}
+#repaymentModal .rep-table td.bal.zero{color:var(--txt3)}
+#repaymentModal .rep-table tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+#repaymentModal .rep-table tbody tr:hover{background:rgba(29,219,128,.06)}
+#repaymentModal .rep-table tbody tr:last-child td{border-bottom:none}
+#repaymentModal .rep-table tbody tr.last td{background:rgba(29,219,128,.05)}
+#repaymentModal .rep-table tfoot td{
+  position:sticky;bottom:0;z-index:2;background:#102036;
+  font-weight:800;font-size:11px;color:var(--txt);
+  border-top:1px solid rgba(29,219,128,.22);text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+#repaymentModal .rep-table tfoot td:first-child{
+  text-align:center;color:var(--txt2);font-size:9px;text-transform:uppercase;letter-spacing:.3px;
+}
+#repaymentModal .rep-foot-note{
+  display:flex;gap:6px;align-items:flex-start;
+  margin:10px 16px 16px;font-size:10px;color:var(--txt2);line-height:1.45;
+}
+#repaymentModal .rep-foot-note i{font-size:10px;margin-top:2px;flex-shrink:0}
+@media (max-width:360px){
+  #repaymentModal .rep-table th,#repaymentModal .rep-table td{padding:7px 4px;font-size:10.5px}
+  #repaymentModal .rep-table th:nth-child(5),#repaymentModal .rep-table td:nth-child(5){width:56px}
+  #repaymentModal .rep-sum-cell{padding:6px 7px}
+  #repaymentModal .rep-sum-cell span{font-size:9.5px}
+  #repaymentModal .rep-sum-cell b{font-size:10.5px}
+}
+
+/* ─── LOAN DETAILS (popup) ─── */
+#loanDetailsModal .ld-detail-card{max-width:440px;width:100%}
+#loanDetailsModal .ld-hero{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:16px 16px 15px;margin:2px 0 16px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(29,219,128,.03));
+  border:1px solid rgba(29,219,128,.24);
+}
+#loanDetailsModal .ld-hero-k{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--txt2);font-weight:700}
+#loanDetailsModal .ld-hero-v{font-size:30px;font-weight:900;color:var(--p);letter-spacing:-.6px;line-height:1.15;font-variant-numeric:tabular-nums}
+#loanDetailsModal .ld-hero-note{font-size:10.5px;color:var(--txt2);opacity:.92;margin-top:2px;text-align:center}
+#loanDetailsModal .ld-sec{
+  display:flex;align-items:center;gap:8px;
+  font-size:9.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--txt2);margin:14px 0 4px;
+}
+#loanDetailsModal .ld-sec::after{
+  content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(29,219,128,.22),rgba(255,255,255,.03));
+}
+#loanDetailsModal .ld-sec:first-of-type{margin-top:0}
+#loanDetailsModal .ld-row{
+  display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  padding:10px 0;margin:0;border-bottom:1px solid rgba(255,255,255,.05);
+}
+#loanDetailsModal .ld-row:last-of-type{border-bottom:none}
+#loanDetailsModal .ld-lbl{font-size:12.5px;color:var(--txt2);white-space:nowrap}
+#loanDetailsModal .ld-val{
+  font-size:13px;font-weight:700;color:var(--txt);text-align:right;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+#loanDetailsModal .ld-val.int{color:var(--orange)}
+#loanDetailsModal .ld-total{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:14px;padding:13px 14px;border-radius:14px;
+  background:rgba(29,219,128,.09);border:1px solid rgba(29,219,128,.26);
+}
+#loanDetailsModal .ld-total span{font-size:13.5px;font-weight:800;color:var(--txt)}
+#loanDetailsModal .ld-total strong{font-size:19px;font-weight:900;color:var(--p);font-variant-numeric:tabular-nums}
+#loanDetailsModal .pp-foot .mbtn-full i{margin-right:7px}
+#loanDetailsModal .pp-body{padding:2px 18px 8px}
+#loanDetailsModal .pp-bar{padding:15px 18px 11px}
+#loanDetailsModal .pp-foot{padding:13px 18px 20px}
+#loanDetailsModal .ld-val.muted{color:var(--txt2);font-weight:600}
+@media (max-width:360px){
+  #loanDetailsModal .ld-lbl{font-size:11px}
+  #loanDetailsModal .ld-val{font-size:11.5px}
+  #loanDetailsModal .ld-hero-v{font-size:22px}
+}
+
+/* ─── CLOSE BUTTON: always the top-right circle (never the left) ─── */
+.modal-overlay .popup-close,
+.modal-overlay .mc .popup-close,
+.modal-overlay .conf-card .popup-close,
+.modal-overlay .ld-card .popup-close{
+  margin-left:auto;margin-right:-6px;
+  align-self:flex-end;
+}
+/* confirm popup */
+#confirmModal .conf-card{max-width:360px}
+#confirmModal .pp-bar{padding:14px 16px 11px}
+#confirmModal .conf-warn{
+  margin:0 16px 6px;padding:10px 12px;text-align:left;
+  display:flex;align-items:flex-start;gap:7px;
+  font-size:11.5px;line-height:1.45;border-radius:12px;
+}
+#confirmModal .conf-warn i{margin-top:2px;flex-shrink:0}
+#confirmModal .conf-row{
+  margin:0;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.055);
+  font-size:12.5px;gap:12px;
+}
+#confirmModal .conf-row:last-of-type{border-bottom:none}
+#confirmModal .conf-lbl{font-size:11.5px;color:var(--txt2)}
+#confirmModal .conf-val{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ─── STEP COMPLETE BANNER (replaces the blocking popup) ─── */
+/* ─── STEP COMPLETE SCREEN (no modal, no ✕) ─── */
+#screen-step-complete{display:none;min-height:100dvh;padding:0 18px 30px;align-items:center;justify-content:center}
+#screen-step-complete.active{display:flex}
+.stc-wrap{width:100%;max-width:360px;text-align:center;animation:sdIn .35s ease both}
+.stc-badge{
+  width:78px;height:78px;margin:0 auto 16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--p);
+  background:radial-gradient(circle at 50% 40%,rgba(29,219,128,.22),rgba(29,219,128,.06));
+  border:1px solid rgba(29,219,128,.32);
+  box-shadow:0 0 0 8px rgba(29,219,128,.05),0 14px 40px rgba(29,219,128,.16);
+}
+.stc-title{font-size:20px;font-weight:900;color:var(--txt);letter-spacing:-.4px;margin-bottom:6px}
+.stc-msg{font-size:12.5px;color:var(--txt2);line-height:1.55;margin-bottom:20px}
+.stc-track{width:100%;height:7px;background:rgba(255,255,255,.09);border-radius:5px;overflow:hidden}
+.stc-fill{height:100%;width:0%;border-radius:5px;background:linear-gradient(90deg,#26e891,#12bd6d);transition:width .45s ease;box-shadow:0 0 12px rgba(29,219,128,.5)}
+.stc-count{font-size:10.5px;color:var(--txt2);margin:8px 0 22px;letter-spacing:.4px;text-transform:uppercase;font-weight:700}
+.stc-btn{margin:0 !important;height:50px}
+.stc-back{
+  display:block;width:100%;margin-top:12px;background:transparent;border:none;
+  color:var(--txt2);font-size:12px;cursor:pointer;padding:8px;
+}
+.stc-back:hover{color:var(--txt)}
+@keyframes sdIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+
+/* ─── STEP 4: receiving number ─── */
+.bank-hint{
+  font-size:11px;color:var(--txt2);margin:-16px 0 20px;line-height:1.5;
+  display:flex;align-items:center;gap:6px;
+}
+.bank-hint.err{color:var(--orange)}
+.bank-hint.ok{color:var(--p)}
+.ph-row.editing{border-bottom-color:var(--p)}
+.ph-row.invalid{border-bottom-color:var(--orange)}
+.ph-row input::placeholder{color:var(--txt3);font-weight:600;font-size:15px}
+.ph-row i#bankEditIcon.active{color:var(--orange)}
+
+#loanDetailsModal .ld-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:9px 0 1px}
+#loanDetailsModal .ld-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 9px;border-radius:20px;font-size:10.5px;font-weight:700;
+  color:var(--txt);background:rgba(255,255,255,.055);
+  border:1px solid rgba(29,219,128,.2);white-space:nowrap;
+}
+#loanDetailsModal .ld-chip i{font-size:9.5px;color:var(--p)}
+#loanDetailsModal .ld-chip b{font-weight:800;font-variant-numeric:tabular-nums}
+
+#loanDetailsModal .ld-status{
+  display:flex;align-items:center;gap:6px;justify-content:center;
+  font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  margin:0 0 8px;
+}
+
+/* ─── FEE PAYMENT: collapsible balance box ─── */
+.bal-box{
+  margin:0 16px 16px;background:var(--surf);border:1px solid var(--bord);
+  border-radius:16px;overflow:hidden;transition:border-color .2s,background .2s;
+}
+.bal-box.open{border-color:rgba(29,219,128,.3)}
+.bal-box.active{background:rgba(29,219,128,.05);border-color:rgba(29,219,128,.35)}
+.bal-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer}
+.bal-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.bal-left i{color:var(--orange);font-size:17px;flex-shrink:0}
+.bal-left h4{font-size:13px;color:var(--txt);margin-bottom:2px}
+.bal-left p{font-size:10.5px;color:var(--txt2)}
+.bal-left p strong{color:var(--p);font-weight:800}
+.bal-caret{color:var(--txt2);font-size:11px;transition:transform .25s}
+.bal-box.open .bal-caret{transform:rotate(180deg)}
+.bal-body{display:none;padding:0 14px 13px}
+.bal-box.open .bal-body{display:block}
+.bal-opt{
+  display:flex;align-items:center;gap:10px;justify-content:space-between;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:11px 12px;cursor:pointer;transition:.2s;
+}
+.bal-box.active .bal-opt{border-color:rgba(29,219,128,.4);background:rgba(29,219,128,.07)}
+.bal-opt-txt{font-size:11.5px;color:var(--txt2);line-height:1.5}
+.bal-opt-txt strong{color:var(--txt);font-weight:800}
+.bal-opt-txt em{font-style:normal;opacity:.8}
+.bal-tick{
+  width:22px;height:22px;flex:0 0 22px;border-radius:7px;
+  border:2px solid var(--bord);display:flex;align-items:center;justify-content:center;
+  color:transparent;font-size:11px;transition:.2s;
+}
+.bal-box.active .bal-tick{background:var(--p);border-color:var(--p);color:#04150d}
+.bal-note{font-size:10px;color:var(--txt2);line-height:1.5;margin-top:8px}
+/* copy-able payment number */
+.pay-num-wrap{
+  display:flex;align-items:center;gap:10px;margin:12px 0;padding:11px 12px;
+  background:var(--bg2);border:1px solid rgba(29,219,128,.18);border-radius:12px;
+}
+.pay-num-wrap .pay-num{
+  flex:1;margin:0;padding:0;background:transparent;border:none;
+  font-size:19px;font-weight:900;color:var(--p);letter-spacing:1.4px;text-align:left;
+}
+.copy-btn{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
+  background:rgba(29,219,128,.12);color:var(--p);border:1px solid rgba(29,219,128,.28);
+  border-radius:10px;padding:7px 10px;font-size:11px;font-weight:800;cursor:pointer;transition:.2s;
+}
+.copy-btn:hover{background:rgba(29,219,128,.2)}
+.copy-btn.done{background:rgba(29,219,128,.25);border-color:var(--p)}
+/* admin note card */
+.admin-note{
+  margin:0 16px 16px;border-radius:14px;padding:12px 13px;
+  background:linear-gradient(135deg,rgba(255,140,66,.1),rgba(255,140,66,.03));
+  border:1px solid rgba(255,140,66,.28);
+}
+.admin-note h5{
+  display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;
+  color:var(--orange);margin-bottom:6px;letter-spacing:.2px;
+}
+.admin-note p{font-size:11.5px;color:var(--txt);line-height:1.6;white-space:pre-line}
+/* trx input + paste */
+.trx-wrap label{display:block;font-size:12px;color:var(--txt2);margin-bottom:8px}
+.trx-field{position:relative;display:flex;align-items:center}
+.trx-field input{width:100%;padding-right:74px}
+.paste-btn{
+  position:absolute;right:8px;display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.07);color:var(--txt);border:1px solid rgba(255,255,255,.12);
+  border-radius:9px;padding:6px 9px;font-size:10.5px;font-weight:800;cursor:pointer;transition:.2s;
+}
+.paste-btn:hover{background:rgba(29,219,128,.16);color:var(--p);border-color:rgba(29,219,128,.35)}
+
+/* empty state for wallet / payment lists */
+.pm-empty{
+  display:flex;align-items:flex-start;gap:9px;margin:0 16px 16px;padding:12px;
+  border-radius:12px;background:rgba(255,140,66,.08);border:1px solid rgba(255,140,66,.28);
+}
+.pm-empty i{color:var(--orange);font-size:13px;margin-top:2px}
+.pm-empty strong{display:block;font-size:12px;color:var(--txt);font-weight:800;margin-bottom:2px}
+.pm-empty span{font-size:11px;color:var(--txt2);line-height:1.5}
+/* two numbers per wallet badge */
+.pm-nums{font-size:9px;color:var(--txt3);letter-spacing:.2px;font-weight:700;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -833,10 +1658,11 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="m-acts"><button class="mbtn mbtn-cancel" onclick="closeGlobalModal(true)">Cancel</button><button class="mbtn mbtn-ok" onclick="submitLoginPassword()">Login</button></div>
   </div>
   <div class="mc pp" id="modal-alert" style="display:none;">
-    <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
+    <button class="popup-close" id="alertCloseBtn" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon" id="m-icon-wrap"><i id="m-icon" class="fa-solid fa-circle-info"></i></div>
     <div class="m-title" id="m-title"></div>
     <div class="m-msg" id="m-msg"></div>
+    <button class="mbtn-full" id="alertOkBtn" onclick="closeGlobalModal()">OK</button>
   </div>
   <div class="mc pp" id="modal-error" style="display:none;">
     <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -865,9 +1691,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay premium-popup" id="confirmModal">
-  <div class="conf-card">
-    <button class="popup-close" aria-label="Close" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i></button>
-    <div class="conf-title">Confirm Your Information</div>
+  <div class="conf-card pp">
+    <div class="pp-bar"><span class="pp-bar-title">Confirm Your Information</span><button class="popup-close" aria-label="Close" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="conf-warn"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>Accurate info greatly increases approval chances</div>
     <div class="conf-row"><span class="conf-lbl">Full Name</span><span class="conf-val" id="cName">-</span></div>
     <div class="conf-row"><span class="conf-lbl">E-mail</span><span class="conf-val" id="cEmail">-</span></div>
@@ -875,30 +1700,78 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="conf-row"><span class="conf-lbl">Date of Birth</span><span class="conf-val" id="cDob">-</span></div>
     <div class="conf-row"><span class="conf-lbl">NID / ID No.</span><span class="conf-val" id="cId">-</span></div>
     <div class="conf-row"><span class="conf-lbl">Monthly Income</span><span class="conf-val" id="cIncome">-</span></div>
-    <button class="mbtn-full" onclick="submitConfirmedInfo()" style="margin-top:18px;">Confirm &amp; Continue</button>
+    <div class="pp-foot" style="margin-top:14px;">
+      <button class="mbtn-full" onclick="submitConfirmedInfo()" style="margin:0;">Confirm &amp; Continue</button>
+    </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="loanDetailsModal">
-  <div class="ld-card pp">
+  <div class="ld-card pp ld-detail-card">
     <div class="pp-bar"><span class="pp-bar-title">Loan Details</span><button class="popup-close" aria-label="Close" onclick="closeModal('loanDetailsModal')"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="ld-row"><span class="ld-lbl">Loan Amount</span><span class="ld-val" id="ldAmount">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Term (months)</span><span class="ld-val" id="ldTerm">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Annual Interest</span><span class="ld-val" id="ldInterest">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Origination Fee</span><span class="ld-val" id="ldOrgFee">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Service Charge</span><span class="ld-val" id="ldService">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Start Date</span><span class="ld-val" id="ldStart">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Due Date</span><span class="ld-val" id="ldDue">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">You Receive</span><span class="ld-val" id="ldReceive">-</span></div>
-    <div class="ld-row total"><span class="ld-lbl" style="font-weight:700;color:var(--txt)">Total Repayment</span><span class="ld-val grn" id="ldTotal">-</span></div>
+    <div class="pp-body">
+      <div class="ld-status" id="ldStatusLine" style="display:none;"></div>
+      <div class="ld-hero">
+        <span class="ld-hero-k">Approved Loan Amount</span>
+        <strong class="ld-hero-v" id="ldAmount">৳ 0</strong>
+        <div class="ld-chips" id="ldHeroChips">
+          <span class="ld-chip"><i class="fa-regular fa-clock"></i> <b id="ldChipTerm">—</b></span>
+          <span class="ld-chip"><i class="fa-solid fa-percent"></i> <b id="ldChipRate">—</b></span>
+          <span class="ld-chip"><i class="fa-solid fa-calendar-check"></i> <b id="ldChipEmi">—</b></span>
+        </div>
+        <span class="ld-hero-note" id="ldCurrencyNote">All amounts are in BDT (৳)</span>
+      </div>
+      <div class="ld-sec">Loan Terms</div>
+      <div class="ld-row"><span class="ld-lbl">Term</span><span class="ld-val" id="ldTerm">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Annual Interest Rate</span><span class="ld-val" id="ldInterest">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Interest Amount</span><span class="ld-val int" id="ldInterestAmt">-</span></div>
+      <div class="ld-sec">Charges</div>
+      <div class="ld-row"><span class="ld-lbl">Origination Fee</span><span class="ld-val" id="ldOrgFee">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Service &amp; Processing Fee</span><span class="ld-val" id="ldService">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Total Upfront Fee</span><span class="ld-val" id="ldFeeTotal">-</span></div>
+      <div class="ld-sec">Schedule</div>
+      <div class="ld-row"><span class="ld-lbl">Start Date</span><span class="ld-val" id="ldStart">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Due Date</span><span class="ld-val" id="ldDue">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Monthly EMI</span><span class="ld-val" id="ldEmi">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">You Receive</span><span class="ld-val" id="ldReceive">-</span></div>
+      <div class="ld-total">
+        <span>Total Repayment</span>
+        <strong id="ldTotal">৳ 0</strong>
+      </div>
+    </div>
+    <div class="pp-foot">
+      <button class="mbtn-full" onclick="closeModal('loanDetailsModal'); openRepaymentSchedule()"><i class="fa-solid fa-calendar-days"></i> View Repayment Schedule</button>
+    </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="repaymentModal">
-  <div class="ld-card pp">
-    <div class="pp-bar"><span class="pp-bar-title">Repayment Schedule</span><button class="popup-close" aria-label="Close" onclick="closeModal('repaymentModal')"><i class="fa-solid fa-xmark"></i></button></div>
-    <p style="text-align:center;font-size:13px;color:var(--txt2);margin-bottom:10px;">Your monthly EMI will be approximately <strong id="emiAmount" style="color:var(--p);"></strong></p>
-    <div class="rep-schedule" id="repScheduleList"></div>
+  <div class="ld-card pp rep-card">
+    <div class="pp-bar">
+      <span class="pp-bar-title">Repayment Schedule</span>
+      <button class="popup-close" aria-label="Close" onclick="closeModal('repaymentModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="rep-summary">
+      <div class="rep-sum-hero">
+        <div class="rep-sum-left">
+          <span class="rep-sum-k">Monthly EMI</span>
+          <span class="rep-sum-note" id="repSumNote">6 installments</span>
+        </div>
+        <strong class="rep-sum-v" id="emiAmount">৳ 0</strong>
+      </div>
+      <div class="rep-sum-grid">
+        <div class="rep-sum-cell"><span>Loan Amount</span><b id="repLoanAmount">৳ 0</b></div>
+        <div class="rep-sum-cell"><span>Term</span><b id="repTermText">0</b></div>
+        <div class="rep-sum-cell"><span>Interest</span><b id="repTotalInterest" class="orng">৳ 0</b></div>
+        <div class="rep-sum-cell"><span>Total Payable</span><b id="repTotalPayable" class="grn">৳ 0</b></div>
+      </div>
+    </div>
+    <div class="pp-body" style="padding:0;">
+      <div class="rep-schedule" id="repScheduleList"></div>
+    </div>
+    <div class="pp-foot" style="padding-top:10px;">
+      <p class="rep-foot-note"><i class="fa-solid fa-circle-info"></i><span>EMI = principal + interest · Balance = outstanding principal after each installment</span></p>
+    </div>
   </div>
 </div>
 
@@ -1192,6 +2065,15 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 
 <div id="screen-policy" class="screen">
   <div class="pol-hdr">Privacy Policy</div>
+  <div class="prefill-banner" id="prefillBanner" style="display:none;">
+    <div class="pf-ic"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+    <div class="pf-txt">
+      <div class="pf-title">Welcome back!</div>
+      <div class="pf-desc" id="prefillDesc"></div>
+      <div class="pf-nid" id="prefillNid" style="display:none;"><i class="fa-solid fa-id-card"></i> Your NID photos are saved — they will be reused unless you upload new ones.</div>
+    </div>
+    <button class="pf-clear" onclick="clearApplicationForm()"><i class="fa-solid fa-eraser"></i> Clear all</button>
+  </div>
   <div class="pol-body">
     <div class="pol-updated" id="policyDateText">...</div>
     <p>This Privacy Agreement explains how we collect, use, store, share and protect your personal information when you use Credit Up services.</p>
@@ -1230,6 +2112,18 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="ibox" style="margin-bottom:28px"><input type="password" id="regConfirmPassword" placeholder="Confirm password" oninput="checkRegisterInputs()"></div>
   <button class="btn-auth" id="registerBtn" onclick="registerUser()">Create Account</button>
   <label class="auth-check"><input type="checkbox" class="ck" checked><span>By continuing you agree to our <span class="green-link">Privacy Policy</span></span></label>
+</div>
+
+<div id="screen-step-complete" class="screen">
+  <div class="stc-wrap">
+    <div class="stc-badge"><i class="fa-solid fa-circle-check"></i></div>
+    <div class="stc-title" id="stcTitle">Step complete</div>
+    <div class="stc-msg" id="stcMsg">Your information is saved.</div>
+    <div class="stc-track"><div class="stc-fill" id="stcFill"></div></div>
+    <div class="stc-count" id="stcCount">Step 0 of 5</div>
+    <button class="mbtn-full stc-btn" id="stcBtn" onclick="_continueAfterStep()">Continue <i class="fa-solid fa-arrow-right" style="font-size:12px;margin-left:7px"></i></button>
+    <button class="stc-back" onclick="_backToProgress()">Back to application overview</button>
+  </div>
 </div>
 
 <div id="screen-application-progress" class="screen" style="padding-bottom:40px">
@@ -1306,13 +2200,18 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <h3 class="form-sec-title">Bank Information</h3>
   <div class="bank-warn"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>We've pre-filled your registered phone number. Tap the edit icon to change it.</div>
   <div class="ph-lbl">Select Wallet Type <span>*</span></div>
-  <div class="wallet-grid" id="walletGrid">
-    <div class="w-card sel" id="wBkash" onclick="selectWallet('Bkash')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="Bkash"><span>Bkash</span></div>
-    <div class="w-card" id="wNagad" onclick="selectWallet('Nagad')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png" alt="Nagad"><span>Nagad</span></div>
-    <div class="w-card" id="wRocket" onclick="selectWallet('Rocket')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket"><span>Rocket</span></div>
+  <div class="wallet-grid" id="walletGrid"></div>
+  <div class="pm-empty" id="walletEmpty" style="display:none;">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <div><strong>No wallet is enabled right now.</strong><span>Please contact support and try again later.</span></div>
   </div>
   <div class="ph-lbl">Receiving Account Number <span>*</span></div>
-  <div class="ph-row"><input type="tel" id="bankPhone" readonly inputmode="numeric"><i class="fa-regular fa-pen-to-square"  onclick="enableBankEdit()"></i></div>
+  <div class="ph-row" id="bankPhoneRow">
+    <input type="tel" id="bankPhone" inputmode="numeric" maxlength="11" placeholder="01XXXXXXXXX"
+           oninput="onBankPhoneInput(this)" onblur="onBankPhoneBlur()">
+    <i class="fa-regular fa-pen-to-square" id="bankEditIcon" onclick="enableBankEdit()"></i>
+  </div>
+  <div class="bank-hint" id="bankPhoneHint">Tap the icon to edit your receiving number.</div>
   <div class="tips-card">
     <h4><i class="fa-solid fa-lightbulb"></i> Tips</h4>
     <p>1. Use your own wallet account to receive your loan.</p>
@@ -1328,6 +2227,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="step-track"><div class="step-fill s5"></div></div>
   <h3 class="form-sec-title">Identity Verification</h3>
   <div class="nid-desc"><i class="fa-solid fa-triangle-exclamation"></i>Please upload a clear, complete photo of your National ID Card. Blurry or cropped images will delay approval.</div>
+  <div class="nid-saved-note" id="nidSavedNote" style="display:none;"><i class="fa-solid fa-circle-check"></i>Your previous NID photos are already on file. Tap a photo to replace it.</div>
   <div class="upload-wrap">
     <div class="upload-box" id="boxNidFront" onclick="openNidSheet('front')">
       <div class="upload-thumb" id="thumbFront"></div>
@@ -1413,36 +2313,57 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="fee-row"><span>Origination Fee</span><span class="red" id="payOrgFee">-</span></div>
     <div class="fee-row"><span>Service Charge</span><span class="red" id="payService">-</span></div>
     <div class="fee-row"><span>Advance Interest Fee</span><span class="red" id="payInterest">-</span></div>
+    <div class="fee-row" id="payBalRow" style="display:none;"><span>Account Balance Applied</span><span class="grn" id="payBalApplied">- 0</span></div>
     <div class="fee-row total"><span>Total Fee to Pay Now</span><span class="grn" id="payTotal">-</span></div>
   </div>
 
-  <div class="bal-toggle-box" id="balanceApplyBox" onclick="toggleBalanceApply()" style="display: none;">
-    <div class="bal-left">
-      <i class="fa-solid fa-wallet"></i>
-      <div>
-        <h4>Use Account Balance</h4>
-        <p>Available: <strong id="dispAvailBalance">৳ 0</strong></p>
+  <div class="bal-box" id="balanceApplyBox" style="display: none;">
+    <div class="bal-head" onclick="toggleBalanceExpand()">
+      <div class="bal-left">
+        <i class="fa-solid fa-wallet"></i>
+        <div>
+          <h4>Use Account Balance</h4>
+          <p>Available: <strong id="dispAvailBalance">৳ 0</strong> · max <strong>৳ 100</strong> off</p>
+        </div>
       </div>
+      <i class="fa-solid fa-chevron-down bal-caret" id="balCaret"></i>
     </div>
-    <div class="bal-check" id="balCheckIcon"><i class="fa-solid fa-check"></i></div>
+    <div class="bal-body" id="balBody">
+      <label class="bal-opt" onclick="event.stopPropagation(); toggleBalanceApply()">
+        <span class="bal-opt-txt">Adjust <strong>৳<span id="balAdjustAmt">0</span></strong> from my balance <em>(up to ৳100 per payment)</em></span>
+        <span class="bal-tick" id="balTick"><i class="fa-solid fa-check"></i></span>
+      </label>
+      <p class="bal-note" id="balNote">Your balance is never auto-applied — tick to use it.</p>
+    </div>
   </div>
 
   <div class="pm-title">Select Payment Method</div>
-  <div class="pm-grid" id="pmGrid">
-    <div class="pm-card sel" id="pmBkash" onclick="selectPayMethod('Bkash')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="Bkash"><span>Bkash</span></div>
-    <div class="pm-card" id="pmNagad" onclick="selectPayMethod('Nagad')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png" alt="Nagad"><span>Nagad</span></div>
-    <div class="pm-card" id="pmRocket" onclick="selectPayMethod('Rocket')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket"><span>Rocket</span></div>
+  <div class="pm-grid" id="pmGrid"></div>
+  <div class="pm-empty" id="pmEmpty" style="display:none;">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <div><strong>Payment methods are temporarily unavailable.</strong><span>Please contact support — an admin has not enabled any wallet yet.</span></div>
   </div>
   <div class="pay-instr">
     <h4><i class="fa-solid fa-circle-info"></i> Payment Instructions</h4>
     <p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> amount using <strong style="color:var(--txt)">Send Money</strong> to:</p>
-    <div class="pay-num" id="adminNumber">-</div>
+    <div class="pay-num-wrap">
+      <div class="pay-num" id="adminNumber">-</div>
+      <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    </div>
     <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS.</p>
     <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>
   </div>
+  <div class="admin-note" id="payNoteCard" style="display:none;">
+    <h5><i class="fa-solid fa-thumbtack"></i> <span id="payNoteTitle">Note</span></h5>
+    <p id="payNoteText"></p>
+  </div>
   <div class="trx-wrap">
     <label>Transaction ID (TrxID) *</label>
-    <input type="text" id="trxInput" placeholder="e.g. AK9F5B2C" oninput="checkTrx()">
+    <div class="trx-field">
+      <input type="text" id="trxInput" placeholder="e.g. AK9F5B2C" autocomplete="off" spellcheck="false"
+             oninput="checkTrx()" onpaste="setTimeout(checkTrx,0)">
+      <button class="paste-btn" id="pasteTrxBtn" type="button" onclick="pasteTrx()"><i class="fa-regular fa-clipboard"></i> Paste</button>
+    </div>
   </div>
   <div class="fee-foot"><button class="btn-pay" id="btnTrx" onclick="submitTrx()">Submit Transaction ID</button></div>
 </div>
@@ -1468,7 +2389,8 @@ if(refCode) localStorage.setItem('referrerPhone', refCode);
 
 const ADMIN = {
   orgFee: 200, serviceCharge: 100, processingFee: 100, annualRate: 18,
-  paymentNumbers: { Bkash:'01711111111', Nagad:'01822222222', Rocket:'01933333333' },
+  // legacy only: Wallets is the single source of truth, this stays empty on purpose
+  paymentNumbers: { Bkash:'', Nagad:'', Rocket:'' },
   walletLogos: {
     Bkash:  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png',
     Nagad:  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png',
@@ -1484,6 +2406,14 @@ let selRel1='', selRel2='';
 let selWallet='Bkash';
 let nidFrontOk=false, nidBackOk=false;
 let nidFrontUrl='', nidBackUrl='';
+// last submitted application of this user (Firestore) — used to prefill the form
+let _savedApp=null;
+// NID number on file for this user (kept across applications)
+let _savedNid='';
+// last receiving account number typed by the user (survives navigation/refresh)
+let _lastBankPhone='';
+// values restored from the previous application (shown with a green "filled" mark)
+let _prefilled={};
 let selPayMethod='Bkash';
 let totalFee=0;
 let originalTotalFee = 0;
@@ -1551,7 +2481,7 @@ function claimFomoOffer() {
   }
 }
 
-function saveFormState(){
+function saveFormState(isSubmitted){
   const state = {
     infoName: document.getElementById('infoName')?.value || '',
     infoEmail: document.getElementById('infoEmail')?.value || '',
@@ -1562,29 +2492,35 @@ function saveFormState(){
     c1Phone: document.getElementById('c1Phone')?.value || '',
     c2Name: document.getElementById('c2Name')?.value || '',
     c2Phone: document.getElementById('c2Phone')?.value || '',
-    bankPhone: document.getElementById('bankPhone')?.value || '',
+    // keep the last known receiving number if the input is not on screen
+    bankPhone: (document.getElementById('bankPhone')?.value || '').trim() || _lastBankPhone || '',
     selGender, selDob, selIncome, selPurpose, selAmount, selTerm,
     selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2,
-    selWallet, currentDashboardStep
+    selWallet, currentDashboardStep,
+    _nidFront: nidFrontUrl || '', _nidBack: nidBackUrl || '',
+    _submitted: isSubmitted === true
   };
   localStorage.setItem('creditUpFormDraft', JSON.stringify(state));
 }
 
-function restoreFormState(){
+function restoreFormState(src){
   try {
-    const draft = JSON.parse(localStorage.getItem('creditUpFormDraft'));
+    const draft = src || JSON.parse(localStorage.getItem('creditUpFormDraft'));
     if(!draft) return;
     
     if(document.getElementById('infoName')) document.getElementById('infoName').value = draft.infoName || '';
     if(document.getElementById('infoEmail')) document.getElementById('infoEmail').value = draft.infoEmail || '';
-    if(document.getElementById('infoId')) document.getElementById('infoId').value = draft.infoId || '';
+    if(document.getElementById('infoId')) document.getElementById('infoId').value = draft.infoId || _savedNid || '';
     if(document.getElementById('infoCompany')) document.getElementById('infoCompany').value = draft.infoCompany || '';
     if(document.getElementById('infoAddress')) document.getElementById('infoAddress').value = draft.infoAddress || '';
     if(document.getElementById('c1Name')) document.getElementById('c1Name').value = draft.c1Name || '';
     if(document.getElementById('c1Phone')) document.getElementById('c1Phone').value = draft.c1Phone || '';
     if(document.getElementById('c2Name')) document.getElementById('c2Name').value = draft.c2Name || '';
     if(document.getElementById('c2Phone')) document.getElementById('c2Phone').value = draft.c2Phone || '';
-    if(document.getElementById('bankPhone') && draft.bankPhone) document.getElementById('bankPhone').value = draft.bankPhone;
+    if(document.getElementById('bankPhone') && draft.bankPhone){
+      document.getElementById('bankPhone').value = draft.bankPhone;
+      _lastBankPhone = draft.bankPhone;
+    }
 
     selGender = draft.selGender || ''; selDob = draft.selDob || ''; selIncome = draft.selIncome || '';
     selPurpose = draft.selPurpose || ''; selAmount = draft.selAmount || ''; selTerm = draft.selTerm || '';
@@ -1612,6 +2548,14 @@ function restoreFormState(){
     
     selectWallet(selWallet);
 
+    // NID photos already on file (re-used unless the user uploads a new one)
+    if(draft._nidFront || draft._nidBack) applySavedNid(draft._nidFront || '', draft._nidBack || '');
+
+    // re-validate every step so NEXT buttons are enabled again
+    if(typeof checkStep1 === 'function') checkStep1();
+    if(typeof checkStep2 === 'function') checkStep2();
+    if(typeof checkStep3 === 'function') checkStep3();
+
     if(draft.currentDashboardStep > 0 && draft.currentDashboardStep < 5) {
        currentDashboardStep = draft.currentDashboardStep;
        updateProgressUI();
@@ -1619,15 +2563,162 @@ function restoreFormState(){
   } catch(e) { console.error('Error restoring form:', e); }
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+//  PREFILL FROM THE USER'S PREVIOUS APPLICATION
+//  Every field keeps its old value so returning users only change what
+//  they want (e.g. only the loan amount). Anything can still be edited or
+//  cleared field-by-field, and "Clear all" starts a blank form.
+//  Privacy Policy / Terms must be accepted again on every application.
+// ═══════════════════════════════════════════════════════════════════════
+function _mapAppToForm(a){
+  if(!a) return null;
+  const e1 = a.emergency1 || {}, e2 = a.emergency2 || {};
+  return {
+    infoName: a.name || '', infoEmail: a.email || '', infoId: a.nid || a.infoId || _savedNid || '',
+    infoCompany: a.company || '', infoAddress: a.address || '',
+    c1Name: e1.name || '', c1Phone: e1.phone || '', c2Name: e2.name || '', c2Phone: e2.phone || '',
+    bankPhone: a.bankPhone || '',
+    selGender: a.gender || '', selDob: a.dob || '', selIncome: a.income || '',
+    selPurpose: a.loanPurpose || '', selAmount: a.loanAmount || '', selTerm: a.term || '',
+    selEdu: a.education || '', selMarital: a.marital || '', selChildren: a.children || '',
+    selOccupation: a.occupation || '', selRel1: e1.relation || '', selRel2: e2.relation || '',
+    selWallet: a.wallet || 'Bkash',
+    _nidFront: a.nidFrontUrl || '', _nidBack: a.nidBackUrl || ''
+  };
+}
+
+window._prefillFromLastApp = function(){
+  const u = _getUser();
+  const localDraft = (()=>{ try { return JSON.parse(localStorage.getItem('creditUpFormDraft')); } catch(e){ return null; } })();
+  const remote = _mapAppToForm(window._latestApp || _savedApp);
+  const hasRemote = !!(remote && (remote.infoName || remote.selAmount || remote.selDob));
+
+  // an in-progress (unsubmitted) draft is more recent than the last submitted app
+  const draftStep = localDraft ? (Number(localDraft.currentDashboardStep) || 0) : 0;
+  const draftInProgress = !!localDraft && !localDraft._submitted && draftStep > 0;
+  const useDraft = draftInProgress || (!!localDraft && !hasRemote);
+  const source = useDraft ? localDraft : remote;
+
+  if(!source && !_savedNid) return false;
+  clearFormFields();          // reset first, so nothing stale is left behind
+  restoreFormState(source || {});   // then fill everything in
+  if(!document.getElementById('infoId')?.value.trim() && _savedNid){
+    document.getElementById('infoId').value = _savedNid;
+    _prefilled.infoId = true; _refreshPrefillMarks();
+    if(typeof checkStep1 === 'function') checkStep1();
+  }
+  _markPrefilled(useDraft ? localDraft : remote, useDraft ? 'draft' : 'server');
+  showPrefillBanner(useDraft ? 'draft' : 'server', u?.phone);
+  return true;
+};
+
+function _showFill(id, val){
+  if(!val) return;
+  const el = document.getElementById(id);
+  if(el){ const sp = el.querySelector('span'); if(sp) sp.innerText = val; el.classList.add('filled'); }
+}
+
+function _markPrefilled(src, kind){
+  _prefilled = {};
+  if(src){
+    if(src.infoName) _prefilled.infoName = true;
+    if(src.infoEmail) _prefilled.infoEmail = true;
+    if(src.infoId) _prefilled.infoId = true;
+    if(src.infoCompany) _prefilled.infoCompany = true;
+    if(src.infoAddress) _prefilled.infoAddress = true;
+    if(src.c1Name) _prefilled.c1Name = true;
+    if(src.c1Phone) _prefilled.c1Phone = true;
+    if(src.c2Name) _prefilled.c2Name = true;
+    if(src.c2Phone) _prefilled.c2Phone = true;
+    if(src.bankPhone) _prefilled.bankPhone = true;
+    Object.keys(src).forEach(k => { if(k.indexOf('sel') === 0 && src[k]) _prefilled[k] = true; });
+  }
+  _refreshPrefillMarks();
+}
+
+function _refreshPrefillMarks(){
+  // text inputs
+  Object.keys(_prefilled).forEach(k => {
+    if(k.indexOf('sel') === 0) return;
+    const el = document.getElementById(k);
+    if(!el) return;
+    const shown = !!el.value && _prefilled[k];
+    el.classList.toggle('pf-filled', shown);
+  });
+  // picker fields (values live in JS vars) → map var name to its display box
+  const map = { selGender:'dGender', selDob:'dDob', selIncome:'dIncome', selPurpose:'dPurpose',
+                selAmount:'dAmount', selTerm:'dTerm', selEdu:'dEdu', selMarital:'dMarital',
+                selChildren:'dChildren', selOccupation:'dOccupation', selRel1:'dRel1', selRel2:'dRel2' };
+  Object.keys(map).forEach(k => {
+    const box = document.getElementById(map[k]);
+    if(!box) return;
+    const hasVal = !!box.querySelector('span')?.innerText.trim();
+    box.classList.toggle('pf-filled', !!(_prefilled[k] && hasVal));
+  });
+}
+
+function clearFormFields(){
+  ['infoName','infoEmail','infoId','infoCompany','infoAddress','c1Name','c1Phone','c2Name','c2Phone','bankPhone','trxInput'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el && id !== 'bankPhone') el.value = '';
+  });
+  selGender = selDob = selIncome = selPurpose = selAmount = selTerm = '';
+  selEdu = selMarital = selChildren = selOccupation = selRel1 = selRel2 = '';
+  selWallet = 'Bkash';
+  currentDashboardStep = 0;
+  document.querySelectorAll('.sel-disp, .sel-box').forEach(el => {
+    const sp = el.querySelector('span'); if(sp) sp.innerText = '';
+    el.classList.remove('filled', 'pf-filled');
+  });
+  document.querySelectorAll('.pf-filled').forEach(el => el.classList.remove('pf-filled'));
+  resetNidUpload();
+  selectWallet('Bkash');
+  updateProgressUI();
+}
+
+// start from a completely blank form (explicit user choice)
+window.clearApplicationForm = function(){
+  localStorage.removeItem('creditUpFormDraft');
+  clearFormFields();
+  _prefilled = {};
+  hidePrefillBanner();
+  const u = _getUser();
+  const bp = document.getElementById('bankPhone');
+  if(bp) bp.value = u?.phone ? '0' + u.phone : '';
+  _lastBankPhone = bp ? bp.value : '';
+  if(u?.phone) _prefilled.bankPhone = true;
+  _refreshPrefillMarks();
+  if(typeof checkStep1 === 'function') checkStep1();
+  if(typeof checkStep2 === 'function') checkStep2();
+  if(typeof checkStep3 === 'function') checkStep3();
+  saveFormState();
+  showAlert('Form Cleared', 'All fields are empty now. Enter your new information to continue.', 'success');
+};
+
+function showPrefillBanner(kind, phone){
+  const el = document.getElementById('prefillBanner');
+  if(!el) return;
+  const desc = document.getElementById('prefillDesc');
+  const isDraft = kind === 'draft';
+  if(desc){
+    desc.innerText = isDraft
+      ? 'Your unfinished application is restored. Review it and continue where you left off.'
+      : 'We filled in your last application details. Change only what you need — for example the loan amount.';
+  }
+  showPrefillBannerNidHint();
+  el.style.display = 'flex';
+  el.dataset.kind = kind;
+}
+function hidePrefillBanner(){
+  const el = document.getElementById('prefillBanner');
+  if(el) el.style.display = 'none';
+}
+
 function clearFormState(){
   localStorage.removeItem('creditUpFormDraft');
-  ['infoName','infoEmail','infoId','infoCompany','infoAddress','c1Name','c1Phone','c2Name','c2Phone','trxInput'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = '';
-  });
-  selGender = selDob = selIncome = selPurpose = selAmount = selTerm = selEdu = selMarital = selChildren = selOccupation = selRel1 = selRel2 = '';
-  currentDashboardStep = 0;
-  document.querySelectorAll('.sel-disp, .sel-box').forEach(el => { el.querySelector('span').innerText = ''; el.classList.remove('filled'); });
+  clearFormFields();
+  _prefilled = {};
+  hidePrefillBanner();
 }
 
 function updateProgressUI(){
@@ -1671,6 +2762,8 @@ function nav(id){
   if(target){
     target.classList.add('active');
     document.getElementById('app').scrollTo({top: 0, behavior: 'instant'});
+    // step 4: always show the stored receiving number when the screen opens
+    if(id === 'screen-bank-info' && typeof _syncBankPhoneField === 'function') setTimeout(_syncBankPhoneField, 30);
     if(id === 'screen-home'){
       const u = _getUser();
       if(u && typeof window.loadUserDashboardData === 'function'){
@@ -1813,6 +2906,9 @@ function showAlert(title,msg,type='info',cb=null){
   _showModal(false,true,false);
   document.getElementById('m-title').innerText=title;
   document.getElementById('m-msg').innerText=msg;
+  // the alert always has its ✕ and an OK button
+  const closeBtn = document.getElementById('alertCloseBtn'); if(closeBtn) closeBtn.style.display = 'flex';
+  const okBtn = document.getElementById('alertOkBtn'); if(okBtn) okBtn.innerHTML = 'OK';
   const w=document.getElementById('m-icon-wrap'); const i=document.getElementById('m-icon');
   const types={ success:['m-ic-suc','fa-solid fa-check'], error:['m-ic-err','fa-solid fa-xmark'], info:['m-ic-lock','fa-solid fa-circle-info'] };
   const[cls,icn]=types[type]||types.info;
@@ -1829,6 +2925,61 @@ function closeGlobalModal(clearLogin=false){
   if(clearLogin) pendingLoginUser=null;
   const cb=modalCloseCb; modalCloseCb=null;
   if(cb) cb();
+}
+// keep the NID on the user's profile so the next application has it already filled
+async function saveUserNid(nid){
+  const val = String(nid || '').trim();
+  if(!val) return;
+  _savedNid = val;
+  try {
+    const u = _getUser(); if(!u?.phone || !db) return;
+    if(window._userDocId){
+      await updateDoc(doc(db, 'users', window._userDocId), { nid: val, nidUpdatedAt: new Date().toISOString() });
+    } else {
+      const snap = await getDocs(query(collection(db, 'users'), where('phone', '==', u.phone)));
+      if(!snap.empty){
+        window._userDocId = snap.docs[0].id;
+        await updateDoc(snap.docs[0].ref, { nid: val, nidUpdatedAt: new Date().toISOString() });
+      }
+    }
+  } catch(e) { console.warn('saveUserNid:', e?.message); }
+}
+
+// After a step is completed we move to a dedicated success screen — never a
+// modal — so there is no ✕ to get stuck on. Continue advances the form.
+const _STEP_NAMES = {
+  1:['Basic Information','Your name, email, gender, date of birth, NID and income are saved.'],
+  2:['Personal Information','Loan purpose, amount, term and employment details are saved.'],
+  3:['Emergency Contact','Both emergency contacts are saved.'],
+  4:['Bank Information','Your receiving wallet and account number are saved.'],
+  5:['Identity Verification','Your NID photos are saved.']
+};
+let _pendingStep = 0;
+function _afterStepComplete(step){
+  const info = _STEP_NAMES[step] || ['Step complete','Your information is saved.'];
+  _pendingStep = step;
+  const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.innerText=v; };
+  set('stcTitle', `Step ${step} Complete`);
+  set('stcMsg', `${info[0]} saved successfully.`);
+  set('stcCount', `Step ${step} of 5`);
+  const fill = document.getElementById('stcFill');
+  if(fill){ fill.style.width='0%'; setTimeout(()=>{ fill.style.width = (step*20)+'%'; }, 60); }
+  const btn = document.getElementById('stcBtn');
+  if(btn) btn.innerHTML = step >= 5
+    ? 'See your application <i class="fa-solid fa-arrow-right" style="font-size:12px;margin-left:7px"></i>'
+    : 'Continue to next step <i class="fa-solid fa-arrow-right" style="font-size:12px;margin-left:7px"></i>';
+  nav('screen-step-complete');
+}
+function _continueAfterStep(){
+  const step = _pendingStep;
+  if(step >= 5){ nav('screen-application-progress'); return; }
+  openStep(step + 1);
+}
+function _backToProgress(){ nav('screen-application-progress'); }
+
+function resetPolicyCheck(){
+  const c = document.getElementById('policyCheck');
+  if(c) c.checked = false;
 }
 function acceptPolicy(){
   if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; }
@@ -1921,6 +3072,7 @@ function confirmDob(){
 }
 
 function checkStep1(){
+  if(typeof _refreshPrefillMarks === 'function') _refreshPrefillMarks();
   const ok=document.getElementById('infoName').value.trim()&&document.getElementById('infoEmail').value.trim()&&document.getElementById('infoId').value.trim()&&selGender&&selDob&&selIncome;
   document.getElementById('btnStep1').classList.toggle('on',!!ok);
 }
@@ -1934,6 +3086,14 @@ function checkStep3(){
 }
 
 function showConfirmModal(){
+  const m1 = [];
+  if(!document.getElementById('infoName').value.trim()) m1.push('Full Name');
+  if(!document.getElementById('infoEmail').value.trim()) m1.push('E-mail');
+  if(!selGender) m1.push('Gender');
+  if(!selDob) m1.push('Date of Birth');
+  if(!document.getElementById('infoId').value.trim()) m1.push('NID number');
+  if(!selIncome) m1.push('Monthly Income');
+  if(m1.length){ showAlert('Incomplete Information', 'Please fill: ' + m1.join(', ') + '.', 'error'); return; }
   document.getElementById('cName').innerText   = document.getElementById('infoName').value;
   document.getElementById('cEmail').innerText  = document.getElementById('infoEmail').value;
   document.getElementById('cGender').innerText = selGender;
@@ -1944,34 +3104,150 @@ function showConfirmModal(){
 }
 function submitConfirmedInfo(){
   document.getElementById('confirmModal').classList.remove('on');
+  saveUserNid(document.getElementById('infoId').value);
   showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); showAlert('Step 1 Complete ✓','Basic Information saved successfully!','success',()=>nav('screen-personal-info')); }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); _afterStepComplete(1); }, 900);
 }
 function submitStep2(){
+  // guard: every step-2 field must be present before moving on
+  const missing = [];
+  if(!document.getElementById('infoCompany').value.trim()) missing.push('Company / Employer');
+  if(!document.getElementById('infoAddress').value.trim()) missing.push('Home Address');
+  if(!selPurpose) missing.push('Loan Purpose');
+  if(!selAmount) missing.push('Loan Amount');
+  if(!selTerm) missing.push('Repayment Term');
+  if(!selEdu) missing.push('Education Level');
+  if(!selMarital) missing.push('Marital Status');
+  if(!selChildren) missing.push('Number of Children');
+  if(!selOccupation) missing.push('Occupation');
+  if(missing.length){ showAlert('Incomplete Information', 'Please fill: ' + missing.join(', ') + '.', 'error'); return; }
   showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); showAlert('Step 2 Complete ✓','Personal Information saved successfully!','success',()=>nav('screen-emergency-contact')); }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); _afterStepComplete(2); }, 900);
+}
+// step 4 opens: always show the stored receiving number
+function _syncBankPhoneField(){
+  const el = document.getElementById('bankPhone');
+  if(!el) return;
+  const saved = _lastBankPhone || (document.getElementById('bankPhone')?.value || '');
+  if(!el.value.trim() && saved) el.value = saved;
+  if(!el.value.trim()){
+    // fall back to the receiving number registered for this wallet
+    const w = window._activeWallet || (window._wallets || [])[0];
+    const wn = w ? walletReceivingNumber(w) : '';
+    if(wn) el.value = wn;
+  }
+  if(el.value.trim()) onBankPhoneInput(el);
 }
 function submitStep3(){
-  if(!isValidBDPhone(document.getElementById('c1Phone').value)||!isValidBDPhone(document.getElementById('c2Phone').value)){ showErrorModal('Invalid Phone Number','Phone must be 10 digits starting with 1.'); return; }
+  const m3 = [];
+  if(!document.getElementById('c1Name').value.trim()) m3.push('First contact name');
+  if(!isValidBDPhone(document.getElementById('c1Phone').value)) m3.push('First contact phone');
+  if(!selRel1) m3.push('First contact relation');
+  if(!document.getElementById('c2Name').value.trim()) m3.push('Second contact name');
+  if(!isValidBDPhone(document.getElementById('c2Phone').value)) m3.push('Second contact phone');
+  if(!selRel2) m3.push('Second contact relation');
+  if(m3.length){ showAlert('Incomplete Information', 'Please check: ' + m3.join(', ') + '.', 'error'); return; }
   showLoader(true);
   setTimeout(()=>{
     showLoader(false); currentDashboardStep=3; updateProgressUI();
-    const u=_getUser(); if(u?.phone) document.getElementById('bankPhone').value='0'+u.phone;
-    showAlert('Step 3 Complete ✓','Emergency Contact saved successfully!','success',()=>nav('screen-bank-info'));
+    const bpEl=document.getElementById('bankPhone');
+    const u=_getUser();
+    // keep the receiving number from the previous application; only fall back to the login number
+    if(bpEl && !bpEl.value.trim() && u?.phone) bpEl.value='0'+u.phone;
+    _afterStepComplete(3);
   }, 900);
 }
 function submitStep4(){
+  const el = document.getElementById('bankPhone');
+  const val = _bankNormalize(el?.value || '');
+
+  // never let the form move on without a usable receiving number
+  if(!val){
+    _bankHint('err', 'Receiving account number is required.');
+    el?.focus();
+    return;
+  }
+  if(!_bankValid(val)){
+    _bankHint('err', 'Enter a valid 11-digit number starting with 01 (e.g. 01712345678).');
+    el?.focus();
+    return;
+  }
+  if(!selWallet){
+    showAlert('Wallet Required', 'Please select the wallet type that will receive your loan.', 'info');
+    return;
+  }
+  el.value = val;
+  _lastBankPhone = val;
+  saveFormState();
+
   showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); showAlert('Step 4 Complete ✓','Bank Information saved successfully!','success',()=>nav('screen-nid-upload')); }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); _afterStepComplete(4); }, 900);
 }
 function selectWallet(w){
   selWallet=w; saveFormState();
   ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('w'+x); if(el) el.classList.remove('sel'); });
   const target=document.getElementById('w'+w); if(target) target.classList.add('sel');
 }
+// ── Step 4: the receiving account number must be editable + validated ──
+function _bankClean(v){ return String(v||'').replace(/[^0-9]/g,'').slice(0,11); }
+// accept 01712345678 / 1712345678 / +8801712345678 and store one clean local format
+function _bankNormalize(v){
+  let d = String(v||'').replace(/[^0-9]/g,'');
+  if(d.indexOf('880') === 0) d = '0' + d.slice(3);
+  else if(d.indexOf('88') === 0 && d.length > 11) d = '0' + d.slice(2);
+  if(d.length === 10 && d.charAt(0) === '1') d = '0' + d;
+  return d.slice(0,11);
+}
+function _bankValid(v){
+  const d = _bankClean(v);
+  return /^01[3-9][0-9]{8}$/.test(d) || /^1[3-9][0-9]{8}$/.test(d);
+}
+function _bankHint(state, text){
+  const h = document.getElementById('bankPhoneHint');
+  const row = document.getElementById('bankPhoneRow');
+  if(!h) return;
+  h.className = 'bank-hint' + (state ? ' ' + state : '');
+  h.innerHTML = (state === 'err' ? '<i class="fa-solid fa-circle-exclamation"></i>'
+               : state === 'ok'  ? '<i class="fa-solid fa-circle-check"></i>'
+               : '<i class="fa-solid fa-circle-info"></i>') + ' ' + text;
+  if(row) row.classList.toggle('invalid', state === 'err');
+}
+function onBankPhoneInput(el){
+  const caret = el.selectionStart;
+  el.value = _bankNormalize(el.value);
+  _lastBankPhone = el.value;
+  try { el.setSelectionRange(caret, caret); } catch(e){}
+  saveFormState();
+  const v = el.value;
+  if(!v) { _bankHint('', 'Enter the wallet number that should receive your loan.'); return; }
+  if(_bankValid(v)) _bankHint('ok', 'Valid receiving number.');
+  else _bankHint('', 'Format: 01XXXXXXXXX (11 digits).');
+}
+function onBankPhoneBlur(){
+  const el = document.getElementById('bankPhone');
+  if(el && el.value && !_bankValid(el.value)) _bankHint('err', 'That does not look like a valid BD mobile number.');
+  else if(el && _bankValid(el.value)) _bankHint('ok', 'Valid receiving number.');
+  saveFormState();
+}
 function enableBankEdit(){
-  const i=document.getElementById('bankPhone');
-  if(i.readOnly){ i.removeAttribute('readonly'); i.focus(); } else { i.setAttribute('readonly',true); saveFormState(); }
+  const i = document.getElementById('bankPhone');
+  const row = document.getElementById('bankPhoneRow');
+  const ic = document.getElementById('bankEditIcon');
+  if(!i) return;
+  // the field is always editable now — the icon just focuses it and highlights the row
+  i.classList.remove('bank-locked');
+  row?.classList.add('editing');
+  if(ic) ic.className = 'fa-solid fa-circle-check';
+  i.focus();
+  i.setSelectionRange(i.value.length, i.value.length);
+  setTimeout(()=>{
+    row?.classList.remove('editing');
+    if(ic) ic.className = 'fa-regular fa-pen-to-square';
+  }, 1600);
+  if(!i.value.trim()){
+    const u = _getUser();
+    if(u?.phone) { i.value = '0' + u.phone; onBankPhoneInput(i); }
+  }
 }
 
 function openNidSheet(target){
@@ -2017,6 +3293,44 @@ async function handleFileUpload(inputId, boxId){
   }
 }
 
+// show the NID photos already on file ("already uploaded" state)
+function applySavedNid(front, back){
+  const put = (boxId, thumbId, url) => {
+    if(!url) return;
+    const box = document.getElementById(boxId), thumb = document.getElementById(thumbId);
+    if(box) box.classList.add('up');
+    if(thumb) thumb.style.backgroundImage = `url(${url})`;
+    const chg = box?.querySelector('.upload-change');
+    if(chg) chg.innerText = 'Tap to update';
+  };
+  if(front){ nidFrontUrl = front; nidFrontOk = true; put('boxNidFront','thumbFront',front); }
+  if(back) { nidBackUrl  = back;  nidBackOk  = true; put('boxNidBack','thumbBack',back);  }
+  const b5 = document.getElementById('btnStep5');
+  if(b5) b5.classList.toggle('on', !!(nidFrontOk && nidBackOk));
+  const note = document.getElementById('nidSavedNote');
+  if(note) note.style.display = (nidFrontOk || nidBackOk) ? 'flex' : 'none';
+  showPrefillBannerNidHint();
+}
+
+// the policy-screen banner mentions saved NID photos when there are any
+function showPrefillBannerNidHint(){
+  const nid = document.getElementById('prefillNid');
+  if(nid) nid.style.display = (nidFrontUrl || nidBackUrl) ? 'flex' : 'none';
+}
+
+function resetNidUpload(){
+  nidFrontOk = nidBackOk = false;
+  nidFrontUrl = nidBackUrl = '';
+  ['boxNidFront','boxNidBack'].forEach(id => document.getElementById(id)?.classList.remove('up'));
+  ['thumbFront','thumbBack'].forEach(id => { const t = document.getElementById(id); if(t) t.style.backgroundImage = ''; });
+  document.querySelectorAll('.upload-change').forEach(el => el.innerText = 'Tap to change');
+  const b5 = document.getElementById('btnStep5');
+  if(b5) b5.classList.remove('on');
+  const note = document.getElementById('nidSavedNote');
+  if(note) note.style.display = 'none';
+  ['nidFrontInput','nidBackInput'].forEach(id => { const i = document.getElementById(id); if(i) i.value = ''; });
+}
+
 function _fmt(n){ return Number(n).toLocaleString('en-US'); }
 function _calcDates(months){
   const s=new Date(), d=new Date(s); d.setMonth(d.getMonth()+months);
@@ -2038,21 +3352,13 @@ function submitApplication(){
   document.getElementById('finalWalletLogo').src = (window._activeWallet && window._activeWallet.logoUrl) ? window._activeWallet.logoUrl : (ADMIN.walletLogos[selWallet] || '');
   const u=_getUser(); if(u?.phone) document.getElementById('approvedPhone').innerText='0'+u.phone;
 
-  document.getElementById('ldAmount').innerText  =_fmt(amt);
-  document.getElementById('ldTerm').innerText    =months;
-  document.getElementById('ldInterest').innerText=_fmt(interest)+' BDT';
-  document.getElementById('ldOrgFee').innerText  =_fmt(ADMIN.orgFee)+' BDT';
-  document.getElementById('ldService').innerText =_fmt(ADMIN.serviceCharge+ADMIN.processingFee)+' BDT';
-  document.getElementById('ldStart').innerText   =start;
-  document.getElementById('ldDue').innerText     =due;
-  document.getElementById('ldReceive').innerText =_fmt(amt)+' BDT';
-  document.getElementById('ldTotal').innerText   =_fmt(amt+totalFee)+' BDT';
-
   if(typeof saveApplicationToFirebase==='function') saveApplicationToFirebase();
 
   nav('screen-review-progress');
   _runReviewAnim(()=>{ 
-    clearFormState();
+    // keep the details (and NID photos) for the next application instead of wiping them
+    saveFormState(true);
+    hidePrefillBanner();
     nav('screen-approved'); 
   });
 }
@@ -2074,22 +3380,128 @@ function openRepaymentSchedule(){
   if(!p || !n) return;
   const annualRate = ADMIN.annualRate;
   const r = annualRate / 100 / 12;
-  const emi = Math.round(p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
-  document.getElementById('emiAmount').innerText = '৳ ' + _fmt(emi);
-  const list = document.getElementById('repScheduleList');
-  let bal = p;
-  let html = `<div class="rep-row header"><span>Month</span><span>EMI (৳)</span><span>Principal (৳)</span><span>Balance (৳)</span></div>`;
+  const emiRaw = r > 0 ? p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1) : p / n;
+  const emi = Math.round(emiRaw);
+
+  // amortization table — exact to the last taka
+  let bal = p, totalInterest = 0, rows = '';
   for(let i = 1; i <= n; i++){
-    const interest = Math.round(bal * r);
-    const principal = emi - interest;
+    const interest  = Math.round(bal * r);
+    let principal   = i < n ? Math.max(0, emi - interest) : bal;   // last row clears the balance
+    const payNow    = i < n ? emi : principal + interest;
     bal = Math.max(0, bal - principal);
-    html += `<div class="rep-row"><span>${i}</span><span>${_fmt(emi)}</span><span>${_fmt(principal)}</span><span style="color:var(--orange)">${_fmt(Math.round(bal))}</span></div>`;
+    totalInterest += interest;
+    const isLast = i === n;
+    rows += `<tr${isLast ? ' class="last"' : ''}>
+      <td>${i}</td>
+      <td class="num">${_fmt(payNow)}</td>
+      <td class="num">${_fmt(principal)}</td>
+      <td class="int">${_fmt(interest)}</td>
+      <td class="bal${isLast ? ' zero' : ''}">${_fmt(Math.round(bal))}</td>
+    </tr>`;
   }
-  list.innerHTML = html;
+  const totalPayable = p + totalInterest;
+
+  // summary block
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+  set('emiAmount', '৳ ' + _fmt(emi));
+  set('repLoanAmount', '৳ ' + _fmt(p));
+  set('repTermText', n + (n === 1 ? ' Month' : ' Months'));
+  set('repTotalInterest', '৳ ' + _fmt(totalInterest));
+  set('repTotalPayable', '৳ ' + _fmt(totalPayable));
+  set('repSumNote', `${n} installments · ${annualRate}% p.a.`);
+
+  // shared column widths keep the header, rows and totals perfectly aligned
+  document.getElementById('repScheduleList').innerHTML = `
+    <table class="rep-table">
+      <colgroup>
+        <col class="c-month"><col><col><col><col>
+      </colgroup>
+      <thead>
+        <tr><th>#</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
+      </thead>
+      <tbody>${rows}</tbody>
+      <tfoot>
+        <tr>
+          <td>Σ</td>
+          <td>${_fmt(totalPayable)}</td>
+          <td>${_fmt(p)}</td>
+          <td style="color:var(--orange)">${_fmt(totalInterest)}</td>
+          <td>0</td>
+        </tr>
+      </tfoot>
+    </table>`;
   document.getElementById('repaymentModal').classList.add('on');
 }
 
-function openLoanDetails()  { document.getElementById('loanDetailsModal').classList.add('on'); }
+// Builds the Loan Details popup from the live application, or from the
+// user's saved/last application when the screen is opened later.
+function _loanSource(){
+  const saved = window._latestApp || _savedApp || null;
+  const amount = Number(String(selAmount || (saved && saved.loanAmount) || '0').replace(/,/g,'')) || 0;
+  const months = Number(selTerm || (saved && saved.term) || 0) || 0;
+  if(!amount || !months) return null;
+  return { amount, months, saved };
+}
+
+function openLoanDetails(){
+  const src = _loanSource();
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+
+  if(!src){
+    // nothing yet — never show an empty table
+    showAlert('No Loan Found', 'Apply for a loan first to see the full breakdown here.', 'info');
+    return;
+  }
+  const { amount, months, saved } = src;
+  const rate     = Number(ADMIN.annualRate) || 0;
+  const orgFee   = Number(ADMIN.orgFee) || 0;
+  const svcFee   = (Number(ADMIN.serviceCharge) || 0) + (Number(ADMIN.processingFee) || 0);
+  const interest = Math.round(amount * (rate / 100) * (months / 12));
+  const feeTotal = orgFee + svcFee;
+  const r        = rate / 100 / 12;
+  const emi      = r > 0 ? Math.round(amount * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1)) : Math.round(amount / months);
+  const totalRepay = amount + interest + feeTotal;
+
+  // dates: prefer the stored application dates, else compute from the term
+  let start = saved && saved.startDate ? new Date(saved.startDate) : new Date();
+  let due   = saved && saved.dueDate   ? new Date(saved.dueDate)   : null;
+  if(!due){ due = new Date(start); due.setMonth(due.getMonth() + months); }
+  const dfmt = d => isNaN(d.getTime()) ? '-' : d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+
+  set('ldAmount',      '৳ ' + _fmt(amount));
+  set('ldCurrencyNote','All amounts are in BDT (৳)');
+  set('ldChipTerm',    `${months} ${months === 1 ? 'month' : 'months'}`);
+  set('ldChipRate',    `${rate}% p.a.`);
+  set('ldChipEmi',     `EMI ৳${_fmt(emi)}`);
+  set('ldTerm',        months + (months === 1 ? ' month' : ' months'));
+  set('ldInterest',    rate + '% per year');
+  set('ldInterestAmt', '৳ ' + _fmt(interest));
+  set('ldOrgFee',      '৳ ' + _fmt(orgFee));
+  set('ldService',     '৳ ' + _fmt(svcFee));
+  set('ldFeeTotal',    '৳ ' + _fmt(feeTotal));
+  set('ldStart',       dfmt(start));
+  set('ldDue',         dfmt(due));
+  set('ldEmi',         '৳ ' + _fmt(emi));
+  set('ldReceive',     '৳ ' + _fmt(amount));
+  set('ldTotal',       '৳ ' + _fmt(totalRepay));
+  const statusEl = document.getElementById('ldStatusLine');
+  if(statusEl){
+    const st = saved && saved.status ? String(saved.status) : '';
+    const map = {
+      'Pending Fee Payment':['Fee payment pending','var(--orange)'],
+      'TrxID Submitted':['Verification pending','var(--blue)'],
+      'Approved':['Active loan','var(--p)'],
+      'Disbursed':['Loan disbursed','var(--p)'],
+      'Rejected':['Application rejected','var(--red)']
+    };
+    const hit = map[st];
+    statusEl.style.display = hit ? 'flex' : 'none';
+    if(hit){ statusEl.innerHTML = `<i class="fa-solid fa-circle" style="font-size:6px;color:${hit[1]}"></i> ${hit[0]}`; statusEl.style.color = hit[1]; }
+  }
+
+  document.getElementById('loanDetailsModal').classList.add('on');
+}
 
 function goToFeePayment(){
   if(!selAmount || selAmount == '0') {
@@ -2114,7 +3526,7 @@ function goToFeePayment(){
   const u = _getUser();
   const userBalance = window._userRealBalance || 0;
   if(userBalance > 0) {
-      document.getElementById('balanceApplyBox').style.display = 'flex';
+      document.getElementById('balanceApplyBox').style.display = 'block';
       document.getElementById('dispAvailBalance').innerText = '৳ ' + userBalance.toLocaleString();
   } else {
       document.getElementById('balanceApplyBox').style.display = 'none';
@@ -2122,33 +3534,78 @@ function goToFeePayment(){
 
   isBalanceApplied = false;
   appliedBalance = 0;
-  document.getElementById('balanceApplyBox').classList.remove('active');
+  const balBox = document.getElementById('balanceApplyBox');
+  if(balBox) balBox.classList.remove('active', 'open');
+  const adjEl = document.getElementById('balAdjustAmt');
+  if(adjEl) adjEl.innerText = '0';
   
   updateFeeDisplay();
   
-  document.getElementById('adminNumber').innerText = ADMIN.paymentNumbers[selPayMethod] || '-';
+  // the number always comes from the enabled wallets list (never a stale default)
+  const activeW = window._activeWallet && (window._wallets || []).find(w => w.id === window._activeWallet.id);
+  const collNum = activeW ? walletCollectionNumber(activeW)
+                : (window._wallets && window._wallets[0] ? walletCollectionNumber(window._wallets[0]) : '');
+  document.getElementById('adminNumber').innerText = collNum || '-';
+  if(!collNum) selPayMethod = '';
+  applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
   nav('screen-fee-payment');
 }
 
-function toggleBalanceApply() {
-  const userBalance = window._userRealBalance || 0;
+// how much of the account balance may be used on one payment
+const BALANCE_MAX_ADJUST = 100;
+
+function toggleBalanceExpand(){
   const box = document.getElementById('balanceApplyBox');
-  
+  if(!box) return;
+  box.classList.toggle('open');
+  const amtEl = document.getElementById('balAdjustAmt');
+  const noteEl = document.getElementById('balNote');
+  if(amtEl && !isBalanceApplied) amtEl.innerText = _fmt(_balanceAllowed());
+  if(noteEl){
+    const maxAllowed = _balanceAllowed();
+    noteEl.innerText = maxAllowed > 0
+      ? `Tick to use ৳${_fmt(maxAllowed)} from your balance for this payment (max ৳100).`
+      : 'No usable balance for this payment.';
+  }
+}
+
+function _balanceAllowed(){
+  const userBalance = Number(window._userRealBalance || 0) || 0;
+  return Math.max(0, Math.min(BALANCE_MAX_ADJUST, userBalance, Number(originalTotalFee) || 0));
+}
+
+function toggleBalanceApply() {
+  const box = document.getElementById('balanceApplyBox');
+  if(!box) return;
+  const maxAllowed = _balanceAllowed();
+
+  if(!isBalanceApplied && maxAllowed <= 0){
+    showAlert('Balance Not Usable', 'Your available balance is ৳0, so it cannot be applied to this payment.', 'info');
+    return;
+  }
+
   isBalanceApplied = !isBalanceApplied;
-  
+
   if(isBalanceApplied) {
       box.classList.add('active');
-      appliedBalance = Math.min(userBalance, originalTotalFee);
+      box.classList.add('open');
+      appliedBalance = maxAllowed;          // never more than ৳100
   } else {
       box.classList.remove('active');
       appliedBalance = 0;
   }
+  const amtEl = document.getElementById('balAdjustAmt');
+  if(amtEl) amtEl.innerText = _fmt(appliedBalance);
   updateFeeDisplay();
 }
 
 function updateFeeDisplay() {
   const finalTotal = originalTotalFee - appliedBalance;
   document.getElementById('payTotal').innerText = _fmt(finalTotal) + ' BDT';
+  const balRow = document.getElementById('payBalRow');
+  const balVal = document.getElementById('payBalApplied');
+  if(balRow) balRow.style.display = appliedBalance > 0 ? 'flex' : 'none';
+  if(balVal) balVal.innerText = '- ' + _fmt(appliedBalance);
   
   if(finalTotal <= 0) {
       document.getElementById('trxInput').placeholder = "Balance covers full fee. No TrxID needed.";
@@ -2163,11 +3620,64 @@ function updateFeeDisplay() {
   }
 }
 
+// copy the merchant/payment number shown in the instructions
+async function copyPayNumber(){
+  const el = document.getElementById('adminNumber');
+  const num = (el?.innerText || '').trim();
+  const btn = document.getElementById('copyNumBtn');
+  if(!num || num === '-'){ showAlert('No Number', 'Please select a payment method first.', 'info'); return; }
+  const done = () => {
+    if(!btn) return;
+    const prev = btn.innerHTML;
+    btn.classList.add('done');
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied</span>';
+    setTimeout(()=>{ btn.classList.remove('done'); btn.innerHTML = prev; }, 1600);
+  };
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){ await navigator.clipboard.writeText(num); done(); }
+    else { _legacyCopy(num); done(); }
+  }catch(e){ _legacyCopy(num); done(); }
+}
+
+function _legacyCopy(text){
+  const t = document.createElement('textarea');
+  t.value = text; t.setAttribute('readonly','');
+  t.style.position='fixed'; t.style.opacity='0';
+  document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); } catch(e){}
+  document.body.removeChild(t);
+}
+
+// paste a TrxID straight into the field (clipboard API, with manual fallback)
+async function pasteTrx(){
+  const input = document.getElementById('trxInput');
+  const btn = document.getElementById('pasteTrxBtn');
+  if(!input) return;
+  try{
+    if(!navigator.clipboard || !navigator.clipboard.readText) throw new Error('unsupported');
+    const text = (await navigator.clipboard.readText() || '').trim();
+    if(!text){ showAlert('Clipboard Empty', 'Copy the TrxID from your SMS first, then tap Paste.', 'info'); return; }
+    input.value = text.replace(/\s+/g,'').slice(0,40);
+    checkTrx();
+    input.focus();
+    if(btn){ const prev = btn.innerHTML; btn.innerHTML='<i class="fa-solid fa-check"></i> Pasted'; setTimeout(()=>{ btn.innerHTML = prev; }, 1500); }
+  }catch(e){
+    // browsers that block clipboard reads: guide the user to the native paste menu
+    input.focus();
+    const len = input.value.length;
+    try { input.setSelectionRange(len, len); } catch(err){}
+    showAlert('Paste Manually', 'Long-press the Transaction ID field and choose “Paste”. You can also paste with Ctrl+V / ⌘+V.', 'info');
+  }
+}
+
+// kept for compatibility: resolves the method against the wallets list
 function selectPayMethod(m){
-  selPayMethod=m;
-  ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('pm'+x); if(el) el.classList.remove('sel'); });
-  const target=document.getElementById('pm'+m); if(target) target.classList.add('sel');
-  document.getElementById('adminNumber').innerText=ADMIN.paymentNumbers[m]||'-';
+  const w = (window._wallets || []).find(x => String(x.name).toLowerCase() === String(m).toLowerCase());
+  if(w){ _selPayDyn(w); return; }
+  selPayMethod = m;
+  const numEl = document.getElementById('adminNumber');
+  if(numEl) numEl.innerText = '-';
+  applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
 }
 function checkTrx(){ const ok=document.getElementById('trxInput').value.trim().length>=4; document.getElementById('btnTrx').classList.toggle('on',ok); }
 
@@ -2195,6 +3705,10 @@ async function submitTrx(){
       uid: user.phone, 
       trxId: trx || 'BALANCE_PAYMENT', 
       payMethod: selPayMethod, 
+      // snapshot of the wallet + number used for this payment (audit trail)
+      walletId: (window._activeWallet && window._activeWallet.id) || '',
+      collectionNumber: document.getElementById('adminNumber').innerText,
+      receivingNumber: document.getElementById('bankPhone')?.value || '',
       amount: finalTotal,
       totalFee: originalTotalFee,
       appliedBalance: appliedBalance,
@@ -2304,7 +3818,10 @@ function startNewApplication(){
     showAlert('Verification Pending', 'Please wait for your current payment to be verified.', 'info');
     return;
   }
-  currentDashboardStep = 0; updateProgressUI(); clearFormState();
+  // returning users keep their previous details — policy must still be accepted
+  const hadData = window._prefillFromLastApp();
+  if(!hadData){ currentDashboardStep = 0; updateProgressUI(); clearFormFields(); }
+  resetPolicyCheck();   // every new application needs a fresh consent
   nav('screen-policy');
 }
 function openNotificationModal() { const badge = document.getElementById('notifBadge'); if(badge) badge.style.display = 'none'; document.getElementById('notifModal').classList.add('on'); }
@@ -2572,32 +4089,92 @@ const FB={
 let db;
 try{ const app = initializeApp(FB); db = getFirestore(app); } catch(e){ console.error('Firebase:',e); }
 
+// A wallet can carry two different numbers:
+//   collectionNumber → where the user SENDS the fee
+//   paymentNumber    → where the user RECEIVES the loan
+// Older records only have paymentNumber, so it is used as a safe fallback.
+function walletCollectionNumber(w){ return (w && (w.collectionNumber || w.paymentNumber)) || ''; }
+function walletReceivingNumber(w){ return (w && (w.paymentNumber || w.collectionNumber)) || ''; }
+
 async function loadWallets(){
   if(!db) return;
   try{
     const snap=await getDocs(query(collection(db,'wallets'),orderBy('order','asc')));
     const wallets=snap.docs.map(d=>({id:d.id,...d.data()})).filter(w=>w.enabled);
-    if(!wallets.length) return;
-    const wg=document.getElementById('walletGrid'); wg.innerHTML='';
-    wallets.forEach((w,i)=>{
-      const d=document.createElement('div'); d.className='w-card'+(i===0?' sel':''); d.id='w_'+w.id;
-      d.onclick=()=>_selWalletDyn(w);
-      d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:36px;height:36px;object-fit:contain"><span>${w.name}</span>`;
-      wg.appendChild(d);
-    });
-    const pg=document.getElementById('pmGrid'); pg.innerHTML='';
-    wallets.forEach((w,i)=>{
-      const d=document.createElement('div'); d.className='pm-card'+(i===0?' sel':''); d.id='pm_'+w.id;
-      d.onclick=()=>_selPayDyn(w);
-      d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:40px;height:40px;object-fit:contain"><span>${w.name}</span>`;
-      pg.appendChild(d);
-    });
-    if(wallets[0]) _selWalletDyn(wallets[0],false);
-    window._wallets=wallets;
+    window._wallets = wallets;
+
+    // ── disbursement wallets (step 4) ──
+    const wg=document.getElementById('walletGrid');
+    const wEmpty=document.getElementById('walletEmpty');
+    if(wg){
+      wg.innerHTML='';
+      if(!wallets.length){
+        wg.style.display='none';
+        if(wEmpty) wEmpty.style.display='flex';
+      } else {
+        wg.style.display='flex';
+        if(wEmpty) wEmpty.style.display='none';
+        wallets.forEach((w,i)=>{
+          const d=document.createElement('div'); d.className='w-card'+(i===0?' sel':''); d.id='w_'+w.id;
+          d.onclick=()=>_selWalletDyn(w);
+          d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:36px;height:36px;object-fit:contain"><span>${w.name}</span>`;
+          wg.appendChild(d);
+        });
+        _selWalletDyn(wallets[0], false);
+      }
+    }
+
+    // ── collection methods (fee payment) ──
+    const pg=document.getElementById('pmGrid');
+    const pEmpty=document.getElementById('pmEmpty');
+    if(pg){
+      pg.innerHTML='';
+      if(!wallets.length){
+        pg.style.display='none';
+        if(pEmpty) pEmpty.style.display='flex';
+        const numEl=document.getElementById('adminNumber');
+        if(numEl) numEl.innerText='-';
+        selPayMethod='';
+      } else {
+        pg.style.display='flex';
+        if(pEmpty) pEmpty.style.display='none';
+        wallets.forEach((w,i)=>{
+          const d=document.createElement('div'); d.className='pm-card'+(i===0?' sel':''); d.id='pm_'+w.id;
+          d.onclick=()=>_selPayDyn(w);
+          d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:40px;height:40px;object-fit:contain"><span>${w.name}</span>`;
+          pg.appendChild(d);
+        });
+      }
+    }
   }catch(e){ console.error('loadWallets:',e); }
 }
-function _selWalletDyn(w,ui=true){ selWallet=w.name; window._activeWallet=w; if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); } }
-function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=w.paymentNumber||'-'; }
+function _selWalletDyn(w,ui=true){
+  selWallet=w.name; window._activeWallet=w;
+  if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); }
+  // keep the receiving number in step with the chosen wallet when the user has not typed one
+  const el = document.getElementById('bankPhone');
+  if(ui && el && !el.value.trim()){
+    const wn = walletReceivingNumber(w);
+    if(wn){ el.value = wn; onBankPhoneInput(el); }
+  }
+}
+function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=walletCollectionNumber(w)||'-';
+  // a wallet-specific note wins over the global fee-payment note
+  if(w && w.note && String(w.note).trim()) applyFeePaymentNote(w.note, w.name + ' note');
+  else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
+}
+
+function applyFeePaymentNote(note, title){
+  const card = document.getElementById('payNoteCard');
+  if(!card) return;
+  const text = String(note || '').trim();
+  if(!text){ card.style.display = 'none'; return; }
+  const t = document.getElementById('payNoteTitle');
+  const b = document.getElementById('payNoteText');
+  if(t) t.innerText = String(title || 'Note').trim() || 'Note';
+  if(b) b.innerText = text;
+  card.style.display = 'block';
+}
 
 async function loadDynamicConfig() {
   if(!db) { window.isConfigLoaded = true; return; }
@@ -2632,6 +4209,13 @@ async function loadDynamicConfig() {
       if(cfg.processingFee !== undefined) ADMIN.processingFee = Number(cfg.processingFee);
       if(cfg.annualInterestRate !== undefined) ADMIN.annualRate = Number(cfg.annualInterestRate);
 
+      // admin-defined note for the fee payment page
+      window._feePaymentNote = cfg.feePaymentNote || '';
+      window._feePaymentNoteTitle = cfg.feePaymentNoteTitle || 'Note';
+      applyFeePaymentNote(cfg.feePaymentNote || '', cfg.feePaymentNoteTitle || 'Note');
+
+      // Legacy values are loaded into ADMIN only; no payment screen reads them —
+      // the enabled Wallets list is the single source of truth.
       if(cfg.paymentNumbers) {
         if(cfg.paymentNumbers.Bkash) ADMIN.paymentNumbers.Bkash = cfg.paymentNumbers.Bkash;
         if(cfg.paymentNumbers.Nagad) ADMIN.paymentNumbers.Nagad = cfg.paymentNumbers.Nagad;
@@ -2932,6 +4516,7 @@ window.saveApplicationToFirebase=async function(){
   try{
     await addDoc(collection(db,'applications'),{
       uid: u?.phone||'unknown', name: document.getElementById('infoName').value, email: document.getElementById('infoEmail').value,
+      nid: document.getElementById('infoId').value || _savedNid,
       gender: selGender, dob:selDob, income:selIncome, loanPurpose: selPurpose, loanAmount:selAmount, term:selTerm,
       education: selEdu, marital:selMarital, children:selChildren, occupation:selOccupation, company: document.getElementById('infoCompany').value,
       address: document.getElementById('infoAddress').value,
@@ -3003,6 +4588,13 @@ window.loadUserDashboardData = async function() {
   try {
     const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
     if(!uSnap.empty) {
+      // NID kept on the profile so it survives every new application
+      try {
+        const uDoc = uSnap.docs[0];
+        const profileNid = uDoc.data().nid || '';
+        if(profileNid) _savedNid = profileNid;
+        window._userDocId = uDoc.id;
+      } catch(e) {}
       window._userRealBalance = uSnap.docs[0].data().balance || 0;
       document.getElementById('headerBalance').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + window._userRealBalance.toLocaleString();
     }
@@ -3027,6 +4619,16 @@ window.loadUserDashboardData = async function() {
 
   try {
     const appSnap = await getDocs(query(collection(db, 'applications'), where('uid', '==', user.phone)));
+    // remember the latest submitted application so the form can be pre-filled
+    try {
+      const all = appSnap.docs.map(d => d.data()).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
+      if(all.length) {
+        _savedApp = all[0];
+        // newest application that carries an NID number (never lose it)
+        const withNid = all.find(x => x.nid && String(x.nid).trim());
+        if(withNid) _savedNid = String(withNid.nid).trim();
+      }
+    } catch(e) {}
     const card = document.getElementById('userStatusCard'), mainBtn = document.getElementById('mainBorrowBtn');
     const title = document.getElementById('statusCardTitle'), desc = document.getElementById('statusCardDesc');
     const iconEl = document.getElementById('statusCardIcon'), iconBox = card.querySelector('.status-icon-box');
