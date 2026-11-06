@@ -591,7 +591,12 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <div style="text-align:center;"><i class="fa-solid fa-comments" style="font-size:32px;opacity:.3;margin-bottom:10px;display:block;"></i>Select a chat to view messages</div>
       </div>
       <div id="supportChatView" style="display:none;flex-direction:column;height:100%;">
-        <div class="tc-hdr"><div class="tc-title" id="supportChatHeader">Chat</div><div class="tc-r"><button class="btn btn-sm btn-s" onclick="closeAdminChat()"><i class="fa-solid fa-xmark"></i>Close</button><button class="btn btn-sm btn-p" onclick="resolveSupportChat()"><i class="fa-solid fa-check"></i>Resolve</button></div></div>
+        <div class="tc-hdr"><div class="tc-title" id="supportChatHeader">Chat</div><div class="tc-r">
+          <button class="btn btn-sm btn-s" onclick="closeAdminChat()"><i class="fa-solid fa-xmark"></i>Close</button>
+          <button class="btn btn-sm btn-p" id="supportResolveBtn" onclick="resolveSupportChat()"><i class="fa-solid fa-check"></i>Resolve</button>
+          <button class="btn btn-sm btn-d" id="supportEndBtn" onclick="endActiveSupportChat()"><i class="fa-solid fa-circle-stop"></i>End</button>
+          <button class="btn btn-sm btn-s" id="supportReopenBtn" style="display:none" onclick="reopenActiveSupportChat()"><i class="fa-solid fa-rotate-right"></i>Reopen</button>
+        </div></div>
         <div id="adminChatMessages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;"></div>
         <div style="padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;">
           <input type="text" id="adminChatInput" placeholder="Type your reply..." style="flex:1;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:13px;outline:none;" onkeypress="if(event.key==='Enter') sendAdminChatMsg()">
@@ -811,7 +816,7 @@ function closeMo(id){ document.getElementById(id).classList.remove('on'); }
 function confirm2(msg,fn){ document.getElementById('cfMsg').innerText=msg; document.getElementById('cfOk').onclick=()=>{ closeMo('moConfirm'); fn(); }; openMo('moConfirm'); }
 
 function sb(s){
-  const m={'active':'b-active','inactive':'b-inactive','suspended':'b-suspended','banned':'b-banned','Pending Fee Payment':'b-pending','TrxID Submitted':'b-submitted','Approved':'b-approved','Disbursed':'b-disbursed','Active':'b-approved','Repaid':'b-repaid','Overdue':'b-overdue','Defaulted':'b-defaulted','Rejected':'b-rejected','Pending':'b-pending','Verified':'b-verified','Under Review':'b-review','Resolved':'b-verified','resolved':'b-verified','open':'b-pending'};
+  const m={'active':'b-active','inactive':'b-inactive','suspended':'b-suspended','banned':'b-banned','Pending Fee Payment':'b-pending','TrxID Submitted':'b-submitted','Approved':'b-approved','Disbursed':'b-disbursed','Active':'b-approved','Repaid':'b-repaid','Overdue':'b-overdue','Defaulted':'b-defaulted','Rejected':'b-rejected','Pending':'b-pending','Verified':'b-verified','Under Review':'b-review','Resolved':'b-verified','resolved':'b-verified','open':'b-pending','closed':'b-inactive'};
   return s?`<span class="b ${m[s]||'b-inactive'}">${s}</span>`:'';
 }
 
@@ -1294,7 +1299,7 @@ function renderSupportThreads(chats) {
     const isActive = window._activeSupportUid === c.uid;
     const preview = (c.lastMessage || '').substring(0, 40);
     const time = c.updatedAt ? new Date(c.updatedAt).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) : '';
-    const statusColor = c.status === 'resolved' ? 'var(--txt3)' : 'var(--p)';
+    const statusColor = (c.status === 'resolved' || c.status === 'closed') ? 'var(--txt3)' : 'var(--p)';
     return `<div class="admin-thread-item ${isActive ? 'active' : ''}" onclick="openAdminSupportChat('${c.uid}')">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
         <div style="font-size:12px;font-weight:700;color:var(--txt);">${c.uid || '-'}</div>
@@ -1314,6 +1319,8 @@ async function openAdminSupportChat(uid) {
   document.getElementById('supportChatView').style.display = 'flex';
   document.getElementById('supportChatHeader').textContent = 'Chat with ' + uid;
   renderAdminMessages(chat);
+  updateSupportChatHeaderButtons(chat);
+  toggleAdminChatInput(chat.status === 'closed');
   renderSupportThreads(Object.values(window._supportChatsCache));
   if (Number(chat.unreadByAdmin) > 0) {
     try {
@@ -1340,6 +1347,9 @@ function renderAdminMessages(chat) {
   }
   container.innerHTML = messages.map(m => {
     const time = new Date(m.at).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+    if (m.sender === 'system') {
+      return `<div style="text-align:center;font-size:11px;color:var(--txt3);padding:6px 12px;font-style:italic;align-self:center;max-width:80%;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border);">${escapeSupportAdmin(m.text)}<div class="admin-msg-meta">${time}</div></div>`;
+    }
     const label = m.sender === 'admin' ? '👤 Admin (You)' : '👤 User';
     return `<div class="admin-msg ${m.sender}">${escapeSupportAdmin(m.text)}<div class="admin-msg-meta">${label} • ${time}</div></div>`;
   }).join('');
@@ -1349,6 +1359,8 @@ function renderAdminMessages(chat) {
 async function sendAdminChatMsg() {
   const uid = window._activeSupportUid;
   if (!uid) { toast('No chat selected', 'w'); return; }
+  const activeChat = window._supportChatsCache[uid];
+  if (activeChat && activeChat.status === 'closed') { toast('Conversation is closed. Reopen to reply.', 'w'); return; }
   const input = document.getElementById('adminChatInput');
   const text = input.value.trim();
   if (!text) return;
@@ -1384,6 +1396,65 @@ async function resolveSupportChat() {
     renderSupportThreads(chats);
     if (window._supportChatsCache[uid]) renderAdminMessages(window._supportChatsCache[uid]);
   } catch(e) { toast('Error', 'e'); }
+}
+
+// ══ END / REOPEN CONVERSATION ══
+function updateSupportChatHeaderButtons(chat) {
+  const isClosed = chat && chat.status === 'closed';
+  const resolveBtn = document.getElementById('supportResolveBtn');
+  const endBtn = document.getElementById('supportEndBtn');
+  const reopenBtn = document.getElementById('supportReopenBtn');
+  if (resolveBtn) resolveBtn.style.display = isClosed ? 'none' : '';
+  if (endBtn) endBtn.style.display = isClosed ? 'none' : '';
+  if (reopenBtn) reopenBtn.style.display = isClosed ? '' : 'none';
+}
+
+function toggleAdminChatInput(disabled) {
+  const input = document.getElementById('adminChatInput');
+  if (!input) return;
+  input.disabled = !!disabled;
+  input.placeholder = disabled ? 'Conversation closed' : 'Type your reply...';
+  const sendBtn = input.parentElement.querySelector('button');
+  if (sendBtn) {
+    sendBtn.disabled = !!disabled;
+    sendBtn.style.opacity = disabled ? '.5' : '';
+    sendBtn.style.cursor = disabled ? 'not-allowed' : '';
+  }
+}
+
+async function endActiveSupportChat() {
+  const uid = window._activeSupportUid;
+  if (!uid) { toast('No chat selected', 'w'); return; }
+  if (!confirm('End this conversation? User cannot reply until they start a new chat.')) return;
+  try {
+    await window._adminEndSupportChat(uid);
+    const updated = await window._adminGetSupportChat(uid);
+    if (updated) {
+      window._supportChatsCache[uid] = updated;
+      renderAdminMessages(updated);
+      updateSupportChatHeaderButtons(updated);
+      toggleAdminChatInput(true);
+      renderSupportThreads(Object.values(window._supportChatsCache));
+    }
+    toast('Conversation ended', 'w');
+  } catch(e) { console.error(e); toast('Failed to end conversation', 'e'); }
+}
+
+async function reopenActiveSupportChat() {
+  const uid = window._activeSupportUid;
+  if (!uid) { toast('No chat selected', 'w'); return; }
+  try {
+    await window._adminReopenSupportChat(uid);
+    const updated = await window._adminGetSupportChat(uid);
+    if (updated) {
+      window._supportChatsCache[uid] = updated;
+      renderAdminMessages(updated);
+      updateSupportChatHeaderButtons(updated);
+      toggleAdminChatInput(false);
+      renderSupportThreads(Object.values(window._supportChatsCache));
+    }
+    toast('Conversation reopened ✓');
+  } catch(e) { console.error(e); toast('Failed to reopen conversation', 'e'); }
 }
 
 async function refreshSupportUnreadBadge() {
@@ -1503,6 +1574,44 @@ window._adminResolveSupport = async function(uid) {
   await updateDoc(snap.docs[0].ref, { status: 'resolved', updatedAt: new Date().toISOString() });
 };
 
+window._adminEndSupportChat = async function(uid) {
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+  if (snap.empty) throw new Error('Chat not found');
+  const docRef = snap.docs[0].ref;
+  const data = snap.docs[0].data();
+  const systemMsg = { sender: 'system', text: '🛑 Support has ended this conversation.', at: new Date().toISOString() };
+  const messages = [...(data.messages || []), systemMsg];
+  await updateDoc(docRef, {
+    messages,
+    status: 'closed',
+    closedBy: 'admin',
+    closedAt: new Date().toISOString(),
+    lastMessage: systemMsg.text,
+    lastSender: 'system',
+    updatedAt: new Date().toISOString()
+  });
+};
+
+window._adminReopenSupportChat = async function(uid) {
+  const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+  if (snap.empty) throw new Error('Chat not found');
+  const docRef = snap.docs[0].ref;
+  const data = snap.docs[0].data();
+  const systemMsg = { sender: 'system', text: '🔄 Support reopened this conversation.', at: new Date().toISOString() };
+  const messages = [...(data.messages || []), systemMsg];
+  await updateDoc(docRef, {
+    messages,
+    status: 'open',
+    closedBy: null,
+    closedAt: null,
+    lastMessage: systemMsg.text,
+    lastSender: 'system',
+    updatedAt: new Date().toISOString()
+  });
+};
+
 window._adminSupportBadgeUnsub = null;
 window._startAdminSupportBadgeListener = function() {
   if (!db) return;
@@ -1524,7 +1633,11 @@ window._startAdminSupportBadgeListener = function() {
       renderSupportThreads(chats);
       if (window._activeSupportUid) {
         const active = chats.find(c => c.uid === window._activeSupportUid);
-        if (active) renderAdminMessages(active);
+        if (active) {
+          renderAdminMessages(active);
+          if (typeof updateSupportChatHeaderButtons === 'function') updateSupportChatHeaderButtons(active);
+          if (typeof toggleAdminChatInput === 'function') toggleAdminChatInput(active.status === 'closed');
+        }
       }
     }
   }, (err) => { console.warn('Support listener:', err); });
