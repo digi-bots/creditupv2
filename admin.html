@@ -2041,6 +2041,9 @@ const FB={
 const app=initializeApp(FB); const db=getFirestore(app); window._db=db;
 
 // ══ FIREBASE STORAGE (wallet logos) ══
+// NOTE: enable Storage in Firebase console (Rules: allow write for authenticated/any, read public)
+// and make sure the bucket below exists. If Storage is unavailable the admin logo upload
+// automatically falls back to embedding the image as a data URL.
 const _storage = getStorage(app);
 window._firebaseUploadLogo = async function(base64, name){
   const path = 'wallet-logos/' + Date.now() + '_' + String(name||'logo').replace(/[^a-z0-9._-]/gi,'_');
