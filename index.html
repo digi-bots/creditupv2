@@ -828,6 +828,85 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .cs-closed-banner.on{display:flex}
 .cs-closed-banner strong{color:var(--txt);font-size:13px}
 .cs-new-chat-btn{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:var(--glow)}
+
+/* ─── REPAYMENT SCHEDULE (premium table) ─── */
+#repaymentModal .rep-card{max-width:410px;font-size:12px}
+#repaymentModal .rep-summary{padding:2px 16px 10px}
+#repaymentModal .rep-sum-hero{
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+  padding:10px 12px 12px;margin-bottom:10px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(29,219,128,.03));
+  border:1px solid rgba(29,219,128,.24);
+}
+#repaymentModal .rep-sum-k{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--txt2);font-weight:700}
+#repaymentModal .rep-sum-v{font-size:23px;font-weight:900;color:var(--p);letter-spacing:-.6px;line-height:1.15;font-variant-numeric:tabular-nums}
+#repaymentModal .rep-sum-note{font-size:9.5px;color:var(--txt2);opacity:.85}
+#repaymentModal .rep-sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+#repaymentModal .rep-sum-cell{
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;padding:7px 9px;
+}
+#repaymentModal .rep-sum-cell span{font-size:10.5px;color:var(--txt2);white-space:nowrap}
+#repaymentModal .rep-sum-cell b{font-size:11.5px;color:var(--txt);font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+#repaymentModal .rep-sum-cell b.grn{color:var(--p)}
+#repaymentModal .rep-schedule{
+  margin:0 16px;max-height:min(44vh,330px);overflow:auto;
+  border-radius:13px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.022);
+  scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+}
+#repaymentModal .rep-schedule::-webkit-scrollbar{width:5px;height:5px}
+#repaymentModal .rep-schedule::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#repaymentModal .rep-schedule::-webkit-scrollbar-track{background:transparent}
+#repaymentModal .rep-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+#repaymentModal .rep-table th,
+#repaymentModal .rep-table td{padding:8px 6px;font-size:11.5px;line-height:1.25}
+#repaymentModal .rep-table thead th{
+  position:sticky;top:0;z-index:2;background:#102036;color:var(--p);
+  font-weight:800;font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;
+  text-align:right;white-space:nowrap;border-bottom:1px solid rgba(29,219,128,.22);
+}
+#repaymentModal .rep-table thead th:first-child{text-align:center}
+#repaymentModal .rep-table th:nth-child(1),
+#repaymentModal .rep-table td:nth-child(1){width:30px}
+#repaymentModal .rep-table th:nth-child(5),
+#repaymentModal .rep-table td:nth-child(5){width:64px}
+#repaymentModal .rep-table td{
+  text-align:right;color:var(--txt);font-variant-numeric:tabular-nums;
+  border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap;
+}
+#repaymentModal .rep-table td:first-child{text-align:center;color:var(--txt2);font-weight:700}
+#repaymentModal .rep-table td.num{font-weight:600}
+#repaymentModal .rep-table td.int{color:var(--orange);font-weight:600}
+#repaymentModal .rep-table td.bal{color:var(--blue);font-weight:700}
+#repaymentModal .rep-table td.bal.zero{color:var(--txt3)}
+#repaymentModal .rep-table tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+#repaymentModal .rep-table tbody tr:hover{background:rgba(29,219,128,.06)}
+#repaymentModal .rep-table tbody tr:last-child td{border-bottom:none}
+#repaymentModal .rep-table tbody tr.last td{background:rgba(29,219,128,.05)}
+#repaymentModal .rep-table tfoot td{
+  position:sticky;bottom:0;z-index:2;background:#102036;
+  font-weight:800;font-size:11px;color:var(--txt);
+  border-top:1px solid rgba(29,219,128,.22);text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+#repaymentModal .rep-table tfoot td:first-child{
+  text-align:center;color:var(--txt2);font-size:9px;text-transform:uppercase;letter-spacing:.3px;
+}
+#repaymentModal .rep-foot-note{
+  display:flex;gap:6px;align-items:flex-start;
+  margin:10px 16px 16px;font-size:10px;color:var(--txt2);line-height:1.45;
+}
+#repaymentModal .rep-foot-note i{font-size:10px;margin-top:2px;flex-shrink:0}
+@media (max-width:360px){
+  #repaymentModal .rep-table th,#repaymentModal .rep-table td{padding:7px 4px;font-size:10.5px}
+  #repaymentModal .rep-table th:nth-child(5),#repaymentModal .rep-table td:nth-child(5){width:56px}
+  #repaymentModal .rep-sum-cell{padding:6px 7px}
+  #repaymentModal .rep-sum-cell span{font-size:9.5px}
+  #repaymentModal .rep-sum-cell b{font-size:10.5px}
+}
 </style>
 </head>
 <body>
@@ -933,10 +1012,23 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 </div>
 
 <div class="modal-overlay" id="repaymentModal">
-  <div class="ld-card pp">
+  <div class="ld-card pp rep-card">
     <div class="pp-bar"><span class="pp-bar-title">Repayment Schedule</span><button class="popup-close" aria-label="Close" onclick="closeModal('repaymentModal')"><i class="fa-solid fa-xmark"></i></button></div>
-    <p style="text-align:center;font-size:13px;color:var(--txt2);margin-bottom:10px;">Your monthly EMI will be approximately <strong id="emiAmount" style="color:var(--p);"></strong></p>
+    <div class="rep-summary">
+      <div class="rep-sum-hero">
+        <span class="rep-sum-k">Monthly EMI</span>
+        <strong class="rep-sum-v" id="emiAmount">৳ 0</strong>
+        <span class="rep-sum-note" id="repSumNote">Equal monthly installments</span>
+      </div>
+      <div class="rep-sum-grid">
+        <div class="rep-sum-cell"><span>Loan Amount</span><b id="repLoanAmount">৳ 0</b></div>
+        <div class="rep-sum-cell"><span>Term</span><b id="repTermText">0</b></div>
+        <div class="rep-sum-cell"><span>Total Interest</span><b id="repTotalInterest">৳ 0</b></div>
+        <div class="rep-sum-cell"><span>Total Payable</span><b id="repTotalPayable" class="grn">৳ 0</b></div>
+      </div>
+    </div>
     <div class="rep-schedule" id="repScheduleList"></div>
+    <p class="rep-foot-note"><i class="fa-solid fa-circle-info"></i> EMI = principal + interest. Balance is the outstanding principal after each installment.</p>
   </div>
 </div>
 
@@ -2325,18 +2417,53 @@ function openRepaymentSchedule(){
   if(!p || !n) return;
   const annualRate = ADMIN.annualRate;
   const r = annualRate / 100 / 12;
-  const emi = Math.round(p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
-  document.getElementById('emiAmount').innerText = '৳ ' + _fmt(emi);
-  const list = document.getElementById('repScheduleList');
-  let bal = p;
-  let html = `<div class="rep-row header"><span>Month</span><span>EMI (৳)</span><span>Principal (৳)</span><span>Balance (৳)</span></div>`;
+  const emiRaw = r > 0 ? p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1) : p / n;
+  const emi = Math.round(emiRaw);
+
+  // amortization table — exact to the last taka
+  let bal = p, totalInterest = 0, rows = '';
   for(let i = 1; i <= n; i++){
-    const interest = Math.round(bal * r);
-    const principal = emi - interest;
+    const interest  = Math.round(bal * r);
+    let principal   = i < n ? Math.max(0, emi - interest) : bal;   // last row clears the balance
+    const payNow    = i < n ? emi : principal + interest;
     bal = Math.max(0, bal - principal);
-    html += `<div class="rep-row"><span>${i}</span><span>${_fmt(emi)}</span><span>${_fmt(principal)}</span><span style="color:var(--orange)">${_fmt(Math.round(bal))}</span></div>`;
+    totalInterest += interest;
+    const isLast = i === n;
+    rows += `<tr${isLast ? ' class="last"' : ''}>
+      <td>${i}</td>
+      <td class="num">${_fmt(payNow)}</td>
+      <td class="num">${_fmt(principal)}</td>
+      <td class="int">${_fmt(interest)}</td>
+      <td class="bal${isLast ? ' zero' : ''}">${_fmt(Math.round(bal))}</td>
+    </tr>`;
   }
-  list.innerHTML = html;
+  const totalPayable = p + totalInterest;
+
+  // summary block
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+  set('emiAmount', '৳ ' + _fmt(emi));
+  set('repLoanAmount', '৳ ' + _fmt(p));
+  set('repTermText', n + (n === 1 ? ' Month' : ' Months'));
+  set('repTotalInterest', '৳ ' + _fmt(totalInterest));
+  set('repTotalPayable', '৳ ' + _fmt(totalPayable));
+  set('repSumNote', `${n} installments · ${annualRate}% annual interest`);
+
+  document.getElementById('repScheduleList').innerHTML = `
+    <table class="rep-table">
+      <thead>
+        <tr><th>#</th><th>EMI (৳)</th><th>Principal (৳)</th><th>Interest (৳)</th><th>Balance (৳)</th></tr>
+      </thead>
+      <tbody>${rows}</tbody>
+      <tfoot>
+        <tr>
+          <td>Total</td>
+          <td>${_fmt(totalPayable)}</td>
+          <td>${_fmt(p)}</td>
+          <td style="color:var(--orange)">${_fmt(totalInterest)}</td>
+          <td>0</td>
+        </tr>
+      </tfoot>
+    </table>`;
   document.getElementById('repaymentModal').classList.add('on');
 }
 
