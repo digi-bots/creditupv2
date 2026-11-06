@@ -275,7 +275,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .bottom-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:400px;background:var(--surf);border-radius:22px 22px 0 0;z-index:10000;padding:16px 20px calc(20px + env(safe-area-inset-bottom));transition:transform .35s cubic-bezier(.4,0,.2,1);border-top:1px solid var(--bord)}
 .bottom-sheet.on{transform:translateX(-50%) translateY(0)}
 .sheet-handle{width:36px;height:4px;background:var(--bord);border-radius:2px;margin:0 auto 18px}
-.sheet-title{font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px}
+.sheet-title{padding-right:38px;font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px}
 .sheet-sub{font-size:13px;color:var(--txt2);margin-bottom:18px}
 .sheet-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
 .sheet-opt{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg2);border-radius:13px;cursor:pointer;border:1px solid var(--bord);transition:.2s}
@@ -435,87 +435,169 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .notif-content p{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:6px}
 .notif-date{font-size:10px;color:var(--txt3);font-weight:600}
 .premium-popup .mc{background:rgba(15,29,53,.85) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important}
-/* ─── PREMIUM POPUP SYSTEM: glass card, green glow border, corner close ─── */
+/* ─── PREMIUM POPUP SYSTEM ─────────────────────────────────────────────
+   one shared shell: glass gradient card, green glow border,
+   sticky top-right close button that stays visible while scrolling.
+   ──────────────────────────────────────────────────────────────────── */
 .modal-overlay .mc,
 .modal-overlay .conf-card,
 .modal-overlay .ld-card,
 .premium-cs-box{
   position:relative;
-  border:1px solid rgba(29,219,128,.24) !important;
+  border:1px solid rgba(29,219,128,.22) !important;
   border-radius:26px !important;
   background:
-    radial-gradient(130% 85% at 50% -12%, rgba(29,219,128,.14), rgba(29,219,128,0) 62%),
-    radial-gradient(90% 70% at 100% 108%, rgba(77,143,255,.10), rgba(77,143,255,0) 66%),
-    linear-gradient(160deg,#12233d 0%,#0c1729 55%,#0a121f 100%) !important;
+    radial-gradient(125% 80% at 50% -14%, rgba(29,219,128,.13), rgba(29,219,128,0) 60%),
+    radial-gradient(85% 65% at 100% 106%, rgba(77,143,255,.09), rgba(77,143,255,0) 64%),
+    linear-gradient(165deg,#12233d 0%,#0c1729 58%,#0a121f 100%) !important;
   box-shadow:
     0 26px 70px rgba(0,0,0,.75),
-    0 0 0 1px rgba(29,219,128,.05),
-    0 0 46px rgba(29,219,128,.13),
+    0 0 0 1px rgba(29,219,128,.04),
+    0 0 42px rgba(29,219,128,.12),
     inset 0 1px 0 rgba(255,255,255,.07),
-    inset 0 0 26px rgba(29,219,128,.05) !important;
+    inset 0 0 24px rgba(29,219,128,.045) !important;
   backdrop-filter:blur(22px) !important;
   -webkit-backdrop-filter:blur(22px) !important;
-  isolation:isolate;
 }
-.modal-overlay .mc::before,
-.modal-overlay .conf-card::before,
-.modal-overlay .ld-card::before,
-.premium-cs-box::before{
-  content:'';position:absolute;top:0;left:16%;right:16%;height:1.5px;border-radius:2px;
-  background:linear-gradient(90deg,transparent,rgba(29,219,128,.9),rgba(77,143,255,.65),transparent);
-  pointer-events:none;z-index:2;
+/* slim, clean scrollbar inside popups */
+.modal-overlay .mc,
+.modal-overlay .conf-card,
+.modal-overlay .ld-card,
+.premium-cs-box{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(29,219,128,.35) transparent;
 }
-.modal-overlay .mc::after,
-.modal-overlay .conf-card::after,
-.modal-overlay .ld-card::after,
-.premium-cs-box::after{
-  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
-  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,0) 26%);
+.modal-overlay .mc::-webkit-scrollbar,
+.modal-overlay .conf-card::-webkit-scrollbar,
+.modal-overlay .ld-card::-webkit-scrollbar,
+.modal-overlay .notif-list::-webkit-scrollbar,
+.modal-overlay .rep-schedule::-webkit-scrollbar,
+.premium-cs-box::-webkit-scrollbar{width:5px}
+.modal-overlay .mc::-webkit-scrollbar-thumb,
+.modal-overlay .conf-card::-webkit-scrollbar-thumb,
+.modal-overlay .ld-card::-webkit-scrollbar-thumb,
+.modal-overlay .notif-list::-webkit-scrollbar-thumb,
+.modal-overlay .rep-schedule::-webkit-scrollbar-thumb,
+.premium-cs-box::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+.modal-overlay .mc::-webkit-scrollbar-track,
+.modal-overlay .notif-list::-webkit-scrollbar-track,
+.modal-overlay .rep-schedule::-webkit-scrollbar-track{background:transparent}
+/* block flow so the sticky close button + sticky header work reliably */
+.modal-overlay .mc,
+.modal-overlay .conf-card,
+.modal-overlay .ld-card{display:block !important}
+/* single clean header (no duplicated sticky header = no ghost text) */
+.modal-overlay .mc.pp > .m-title,
+.modal-overlay .mc.pp > .ld-title,
+.modal-overlay .conf-card > .conf-title{position:static}
+.modal-overlay .mc.pp:has(.popup-close) > .m-title,
+.modal-overlay .mc.pp:has(.popup-close) > .ld-title,
+.modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:44px}
+/* panels with their own inner scroll keep the ✕ always visible */
+.modal-overlay .mc.pp .pp-bar{
+  position:sticky;top:-2px;z-index:19;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 16px 10px;
+  background:linear-gradient(180deg,#12233d 0%,rgba(18,35,61,.97) 74%,rgba(18,35,61,0) 100%);
+  border-bottom:1px solid rgba(29,219,128,.12);
 }
-.modal-overlay .mc > *, .modal-overlay .conf-card > *,
-.modal-overlay .ld-card > *, .premium-cs-box > *{position:relative;z-index:1}
-.premium-cs-overlay{z-index:9999999}
+.modal-overlay .mc.pp .pp-bar-title{
+  font-size:16.5px;font-weight:800;color:var(--txt);
+  letter-spacing:-.3px;text-shadow:0 2px 14px rgba(29,219,128,.2);
+}
+.modal-overlay .mc.pp .pp-bar .popup-close{position:static;float:none;margin:0;flex:0 0 32px}
+.modal-overlay :is(.mc,pp.ld-card,.ld-card.pp,.conf-card.pp):has(.pp-bar){padding:0 !important}
+.modal-overlay .mc.pp:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .ld-card.pp:has(.pp-bar) > :not(.pp-bar){
+  margin-left:16px;margin-right:16px;
+}
+.modal-overlay .mc.pp:has(.pp-bar) > .notif-list{margin-bottom:16px}
+.modal-overlay .mc.pp:has(.pp-bar) > .mbtn-full,
+.modal-overlay .ld-card.pp:has(.pp-bar) > .mbtn-full{margin-top:14px;margin-bottom:16px}
+.modal-overlay #statusModalContent > *:first-child{margin-top:4px}
+.modal-overlay .m-title,.modal-overlay .conf-title,.modal-overlay .ld-title{
+  text-shadow:0 2px 14px rgba(29,219,128,.2);letter-spacing:-.35px;
+}
+.modal-overlay .m-icon{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 10px 26px rgba(0,0,0,.4),0 0 24px rgba(29,219,128,.1)}
+/* ── sticky corner close button ── */
 .popup-close{
-  position:absolute;top:14px;right:14px;width:32px;height:32px;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-  border-radius:50%;color:var(--txt2);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:.28s;z-index:12;font-size:13px;padding:0;line-height:1;
-  flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.09);
+  position:sticky;top:0;float:right;
+  margin:-4px -6px 0 12px;
+  width:32px;height:32px;flex:0 0 32px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;color:var(--txt2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.25s;z-index:20;
+  font-size:13px;padding:0;line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(0,0,0,.35);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
-.popup-close:hover{background:rgba(255,77,106,.2);color:var(--red);border-color:rgba(255,77,106,.35);transform:rotate(90deg)}
+.popup-close:hover{background:rgba(255,77,106,.22);color:var(--red);border-color:rgba(255,77,106,.4);transform:rotate(90deg)}
+.popup-close:active{transform:scale(.92)}
+/* status popup + forms: close pinned in the corner, title gets out of its way */
+.modal-overlay .mc.pp > .m-title{padding-top:18px}
+.modal-overlay .mc.pp[style*="text-align: center"] > .m-title{padding-top:8px}
+/* support popup keeps the same look, just anchored in its corner */
+.cs-close-btn{
+  position:sticky;top:10px;align-self:flex-end;
+  margin:-4px 12px -30px 0;width:32px;height:32px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;color:var(--txt2);display:flex;justify-content:center;align-items:center;
+  cursor:pointer;transition:.25s;z-index:12;font-size:13px;padding:0;line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(0,0,0,.35);
+}
+.cs-close-btn:hover{background:rgba(255,77,106,.22);color:var(--red);border-color:rgba(255,77,106,.4);transform:rotate(90deg)}
+/* the close button always occupies the top-right corner: reserve the space */
 .modal-overlay .mc:has(.popup-close),
 .modal-overlay .conf-card:has(.popup-close),
-.modal-overlay .ld-card:has(.popup-close){padding-top:26px}
-.cs-close-btn{border-color:rgba(255,255,255,.12);color:var(--txt2)}
-.cs-close-btn:hover{background:rgba(255,77,106,.2);color:var(--red);border-color:rgba(255,77,106,.3);transform:rotate(90deg)}
-/* premium typography + icons */
-.modal-overlay .m-title,.modal-overlay .conf-title,.modal-overlay .ld-title,.cs-title{
-  text-shadow:0 2px 14px rgba(29,219,128,.22);letter-spacing:-.35px;
-}
-.modal-overlay .m-icon{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 10px 26px rgba(0,0,0,.4),0 0 26px rgba(29,219,128,.10)}
-/* premium buttons */
+.modal-overlay .ld-card:has(.popup-close){padding:18px 20px 20px}
+.modal-overlay .mc:has(.popup-close) > .m-title,
+.modal-overlay .mc:has(.popup-close) > .ld-title,
+.modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:38px}
+#referModal .refer-card > .popup-close{position:absolute;top:14px;right:14px;float:none;margin:0}
+#referModal .refer-head{padding-top:14px}
+#referModal .refer-head{padding-right:0}
+/* ── premium buttons ── */
 .mbtn-full,.mbtn-ok{
   background:linear-gradient(135deg,#26e891 0%,#12bd6d 55%,#0ea35d 100%) !important;
-  box-shadow:0 10px 26px rgba(29,219,128,.26),inset 0 1px 0 rgba(255,255,255,.28) !important;
+  box-shadow:0 10px 26px rgba(29,219,128,.24),inset 0 1px 0 rgba(255,255,255,.28) !important;
   border:1px solid rgba(255,255,255,.12) !important;
   letter-spacing:.3px;transition:transform .15s ease,box-shadow .22s ease,filter .2s ease;
 }
-.mbtn-full:hover,.mbtn-ok:hover{filter:brightness(1.05);box-shadow:0 12px 30px rgba(29,219,128,.34),inset 0 1px 0 rgba(255,255,255,.3) !important}
+.mbtn-full:hover,.mbtn-ok:hover{filter:brightness(1.05);box-shadow:0 12px 30px rgba(29,219,128,.32),inset 0 1px 0 rgba(255,255,255,.3) !important}
 .mbtn-full:active,.mbtn-ok:active{transform:scale(.975)}
 .mbtn-full.premium-danger{
   background:linear-gradient(135deg,#ff5d7d 0%,#ff416c 45%,#ec2c4f 100%) !important;
-  box-shadow:0 10px 26px rgba(255,65,108,.28),inset 0 1px 0 rgba(255,255,255,.25) !important;
+  box-shadow:0 10px 26px rgba(255,65,108,.26),inset 0 1px 0 rgba(255,255,255,.25) !important;
 }
 .mbtn-cancel{background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.1) !important;color:var(--txt2) !important}
 .mbtn-cancel:hover{color:var(--txt) !important;background:rgba(255,255,255,.09) !important}
 .btn-pick-ok,.btn-pick-cancel{
   background:linear-gradient(135deg,#26e891,#12bd6d) !important;color:#04150d !important;font-weight:800 !important;
-  box-shadow:0 10px 24px rgba(29,219,128,.24),inset 0 1px 0 rgba(255,255,255,.28) !important;border:none !important;
+  box-shadow:0 10px 24px rgba(29,219,128,.22),inset 0 1px 0 rgba(255,255,255,.28) !important;border:none !important;
 }
 .btn-pick-cancel{background:rgba(255,255,255,.06) !important;color:var(--txt2) !important;box-shadow:none !important;border:1px solid rgba(255,255,255,.1) !important}
-/* premium dividers + inline panels */
-.modal-overlay .mc [style*="border-top:1px dashed"],
-.modal-overlay .mc [style*="border-top:1px solid"]{border-top-color:rgba(29,219,128,.16) !important}
+/* ── tight, clean inner spacing (no wasted space) ── */
+.modal-overlay .m-icon{width:56px;height:56px;font-size:22px;margin:0 auto 12px}
+.modal-overlay .m-title{font-size:17.5px;margin-bottom:6px}
+.modal-overlay .m-msg{font-size:13px;margin-bottom:16px;line-height:1.5}
+.modal-overlay .conf-title,.modal-overlay .ld-title{font-size:17.5px;margin-bottom:14px}
+.modal-overlay .conf-row,.modal-overlay .ld-row{margin-bottom:0;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.modal-overlay .conf-row:last-of-type,.modal-overlay .ld-row.total{border-bottom:none}
+.modal-overlay .ld-row.total{margin-top:2px;padding-top:12px;border-top:1px solid rgba(29,219,128,.22);border-bottom:none}
+.modal-overlay .mbtn-full{height:46px;border-radius:14px;font-size:14.5px;margin-top:16px}
+.modal-overlay .mbtn{height:46px;border-radius:14px;font-size:14.5px}
+.modal-overlay .m-acts{margin-top:18px}
+.modal-overlay .detail-row{padding:11px 0}
+.modal-overlay .notif-list{max-height:min(58vh,430px);gap:10px;padding-right:2px}
+.modal-overlay .notif-item{padding:13px 14px;border-radius:13px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.06)}
+.modal-overlay .notif-item.unread{border-left:3px solid var(--p);background:rgba(29,219,128,.045)}
+.modal-overlay .notif-content h4{font-size:13.5px;margin-bottom:3px}
+.modal-overlay .notif-content p{font-size:11.5px;margin-bottom:5px}
+.modal-overlay .calc-row{padding:9px 0;font-size:13.5px}
+.modal-overlay .rep-schedule{max-height:min(42vh,300px);border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+/* bottom sheets: same accent, sticky close */
 /* bottom sheets share the same premium accent */
 .modal-overlay .picker-card,
 .bottom-sheet{
@@ -526,7 +608,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   box-shadow:0 -22px 60px rgba(0,0,0,.8),0 0 34px rgba(29,219,128,.12) !important;
 }
 .picker-card > .popup-close,
-.bottom-sheet > .popup-close{top:14px;right:16px}
+.bottom-sheet > .popup-close{position:absolute;top:14px;right:16px;float:none;margin:0}
 /* Referral popup: full app width, no scroll, English, close in corner */
 #referModal{padding:8px}
 #referModal .refer-card{max-width:none;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;gap:0;max-height:none}
@@ -682,7 +764,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay premium-popup" id="fomoModal">
-  <div class="mc" style="max-width: 360px; text-align: center;">
+  <div class="mc pp" style="max-width: 360px; text-align: center;">
     <button class="popup-close" aria-label="Close" onclick="closeFomoModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="fomo-fire-icon">🔥</div>
     <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
@@ -697,7 +779,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay" id="globalModal">
-  <div class="mc" id="modal-password" style="display:none;">
+  <div class="mc pp" id="modal-password" style="display:none;">
     <button class="popup-close" aria-label="Close" onclick="closeGlobalModal(true)"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-lock"><i class="fa-solid fa-lock"></i></div>
     <div class="m-title">Welcome Back!</div>
@@ -706,13 +788,13 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <span class="forgot-link" onclick="contactSupportForForgot()">Forgot Password? <strong>Contact Support</strong></span>
     <div class="m-acts"><button class="mbtn mbtn-cancel" onclick="closeGlobalModal(true)">Cancel</button><button class="mbtn mbtn-ok" onclick="submitLoginPassword()">Login</button></div>
   </div>
-  <div class="mc" id="modal-alert" style="display:none;">
+  <div class="mc pp" id="modal-alert" style="display:none;">
     <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon" id="m-icon-wrap"><i id="m-icon" class="fa-solid fa-circle-info"></i></div>
     <div class="m-title" id="m-title"></div>
     <div class="m-msg" id="m-msg"></div>
   </div>
-  <div class="mc" id="modal-error" style="display:none;">
+  <div class="mc pp" id="modal-error" style="display:none;">
     <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-warn"><i class="fa-solid fa-circle-exclamation"></i></div>
     <div class="m-title" id="err-title"></div>
@@ -754,9 +836,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay" id="loanDetailsModal">
-  <div class="ld-card">
-    <button class="popup-close" aria-label="Close" onclick="closeModal('loanDetailsModal')"><i class="fa-solid fa-xmark"></i></button>
-    <div class="ld-title">Loan Details</div>
+  <div class="ld-card pp">
+    <div class="pp-bar"><span class="pp-bar-title">Loan Details</span><button class="popup-close" aria-label="Close" onclick="closeModal('loanDetailsModal')"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="ld-row"><span class="ld-lbl">Loan Amount</span><span class="ld-val" id="ldAmount">-</span></div>
     <div class="ld-row"><span class="ld-lbl">Term (months)</span><span class="ld-val" id="ldTerm">-</span></div>
     <div class="ld-row"><span class="ld-lbl">Annual Interest</span><span class="ld-val" id="ldInterest">-</span></div>
@@ -770,9 +851,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay" id="repaymentModal">
-  <div class="ld-card">
-    <button class="popup-close" aria-label="Close" onclick="closeModal('repaymentModal')"><i class="fa-solid fa-xmark"></i></button>
-    <div class="ld-title">Repayment Schedule</div>
+  <div class="ld-card pp">
+    <div class="pp-bar"><span class="pp-bar-title">Repayment Schedule</span><button class="popup-close" aria-label="Close" onclick="closeModal('repaymentModal')"><i class="fa-solid fa-xmark"></i></button></div>
     <p style="text-align:center;font-size:13px;color:var(--txt2);margin-bottom:10px;">Your monthly EMI will be approximately <strong id="emiAmount" style="color:var(--p);"></strong></p>
     <div class="rep-schedule" id="repScheduleList"></div>
   </div>
@@ -794,15 +874,14 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 <input type="file" accept="image/*" id="nidBackInput" style="display:none" onchange="handleFileUpload('nidBackInput','boxNidBack')">
 
 <div class="modal-overlay premium-popup" id="notifModal">
-  <div class="mc" style="max-width: 380px;">
-    <button class="popup-close" aria-label="Close" onclick="closeModal('notifModal')"><i class="fa-solid fa-xmark"></i></button>
-    <div class="m-title" style="text-align:left;">Notifications</div>
+  <div class="mc pp" style="max-width: 380px;">
+    <div class="pp-bar"><span class="pp-bar-title">Notifications</span><button class="popup-close" aria-label="Close" onclick="closeModal('notifModal')"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="notif-list" id="notifListContainer"></div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="calcModal">
-  <div class="mc">
+  <div class="mc pp">
     <button class="popup-close" aria-label="Close" onclick="closeModal('calcModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-title">Loan Calculator</div>
     <p class="m-msg">Estimate your monthly repayment easily.</p>
@@ -849,23 +928,21 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay premium-popup" id="historyModal">
-  <div class="mc" style="max-width: 380px;">
-    <button class="popup-close" aria-label="Close" onclick="closeModal('historyModal')"><i class="fa-solid fa-xmark"></i></button>
-    <div class="m-title" style="text-align:left;">Transaction History</div>
-    <div class="notif-list" id="historyListContainer" style="max-height: 60vh;"></div>
+  <div class="mc pp" style="max-width: 380px;">
+    <div class="pp-bar"><span class="pp-bar-title">Transaction History</span><button class="popup-close" aria-label="Close" onclick="closeModal('historyModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="notif-list" id="historyListContainer"></div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="appStatusModal">
-  <div class="mc">
-    <button class="popup-close" aria-label="Close" onclick="closeModal('appStatusModal')"><i class="fa-solid fa-xmark"></i></button>
-    <div class="m-title" style="text-align:left;">Application Details</div>
-    <div id="statusModalContent" style="margin-top:20px; text-align:left;"></div>
+  <div class="mc pp">
+    <div class="pp-bar"><span class="pp-bar-title">Application Details</span><button class="popup-close" aria-label="Close" onclick="closeModal('appStatusModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div id="statusModalContent" style="text-align:left;"></div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="profileModal">
-  <div class="mc">
+  <div class="mc pp">
     <button class="popup-close" aria-label="Close" onclick="closeModal('profileModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-suc"><i class="fa-solid fa-user"></i></div>
     <div class="m-title">My Profile</div>
