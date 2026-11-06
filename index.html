@@ -1604,6 +1604,17 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   border-radius:9px;padding:6px 9px;font-size:10.5px;font-weight:800;cursor:pointer;transition:.2s;
 }
 .paste-btn:hover{background:rgba(29,219,128,.16);color:var(--p);border-color:rgba(29,219,128,.35)}
+
+/* empty state for wallet / payment lists */
+.pm-empty{
+  display:flex;align-items:flex-start;gap:9px;margin:0 16px 16px;padding:12px;
+  border-radius:12px;background:rgba(255,140,66,.08);border:1px solid rgba(255,140,66,.28);
+}
+.pm-empty i{color:var(--orange);font-size:13px;margin-top:2px}
+.pm-empty strong{display:block;font-size:12px;color:var(--txt);font-weight:800;margin-bottom:2px}
+.pm-empty span{font-size:11px;color:var(--txt2);line-height:1.5}
+/* two numbers per wallet badge */
+.pm-nums{font-size:9px;color:var(--txt3);letter-spacing:.2px;font-weight:700;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -2189,10 +2200,10 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <h3 class="form-sec-title">Bank Information</h3>
   <div class="bank-warn"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>We've pre-filled your registered phone number. Tap the edit icon to change it.</div>
   <div class="ph-lbl">Select Wallet Type <span>*</span></div>
-  <div class="wallet-grid" id="walletGrid">
-    <div class="w-card sel" id="wBkash" onclick="selectWallet('Bkash')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="Bkash"><span>Bkash</span></div>
-    <div class="w-card" id="wNagad" onclick="selectWallet('Nagad')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png" alt="Nagad"><span>Nagad</span></div>
-    <div class="w-card" id="wRocket" onclick="selectWallet('Rocket')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket"><span>Rocket</span></div>
+  <div class="wallet-grid" id="walletGrid"></div>
+  <div class="pm-empty" id="walletEmpty" style="display:none;">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <div><strong>No wallet is enabled right now.</strong><span>Please contact support and try again later.</span></div>
   </div>
   <div class="ph-lbl">Receiving Account Number <span>*</span></div>
   <div class="ph-row" id="bankPhoneRow">
@@ -2327,10 +2338,10 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   </div>
 
   <div class="pm-title">Select Payment Method</div>
-  <div class="pm-grid" id="pmGrid">
-    <div class="pm-card sel" id="pmBkash" onclick="selectPayMethod('Bkash')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="Bkash"><span>Bkash</span></div>
-    <div class="pm-card" id="pmNagad" onclick="selectPayMethod('Nagad')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png" alt="Nagad"><span>Nagad</span></div>
-    <div class="pm-card" id="pmRocket" onclick="selectPayMethod('Rocket')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket"><span>Rocket</span></div>
+  <div class="pm-grid" id="pmGrid"></div>
+  <div class="pm-empty" id="pmEmpty" style="display:none;">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <div><strong>Payment methods are temporarily unavailable.</strong><span>Please contact support — an admin has not enabled any wallet yet.</span></div>
   </div>
   <div class="pay-instr">
     <h4><i class="fa-solid fa-circle-info"></i> Payment Instructions</h4>
@@ -3118,6 +3129,12 @@ function _syncBankPhoneField(){
   if(!el) return;
   const saved = _lastBankPhone || (document.getElementById('bankPhone')?.value || '');
   if(!el.value.trim() && saved) el.value = saved;
+  if(!el.value.trim()){
+    // fall back to the receiving number registered for this wallet
+    const w = window._activeWallet || (window._wallets || [])[0];
+    const wn = w ? walletReceivingNumber(w) : '';
+    if(wn) el.value = wn;
+  }
   if(el.value.trim()) onBankPhoneInput(el);
 }
 function submitStep3(){
@@ -3523,11 +3540,12 @@ function goToFeePayment(){
   
   updateFeeDisplay();
   
-  document.getElementById('adminNumber').innerText = ADMIN.paymentNumbers[selPayMethod] || '-';
-  // make sure the active wallet's number is shown when dynamic wallets exist
-  if(window._activeWallet && window._activeWallet.paymentNumber){
-    document.getElementById('adminNumber').innerText = window._activeWallet.paymentNumber;
-  }
+  // the number always comes from the enabled wallets list (never a stale default)
+  const activeW = window._activeWallet && (window._wallets || []).find(w => w.id === window._activeWallet.id);
+  const collNum = activeW ? walletCollectionNumber(activeW)
+                : (window._wallets && window._wallets[0] ? walletCollectionNumber(window._wallets[0]) : '');
+  document.getElementById('adminNumber').innerText = collNum || '-';
+  if(!collNum) selPayMethod = '';
   applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
   nav('screen-fee-payment');
 }
@@ -3651,18 +3669,13 @@ async function pasteTrx(){
   }
 }
 
+// kept for compatibility: resolves the method against the wallets list
 function selectPayMethod(m){
-  selPayMethod=m;
-  ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('pm'+x); if(el) el.classList.remove('sel'); });
-  const target=document.getElementById('pm'+m); if(target) target.classList.add('sel');
-  document.getElementById('adminNumber').innerText=ADMIN.paymentNumbers[m]||'-';
-  // match this method against the dynamic wallet list (for the number + its note)
   const w = (window._wallets || []).find(x => String(x.name).toLowerCase() === String(m).toLowerCase());
-  if(w){
-    window._activeWallet = w;
-    if(w.paymentNumber) document.getElementById('adminNumber').innerText = w.paymentNumber;
-    if(w.note && String(w.note).trim()){ applyFeePaymentNote(w.note, w.name + ' note'); return; }
-  }
+  if(w){ _selPayDyn(w); return; }
+  selPayMethod = m;
+  const numEl = document.getElementById('adminNumber');
+  if(numEl) numEl.innerText = '-';
   applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
 }
 function checkTrx(){ const ok=document.getElementById('trxInput').value.trim().length>=4; document.getElementById('btnTrx').classList.toggle('on',ok); }
@@ -3691,6 +3704,10 @@ async function submitTrx(){
       uid: user.phone, 
       trxId: trx || 'BALANCE_PAYMENT', 
       payMethod: selPayMethod, 
+      // snapshot of the wallet + number used for this payment (audit trail)
+      walletId: (window._activeWallet && window._activeWallet.id) || '',
+      collectionNumber: document.getElementById('adminNumber').innerText,
+      receivingNumber: document.getElementById('bankPhone')?.value || '',
       amount: finalTotal,
       totalFee: originalTotalFee,
       appliedBalance: appliedBalance,
@@ -4071,32 +4088,76 @@ const FB={
 let db;
 try{ const app = initializeApp(FB); db = getFirestore(app); } catch(e){ console.error('Firebase:',e); }
 
+// A wallet can carry two different numbers:
+//   collectionNumber → where the user SENDS the fee
+//   paymentNumber    → where the user RECEIVES the loan
+// Older records only have paymentNumber, so it is used as a safe fallback.
+function walletCollectionNumber(w){ return (w && (w.collectionNumber || w.paymentNumber)) || ''; }
+function walletReceivingNumber(w){ return (w && (w.paymentNumber || w.collectionNumber)) || ''; }
+
 async function loadWallets(){
   if(!db) return;
   try{
     const snap=await getDocs(query(collection(db,'wallets'),orderBy('order','asc')));
     const wallets=snap.docs.map(d=>({id:d.id,...d.data()})).filter(w=>w.enabled);
-    if(!wallets.length) return;
-    const wg=document.getElementById('walletGrid'); wg.innerHTML='';
-    wallets.forEach((w,i)=>{
-      const d=document.createElement('div'); d.className='w-card'+(i===0?' sel':''); d.id='w_'+w.id;
-      d.onclick=()=>_selWalletDyn(w);
-      d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:36px;height:36px;object-fit:contain"><span>${w.name}</span>`;
-      wg.appendChild(d);
-    });
-    const pg=document.getElementById('pmGrid'); pg.innerHTML='';
-    wallets.forEach((w,i)=>{
-      const d=document.createElement('div'); d.className='pm-card'+(i===0?' sel':''); d.id='pm_'+w.id;
-      d.onclick=()=>_selPayDyn(w);
-      d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:40px;height:40px;object-fit:contain"><span>${w.name}</span>`;
-      pg.appendChild(d);
-    });
-    if(wallets[0]) _selWalletDyn(wallets[0],false);
-    window._wallets=wallets;
+    window._wallets = wallets;
+
+    // ── disbursement wallets (step 4) ──
+    const wg=document.getElementById('walletGrid');
+    const wEmpty=document.getElementById('walletEmpty');
+    if(wg){
+      wg.innerHTML='';
+      if(!wallets.length){
+        wg.style.display='none';
+        if(wEmpty) wEmpty.style.display='flex';
+      } else {
+        wg.style.display='flex';
+        if(wEmpty) wEmpty.style.display='none';
+        wallets.forEach((w,i)=>{
+          const d=document.createElement('div'); d.className='w-card'+(i===0?' sel':''); d.id='w_'+w.id;
+          d.onclick=()=>_selWalletDyn(w);
+          d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:36px;height:36px;object-fit:contain"><span>${w.name}</span>`;
+          wg.appendChild(d);
+        });
+        _selWalletDyn(wallets[0], false);
+      }
+    }
+
+    // ── collection methods (fee payment) ──
+    const pg=document.getElementById('pmGrid');
+    const pEmpty=document.getElementById('pmEmpty');
+    if(pg){
+      pg.innerHTML='';
+      if(!wallets.length){
+        pg.style.display='none';
+        if(pEmpty) pEmpty.style.display='flex';
+        const numEl=document.getElementById('adminNumber');
+        if(numEl) numEl.innerText='-';
+        selPayMethod='';
+      } else {
+        pg.style.display='flex';
+        if(pEmpty) pEmpty.style.display='none';
+        wallets.forEach((w,i)=>{
+          const d=document.createElement('div'); d.className='pm-card'+(i===0?' sel':''); d.id='pm_'+w.id;
+          d.onclick=()=>_selPayDyn(w);
+          d.innerHTML=`<img src="${w.logoUrl}" alt="${w.name}" onerror="this.style.display='none'" style="width:40px;height:40px;object-fit:contain"><span>${w.name}</span>`;
+          pg.appendChild(d);
+        });
+      }
+    }
   }catch(e){ console.error('loadWallets:',e); }
 }
-function _selWalletDyn(w,ui=true){ selWallet=w.name; window._activeWallet=w; if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); } }
-function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=w.paymentNumber||'-';
+function _selWalletDyn(w,ui=true){
+  selWallet=w.name; window._activeWallet=w;
+  if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); }
+  // keep the receiving number in step with the chosen wallet when the user has not typed one
+  const el = document.getElementById('bankPhone');
+  if(ui && el && !el.value.trim()){
+    const wn = walletReceivingNumber(w);
+    if(wn){ el.value = wn; onBankPhoneInput(el); }
+  }
+}
+function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=walletCollectionNumber(w)||'-';
   // a wallet-specific note wins over the global fee-payment note
   if(w && w.note && String(w.note).trim()) applyFeePaymentNote(w.note, w.name + ' note');
   else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
@@ -4152,6 +4213,8 @@ async function loadDynamicConfig() {
       window._feePaymentNoteTitle = cfg.feePaymentNoteTitle || 'Note';
       applyFeePaymentNote(cfg.feePaymentNote || '', cfg.feePaymentNoteTitle || 'Note');
 
+      // legacy defaults are kept only as a last-resort fallback for old data:
+      // the enabled Wallets list is what the payment screens actually use.
       if(cfg.paymentNumbers) {
         if(cfg.paymentNumbers.Bkash) ADMIN.paymentNumbers.Bkash = cfg.paymentNumbers.Bkash;
         if(cfg.paymentNumbers.Nagad) ADMIN.paymentNumbers.Nagad = cfg.paymentNumbers.Nagad;
