@@ -525,12 +525,14 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg full"><label>Occupation Options (comma-separated)</label><input id="c-oc" placeholder="Salaried, Business Owner, Student, Freelancer, Unemployed"></div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-phone"></i>Default Payment Numbers</div>
-    <div class="fgrid fgrid3">
-      <div class="fg"><label>Bkash Number</label><input id="c-bk" placeholder="017XXXXXXXX"></div>
-      <div class="fg"><label>Nagad Number</label><input id="c-ng" placeholder="018XXXXXXXX"></div>
-      <div class="fg"><label>Rocket Number</label><input id="c-rk" placeholder="019XXXXXXXX"></div>
+  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-wallet"></i>Payment Numbers</div>
+    <div style="font-size:12px;color:var(--txt2);line-height:1.7">
+      Payment and payout numbers are now managed in the <strong style="color:var(--p)">Wallets</strong> section — that is the only place users read them from.<br>
+      Each wallet has a <strong style="color:var(--orange)">collection number</strong> (where users send the fee) and a <strong style="color:var(--p)">receiving number</strong> (where the loan is paid out).
     </div>
+    <button class="btn btn-sm btn-p" style="margin-top:10px" onclick="gS('wallets',document.getElementById('n-wallets'))">
+      <i class="fa-solid fa-arrow-right"></i> Manage wallets
+    </button>
   </div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-thumbtack"></i>Fee Payment Note (shown to users)</div>
     <div class="fgrid">
@@ -1335,11 +1337,12 @@ async function delW(id){ showL(true); await window._deleteDoc(id,'wallets'); sho
 // ══ CONFIG ═══════════════════════════════════════════
 async function loadConfig(){
   showL(true); const cfg=await window._getDoc('siteConfig','main'); showL(false); if(!cfg)return;
+  window._cfgLoaded = cfg;   // keep a copy so saving preserves fields we no longer edit here
   const s=(id,v)=>{ const el=document.getElementById(id); if(el&&v!=null)el.value=v; };
   const cb=(id,v)=>{ const el=document.getElementById(id); if(el)el.checked=!!v; };
   s('c-mb',cfg.maxBorrowAmount);s('c-ir',cfg.annualInterestRate);s('c-of',cfg.orgFee);s('c-sc',cfg.serviceCharge);s('c-pf',cfg.processingFee);s('c-nb',cfg.newUserBonus);
   s('c-la',(cfg.loanAmounts||[]).join(', '));s('c-lt',(cfg.loanTerms||[]).join(', '));s('c-lp',(cfg.loanPurposes||[]).join(', '));s('c-oc',(cfg.occupations||[]).join(', '));
-  s('c-bk',cfg.paymentNumbers?.Bkash);s('c-ng',cfg.paymentNumbers?.Nagad);s('c-rk',cfg.paymentNumbers?.Rocket);
+  // payment numbers live in the Wallets section now (kept untouched in the saved config)
   s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');
   s('c-wa',cfg.contact?.whatsapp);s('c-tg',cfg.contact?.telegram);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
   s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
@@ -1349,7 +1352,7 @@ async function saveConfig(){
   const g=id=>document.getElementById(id)?.value.trim();
   const sl=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
   const cb=id=>document.getElementById(id)?.checked;
-  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:parseFloat(g('c-nb'))||100,loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:{Bkash:g('c-bk'),Nagad:g('c-ng'),Rocket:g('c-rk')},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
+  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:parseFloat(g('c-nb'))||100,loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
   showL(true); await window._setDoc('siteConfig','main',cfg); showL(false);
   await logAct('Site config saved','config','main'); toast('Configuration saved ✓');
 }

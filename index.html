@@ -2389,7 +2389,8 @@ if(refCode) localStorage.setItem('referrerPhone', refCode);
 
 const ADMIN = {
   orgFee: 200, serviceCharge: 100, processingFee: 100, annualRate: 18,
-  paymentNumbers: { Bkash:'01711111111', Nagad:'01822222222', Rocket:'01933333333' },
+  // legacy only: Wallets is the single source of truth, this stays empty on purpose
+  paymentNumbers: { Bkash:'', Nagad:'', Rocket:'' },
   walletLogos: {
     Bkash:  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png',
     Nagad:  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png',
@@ -4213,8 +4214,8 @@ async function loadDynamicConfig() {
       window._feePaymentNoteTitle = cfg.feePaymentNoteTitle || 'Note';
       applyFeePaymentNote(cfg.feePaymentNote || '', cfg.feePaymentNoteTitle || 'Note');
 
-      // legacy defaults are kept only as a last-resort fallback for old data:
-      // the enabled Wallets list is what the payment screens actually use.
+      // Legacy values are loaded into ADMIN only; no payment screen reads them —
+      // the enabled Wallets list is the single source of truth.
       if(cfg.paymentNumbers) {
         if(cfg.paymentNumbers.Bkash) ADMIN.paymentNumbers.Bkash = cfg.paymentNumbers.Bkash;
         if(cfg.paymentNumbers.Nagad) ADMIN.paymentNumbers.Nagad = cfg.paymentNumbers.Nagad;
