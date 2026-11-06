@@ -435,6 +435,12 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .notif-content p{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:6px}
 .notif-date{font-size:10px;color:var(--txt3);font-weight:600}
 .premium-popup .mc{background:rgba(15,29,53,.85) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important}
+/* Refer & Win Big modal - roomier height & width so content fits without scrolling */
+.refer-mc{max-width:460px !important;max-height:94dvh !important;padding:20px 22px !important}
+.refer-mc .m-icon{width:54px;height:54px;font-size:22px;margin:0 auto 10px}
+.refer-mc .m-title{font-size:20px;margin-bottom:4px}
+.refer-mc .m-msg{font-size:13px;margin-bottom:14px}
+@media (min-width:520px){.refer-mc{padding:24px 28px !important}}
 .premium-cs-item{display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.03);padding:15px;border-radius:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);transition:.2s}
 .premium-cs-icon{width:40px;height:40px;border-radius:12px;display:flex;justify-content:center;align-items:center;font-size:18px}
 .detail-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--bord)}
@@ -689,7 +695,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay premium-popup" id="referModal">
-  <div class="mc" style="max-height: 90dvh; overflow-y: auto;">
+  <div class="mc refer-mc">
     <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
     <div class="m-title">Refer &amp; Win Big!</div>
     <p class="m-msg">বন্ধুদের রেফার করে জিতুন বিশাল সব পুরস্কার!</p>
@@ -702,9 +708,9 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:8px;"><div id="tierProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff8c42, #ff4b2b); border-radius:5px; transition: width 0.5s;"></div></div>
       <p style="font-size:11px; color:var(--txt2); text-align:center;" id="tierProgressText">পরবর্তী পুরস্কার পেতে আরও রেফার করুন!</p>
       <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px; border-top:1px dashed var(--bord); padding-top:15px;">
-        <div id="tierRow20" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥉</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">২০ জন রেফারেল</div><div style="font-size:11px; color:var(--orange);">৳১০,০০০ এর নিচে লোনে ১ম কিস্তি মাফ!</div></div><i class="fa-solid fa-lock" id="tierLock20" style="color:var(--txt2); font-size:12px;"></i></div>
-        <div id="tierRow50" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥈</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">৫০ জন রেফারেল</div><div style="font-size:11px; color:var(--blue);">৳৫,০০০ ফ্রি লোন! (শোধ করতে হবে না)</div></div><i class="fa-solid fa-lock" id="tierLock50" style="color:var(--txt2); font-size:12px;"></i></div>
-        <div id="tierRow100" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥇</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">১০০ জন রেফারেল</div><div style="font-size:11px; color:var(--red);">ইনস্ট্যান্ট ৳৫০,০০০ জ্যাকপট!</div></div><i class="fa-solid fa-lock" id="tierLock100" style="color:var(--txt2); font-size:12px;"></i></div>
+        <div id="tierRow20" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥉</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">২০ জন রেফারেল</div><div style="font-size:11px; color:var(--orange);">৳১০,০০০ এর নিচে লোনে ১ম কিস্তি মাফ!</div></div><i class="fa-solid fa-lock" id="tierLock20" style="color:var(--txt2); font-size:12px;"></i></div>
+        <div id="tierRow50" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥈</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">৫০ জন রেফারেল</div><div style="font-size:11px; color:var(--blue);">৳৫,০০০ ফ্রি লোন! (শোধ করতে হবে না)</div></div><i class="fa-solid fa-lock" id="tierLock50" style="color:var(--txt2); font-size:12px;"></i></div>
+        <div id="tierRow100" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥇</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">১০০ জন রেফারেল</div><div style="font-size:11px; color:var(--red);">ইনস্ট্যান্ট ৳৫০,০০০ জ্যাকপট!</div></div><i class="fa-solid fa-lock" id="tierLock100" style="color:var(--txt2); font-size:12px;"></i></div>
       </div>
     </div>
     <div style="background:var(--bg2); border-radius:14px; padding:15px; border:1px dashed var(--p); text-align:center;"><p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Referral Link</p><div style="font-size:12px; color:var(--p); word-break:break-all; font-weight:700;" id="refLinkDisplay">Loading...</div></div>
