@@ -2634,10 +2634,7 @@ window.submitLoginPassword=function(){
     if(pendingLoginUser.status === 'banned') { showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.'); return; }
     localStorage.setItem('creditUpUser',JSON.stringify(pendingLoginUser));
     closeGlobalModal();
-    document.getElementById('dashSuccessText').innerText='Welcome back! 👋';
-    nav('screen-application-progress');
-    if(typeof updateUIForUser === 'function') updateUIForUser();
-    setTimeout(() => { if(typeof window.loadUserDashboardData === 'function') window.loadUserDashboardData(); }, 500);
+    nav('screen-home');
   } else { showAlert('Incorrect Password','The password you entered is incorrect.','error'); }
 };
 
