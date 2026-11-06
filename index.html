@@ -435,32 +435,96 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .notif-content p{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:6px}
 .notif-date{font-size:10px;color:var(--txt3);font-weight:600}
 .premium-popup .mc{background:rgba(15,29,53,.85) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important}
-/* ─── UNIFIED POPUP LOOK: green border + corner close (like support popup) ─── */
+/* ─── PREMIUM POPUP SYSTEM: glass card, green glow border, corner close ─── */
 .modal-overlay .mc,
 .modal-overlay .conf-card,
 .modal-overlay .ld-card,
 .premium-cs-box{
   position:relative;
-  border:1px solid rgba(29,219,128,.3) !important;
-  border-radius:24px !important;
-  background:linear-gradient(145deg,rgba(15,29,53,.97),rgba(10,20,40,.99)) !important;
-  box-shadow:0 0 40px rgba(29,219,128,.15), inset 0 0 20px rgba(29,219,128,.05) !important;
+  border:1px solid rgba(29,219,128,.24) !important;
+  border-radius:26px !important;
+  background:
+    radial-gradient(130% 85% at 50% -12%, rgba(29,219,128,.14), rgba(29,219,128,0) 62%),
+    radial-gradient(90% 70% at 100% 108%, rgba(77,143,255,.10), rgba(77,143,255,0) 66%),
+    linear-gradient(160deg,#12233d 0%,#0c1729 55%,#0a121f 100%) !important;
+  box-shadow:
+    0 26px 70px rgba(0,0,0,.75),
+    0 0 0 1px rgba(29,219,128,.05),
+    0 0 46px rgba(29,219,128,.13),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 0 26px rgba(29,219,128,.05) !important;
+  backdrop-filter:blur(22px) !important;
+  -webkit-backdrop-filter:blur(22px) !important;
+  isolation:isolate;
 }
+.modal-overlay .mc::before,
+.modal-overlay .conf-card::before,
+.modal-overlay .ld-card::before,
+.premium-cs-box::before{
+  content:'';position:absolute;top:0;left:16%;right:16%;height:1.5px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,rgba(29,219,128,.9),rgba(77,143,255,.65),transparent);
+  pointer-events:none;z-index:2;
+}
+.modal-overlay .mc::after,
+.modal-overlay .conf-card::after,
+.modal-overlay .ld-card::after,
+.premium-cs-box::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,0) 26%);
+}
+.modal-overlay .mc > *, .modal-overlay .conf-card > *,
+.modal-overlay .ld-card > *, .premium-cs-box > *{position:relative;z-index:1}
 .premium-cs-overlay{z-index:9999999}
 .popup-close{
   position:absolute;top:14px;right:14px;width:32px;height:32px;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
   border-radius:50%;color:var(--txt2);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:.3s;z-index:10;font-size:13px;padding:0;line-height:1;flex-shrink:0;
+  cursor:pointer;transition:.28s;z-index:12;font-size:13px;padding:0;line-height:1;
+  flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.09);
 }
-.popup-close:hover{background:rgba(255,77,106,.2);color:var(--red);transform:rotate(90deg)}
+.popup-close:hover{background:rgba(255,77,106,.2);color:var(--red);border-color:rgba(255,77,106,.35);transform:rotate(90deg)}
 .modal-overlay .mc:has(.popup-close),
 .modal-overlay .conf-card:has(.popup-close),
 .modal-overlay .ld-card:has(.popup-close){padding-top:26px}
-.cs-close-btn{border-color:rgba(255,255,255,.1);color:var(--txt2)}
+.cs-close-btn{border-color:rgba(255,255,255,.12);color:var(--txt2)}
 .cs-close-btn:hover{background:rgba(255,77,106,.2);color:var(--red);border-color:rgba(255,77,106,.3);transform:rotate(90deg)}
+/* premium typography + icons */
+.modal-overlay .m-title,.modal-overlay .conf-title,.modal-overlay .ld-title,.cs-title{
+  text-shadow:0 2px 14px rgba(29,219,128,.22);letter-spacing:-.35px;
+}
+.modal-overlay .m-icon{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 10px 26px rgba(0,0,0,.4),0 0 26px rgba(29,219,128,.10)}
+/* premium buttons */
+.mbtn-full,.mbtn-ok{
+  background:linear-gradient(135deg,#26e891 0%,#12bd6d 55%,#0ea35d 100%) !important;
+  box-shadow:0 10px 26px rgba(29,219,128,.26),inset 0 1px 0 rgba(255,255,255,.28) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  letter-spacing:.3px;transition:transform .15s ease,box-shadow .22s ease,filter .2s ease;
+}
+.mbtn-full:hover,.mbtn-ok:hover{filter:brightness(1.05);box-shadow:0 12px 30px rgba(29,219,128,.34),inset 0 1px 0 rgba(255,255,255,.3) !important}
+.mbtn-full:active,.mbtn-ok:active{transform:scale(.975)}
+.mbtn-full.premium-danger{
+  background:linear-gradient(135deg,#ff5d7d 0%,#ff416c 45%,#ec2c4f 100%) !important;
+  box-shadow:0 10px 26px rgba(255,65,108,.28),inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+.mbtn-cancel{background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.1) !important;color:var(--txt2) !important}
+.mbtn-cancel:hover{color:var(--txt) !important;background:rgba(255,255,255,.09) !important}
+.btn-pick-ok,.btn-pick-cancel{
+  background:linear-gradient(135deg,#26e891,#12bd6d) !important;color:#04150d !important;font-weight:800 !important;
+  box-shadow:0 10px 24px rgba(29,219,128,.24),inset 0 1px 0 rgba(255,255,255,.28) !important;border:none !important;
+}
+.btn-pick-cancel{background:rgba(255,255,255,.06) !important;color:var(--txt2) !important;box-shadow:none !important;border:1px solid rgba(255,255,255,.1) !important}
+/* premium dividers + inline panels */
+.modal-overlay .mc [style*="border-top:1px dashed"],
+.modal-overlay .mc [style*="border-top:1px solid"]{border-top-color:rgba(29,219,128,.16) !important}
+/* bottom sheets share the same premium accent */
 .modal-overlay .picker-card,
-.bottom-sheet{border-top:1px solid rgba(29,219,128,.3) !important;box-shadow:0 -20px 60px rgba(0,0,0,.8),0 0 30px rgba(29,219,128,.12) !important}
+.bottom-sheet{
+  border-top:1px solid rgba(29,219,128,.28) !important;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(29,219,128,.12), rgba(29,219,128,0) 60%),
+    linear-gradient(160deg,#12233d,#0b1526) !important;
+  box-shadow:0 -22px 60px rgba(0,0,0,.8),0 0 34px rgba(29,219,128,.12) !important;
+}
 .picker-card > .popup-close,
 .bottom-sheet > .popup-close{top:14px;right:16px}
 /* Referral popup: full app width, no scroll, English, close in corner */
@@ -628,8 +692,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       <div class="fomo-progress-track"><div class="fomo-progress-fill" style="width: 76%;"></div></div>
       <p class="fomo-warning"><i class="fa-solid fa-triangle-exclamation"></i> মাত্র ১২টি অফার বাকি!</p>
     </div>
-    <button class="mbtn-full" style="background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255,75,43,0.4); font-size: 16px; margin-bottom: 12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
-    <button class="mbtn-cancel" style="width: 100%; border: none; background: transparent; color: var(--txt2);" onclick="closeFomoModal()">আমি পরে দেখব</button>
+    <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
   </div>
 </div>
 
@@ -648,14 +711,12 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="m-icon" id="m-icon-wrap"><i id="m-icon" class="fa-solid fa-circle-info"></i></div>
     <div class="m-title" id="m-title"></div>
     <div class="m-msg" id="m-msg"></div>
-    <button class="mbtn-full" onclick="closeGlobalModal()">OK</button>
   </div>
   <div class="mc" id="modal-error" style="display:none;">
     <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-warn"><i class="fa-solid fa-circle-exclamation"></i></div>
     <div class="m-title" id="err-title"></div>
     <div class="m-err-msg" id="err-msg"></div>
-    <button class="mbtn-full" onclick="closeGlobalModal()">Got it</button>
   </div>
 </div>
 
@@ -664,7 +725,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="picker-hdr" id="pickerTitle" style="padding-right:34px;">Select Option</div>
     <button class="popup-close" aria-label="Close" onclick="closePicker()"><i class="fa-solid fa-xmark"></i></button>
     <div class="pick-list" id="pickerList"></div>
-    <div class="pick-acts"><button class="btn-pick-cancel" onclick="closePicker()">Cancel</button><button class="btn-pick-ok" onclick="confirmPicker()">Confirm</button></div>
+    <div class="pick-acts"><button class="btn-pick-ok" onclick="confirmPicker()">Confirm</button></div>
   </div>
 </div>
 
@@ -673,7 +734,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="picker-hdr" style="padding-right:34px;">Date of Birth</div>
     <button class="popup-close" aria-label="Close" onclick="closeDob()"><i class="fa-solid fa-xmark"></i></button>
     <div class="dob-cols"><div class="dob-col" id="yearCol"></div><div class="dob-col" id="monthCol"></div><div class="dob-col" id="dayCol"></div></div>
-    <div class="pick-acts"><button class="btn-pick-cancel" onclick="closeDob()">Cancel</button><button class="btn-pick-ok" onclick="confirmDob()">Confirm</button></div>
+    <div class="pick-acts"><button class="btn-pick-ok" onclick="confirmDob()">Confirm</button></div>
   </div>
 </div>
 
@@ -705,7 +766,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="ld-row"><span class="ld-lbl">Due Date</span><span class="ld-val" id="ldDue">-</span></div>
     <div class="ld-row"><span class="ld-lbl">You Receive</span><span class="ld-val" id="ldReceive">-</span></div>
     <div class="ld-row total"><span class="ld-lbl" style="font-weight:700;color:var(--txt)">Total Repayment</span><span class="ld-val grn" id="ldTotal">-</span></div>
-    <button class="mbtn-full" onclick="closeModal('loanDetailsModal')" style="margin-top:18px;">OK</button>
   </div>
 </div>
 
@@ -715,7 +775,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="ld-title">Repayment Schedule</div>
     <p style="text-align:center;font-size:13px;color:var(--txt2);margin-bottom:10px;">Your monthly EMI will be approximately <strong id="emiAmount" style="color:var(--p);"></strong></p>
     <div class="rep-schedule" id="repScheduleList"></div>
-    <button class="mbtn-full" onclick="closeModal('repaymentModal')" style="margin-top:18px;">Close</button>
   </div>
 </div>
 
@@ -729,7 +788,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="sheet-opt" onclick="triggerNidCapture('camera')"><div class="sheet-opt-ic" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fa-solid fa-camera"></i></div><div class="sheet-opt-info"><div class="sheet-opt-title">Take Photo</div><div class="sheet-opt-sub">Open camera to capture</div></div><i class="fa-solid fa-chevron-right sheet-opt-arr"></i></div>
     <div class="sheet-opt" onclick="triggerNidCapture('gallery')"><div class="sheet-opt-ic" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"><i class="fa-solid fa-images"></i></div><div class="sheet-opt-info"><div class="sheet-opt-title">Choose from Gallery</div><div class="sheet-opt-sub">Select an existing photo</div></div><i class="fa-solid fa-chevron-right sheet-opt-arr"></i></div>
   </div>
-  <button class="sheet-cancel" onclick="closeNidSheet()">Cancel</button>
 </div>
 
 <input type="file" accept="image/*" id="nidFrontInput" style="display:none" onchange="handleFileUpload('nidFrontInput','boxNidFront')">
@@ -758,7 +816,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="calc-row"><span>Interest (<span id="calcRateLabel">18</span>% p.a)</span><span id="calcInterest">৳ 900</span></div>
     <div class="calc-row"><span>Processing Fee</span><span id="calcFee">৳ 400</span></div>
     <div class="calc-row" style="border-top:1px solid var(--bord); margin-top:5px; padding-top:10px; font-weight:800; color:var(--txt); font-size:16px;"><span>Total Repayment</span><span id="calcTotal" style="color:var(--p);">৳ 11,300</span></div>
-    <button class="mbtn-full" style="margin-top:20px;" onclick="closeModal('calcModal')">Got it</button>
   </div>
 </div>
 
@@ -816,8 +873,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       <div class="detail-row"><div class="detail-lbl">Phone Number</div><div class="detail-val" id="profPhone">-</div></div>
       <div class="detail-row"><div class="detail-lbl">Account Status</div><div class="detail-val" style="color:var(--p);">Active</div></div>
     </div>
-    <button class="mbtn-full" style="background:var(--red); color:#fff; box-shadow:none; margin-bottom:10px;" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-    <button class="mbtn-cancel" style="width:100%;" onclick="closeModal('profileModal')">Close</button>
+    <button class="mbtn-full premium-danger" style="margin-bottom:10px;" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
   </div>
 </div>
 
