@@ -498,6 +498,15 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div class="sec" id="sec-wallets">
   <div class="sec-head"><h2>Wallets & Payment Methods</h2><button class="btn btn-sm btn-p" onclick="openWM()"><i class="fa-solid fa-plus"></i>Add Wallet</button></div>
   <div id="walletRows"><div style="text-align:center;color:var(--txt2);padding:24px;font-size:12px">Loading...</div></div>
+  <div class="cfg-blk" id="walletMigrateBlock" style="margin-top:12px;display:none;">
+    <div class="cfg-t"><i class="fa-solid fa-arrows-rotate"></i>Legacy Payment Numbers Found</div>
+    <div style="font-size:12px;color:var(--txt2);line-height:1.7;margin-bottom:10px">
+      The old <strong style="color:var(--txt)">Site Config → Default Payment Numbers</strong> are still stored but no longer used.
+      Migrate them into proper wallets (collection number = where users send the fee, receiving number = where loans are paid out).
+    </div>
+    <div id="migratePreview" style="font-size:12px;color:var(--txt);line-height:1.8;margin-bottom:12px"></div>
+    <button class="btn btn-sm btn-p" onclick="migrateLegacyNumbers()"><i class="fa-solid fa-wand-magic-sparkles"></i>Migrate to wallets</button>
+  </div>
   <div class="cfg-blk" style="margin-top:12px">
     <div class="cfg-t"><i class="fa-solid fa-circle-info"></i>Logo URL Tips</div>
     <div style="font-size:12px;color:var(--txt2);line-height:1.8">• Upload logos to <strong style="color:var(--txt)">imgbb.com</strong> or <strong style="color:var(--txt)">postimages.org</strong> → direct link<br>• Firebase Storage public URL (most reliable)<br>• <span style="color:var(--red)">Avoid Wikipedia / Wikimedia</span> — blocked on mobile</div>
@@ -1321,7 +1330,77 @@ function calcEMI(){
 }
 
 // ══ WALLETS ══════════════════════════════════════════
-async function loadWallets(){ _D.wallets=await _get('wallets','order','asc'); renderWallets(); }
+const LEGACY_LOGOS = {
+  Bkash:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png',
+  Nagad:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png',
+  Rocket:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png'
+};
+
+async function loadWallets(){
+  _D.wallets = await _get('wallets','order','asc');
+  renderWallets();
+  renderLegacyMigration();
+}
+
+// old Site Config numbers that could be turned into wallets
+async function _legacyNumbers(){
+  try{
+    if(!window._cfgLoaded) window._cfgLoaded = await window._getDoc('siteConfig','main');
+    const pn = window._cfgLoaded?.paymentNumbers || {};
+    const out = [];
+    Object.keys(pn).forEach(k=>{
+      const num = String(pn[k]||'').trim();
+      if(num) out.push({name:k, number:num});
+    });
+    return out;
+  }catch(e){ return []; }
+}
+
+async function renderLegacyMigration(){
+  const legacy = await _legacyNumbers();
+  const existing = (_D.wallets||[]).map(w=>String(w.name||'').toLowerCase());
+  const todo = legacy.filter(l => !existing.includes(l.name.toLowerCase()));
+  const block = document.getElementById('walletMigrateBlock');
+  const prev  = document.getElementById('migratePreview');
+  if(!block || !prev) return;
+  if(!todo.length){ block.style.display='none'; return; }
+  prev.innerHTML = todo.map(l=>`<div>• <strong>${l.name}</strong> — ${l.number} <span style="color:var(--txt2);font-size:11px">(will become a wallet: fee → same number, payout → same number)</span></div>`).join('');
+  block.style.display='block';
+}
+
+async function migrateLegacyNumbers(){
+  const legacy = await _legacyNumbers();
+  const existing = (_D.wallets||[]).map(w=>String(w.name||'').toLowerCase());
+  const todo = legacy.filter(l => !existing.includes(l.name.toLowerCase()));
+  if(!todo.length){ toast('Nothing to migrate','w'); return; }
+
+  confirm2(`Create ${todo.length} wallet(s) from the legacy numbers? Existing wallets are left untouched.`, async () => {
+    showL(true);
+    try{
+      let order = (_D.wallets||[]).length;
+      for(const l of todo){
+        order++;
+        await window._addDoc('wallets', {
+          name: l.name,
+          logoUrl: LEGACY_LOGOS[l.name] || '',
+          collectionNumber: l.number,
+          paymentNumber: l.number,        // legacy used one number for both
+          note: '',
+          order,
+          enabled: true,
+          migratedFrom: 'siteConfig.paymentNumbers',
+          createdAt: new Date().toISOString()
+        });
+      }
+      // keep the old values for reference but mark them as migrated
+      await window._setDoc('siteConfig','main',{ paymentNumbersMigratedAt: new Date().toISOString() });
+      await logAct(`Migrated ${todo.length} legacy payment number(s) to wallets`,'wallet','migrate');
+      toast('Wallets created from legacy numbers ✓');
+      await loadWallets();
+    }catch(e){ toast(e.message || 'Migration failed','e'); }
+    showL(false);
+  });
+}
 function renderWallets(){
   const w=_D.wallets;
   document.getElementById('walletRows').innerHTML=w.length?w.map((wl,i)=>`<div class="wrow">${wl.logoUrl?`<img class="wimg" src="${wl.logoUrl}" alt="${wl.name}" onerror="this.style.display='none'">`:`<div class="wph"><i class="fa-solid fa-wallet"></i></div>`}<div class="wi"><div class="wn">${wl.name}${!wl.enabled?'<span style="font-size:9px;color:var(--orange);margin-left:5px;font-weight:700;background:rgba(255,140,66,.1);padding:2px 5px;border-radius:3px">OFF</span>':''}</div><div class="wnum">${wl.collectionNumber||wl.paymentNumber||'-'} <span style="opacity:.55;font-size:9.5px">(fee)</span>${(wl.paymentNumber && wl.collectionNumber && wl.paymentNumber!==wl.collectionNumber)?` · ${wl.paymentNumber} <span style="opacity:.55;font-size:9.5px">(payout)</span>`:''}</div></div><label class="tog" style="margin-left:auto"><input type="checkbox" ${wl.enabled?'checked':''} onchange="togW('${wl._id}',this.checked)"><span class="tog-sl"></span></label><div class="wa"><button class="ab" style="background:rgba(255,255,255,.04);color:var(--txt2)" onclick="mvW(${i},-1)"><i class="fa-solid fa-chevron-up"></i></button><button class="ab" style="background:rgba(255,255,255,.04);color:var(--txt2)" onclick="mvW(${i},1)"><i class="fa-solid fa-chevron-down"></i></button><button class="ab ab-e" onclick="editW('${wl._id}')"><i class="fa-solid fa-pen"></i></button><button class="ab ab-d" onclick="confirm2('Delete wallet &quot;${wl.name}&quot;?',()=>delW('${wl._id}'))"><i class="fa-solid fa-trash"></i></button></div></div>`).join(''):'<div style="text-align:center;color:var(--txt2);padding:24px;font-size:12px">No wallets added yet.</div>';
