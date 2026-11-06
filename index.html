@@ -275,7 +275,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .bottom-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:400px;background:var(--surf);border-radius:22px 22px 0 0;z-index:10000;padding:16px 20px calc(20px + env(safe-area-inset-bottom));transition:transform .35s cubic-bezier(.4,0,.2,1);border-top:1px solid var(--bord)}
 .bottom-sheet.on{transform:translateX(-50%) translateY(0)}
 .sheet-handle{width:36px;height:4px;background:var(--bord);border-radius:2px;margin:0 auto 18px}
-.sheet-title{font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px}
+.sheet-title{padding-right:38px;font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px}
 .sheet-sub{font-size:13px;color:var(--txt2);margin-bottom:18px}
 .sheet-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
 .sheet-opt{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg2);border-radius:13px;cursor:pointer;border:1px solid var(--bord);transition:.2s}
@@ -435,6 +435,258 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .notif-content p{font-size:12px;color:var(--txt2);line-height:1.5;margin-bottom:6px}
 .notif-date{font-size:10px;color:var(--txt3);font-weight:600}
 .premium-popup .mc{background:rgba(15,29,53,.85) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important}
+/* ─── PREMIUM POPUP SYSTEM ─────────────────────────────────────────────
+   one shared shell: glass gradient card, green glow border,
+   sticky top-right close button that stays visible while scrolling.
+   ──────────────────────────────────────────────────────────────────── */
+.modal-overlay .mc,
+.modal-overlay .conf-card,
+.modal-overlay .ld-card,
+.premium-cs-box{
+  position:relative;
+  border:1px solid rgba(29,219,128,.22) !important;
+  border-radius:26px !important;
+  background:
+    radial-gradient(125% 80% at 50% -14%, rgba(29,219,128,.13), rgba(29,219,128,0) 60%),
+    radial-gradient(85% 65% at 100% 106%, rgba(77,143,255,.09), rgba(77,143,255,0) 64%),
+    linear-gradient(165deg,#12233d 0%,#0c1729 58%,#0a121f 100%) !important;
+  box-shadow:
+    0 26px 70px rgba(0,0,0,.75),
+    0 0 0 1px rgba(29,219,128,.04),
+    0 0 42px rgba(29,219,128,.12),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 0 24px rgba(29,219,128,.045) !important;
+  backdrop-filter:blur(22px) !important;
+  -webkit-backdrop-filter:blur(22px) !important;
+}
+/* slim, clean scrollbar inside popups */
+.modal-overlay .mc,
+.modal-overlay .conf-card,
+.modal-overlay .ld-card,
+.premium-cs-box{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(29,219,128,.35) transparent;
+}
+.modal-overlay .mc::-webkit-scrollbar,
+.modal-overlay .conf-card::-webkit-scrollbar,
+.modal-overlay .ld-card::-webkit-scrollbar,
+.modal-overlay .notif-list::-webkit-scrollbar,
+.modal-overlay .rep-schedule::-webkit-scrollbar,
+.premium-cs-box::-webkit-scrollbar{width:5px}
+.modal-overlay .mc::-webkit-scrollbar-thumb,
+.modal-overlay .conf-card::-webkit-scrollbar-thumb,
+.modal-overlay .ld-card::-webkit-scrollbar-thumb,
+.modal-overlay .notif-list::-webkit-scrollbar-thumb,
+.modal-overlay .rep-schedule::-webkit-scrollbar-thumb,
+.premium-cs-box::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+.modal-overlay .mc::-webkit-scrollbar-track,
+.modal-overlay .notif-list::-webkit-scrollbar-track,
+.modal-overlay .rep-schedule::-webkit-scrollbar-track{background:transparent}
+/* single clean header (no duplicated sticky header = no ghost text) */
+.modal-overlay .mc.pp > .m-title,
+.modal-overlay .mc.pp > .ld-title,
+.modal-overlay .conf-card > .conf-title{position:static}
+.modal-overlay .mc.pp:has(.popup-close) > .m-title,
+.modal-overlay .mc.pp:has(.popup-close) > .ld-title,
+.modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:44px}
+/* panels with their own inner scroll keep the ✕ always visible */
+.modal-overlay .mc.pp .pp-bar{
+  position:sticky;top:-2px;z-index:19;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 16px 10px;
+  background:linear-gradient(180deg,#12233d 0%,rgba(18,35,61,.97) 74%,rgba(18,35,61,0) 100%);
+  border-bottom:1px solid rgba(29,219,128,.12);
+}
+.modal-overlay .mc.pp .pp-bar-title{
+  font-size:16.5px;font-weight:800;color:var(--txt);
+  letter-spacing:-.3px;text-shadow:0 2px 14px rgba(29,219,128,.2);
+}
+.modal-overlay .mc.pp .pp-bar .popup-close{position:static;float:none;margin:0;flex:0 0 32px}
+.modal-overlay :is(.mc,pp.ld-card,.ld-card.pp,.conf-card.pp):has(.pp-bar){padding:0 !important}
+.modal-overlay .mc.pp:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .ld-card.pp:has(.pp-bar) > :not(.pp-bar){
+  margin-left:16px;margin-right:16px;
+}
+.modal-overlay .mc.pp:has(.pp-bar) > .notif-list{margin-bottom:22px}
+.modal-overlay .ld-card.pp:has(.pp-bar) > .mbtn-full{margin-top:16px;margin-bottom:22px}
+.modal-overlay .ld-card.pp:has(.pp-bar) > .rep-schedule{margin-bottom:0}
+/* body + pinned footer: buttons never touch the card edge */
+.modal-overlay .mc.pp .pp-body{padding:2px 16px 6px}
+.modal-overlay .mc.pp .pp-body .detail-row:first-child{padding-top:4px}
+.modal-overlay .mc.pp .pp-foot{
+  flex-shrink:0;padding:14px 16px 22px;
+  border-top:1px solid rgba(29,219,128,.14);
+  background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55));
+}
+.modal-overlay .mc.pp .pp-foot .mbtn-full,
+.modal-overlay .mc.pp .pp-foot .mbtn{margin:0 !important}
+.modal-overlay .mc.pp .pp-foot:empty{display:none}
+.modal-overlay .mc.pp .pp-body > *,
+#referModal .refer-body > *{max-width:100%}
+/* status popup: scrolling rows, fixed header + footer */
+#appStatusModal .mc.pp{
+  max-height:min(86dvh,560px);
+  display:flex !important;flex-direction:column;overflow:hidden;
+}
+#appStatusModal #statusModalContent{
+  margin:0 !important;padding:0 !important;
+  display:flex;flex-direction:column;min-height:0;flex:1 1 auto;
+}
+#appStatusModal .pp-body{flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent}
+#appStatusModal .pp-body::-webkit-scrollbar{width:5px}
+#appStatusModal .pp-body::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#appStatusModal .pp-body::-webkit-scrollbar-track{background:transparent}
+/* tidy rows: aligned labels, tighter dividers */
+.modal-overlay .detail-row{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.modal-overlay .detail-row:last-child{border-bottom:none}
+.modal-overlay .detail-lbl{font-size:12.5px;color:var(--txt2);letter-spacing:.1px}
+.modal-overlay .detail-val{font-size:13px;font-weight:700;color:var(--txt)}
+.modal-overlay .detail-val.color-p{color:var(--p);font-weight:800}
+.modal-overlay .detail-val.fw8{font-weight:800}
+.modal-overlay .notif-list{margin-top:2px}
+.modal-overlay .m-title,.modal-overlay .conf-title,.modal-overlay .ld-title{
+  text-shadow:0 2px 14px rgba(29,219,128,.2);letter-spacing:-.35px;
+}
+.modal-overlay .m-icon{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 10px 26px rgba(0,0,0,.4),0 0 24px rgba(29,219,128,.1)}
+/* ── sticky corner close button ── */
+.popup-close{
+  position:sticky;top:12px;
+  align-self:flex-end;
+  margin:-4px -6px -34px 12px;
+  width:32px;height:32px;flex:0 0 32px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;color:var(--txt2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.25s;z-index:20;
+  font-size:13px;padding:0;line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(0,0,0,.35);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.popup-close:hover{background:rgba(255,77,106,.22);color:var(--red);border-color:rgba(255,77,106,.4);transform:rotate(90deg)}
+.popup-close:active{transform:scale(.92)}
+/* status popup + forms: close pinned in the corner, title gets out of its way */
+.modal-overlay .mc.pp > .m-title{padding-top:18px}
+/* global modal holds 3 panels; only one is shown at a time and always full width */
+#globalModal{flex-wrap:wrap}
+#globalModal > .mc{flex:0 0 auto;width:100%;max-width:340px;align-self:center}
+.modal-overlay .mc.pp[style*="text-align: center"] > .m-title{padding-top:8px}
+/* support popup keeps the same look, just anchored in its corner */
+.cs-close-btn{
+  position:sticky;top:10px;align-self:flex-end;
+  margin:-4px 12px -30px 0;width:32px;height:32px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;color:var(--txt2);display:flex;justify-content:center;align-items:center;
+  cursor:pointer;transition:.25s;z-index:12;font-size:13px;padding:0;line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(0,0,0,.35);
+}
+.cs-close-btn:hover{background:rgba(255,77,106,.22);color:var(--red);border-color:rgba(255,77,106,.4);transform:rotate(90deg)}
+/* the close button always occupies the top-right corner: reserve the space */
+.modal-overlay .mc:has(.popup-close),
+.modal-overlay .conf-card:has(.popup-close),
+.modal-overlay .ld-card:has(.popup-close){padding:18px 20px 24px}
+.modal-overlay .mc:has(.popup-close) > .m-title,
+.modal-overlay .mc:has(.popup-close) > .ld-title,
+.modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:38px}
+#referModal .refer-card > .popup-close{position:absolute;top:14px;right:14px;float:none;margin:0}
+#referModal .refer-head{padding-top:14px}
+#referModal .refer-head{padding-right:0}
+/* ── premium buttons ── */
+.mbtn-full,.mbtn-ok{
+  background:linear-gradient(135deg,#26e891 0%,#12bd6d 55%,#0ea35d 100%) !important;
+  box-shadow:0 10px 26px rgba(29,219,128,.24),inset 0 1px 0 rgba(255,255,255,.28) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  letter-spacing:.3px;transition:transform .15s ease,box-shadow .22s ease,filter .2s ease;
+}
+.mbtn-full:hover,.mbtn-ok:hover{filter:brightness(1.05);box-shadow:0 12px 30px rgba(29,219,128,.32),inset 0 1px 0 rgba(255,255,255,.3) !important}
+.mbtn-full:active,.mbtn-ok:active{transform:scale(.975)}
+.mbtn-full.premium-danger{
+  background:linear-gradient(135deg,#ff5d7d 0%,#ff416c 45%,#ec2c4f 100%) !important;
+  box-shadow:0 10px 26px rgba(255,65,108,.26),inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+.mbtn-cancel{background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.1) !important;color:var(--txt2) !important}
+.mbtn-cancel:hover{color:var(--txt) !important;background:rgba(255,255,255,.09) !important}
+.btn-pick-ok,.btn-pick-cancel{
+  background:linear-gradient(135deg,#26e891,#12bd6d) !important;color:#04150d !important;font-weight:800 !important;
+  box-shadow:0 10px 24px rgba(29,219,128,.22),inset 0 1px 0 rgba(255,255,255,.28) !important;border:none !important;
+}
+.btn-pick-cancel{background:rgba(255,255,255,.06) !important;color:var(--txt2) !important;box-shadow:none !important;border:1px solid rgba(255,255,255,.1) !important}
+/* ── tight, clean inner spacing (no wasted space) ── */
+.modal-overlay .m-icon{width:56px;height:56px;font-size:22px;margin:0 auto 12px}
+.modal-overlay .m-title{font-size:17.5px;margin-bottom:6px}
+.modal-overlay .m-msg{font-size:13px;margin-bottom:16px;line-height:1.5}
+.modal-overlay .conf-title,.modal-overlay .ld-title{font-size:17.5px;margin-bottom:14px}
+.modal-overlay .conf-row,.modal-overlay .ld-row{margin-bottom:0;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.modal-overlay .conf-row:last-of-type,.modal-overlay .ld-row.total{border-bottom:none}
+.modal-overlay .ld-row.total{margin-top:2px;padding-top:12px;border-top:1px solid rgba(29,219,128,.22);border-bottom:none}
+.modal-overlay .mbtn-full{height:46px;border-radius:14px;font-size:14.5px;margin-top:16px}
+.modal-overlay .mc.pp > .mbtn-full:last-child{margin-bottom:4px}
+.modal-overlay .mc.pp > .m-acts:last-child{margin-bottom:4px}
+.modal-overlay .mbtn-cancel{padding:0}
+.modal-overlay .notif-item .notif-content h4{line-height:1.35}
+.modal-overlay .notif-item .notif-content p{line-height:1.5}
+.modal-overlay .mbtn{height:46px;border-radius:14px;font-size:14.5px}
+.modal-overlay .m-acts{margin-top:18px}
+.modal-overlay .detail-row{padding:11px 0}
+.modal-overlay .notif-list{max-height:min(58vh,430px);gap:10px;padding-right:2px}
+.modal-overlay .notif-item{padding:13px 14px;border-radius:13px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.06)}
+.modal-overlay .notif-item.unread{border-left:3px solid var(--p);background:rgba(29,219,128,.045)}
+.modal-overlay .notif-content h4{font-size:13.5px;margin-bottom:3px}
+.modal-overlay .notif-content p{font-size:11.5px;margin-bottom:5px}
+.modal-overlay .calc-row{padding:9px 0;font-size:13.5px}
+.modal-overlay .rep-schedule{max-height:min(42vh,300px);border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+/* bottom sheets: same accent, sticky close */
+/* bottom sheets share the same premium accent */
+.modal-overlay .picker-card,
+.bottom-sheet{
+  border-top:1px solid rgba(29,219,128,.28) !important;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(29,219,128,.12), rgba(29,219,128,0) 60%),
+    linear-gradient(160deg,#12233d,#0b1526) !important;
+  box-shadow:0 -22px 60px rgba(0,0,0,.8),0 0 34px rgba(29,219,128,.12) !important;
+}
+.picker-card > .popup-close,
+.bottom-sheet > .popup-close{position:absolute;top:14px;right:16px;float:none;margin:0}
+/* Referral popup: full app width, no scroll, English, close in corner */
+#referModal{padding:8px}
+#referModal .refer-card{max-width:none;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;gap:0;max-height:min(94dvh,720px)}
+/* head/body/footer: content scrolls, close + actions stay put */
+#referModal .refer-head{flex-shrink:0;position:relative;padding:16px 18px 0;text-align:center}
+#referModal .refer-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:0 18px 4px;scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent}
+#referModal .refer-body::-webkit-scrollbar{width:5px}
+#referModal .refer-body::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#referModal .refer-body::-webkit-scrollbar-track{background:transparent}
+#referModal .refer-card > .popup-close{top:14px;right:14px}
+#referModal .m-icon{width:44px;height:44px;font-size:18px;margin:0 auto 8px}
+#referModal .m-title{font-size:17px;margin-bottom:4px}
+#referModal .m-msg{font-size:12px;margin-bottom:12px;line-height:1.4}
+#referModal .ref-stats{display:flex;gap:10px;margin-bottom:10px}
+#referModal .ref-stat{flex:1;background:var(--bg2);padding:8px;border-radius:12px;text-align:center;border:1px solid var(--bord)}
+#referModal .ref-stat.success{background:rgba(29,219,128,.1);border-color:rgba(29,219,128,.2)}
+#referModal .ref-stat p{font-size:9.5px;text-transform:uppercase;color:var(--txt2);margin-bottom:1px;letter-spacing:.4px}
+#referModal .ref-stat.success p{color:var(--p)}
+#referModal .ref-stat h3{font-size:16px;color:var(--txt);line-height:1.2}
+#referModal .ref-stat.success h3{color:var(--p)}
+#referModal .ref-status{background:var(--bg2);border:1px solid var(--bord);border-radius:14px;padding:11px 12px;margin-bottom:10px}
+#referModal .ref-status-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+#referModal .ref-status-top span:first-child{font-size:12px;font-weight:700;color:var(--txt)}
+#referModal .ref-status-top span:last-child{font-size:12.5px;font-weight:800;color:var(--orange)}
+#referModal .ref-progress{width:100%;height:7px;background:rgba(255,255,255,.1);border-radius:5px;overflow:hidden}
+#referModal .ref-progress i{display:block;height:100%;width:0%;border-radius:5px;background:linear-gradient(90deg,#ff8c42,#ff4b2b);transition:width .5s}
+#referModal .ref-progress-text{font-size:10.5px;color:var(--txt2);text-align:center;margin-top:6px}
+#referModal .ref-tiers{display:flex;flex-direction:column;gap:6px;margin-top:9px;border-top:1px dashed var(--bord);padding-top:9px}
+#referModal .ref-tier{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);padding:7px 9px;border-radius:10px;border:1px solid transparent;transition:.3s;white-space:nowrap;overflow:hidden}
+#referModal .ref-tier .em{font-size:16px;flex-shrink:0;line-height:1}
+#referModal .ref-tier .tx{flex:1;min-width:0;font-size:11.5px;font-weight:700;color:var(--txt);overflow:hidden;text-overflow:ellipsis}
+#referModal .ref-tier .tx b{font-weight:800}
+#referModal .ref-tier .tx em{font-style:normal;font-weight:600}
+#referModal .ref-tier .lk{color:var(--txt2);font-size:11px;flex-shrink:0}
+#referModal .refer-foot{display:flex;gap:8px;flex-shrink:0;padding:14px 18px 22px;border-top:1px solid rgba(29,219,128,.14);background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55))}
+#referModal .refer-foot .mbtn{height:44px;font-size:13.5px;border-radius:13px;margin:0}
+@media (max-width:360px){
+  #referModal .ref-tier .tx{font-size:10.5px}
+  #referModal .m-title{font-size:16px}
+}
 .premium-cs-item{display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.03);padding:15px;border-radius:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);transition:.2s}
 .premium-cs-icon{width:40px;height:40px;border-radius:12px;display:flex;justify-content:center;align-items:center;font-size:18px}
 .detail-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--bord)}
@@ -556,7 +808,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay premium-popup" id="fomoModal">
-  <div class="mc" style="max-width: 360px; text-align: center;">
+  <div class="mc pp" style="max-width: 360px; text-align: center;">
+    <button class="popup-close" aria-label="Close" onclick="closeFomoModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="fomo-fire-icon">🔥</div>
     <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
     <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">প্রথম ৫০ জন ইউজারের মধ্যে থাকলে আপনার লোনের <b style="color:var(--orange);">১ম মাসের কিস্তি সম্পূর্ণ ফ্রি!</b> <br><span style="font-size: 11px; color: var(--p);">(১ম মাসের কিস্তি কোম্পানিই বহন করবে, ২য় মাস থেকে পরিশোধ শুরু)</span></p>
@@ -565,13 +818,13 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       <div class="fomo-progress-track"><div class="fomo-progress-fill" style="width: 76%;"></div></div>
       <p class="fomo-warning"><i class="fa-solid fa-triangle-exclamation"></i> মাত্র ১২টি অফার বাকি!</p>
     </div>
-    <button class="mbtn-full" style="background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255,75,43,0.4); font-size: 16px; margin-bottom: 12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
-    <button class="mbtn-cancel" style="width: 100%; border: none; background: transparent; color: var(--txt2);" onclick="closeFomoModal()">আমি পরে দেখব</button>
+    <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
   </div>
 </div>
 
 <div class="modal-overlay" id="globalModal">
-  <div class="mc" id="modal-password" style="display:none;">
+  <div class="mc pp" id="modal-password" style="display:none;">
+    <button class="popup-close" aria-label="Close" onclick="closeGlobalModal(true)"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-lock"><i class="fa-solid fa-lock"></i></div>
     <div class="m-title">Welcome Back!</div>
     <div class="m-msg">Enter your password to continue securely.</div>
@@ -579,38 +832,41 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <span class="forgot-link" onclick="contactSupportForForgot()">Forgot Password? <strong>Contact Support</strong></span>
     <div class="m-acts"><button class="mbtn mbtn-cancel" onclick="closeGlobalModal(true)">Cancel</button><button class="mbtn mbtn-ok" onclick="submitLoginPassword()">Login</button></div>
   </div>
-  <div class="mc" id="modal-alert" style="display:none;">
+  <div class="mc pp" id="modal-alert" style="display:none;">
+    <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon" id="m-icon-wrap"><i id="m-icon" class="fa-solid fa-circle-info"></i></div>
     <div class="m-title" id="m-title"></div>
     <div class="m-msg" id="m-msg"></div>
-    <button class="mbtn-full" onclick="closeGlobalModal()">OK</button>
   </div>
-  <div class="mc" id="modal-error" style="display:none;">
+  <div class="mc pp" id="modal-error" style="display:none;">
+    <button class="popup-close" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-warn"><i class="fa-solid fa-circle-exclamation"></i></div>
     <div class="m-title" id="err-title"></div>
     <div class="m-err-msg" id="err-msg"></div>
-    <button class="mbtn-full" onclick="closeGlobalModal()">Got it</button>
   </div>
 </div>
 
 <div class="modal-overlay" id="pickerModal">
   <div class="picker-card">
-    <div class="picker-hdr" id="pickerTitle">Select Option</div>
+    <div class="picker-hdr" id="pickerTitle" style="padding-right:34px;">Select Option</div>
+    <button class="popup-close" aria-label="Close" onclick="closePicker()"><i class="fa-solid fa-xmark"></i></button>
     <div class="pick-list" id="pickerList"></div>
-    <div class="pick-acts"><button class="btn-pick-cancel" onclick="closePicker()">Cancel</button><button class="btn-pick-ok" onclick="confirmPicker()">Confirm</button></div>
+    <div class="pick-acts"><button class="btn-pick-ok" onclick="confirmPicker()">Confirm</button></div>
   </div>
 </div>
 
 <div class="modal-overlay" id="dobModal">
   <div class="picker-card">
-    <div class="picker-hdr">Date of Birth</div>
+    <div class="picker-hdr" style="padding-right:34px;">Date of Birth</div>
+    <button class="popup-close" aria-label="Close" onclick="closeDob()"><i class="fa-solid fa-xmark"></i></button>
     <div class="dob-cols"><div class="dob-col" id="yearCol"></div><div class="dob-col" id="monthCol"></div><div class="dob-col" id="dayCol"></div></div>
-    <div class="pick-acts"><button class="btn-pick-cancel" onclick="closeDob()">Cancel</button><button class="btn-pick-ok" onclick="confirmDob()">Confirm</button></div>
+    <div class="pick-acts"><button class="btn-pick-ok" onclick="confirmDob()">Confirm</button></div>
   </div>
 </div>
 
-<div class="modal-overlay" id="confirmModal">
+<div class="modal-overlay premium-popup" id="confirmModal">
   <div class="conf-card">
+    <button class="popup-close" aria-label="Close" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="conf-title">Confirm Your Information</div>
     <div class="conf-warn"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>Accurate info greatly increases approval chances</div>
     <div class="conf-row"><span class="conf-lbl">Full Name</span><span class="conf-val" id="cName">-</span></div>
@@ -624,8 +880,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 </div>
 
 <div class="modal-overlay" id="loanDetailsModal">
-  <div class="ld-card">
-    <div class="ld-title">Loan Details</div>
+  <div class="ld-card pp">
+    <div class="pp-bar"><span class="pp-bar-title">Loan Details</span><button class="popup-close" aria-label="Close" onclick="closeModal('loanDetailsModal')"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="ld-row"><span class="ld-lbl">Loan Amount</span><span class="ld-val" id="ldAmount">-</span></div>
     <div class="ld-row"><span class="ld-lbl">Term (months)</span><span class="ld-val" id="ldTerm">-</span></div>
     <div class="ld-row"><span class="ld-lbl">Annual Interest</span><span class="ld-val" id="ldInterest">-</span></div>
@@ -635,43 +891,42 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="ld-row"><span class="ld-lbl">Due Date</span><span class="ld-val" id="ldDue">-</span></div>
     <div class="ld-row"><span class="ld-lbl">You Receive</span><span class="ld-val" id="ldReceive">-</span></div>
     <div class="ld-row total"><span class="ld-lbl" style="font-weight:700;color:var(--txt)">Total Repayment</span><span class="ld-val grn" id="ldTotal">-</span></div>
-    <button class="mbtn-full" onclick="closeModal('loanDetailsModal')" style="margin-top:18px;">OK</button>
   </div>
 </div>
 
 <div class="modal-overlay" id="repaymentModal">
-  <div class="ld-card">
-    <div class="ld-title">Repayment Schedule</div>
+  <div class="ld-card pp">
+    <div class="pp-bar"><span class="pp-bar-title">Repayment Schedule</span><button class="popup-close" aria-label="Close" onclick="closeModal('repaymentModal')"><i class="fa-solid fa-xmark"></i></button></div>
     <p style="text-align:center;font-size:13px;color:var(--txt2);margin-bottom:10px;">Your monthly EMI will be approximately <strong id="emiAmount" style="color:var(--p);"></strong></p>
     <div class="rep-schedule" id="repScheduleList"></div>
-    <button class="mbtn-full" onclick="closeModal('repaymentModal')" style="margin-top:18px;">Close</button>
   </div>
 </div>
 
 <div class="sheet-back" id="nidSheetBack" onclick="closeNidSheet()"></div>
 <div class="bottom-sheet" id="nidSheet">
   <div class="sheet-handle"></div>
-  <div class="sheet-title" id="nidSheetTitle">Upload Front Side</div>
+    <button class="popup-close" aria-label="Close" onclick="closeNidSheet()"><i class="fa-solid fa-xmark"></i></button>
+  <div class="sheet-title" id="nidSheetTitle" style="padding-right:34px;">Upload Front Side</div>
   <div class="sheet-sub">Choose how to add your ID photo</div>
   <div class="sheet-opts">
     <div class="sheet-opt" onclick="triggerNidCapture('camera')"><div class="sheet-opt-ic" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fa-solid fa-camera"></i></div><div class="sheet-opt-info"><div class="sheet-opt-title">Take Photo</div><div class="sheet-opt-sub">Open camera to capture</div></div><i class="fa-solid fa-chevron-right sheet-opt-arr"></i></div>
     <div class="sheet-opt" onclick="triggerNidCapture('gallery')"><div class="sheet-opt-ic" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"><i class="fa-solid fa-images"></i></div><div class="sheet-opt-info"><div class="sheet-opt-title">Choose from Gallery</div><div class="sheet-opt-sub">Select an existing photo</div></div><i class="fa-solid fa-chevron-right sheet-opt-arr"></i></div>
   </div>
-  <button class="sheet-cancel" onclick="closeNidSheet()">Cancel</button>
 </div>
 
 <input type="file" accept="image/*" id="nidFrontInput" style="display:none" onchange="handleFileUpload('nidFrontInput','boxNidFront')">
 <input type="file" accept="image/*" id="nidBackInput" style="display:none" onchange="handleFileUpload('nidBackInput','boxNidBack')">
 
 <div class="modal-overlay premium-popup" id="notifModal">
-  <div class="mc" style="max-width: 380px;">
-    <div class="m-title" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">Notifications <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--txt2); font-size:18px;" onclick="closeModal('notifModal')"></i></div>
+  <div class="mc pp" style="max-width: 380px;">
+    <div class="pp-bar"><span class="pp-bar-title">Notifications</span><button class="popup-close" aria-label="Close" onclick="closeModal('notifModal')"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="notif-list" id="notifListContainer"></div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="calcModal">
-  <div class="mc">
+  <div class="mc pp">
+    <button class="popup-close" aria-label="Close" onclick="closeModal('calcModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-title">Loan Calculator</div>
     <p class="m-msg">Estimate your monthly repayment easily.</p>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Loan Amount (BDT)</label>
@@ -684,59 +939,64 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="calc-row"><span>Interest (<span id="calcRateLabel">18</span>% p.a)</span><span id="calcInterest">৳ 900</span></div>
     <div class="calc-row"><span>Processing Fee</span><span id="calcFee">৳ 400</span></div>
     <div class="calc-row" style="border-top:1px solid var(--bord); margin-top:5px; padding-top:10px; font-weight:800; color:var(--txt); font-size:16px;"><span>Total Repayment</span><span id="calcTotal" style="color:var(--p);">৳ 11,300</span></div>
-    <button class="mbtn-full" style="margin-top:20px;" onclick="closeModal('calcModal')">Got it</button>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="referModal">
-  <div class="mc" style="max-height: 90dvh; overflow-y: auto;">
-    <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
-    <div class="m-title">Refer &amp; Win Big!</div>
-    <p class="m-msg">বন্ধুদের রেফার করে জিতুন বিশাল সব পুরস্কার!</p>
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-      <div style="flex:1; background:var(--bg2); padding:12px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase;">Total Refers</p><h3 style="font-size:18px; color:var(--txt);" id="refTotalCount">0</h3></div>
-      <div style="flex:1; background:rgba(29,219,128,.1); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase;">Success</p><h3 style="font-size:18px; color:var(--p);" id="refSuccessCount">0</h3></div>
+  <div class="mc refer-card">
+    <div class="refer-head">
+      <button class="popup-close" aria-label="Close" onclick="closeModal('referModal')"><i class="fa-solid fa-xmark"></i></button>
+      <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
+      <div class="m-title">Refer &amp; Win Big!</div>
+      <p class="m-msg">Refer your friends and unlock big rewards.</p>
     </div>
-    <div style="background:var(--bg2); border:1px solid var(--bord); border-radius:14px; padding:15px; margin-bottom:15px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:13px; font-weight:700; color:var(--txt);">Current Status:</span><span style="font-size:14px; font-weight:800; color:var(--orange);" id="currentTierName">Starter</span></div>
-      <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:8px;"><div id="tierProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff8c42, #ff4b2b); border-radius:5px; transition: width 0.5s;"></div></div>
-      <p style="font-size:11px; color:var(--txt2); text-align:center;" id="tierProgressText">পরবর্তী পুরস্কার পেতে আরও রেফার করুন!</p>
-      <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px; border-top:1px dashed var(--bord); padding-top:15px;">
-        <div id="tierRow20" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥉</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">২০ জন রেফারেল</div><div style="font-size:11px; color:var(--orange);">৳১০,০০০ এর নিচে লোনে ১ম কিস্তি মাফ!</div></div><i class="fa-solid fa-lock" id="tierLock20" style="color:var(--txt2); font-size:12px;"></i></div>
-        <div id="tierRow50" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥈</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">৫০ জন রেফারেল</div><div style="font-size:11px; color:var(--blue);">৳৫,০০০ ফ্রি লোন! (শোধ করতে হবে না)</div></div><i class="fa-solid fa-lock" id="tierLock50" style="color:var(--txt2); font-size:12px;"></i></div>
-        <div id="tierRow100" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥇</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">১০০ জন রেফারেল</div><div style="font-size:11px; color:var(--red);">ইনস্ট্যান্ট ৳৫০,০০০ জ্যাকপট!</div></div><i class="fa-solid fa-lock" id="tierLock100" style="color:var(--txt2); font-size:12px;"></i></div>
+    <div class="refer-body">
+    <div class="ref-stats">
+      <div class="ref-stat"><p>Total Refers</p><h3 id="refTotalCount">0</h3></div>
+      <div class="ref-stat success"><p>Success</p><h3 id="refSuccessCount">0</h3></div>
+    </div>
+    <div class="ref-status">
+      <div class="ref-status-top"><span>Current Status:</span><span id="currentTierName">Starter</span></div>
+      <div class="ref-progress"><i id="tierProgressBar"></i></div>
+      <p class="ref-progress-text" id="tierProgressText">Refer more friends to unlock your next reward.</p>
+      <div class="ref-tiers">
+        <div class="ref-tier" id="tierRow20"><span class="em">&#129353;</span><span class="tx">20 Referrals &mdash; <em>1st installment waived on loans under &#2547;10,000</em></span><i class="fa-solid fa-lock lk" id="tierLock20"></i></div>
+        <div class="ref-tier" id="tierRow50"><span class="em">&#129352;</span><span class="tx">50 Referrals &mdash; <em>&#2547;5,000 free loan (no repayment)</em></span><i class="fa-solid fa-lock lk" id="tierLock50"></i></div>
+        <div class="ref-tier" id="tierRow100"><span class="em">&#129351;</span><span class="tx">100 Referrals &mdash; <em>instant &#2547;50,000 jackpot</em></span><i class="fa-solid fa-lock lk" id="tierLock100"></i></div>
       </div>
     </div>
-    <div style="background:var(--bg2); border-radius:14px; padding:15px; border:1px dashed var(--p); text-align:center;"><p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Referral Link</p><div style="font-size:12px; color:var(--p); word-break:break-all; font-weight:700;" id="refLinkDisplay">Loading...</div></div>
-    <div style="display:flex; gap:10px; margin-top:15px;"><button class="mbtn mbtn-cancel" style="flex:1; background:var(--surf2);" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button><button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button></div>
-    <button class="mbtn-cancel" style="width:100%; margin-top:10px; border:none; background:transparent; color:var(--txt2);" onclick="closeModal('referModal')">Close</button>
+    </div>
+    <div class="refer-foot">
+      <button class="mbtn mbtn-cancel" style="flex:1;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy Link</button>
+      <button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button>
+    </div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="historyModal">
-  <div class="mc" style="max-width: 380px;">
-    <div class="m-title" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">Transaction History <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--txt2); font-size:18px;" onclick="closeModal('historyModal')"></i></div>
-    <div class="notif-list" id="historyListContainer" style="max-height: 60vh;"></div>
+  <div class="mc pp" style="max-width: 380px;">
+    <div class="pp-bar"><span class="pp-bar-title">Transaction History</span><button class="popup-close" aria-label="Close" onclick="closeModal('historyModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="notif-list" id="historyListContainer"></div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="appStatusModal">
-  <div class="mc">
-    <div class="m-title" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">Application Details <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--txt2); font-size:18px;" onclick="closeModal('appStatusModal')"></i></div>
-    <div id="statusModalContent" style="margin-top:20px; text-align:left;"></div>
+  <div class="mc pp">
+    <div class="pp-bar"><span class="pp-bar-title">Application Details</span><button class="popup-close" aria-label="Close" onclick="closeModal('appStatusModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div id="statusModalContent" style="text-align:left;"></div>
   </div>
 </div>
 
 <div class="modal-overlay premium-popup" id="profileModal">
-  <div class="mc">
+  <div class="mc pp">
+    <button class="popup-close" aria-label="Close" onclick="closeModal('profileModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon m-ic-suc"><i class="fa-solid fa-user"></i></div>
     <div class="m-title">My Profile</div>
     <div style="background:var(--bg2); border-radius:14px; padding:15px; margin:15px 0; border:1px solid var(--bord);">
       <div class="detail-row"><div class="detail-lbl">Phone Number</div><div class="detail-val" id="profPhone">-</div></div>
       <div class="detail-row"><div class="detail-lbl">Account Status</div><div class="detail-val" style="color:var(--p);">Active</div></div>
     </div>
-    <button class="mbtn-full" style="background:var(--red); color:#fff; box-shadow:none; margin-bottom:10px;" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-    <button class="mbtn-cancel" style="width:100%;" onclick="closeModal('profileModal')">Close</button>
+    <button class="mbtn-full premium-danger" style="margin-bottom:10px;" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
   </div>
 </div>
 
@@ -2053,7 +2313,7 @@ function openReferModal() {
   const u = _getUser();
   if(!u || !u.phone) { showAlert('Login Required', 'Please login to access the referral program.', 'error'); return; }
   const link = `${BASE_URL}?ref=${u.phone}`;
-  document.getElementById('refLinkDisplay').innerText = link;
+  window._refLinkCache = link;
   document.getElementById('referModal').classList.add('on');
   if(typeof window.loadReferralStats === 'function') window.loadReferralStats(u.phone);
 }
@@ -2079,23 +2339,25 @@ function openAppStatusModal() {
   let statusHtml = '', btnHtml = '';
   if(a.status === 'Pending Fee Payment') {
     statusHtml = '<span style="color:var(--orange); font-weight:700;">Fee Payment Pending</span>';
-    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); goToFeePayment()">Pay Fee Now</button>`;
+    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); goToFeePayment()">Pay Fee Now</button>`;
   } else if(a.status === 'TrxID Submitted') {
     statusHtml = '<span style="color:var(--blue); font-weight:700;">Verification Pending ⏳</span>';
-    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); nav('screen-waiting')">View Verification Status</button>`;
+    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); nav('screen-waiting')">View Verification Status</button>`;
   } else if(a.status === 'Approved' || a.status === 'Disbursed') {
     statusHtml = '<span style="color:var(--p); font-weight:700;">Approved &amp; Active 💸</span>';
-    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); _populateApprovedScreen(window._latestApp); nav('screen-approved')">View Loan Details</button>`;
+    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); _populateApprovedScreen(window._latestApp); nav('screen-approved')">View Loan Details</button>`;
   } else if(a.status === 'Rejected') {
     statusHtml = '<span style="color:var(--red); font-weight:700;">Rejected ❌</span>';
-    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); startNewApplication()">Apply Again</button>`;
+    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); startNewApplication()">Apply Again</button>`;
   }
   content.innerHTML = `
-    <div class="detail-row"><div class="detail-lbl">Loan Amount</div><div class="detail-val color-p fw8">৳ ${a.loanAmount || '-'}</div></div>
-    <div class="detail-row"><div class="detail-lbl">Term</div><div class="detail-val">${a.term || '-'} Months</div></div>
-    <div class="detail-row"><div class="detail-lbl">Status</div><div class="detail-val">${statusHtml}</div></div>
-    <div class="detail-row"><div class="detail-lbl">Applied On</div><div class="detail-val">${a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '-'}</div></div>
-    ${btnHtml}
+    <div class="pp-body">
+      <div class="detail-row"><div class="detail-lbl">Loan Amount</div><div class="detail-val color-p fw8">৳ ${a.loanAmount || '-'}</div></div>
+      <div class="detail-row"><div class="detail-lbl">Term</div><div class="detail-val">${a.term || '-'} Months</div></div>
+      <div class="detail-row"><div class="detail-lbl">Status</div><div class="detail-val">${statusHtml}</div></div>
+      <div class="detail-row"><div class="detail-lbl">Applied On</div><div class="detail-val">${a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '-'}</div></div>
+    </div>
+    ${btnHtml ? `<div class="pp-foot">${btnHtml}</div>` : ''}
   `;
   document.getElementById('appStatusModal').classList.add('on');
 }
@@ -2806,16 +3068,16 @@ window.loadReferralStats = async function(phone) {
     let tierName = 'Starter', pct = 0, txt = '';
     if (activeCount >= 100) {
       tierName = 'Jackpot Winner 🏆'; pct = 100;
-      txt = 'অভিনন্দন! আপনি ৫০,০০০ টাকার জ্যাকপট জিতেছেন!';
+      txt = 'Congratulations! You unlocked the ৳50,000 jackpot!';
     } else if (activeCount >= 50) {
       tierName = 'Silver 🥈'; pct = (activeCount / 100) * 100;
-      txt = `জ্যাকপট পেতে আরও ${100 - activeCount} জন রেফার করুন!`;
+      txt = `Refer ${100 - activeCount} more friend${100 - activeCount === 1 ? '' : 's'} to win the jackpot!`;
     } else if (activeCount >= 20) {
       tierName = 'Bronze 🥉'; pct = (activeCount / 50) * 100;
-      txt = `ফ্রি লোন পেতে আরও ${50 - activeCount} জন রেফার করুন!`;
+      txt = `Refer ${50 - activeCount} more friend${50 - activeCount === 1 ? '' : 's'} to unlock the free loan!`;
     } else {
       tierName = 'Starter'; pct = (activeCount / 20) * 100;
-      txt = `১ম কিস্তি মাফ পেতে আরও ${20 - activeCount} জন রেফার করুন!`;
+      txt = `Refer ${20 - activeCount} more friend${20 - activeCount === 1 ? '' : 's'} to waive your 1st installment!`;
     }
     const ctEl = document.getElementById('currentTierName'); if(ctEl) ctEl.innerText = tierName;
     const pbEl = document.getElementById('tierProgressBar'); if(pbEl) pbEl.style.width = pct + '%';
