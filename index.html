@@ -1575,6 +1575,9 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .bal-box.active .bal-tick{background:var(--p);border-color:var(--p);color:#04150d}
 .bal-note{font-size:10px;color:var(--txt2);line-height:1.5;margin-top:8px}
 /* copy-able payment number */
+.pay-ms-chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--txt2);background:rgba(29,219,128,.07);border:1px solid rgba(29,219,128,.2);border-radius:8px;padding:6px 10px;margin-bottom:10px}
+.pay-ms-chip i{color:var(--p);font-size:10px}
+.pay-ms-chip strong{color:var(--p);font-weight:800}
 .pay-num-wrap{
   display:flex;align-items:center;gap:10px;margin:12px 0;padding:11px 12px;
   background:var(--bg2);border:1px solid rgba(29,219,128,.18);border-radius:12px;
@@ -2352,7 +2355,6 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   </div>
   <div class="pay-instr">
     <h4><i class="fa-solid fa-circle-info"></i> Payment Instructions</h4>
-    <p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> using <strong style="color:var(--txt)" id="payMethodLine">Send Money</strong> to:</p>
     <div id="payStepsList">
       <div class="pay-num-wrap">
         <div class="pay-num" id="adminNumber">-</div>
@@ -3558,11 +3560,6 @@ function goToFeePayment(){
   if(collNum) renderPaySteps(shownW);
   else { const an=document.getElementById('adminNumber'); if(an) an.innerText='-'; }
   if(!collNum) selPayMethod = '';
-  const ml = document.getElementById('payMethodLine');
-  if(ml){
-    const shown = activeW || (window._wallets && window._wallets[0]) || null;
-    ml.innerText = shown ? payMethodLabel(shown) : 'Send Money';
-  }
   applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
   nav('screen-fee-payment');
 }
@@ -4203,8 +4200,7 @@ function payMethodLabel(w){
 function _selPayDyn(w,ui=true){
   selPayMethod=w.name; window._activeWallet=w;
   if(ui){ document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); }
-  const ml=document.getElementById('payMethodLine'); if(ml) ml.innerText=payMethodLabel(w);
-  renderPaySteps(w);
+  renderPaySteps(w);   // renders the whole instruction block (method line included)
   // a wallet-specific note wins over the global fee-payment note
   if(w && w.note && String(w.note).trim()) applyFeePaymentNote(w.note, w.name + ' note');
   else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
@@ -4214,42 +4210,49 @@ function _selPayDyn(w,ui=true){
 function renderPaySteps(w){
   const box=document.getElementById('payStepsList');
   if(!box) return;
-  const steps=(w && Array.isArray(w.instructions) ? w.instructions : []).filter(x=>String(x).trim());
-  if(!steps.length){
-    const num0 = walletCollectionNumber(w) || '-';
-    box.innerHTML = `<div class="pay-num-wrap">
-        <div class="pay-num" id="adminNumber">${num0}</div>
+  const num = walletCollectionNumber(w) || '-';
+  const method = payMethodLabel(w);
+  const NUMBLOCK = `<div class="pay-num-wrap">
+        <div class="pay-num" id="adminNumber">${num}</div>
         <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
-      </div>
+      </div>`;
+  const METHODTAG = `<strong style="color:var(--txt)" id="payMethodLine">${method}</strong>`;
+  const steps=(w && Array.isArray(w.instructions) ? w.instructions : []).filter(x=>String(x).trim());
+
+  // ── no custom steps: default 3 steps, using this wallet's own payment method ──
+  if(!steps.length){
+    box.innerHTML = `<p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> using ${METHODTAG} to:</p>
+      ${NUMBLOCK}
       <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.</p>
       <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>`;
     return;
   }
-  const num = walletCollectionNumber(w) || '-';
+
+  // ── admin-written steps: {method} / {amount} / {number} become live widgets ──
   let n = 0;
   const body = steps.map((raw)=>{
-    let t = String(raw).replace(/[<>]/g,'');
-    // the number placeholder becomes the real, copyable number block
-    const hasNum = /\{number\}/i.test(t);
-    t = t.replace(/\{number\}/gi, '');
-    t = t.replace(/\{amount\}/gi, '<strong style="color:var(--txt)">Total Fee</strong>');
-    const numBlock = hasNum ? `<div class="pay-num-wrap">
-        <div class="pay-num" id="adminNumber">${num}</div>
-        <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
-      </div>` : '';
-    const label = t.trim().replace(/[:\-–]\s*$/,'').trim();
-    // a line that only holds the number gets no number prefix — the block speaks for itself
-    if(!label) return numBlock;
+    const src = String(raw).replace(/[<>]/g,'');
+    const hasNum = /\{number\}/i.test(src);
+    let label = src
+      .replace(/\{method\}/gi,'@@METHOD@@')
+      .replace(/\{amount\}/gi,'@@AMOUNT@@')
+      .replace(/\{number\}/gi,'')
+      .replace(/[:\-–]\s*$/,'').trim();
+    if(!label) return NUMBLOCK;                     // a line holding only {number}
+    label = label.replace(/@@METHOD@@/g, METHODTAG)
+                 .replace(/@@AMOUNT@@/g, '<strong style="color:var(--txt)">Total Fee</strong>');
     n++;
-    return `<p>${n}. ${label}</p>` + numBlock;
+    return `<p>${n}. ${label}</p>` + (hasNum ? NUMBLOCK : '');
   }).join('');
-  box.innerHTML = body;
-  if(!document.getElementById('adminNumber')){
-    box.insertAdjacentHTML('beforeend', `<div class="pay-num-wrap">
-        <div class="pay-num" id="adminNumber">${num}</div>
-        <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
-      </div>`);
-  }
+
+  // the admin did not mention the method anywhere → show it as a small chip on top
+  const mentionsMethod = steps.some(x=>/\{method\}/i.test(String(x))) || steps.some(x=>new RegExp(method,'i').test(String(x)));
+  const chip = (!mentionsMethod && ((w && w.payMethod)||'').trim())
+    ? `<div class="pay-ms-chip"><i class="fa-solid fa-bolt"></i>Use <strong>${method}</strong> to send the fee</div>`
+    : '';
+
+  box.innerHTML = chip + body;
+  if(!document.getElementById('adminNumber')) box.insertAdjacentHTML('beforeend', NUMBLOCK);
 }
 
 function applyFeePaymentNote(note, title){

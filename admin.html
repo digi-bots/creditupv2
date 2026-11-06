@@ -825,7 +825,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg full">
         <label>Payment steps for this wallet <span style="color:var(--txt2);font-weight:500">(optional · one step per line, shown on the fee page)</span></label>
         <textarea id="wInstr" rows="4" maxlength="600" placeholder="Open Bkash and choose Send Money&#10;Enter the number shown above&#10;Send the exact Total Fee amount&#10;Copy the TrxID from the SMS"></textarea>
-        <div class="hint">Tips: write <strong style="color:var(--p)">{number}</strong> where the wallet number should appear and <strong style="color:var(--p)">{amount}</strong> for the fee amount. Leave empty to use the default steps.</div>
+        <div class="hint">Placeholders: <strong style="color:var(--p)">{method}</strong> → the pay method you selected above, <strong style="color:var(--p)">{number}</strong> → the fee collection number (with a copy button), <strong style="color:var(--p)">{amount}</strong> → the Total Fee. Leave empty to use the default 3 steps — they already show the selected method.</div>
       </div>
     </div>
     <div class="wsec-h"><i class="fa-solid fa-arrow-up-from-bracket"></i>Loan disbursement <em>where you send the loan money</em></div>
