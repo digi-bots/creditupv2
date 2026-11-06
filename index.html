@@ -482,10 +482,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .modal-overlay .mc::-webkit-scrollbar-track,
 .modal-overlay .notif-list::-webkit-scrollbar-track,
 .modal-overlay .rep-schedule::-webkit-scrollbar-track{background:transparent}
-/* block flow so the sticky close button + sticky header work reliably */
-.modal-overlay .mc,
-.modal-overlay .conf-card,
-.modal-overlay .ld-card{display:block !important}
 /* single clean header (no duplicated sticky header = no ghost text) */
 .modal-overlay .mc.pp > .m-title,
 .modal-overlay .mc.pp > .ld-title,
@@ -554,8 +550,9 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .modal-overlay .m-icon{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 10px 26px rgba(0,0,0,.4),0 0 24px rgba(29,219,128,.1)}
 /* ── sticky corner close button ── */
 .popup-close{
-  position:sticky;top:0;float:right;
-  margin:-4px -6px 0 12px;
+  position:sticky;top:12px;
+  align-self:flex-end;
+  margin:-4px -6px -34px 12px;
   width:32px;height:32px;flex:0 0 32px;
   background:rgba(255,255,255,.07);
   border:1px solid rgba(255,255,255,.13);
@@ -570,6 +567,9 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .popup-close:active{transform:scale(.92)}
 /* status popup + forms: close pinned in the corner, title gets out of its way */
 .modal-overlay .mc.pp > .m-title{padding-top:18px}
+/* global modal holds 3 panels; only one is shown at a time and always full width */
+#globalModal{flex-wrap:wrap}
+#globalModal > .mc{flex:0 0 auto;width:100%;max-width:340px;align-self:center}
 .modal-overlay .mc.pp[style*="text-align: center"] > .m-title{padding-top:8px}
 /* support popup keeps the same look, just anchored in its corner */
 .cs-close-btn{
