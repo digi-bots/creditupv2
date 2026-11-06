@@ -987,11 +987,61 @@ function renderAP(){
 function toggleAll(cb){ document.querySelectorAll('.ack').forEach(c=>{c.checked=cb.checked; if(cb.checked)_selApps.add(c.value); else _selApps.delete(c.value);}); }
 function togAck(cb){ if(cb.checked)_selApps.add(cb.value); else _selApps.delete(cb.value); }
 function openBulk(){ document.getElementById('bulkCnt').innerText=`${_selApps.size} selected`; openMo('moBulk'); }
+
+/* ═══════════════════════════════════════════════════════
+   LOAN APPROVAL → CREDIT BALANCE + NOTIFY USER
+   This is the single shared helper used by every place an
+   application gets set to "Approved". It guards against
+   double-crediting with the `balanceCredited` flag stored
+   on the application document itself.
+   ═══════════════════════════════════════════════════════ */
+async function creditLoanToUser(app) {
+  if (!app || !app.uid) return false;
+  // Already credited once before? Never credit twice.
+  if (app.balanceCredited === true) return false;
+
+  try {
+    const users = await _get('users');
+    const user = users.find(u => u.phone === app.uid);
+    if (!user) return false;
+
+    const loanAmt = Number(String(app.loanAmount || 0).replace(/,/g, ''));
+    if (!loanAmt || loanAmt <= 0) return false;
+
+    const newBalance = (Number(user.balance) || 0) + loanAmt;
+    await window._updateDoc(user._id, 'users', { balance: newBalance });
+
+    // Mark the application as credited so re-saving/re-approving never double-credits
+    await window._updateDoc(app._id, 'applications', { balanceCredited: true, creditedAt: new Date().toISOString() });
+
+    // Notify the user — shows up via the home screen's notification bell
+    await window._addDoc('user_notifications', {
+      uid: app.uid,
+      title: 'Loan Approved! 🎉',
+      message: `Your loan of ৳${fa(loanAmt)} has been approved and added to your balance.`,
+      type: 'bonus',
+      createdAt: new Date().toISOString()
+    });
+
+    await logAct(`Loan ৳${loanAmt} credited to ${app.uid} on approval`, 'transaction', user._id);
+    return true;
+  } catch (e) {
+    console.error('creditLoanToUser:', e);
+    return false;
+  }
+}
+
 async function applyBulk(){
   const action=document.getElementById('bulkAct').value;
   if(!_selApps.size){toast('No applications selected','w');return;}
   showL(true);
-  for(const id of _selApps) await window._updateDoc(id,'applications',{status:action,updatedAt:new Date().toISOString()});
+  for(const id of _selApps) {
+    await window._updateDoc(id,'applications',{status:action,updatedAt:new Date().toISOString()});
+    if(action === 'Approved'){
+      const app = findById('applications', id);
+      if(app) await creditLoanToUser({...app, status:'Approved'});
+    }
+  }
   showL(false);
   await logAct(`Bulk ${action} on ${_selApps.size} apps`,'application','bulk');
   toast(`Bulk action applied: ${action}`); closeMo('moBulk'); loadApps();
@@ -1027,13 +1077,35 @@ async function updateAppStatus(){
   const upd={status,adminRemark:remark,updatedAt:new Date().toISOString()};
   if(adj) upd.loanAmount=adj;
   await window._updateDoc(_docId,'applications',upd);
+
+  if(status === 'Approved'){
+    const app = findById('applications', _docId);
+    if(app) await creditLoanToUser({...app, loanAmount: adj || app.loanAmount, status:'Approved'});
+  }
+
   await logAct(`App status → ${status}`,'application',_docId);
   toast(`Status: ${status}`); closeMo('moApp'); loadApps();
 }
-async function qApprove(){ if(!_docId)return; await window._updateDoc(_docId,'applications',{status:'Approved',updatedAt:new Date().toISOString()}); await logAct('App approved','application',_docId); toast('Application approved'); closeMo('moApp'); loadApps(); }
+async function qApprove(){
+  if(!_docId)return;
+  await window._updateDoc(_docId,'applications',{status:'Approved',updatedAt:new Date().toISOString()});
+  const app = findById('applications', _docId);
+  if(app) await creditLoanToUser({...app, status:'Approved'});
+  await logAct('App approved','application',_docId);
+  toast('Application approved — balance credited & user notified');
+  closeMo('moApp'); loadApps();
+}
 async function qReject(){ await window._updateDoc(_docId,'applications',{status:'Rejected',updatedAt:new Date().toISOString()}); await logAct('App rejected','application',_docId); toast('Application rejected','e'); closeMo('moApp'); loadApps(); }
 async function markDisb(){ await window._updateDoc(_docId,'applications',{status:'Disbursed',disbursedAt:new Date().toISOString()}); await logAct('Loan disbursed','application',_docId); toast('Marked Disbursed','i'); closeMo('moApp'); loadApps(); }
-async function qApproveApp(id){ _docId=id; await window._updateDoc(id,'applications',{status:'Approved',updatedAt:new Date().toISOString()}); await logAct('Quick-approved','application',id); toast('Approved'); loadApps(); }
+async function qApproveApp(id){
+  _docId=id;
+  await window._updateDoc(id,'applications',{status:'Approved',updatedAt:new Date().toISOString()});
+  const app = findById('applications', id);
+  if(app) await creditLoanToUser({...app, status:'Approved'});
+  await logAct('Quick-approved','application',id);
+  toast('Approved — balance credited');
+  loadApps();
+}
 async function qRejectApp(id){ await window._updateDoc(id,'applications',{status:'Rejected',updatedAt:new Date().toISOString()}); await logAct('Quick-rejected','application',id); toast('Rejected','e'); loadApps(); }
 
 // ══ TRANSACTIONS ═════════════════════════════════════
@@ -1046,8 +1118,11 @@ async function syncAppOnTrx(uid,newStatus){
     const upd={status:newStatus,statusUpdatedAt:new Date().toISOString()};
     if(newStatus==='Approved') upd.approvedAt=new Date().toISOString();
     await window._updateDoc(active[0]._id,'applications',upd);
-    
+
     if(newStatus==='Approved'){
+      // Credit the loan amount to the user's balance + send notification (guarded against double-credit)
+      await creditLoanToUser({...active[0], status:'Approved'});
+
       const users=await _get('users');
       const applicant=users.find(u=>u.phone===uid);
       const bonusKey = applicant && applicant.referredBy ? `refBonus_${applicant.referredBy}_${active[0]._id}` : null;
@@ -1067,43 +1142,6 @@ async function syncAppOnTrx(uid,newStatus){
   }catch(e){console.error('syncApp:',e);return false;}
 }
 
-// ══ CREDIT LOAN AMOUNT + NOTIFY USER ON APPROVAL ══
-async function creditLoanToUser(app) {
-  if (!app || !app.uid) return false;
-  // Already credited? Skip to prevent double-crediting
-  if (app.balanceCredited === true) return false;
-
-  try {
-    const users = await _get('users');
-    const user = users.find(u => u.phone === app.uid);
-    if (!user) return false;
-
-    const loanAmt = Number(String(app.loanAmount || 0).replace(/,/g, ''));
-    if (!loanAmt || loanAmt <= 0) return false;
-
-    const newBalance = (Number(user.balance) || 0) + loanAmt;
-    await window._updateDoc(user._id, 'users', { balance: newBalance });
-
-    // Mark application as credited so it never double-credits
-    await window._updateDoc(app._id, 'applications', { balanceCredited: true, creditedAt: new Date().toISOString() });
-
-    // Send notification to user
-    await window._addDoc('user_notifications', {
-      uid: app.uid,
-      title: 'Loan Approved! 🎉',
-      message: `Your loan of ৳${fa(loanAmt)} has been approved and added to your balance.`,
-      type: 'bonus',
-      createdAt: new Date().toISOString()
-    });
-
-    await logAct(`Loan ৳${loanAmt} credited to ${app.uid} on approval`, 'transaction', user._id);
-    return true;
-  } catch (e) {
-    console.error('creditLoanToUser:', e);
-    return false;
-  }
-}
-  
 async function loadTrx(){
   showL(true); _D.transactions=await _get('transactions','submittedAt'); _pg.transactions=0; showL(false);
   const t=_D.transactions;
