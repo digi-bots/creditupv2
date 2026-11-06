@@ -976,6 +976,28 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 #confirmModal .conf-row:last-of-type{border-bottom:none}
 #confirmModal .conf-lbl{font-size:11.5px;color:var(--txt2)}
 #confirmModal .conf-val{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ─── STEP COMPLETE BANNER (replaces the blocking popup) ─── */
+.stepdone-banner{
+  display:flex;align-items:flex-start;gap:10px;
+  margin:12px 14px 2px;padding:11px 12px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(29,219,128,.04));
+  border:1px solid rgba(29,219,128,.3);
+  animation:sdIn .32s ease both;
+}
+.stepdone-banner .sd-ic{
+  width:28px;height:28px;flex:0 0 28px;border-radius:9px;
+  background:rgba(29,219,128,.18);color:var(--p);
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+}
+.stepdone-banner .sd-txt{flex:1;min-width:0}
+.stepdone-banner .sd-title{font-size:12.5px;font-weight:800;color:var(--p);margin-bottom:2px}
+.stepdone-banner .sd-desc{font-size:11px;color:var(--txt2);line-height:1.45}
+.stepdone-banner .sd-x{
+  flex:0 0 auto;background:transparent;border:none;color:var(--txt2);
+  font-size:12px;cursor:pointer;padding:2px 2px 0;line-height:1;
+}
+@keyframes sdIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -1461,6 +1483,14 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 </div>
 
 <div id="screen-application-progress" class="screen" style="padding-bottom:40px">
+  <div class="stepdone-banner" id="stepDoneBanner" style="display:none;">
+    <div class="sd-ic"><i class="fa-solid fa-circle-check"></i></div>
+    <button class="sd-x" aria-label="Dismiss" onclick="hideStepDoneBanner()"><i class="fa-solid fa-xmark"></i></button>
+      <div class="sd-txt">
+      <div class="sd-title" id="stepDoneTitle">Step complete</div>
+      <div class="sd-desc" id="stepDoneDesc"></div>
+    </div>
+  </div>
   <div class="dash-hdr"><i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-home')"></i><div class="logo">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
   <div class="suc-banner"><div class="suc-left"><i class="fa-solid fa-circle-check suc-icon"></i><span id="dashSuccessText">Welcome!</span></div><span class="suc-icon">🎉</span></div>
   <div class="warn-box"><i class="fa-solid fa-circle-exclamation"></i><p>Tap <strong style="color:var(--txt)">"APPLY"</strong> and complete each step in order.</p></div>
@@ -2200,15 +2230,13 @@ function openPasswordModal() {
   }
 }
 
-function showAlert(title,msg,type='info',cb=null,okLabel=null){
+function showAlert(title,msg,type='info',cb=null){
   _showModal(false,true,false);
   document.getElementById('m-title').innerText=title;
   document.getElementById('m-msg').innerText=msg;
-  const okBtn = document.getElementById('alertOkBtn');
-  const closeBtn = document.getElementById('alertCloseBtn');
-  if(okBtn) okBtn.innerHTML = okLabel ? `${okLabel} <i class="fa-solid fa-arrow-right" style="font-size:11px;margin-left:6px"></i>` : 'OK';
-  // step-complete popups only offer OK / Next — no ✕ in the corner
-  if(closeBtn) closeBtn.style.display = okLabel ? 'none' : 'flex';
+  // the alert always has its ✕ and an OK button
+  const closeBtn = document.getElementById('alertCloseBtn'); if(closeBtn) closeBtn.style.display = 'flex';
+  const okBtn = document.getElementById('alertOkBtn'); if(okBtn) okBtn.innerHTML = 'OK';
   const w=document.getElementById('m-icon-wrap'); const i=document.getElementById('m-icon');
   const types={ success:['m-ic-suc','fa-solid fa-check'], error:['m-ic-err','fa-solid fa-xmark'], info:['m-ic-lock','fa-solid fa-circle-info'] };
   const[cls,icn]=types[type]||types.info;
@@ -2245,10 +2273,37 @@ async function saveUserNid(nid){
   } catch(e) { console.warn('saveUserNid:', e?.message); }
 }
 
-// After a step is completed the popup shows OK / Next (no ✕) and moves the user on.
+// After a step is completed: an inline banner (no popup, no ✕) confirms it
+// and the user lands directly on the next step of the form.
+const _STEP_NAMES = {
+  1:['Basic Information','Your name, email, gender, DOB, NID and income are saved.'],
+  2:['Personal Information','Loan purpose, amount, term and employment details are saved.'],
+  3:['Emergency Contact','Both emergency contacts are saved.'],
+  4:['Bank Information','Your receiving wallet and account number are saved.'],
+  5:['Identity Verification','Your NID photos are saved.']
+};
 function _afterStepComplete(step){
+  const info = _STEP_NAMES[step] || ['Step complete','Your information is saved.'];
+  const banner = document.getElementById('stepDoneBanner');
+  if(banner){
+    const t = document.getElementById('stepDoneTitle');
+    const d = document.getElementById('stepDoneDesc');
+    if(t) t.innerText = `Step ${step} complete — ${info[0]} saved`;
+    if(d) d.innerText = info[1];
+    // re-trigger the entry animation
+    banner.style.animation = 'none';
+    void banner.offsetWidth;
+    banner.style.animation = '';
+    banner.style.display = 'flex';
+    clearTimeout(window._stepDoneTimer);
+    window._stepDoneTimer = setTimeout(()=>{ banner.style.display = 'none'; }, 6000);
+  }
   if(step >= 5){ nav('screen-application-progress'); return; }
   openStep(step + 1);
+}
+function hideStepDoneBanner(){
+  const b = document.getElementById('stepDoneBanner');
+  if(b) b.style.display = 'none';
 }
 
 function resetPolicyCheck(){
@@ -2372,11 +2427,11 @@ function submitConfirmedInfo(){
   document.getElementById('confirmModal').classList.remove('on');
   saveUserNid(document.getElementById('infoId').value);
   showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); showAlert('Step 1 Complete ✓','Basic Information saved successfully!','success',()=>_afterStepComplete(1),'Next'); }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=1; updateProgressUI(); _afterStepComplete(1); }, 900);
 }
 function submitStep2(){
   showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); showAlert('Step 2 Complete ✓','Personal Information saved successfully!','success',()=>_afterStepComplete(2),'Next'); }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=2; updateProgressUI(); _afterStepComplete(2); }, 900);
 }
 function submitStep3(){
   if(!isValidBDPhone(document.getElementById('c1Phone').value)||!isValidBDPhone(document.getElementById('c2Phone').value)){ showErrorModal('Invalid Phone Number','Phone must be 10 digits starting with 1.'); return; }
@@ -2387,12 +2442,12 @@ function submitStep3(){
     const u=_getUser();
     // keep the receiving number from the previous application; only fall back to the login number
     if(bpEl && !bpEl.value.trim() && u?.phone) bpEl.value='0'+u.phone;
-    showAlert('Step 3 Complete ✓','Emergency Contact saved successfully!','success',()=>_afterStepComplete(3),'Next');
+    _afterStepComplete(3);
   }, 900);
 }
 function submitStep4(){
   showLoader(true);
-  setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); showAlert('Step 4 Complete ✓','Bank Information saved successfully!','success',()=>_afterStepComplete(4),'Next'); }, 900);
+  setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); _afterStepComplete(4); }, 900);
 }
 function selectWallet(w){
   selWallet=w; saveFormState();
