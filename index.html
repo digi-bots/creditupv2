@@ -528,38 +528,41 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .modal-overlay .mc.pp:has(.popup-close) > .ld-title,
 .modal-overlay .conf-card:has(.popup-close) > .conf-title{padding-right:44px}
 /* panels with their own inner scroll keep the ✕ always visible */
-.modal-overlay .mc.pp .pp-bar{
+.modal-overlay .pp-bar{
   position:sticky;top:-2px;z-index:19;
   display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:14px 16px 10px;
   background:linear-gradient(180deg,#12233d 0%,rgba(18,35,61,.97) 74%,rgba(18,35,61,0) 100%);
   border-bottom:1px solid rgba(29,219,128,.12);
 }
-.modal-overlay .mc.pp .pp-bar-title{
+.modal-overlay .pp-bar-title{
   font-size:16.5px;font-weight:800;color:var(--txt);
   letter-spacing:-.3px;text-shadow:0 2px 14px rgba(29,219,128,.2);
 }
-.modal-overlay .mc.pp .pp-bar .popup-close{position:static;float:none;margin:0;flex:0 0 32px}
-.modal-overlay :is(.mc,pp.ld-card,.ld-card.pp,.conf-card.pp):has(.pp-bar){padding:0 !important}
-.modal-overlay .mc.pp:has(.pp-bar) > :not(.pp-bar),
-.modal-overlay .ld-card.pp:has(.pp-bar) > :not(.pp-bar){
+.modal-overlay .pp-bar .popup-close{position:static;float:none;margin:0;flex:0 0 32px}
+.modal-overlay .mc:has(.pp-bar),
+.modal-overlay .ld-card:has(.pp-bar),
+.modal-overlay .conf-card:has(.pp-bar){padding:0 !important}
+.modal-overlay .mc:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .ld-card:has(.pp-bar) > :not(.pp-bar),
+.modal-overlay .conf-card:has(.pp-bar) > :not(.pp-bar){
   margin-left:16px;margin-right:16px;
 }
-.modal-overlay .mc.pp:has(.pp-bar) > .notif-list{margin-bottom:22px}
-.modal-overlay .ld-card.pp:has(.pp-bar) > .mbtn-full{margin-top:16px;margin-bottom:22px}
-.modal-overlay .ld-card.pp:has(.pp-bar) > .rep-schedule{margin-bottom:0}
+.modal-overlay .mc:has(.pp-bar) > .notif-list{margin-bottom:22px}
+.modal-overlay .ld-card:has(.pp-bar) > .mbtn-full{margin-top:16px;margin-bottom:22px}
+
 /* body + pinned footer: buttons never touch the card edge */
-.modal-overlay .mc.pp .pp-body{padding:2px 16px 6px}
-.modal-overlay .mc.pp .pp-body .detail-row:first-child{padding-top:4px}
-.modal-overlay .mc.pp .pp-foot{
+.modal-overlay .pp-body{padding:2px 16px 6px}
+.modal-overlay .pp-body .detail-row:first-child{padding-top:4px}
+.modal-overlay .pp-foot{
   flex-shrink:0;padding:14px 16px 22px;
   border-top:1px solid rgba(29,219,128,.14);
   background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55));
 }
-.modal-overlay .mc.pp .pp-foot .mbtn-full,
-.modal-overlay .mc.pp .pp-foot .mbtn{margin:0 !important}
-.modal-overlay .mc.pp .pp-foot:empty{display:none}
-.modal-overlay .mc.pp .pp-body > *,
+.modal-overlay .pp-foot .mbtn-full,
+.modal-overlay .pp-foot .mbtn{margin:0 !important}
+.modal-overlay .pp-foot:empty{display:none}
+.modal-overlay .pp-body > *,
 #referModal .refer-body > *{max-width:100%}
 /* status popup: scrolling rows, fixed header + footer */
 #appStatusModal .mc.pp{
@@ -907,6 +910,47 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   #repaymentModal .rep-sum-cell span{font-size:9.5px}
   #repaymentModal .rep-sum-cell b{font-size:10.5px}
 }
+
+/* ─── LOAN DETAILS (popup) ─── */
+#loanDetailsModal .ld-detail-card{max-width:390px}
+#loanDetailsModal .ld-hero{
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+  padding:11px 12px 12px;margin:4px 0 12px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(29,219,128,.03));
+  border:1px solid rgba(29,219,128,.24);
+}
+#loanDetailsModal .ld-hero-k{font-size:9.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--txt2);font-weight:700}
+#loanDetailsModal .ld-hero-v{font-size:24px;font-weight:900;color:var(--p);letter-spacing:-.6px;line-height:1.15;font-variant-numeric:tabular-nums}
+#loanDetailsModal .ld-hero-note{font-size:9.5px;color:var(--txt2);opacity:.9}
+#loanDetailsModal .ld-sec{
+  font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--txt3);margin:10px 0 2px;
+}
+#loanDetailsModal .ld-sec:first-of-type{margin-top:0}
+#loanDetailsModal .ld-row{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:8px 0;margin:0;border-bottom:1px solid rgba(255,255,255,.055);
+}
+#loanDetailsModal .ld-row:last-of-type{border-bottom:none}
+#loanDetailsModal .ld-lbl{font-size:11.5px;color:var(--txt2);white-space:nowrap}
+#loanDetailsModal .ld-val{
+  font-size:12px;font-weight:700;color:var(--txt);text-align:right;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+#loanDetailsModal .ld-val.int{color:var(--orange)}
+#loanDetailsModal .ld-total{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:10px;padding:11px 12px;border-radius:13px;
+  background:rgba(29,219,128,.09);border:1px solid rgba(29,219,128,.26);
+}
+#loanDetailsModal .ld-total span{font-size:12.5px;font-weight:800;color:var(--txt)}
+#loanDetailsModal .ld-total strong{font-size:17px;font-weight:900;color:var(--p);font-variant-numeric:tabular-nums}
+#loanDetailsModal .pp-foot .mbtn-full i{margin-right:6px}
+@media (max-width:360px){
+  #loanDetailsModal .ld-lbl{font-size:11px}
+  #loanDetailsModal .ld-val{font-size:11.5px}
+  #loanDetailsModal .ld-hero-v{font-size:22px}
+}
 </style>
 </head>
 <body>
@@ -997,17 +1041,35 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 </div>
 
 <div class="modal-overlay" id="loanDetailsModal">
-  <div class="ld-card pp">
+  <div class="ld-card pp ld-detail-card">
     <div class="pp-bar"><span class="pp-bar-title">Loan Details</span><button class="popup-close" aria-label="Close" onclick="closeModal('loanDetailsModal')"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="ld-row"><span class="ld-lbl">Loan Amount</span><span class="ld-val" id="ldAmount">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Term (months)</span><span class="ld-val" id="ldTerm">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Annual Interest</span><span class="ld-val" id="ldInterest">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Origination Fee</span><span class="ld-val" id="ldOrgFee">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Service Charge</span><span class="ld-val" id="ldService">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Start Date</span><span class="ld-val" id="ldStart">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">Due Date</span><span class="ld-val" id="ldDue">-</span></div>
-    <div class="ld-row"><span class="ld-lbl">You Receive</span><span class="ld-val" id="ldReceive">-</span></div>
-    <div class="ld-row total"><span class="ld-lbl" style="font-weight:700;color:var(--txt)">Total Repayment</span><span class="ld-val grn" id="ldTotal">-</span></div>
+    <div class="pp-body">
+      <div class="ld-hero">
+        <span class="ld-hero-k">Approved Loan Amount</span>
+        <strong class="ld-hero-v" id="ldAmount">৳ 0</strong>
+        <span class="ld-hero-note" id="ldHeroNote">—</span>
+      </div>
+      <div class="ld-sec">Loan Terms</div>
+      <div class="ld-row"><span class="ld-lbl">Term</span><span class="ld-val" id="ldTerm">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Annual Interest</span><span class="ld-val" id="ldInterest">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Interest Amount</span><span class="ld-val int" id="ldInterestAmt">-</span></div>
+      <div class="ld-sec">Charges</div>
+      <div class="ld-row"><span class="ld-lbl">Origination Fee</span><span class="ld-val" id="ldOrgFee">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Service &amp; Processing</span><span class="ld-val" id="ldService">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Total Upfront Fee</span><span class="ld-val" id="ldFeeTotal">-</span></div>
+      <div class="ld-sec">Schedule</div>
+      <div class="ld-row"><span class="ld-lbl">Start Date</span><span class="ld-val" id="ldStart">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Due Date</span><span class="ld-val" id="ldDue">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Monthly EMI</span><span class="ld-val" id="ldEmi">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">You Receive</span><span class="ld-val" id="ldReceive">-</span></div>
+      <div class="ld-total">
+        <span>Total Repayment</span>
+        <strong id="ldTotal">৳ 0</strong>
+      </div>
+    </div>
+    <div class="pp-foot">
+      <button class="mbtn-full" onclick="closeModal('loanDetailsModal'); openRepaymentSchedule()"><i class="fa-solid fa-calendar-days"></i> View Repayment Schedule</button>
+    </div>
   </div>
 </div>
 
@@ -2379,16 +2441,6 @@ function submitApplication(){
   document.getElementById('finalWalletLogo').src = (window._activeWallet && window._activeWallet.logoUrl) ? window._activeWallet.logoUrl : (ADMIN.walletLogos[selWallet] || '');
   const u=_getUser(); if(u?.phone) document.getElementById('approvedPhone').innerText='0'+u.phone;
 
-  document.getElementById('ldAmount').innerText  =_fmt(amt);
-  document.getElementById('ldTerm').innerText    =months;
-  document.getElementById('ldInterest').innerText=_fmt(interest)+' BDT';
-  document.getElementById('ldOrgFee').innerText  =_fmt(ADMIN.orgFee)+' BDT';
-  document.getElementById('ldService').innerText =_fmt(ADMIN.serviceCharge+ADMIN.processingFee)+' BDT';
-  document.getElementById('ldStart').innerText   =start;
-  document.getElementById('ldDue').innerText     =due;
-  document.getElementById('ldReceive').innerText =_fmt(amt)+' BDT';
-  document.getElementById('ldTotal').innerText   =_fmt(amt+totalFee)+' BDT';
-
   if(typeof saveApplicationToFirebase==='function') saveApplicationToFirebase();
 
   nav('screen-review-progress');
@@ -2467,7 +2519,57 @@ function openRepaymentSchedule(){
   document.getElementById('repaymentModal').classList.add('on');
 }
 
-function openLoanDetails()  { document.getElementById('loanDetailsModal').classList.add('on'); }
+// Builds the Loan Details popup from the live application, or from the
+// user's saved/last application when the screen is opened later.
+function _loanSource(){
+  const saved = window._latestApp || _savedApp || null;
+  const amount = Number(String(selAmount || (saved && saved.loanAmount) || '0').replace(/,/g,'')) || 0;
+  const months = Number(selTerm || (saved && saved.term) || 0) || 0;
+  if(!amount || !months) return null;
+  return { amount, months, saved };
+}
+
+function openLoanDetails(){
+  const src = _loanSource();
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+
+  if(!src){
+    // nothing yet — never show an empty table
+    showAlert('No Loan Found', 'Apply for a loan first to see the full breakdown here.', 'info');
+    return;
+  }
+  const { amount, months, saved } = src;
+  const rate     = Number(ADMIN.annualRate) || 0;
+  const orgFee   = Number(ADMIN.orgFee) || 0;
+  const svcFee   = (Number(ADMIN.serviceCharge) || 0) + (Number(ADMIN.processingFee) || 0);
+  const interest = Math.round(amount * (rate / 100) * (months / 12));
+  const feeTotal = orgFee + svcFee;
+  const r        = rate / 100 / 12;
+  const emi      = r > 0 ? Math.round(amount * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1)) : Math.round(amount / months);
+  const totalRepay = amount + interest + feeTotal;
+
+  // dates: prefer the stored application dates, else compute from the term
+  let start = saved && saved.startDate ? new Date(saved.startDate) : new Date();
+  let due   = saved && saved.dueDate   ? new Date(saved.dueDate)   : null;
+  if(!due){ due = new Date(start); due.setMonth(due.getMonth() + months); }
+  const dfmt = d => isNaN(d.getTime()) ? '-' : d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+
+  set('ldAmount',      '৳ ' + _fmt(amount));
+  set('ldHeroNote',    `${months} ${months === 1 ? 'month' : 'months'} · ${rate}% p.a. · EMI ৳${_fmt(emi)}`);
+  set('ldTerm',        months + (months === 1 ? ' month' : ' months'));
+  set('ldInterest',    rate + '% per year');
+  set('ldInterestAmt', '৳ ' + _fmt(interest));
+  set('ldOrgFee',      '৳ ' + _fmt(orgFee));
+  set('ldService',     '৳ ' + _fmt(svcFee));
+  set('ldFeeTotal',    '৳ ' + _fmt(feeTotal));
+  set('ldStart',       dfmt(start));
+  set('ldDue',         dfmt(due));
+  set('ldEmi',         '৳ ' + _fmt(emi));
+  set('ldReceive',     '৳ ' + _fmt(amount));
+  set('ldTotal',       '৳ ' + _fmt(totalRepay));
+
+  document.getElementById('loanDetailsModal').classList.add('on');
+}
 
 function goToFeePayment(){
   if(!selAmount || selAmount == '0') {
