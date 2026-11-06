@@ -2664,11 +2664,8 @@ window.registerUser=async function(){
     localStorage.removeItem('referrerPhone');
     showLoader(false);
     showAlert('Account Created! 🎉', `Welcome! You received ৳${bonusAmt} bonus.`, 'success', () => {
-      document.getElementById('dashSuccessText').innerText = 'Registration Successful! 🎉';
-      nav('screen-application-progress');
-      if(typeof updateUIForUser === 'function') updateUIForUser();
-      if(typeof window.loadUserDashboardData === 'function') window.loadUserDashboardData();
-    });
+  nav('screen-home');
+});
   }catch(e){ showLoader(false); showAlert('Error', e.message, 'error'); }
 };
 
