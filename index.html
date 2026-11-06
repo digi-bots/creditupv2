@@ -539,7 +539,12 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   font-size:16.5px;font-weight:800;color:var(--txt);
   letter-spacing:-.3px;text-shadow:0 2px 14px rgba(29,219,128,.2);
 }
-.modal-overlay .pp-bar .popup-close{position:static;float:none;margin:0;flex:0 0 32px}
+.modal-overlay .pp-bar .popup-close{position:static !important;float:none !important;margin:0 0 0 auto !important;flex:0 0 32px}
+/* safety net: a close button can never drift to the left edge */
+.modal-overlay .mc > .popup-close,
+.modal-overlay .ld-card > .popup-close,
+.modal-overlay .conf-card > .popup-close{position:sticky;margin-left:auto !important;margin-right:-6px;align-self:flex-end}
+.modal-overlay .pp-bar > .pp-bar-title{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .modal-overlay .mc:has(.pp-bar),
 .modal-overlay .ld-card:has(.pp-bar),
 .modal-overlay .conf-card:has(.pp-bar){padding:0 !important}
@@ -912,40 +917,48 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 }
 
 /* ─── LOAN DETAILS (popup) ─── */
-#loanDetailsModal .ld-detail-card{max-width:390px}
+#loanDetailsModal .ld-detail-card{max-width:440px;width:100%}
 #loanDetailsModal .ld-hero{
-  display:flex;flex-direction:column;align-items:center;gap:1px;
-  padding:11px 12px 12px;margin:4px 0 12px;border-radius:14px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:16px 16px 15px;margin:2px 0 16px;border-radius:16px;
   background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(29,219,128,.03));
   border:1px solid rgba(29,219,128,.24);
 }
-#loanDetailsModal .ld-hero-k{font-size:9.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--txt2);font-weight:700}
-#loanDetailsModal .ld-hero-v{font-size:24px;font-weight:900;color:var(--p);letter-spacing:-.6px;line-height:1.15;font-variant-numeric:tabular-nums}
-#loanDetailsModal .ld-hero-note{font-size:9.5px;color:var(--txt2);opacity:.9}
+#loanDetailsModal .ld-hero-k{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--txt2);font-weight:700}
+#loanDetailsModal .ld-hero-v{font-size:30px;font-weight:900;color:var(--p);letter-spacing:-.6px;line-height:1.15;font-variant-numeric:tabular-nums}
+#loanDetailsModal .ld-hero-note{font-size:10.5px;color:var(--txt2);opacity:.92;margin-top:2px;text-align:center}
 #loanDetailsModal .ld-sec{
-  font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
-  color:var(--txt3);margin:10px 0 2px;
+  display:flex;align-items:center;gap:8px;
+  font-size:9.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--txt2);margin:14px 0 4px;
+}
+#loanDetailsModal .ld-sec::after{
+  content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(29,219,128,.22),rgba(255,255,255,.03));
 }
 #loanDetailsModal .ld-sec:first-of-type{margin-top:0}
 #loanDetailsModal .ld-row{
-  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
-  padding:8px 0;margin:0;border-bottom:1px solid rgba(255,255,255,.055);
+  display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  padding:10px 0;margin:0;border-bottom:1px solid rgba(255,255,255,.05);
 }
 #loanDetailsModal .ld-row:last-of-type{border-bottom:none}
-#loanDetailsModal .ld-lbl{font-size:11.5px;color:var(--txt2);white-space:nowrap}
+#loanDetailsModal .ld-lbl{font-size:12.5px;color:var(--txt2);white-space:nowrap}
 #loanDetailsModal .ld-val{
-  font-size:12px;font-weight:700;color:var(--txt);text-align:right;
+  font-size:13px;font-weight:700;color:var(--txt);text-align:right;
   font-variant-numeric:tabular-nums;white-space:nowrap;
 }
 #loanDetailsModal .ld-val.int{color:var(--orange)}
 #loanDetailsModal .ld-total{
   display:flex;justify-content:space-between;align-items:center;
-  margin-top:10px;padding:11px 12px;border-radius:13px;
+  margin-top:14px;padding:13px 14px;border-radius:14px;
   background:rgba(29,219,128,.09);border:1px solid rgba(29,219,128,.26);
 }
-#loanDetailsModal .ld-total span{font-size:12.5px;font-weight:800;color:var(--txt)}
-#loanDetailsModal .ld-total strong{font-size:17px;font-weight:900;color:var(--p);font-variant-numeric:tabular-nums}
-#loanDetailsModal .pp-foot .mbtn-full i{margin-right:6px}
+#loanDetailsModal .ld-total span{font-size:13.5px;font-weight:800;color:var(--txt)}
+#loanDetailsModal .ld-total strong{font-size:19px;font-weight:900;color:var(--p);font-variant-numeric:tabular-nums}
+#loanDetailsModal .pp-foot .mbtn-full i{margin-right:7px}
+#loanDetailsModal .pp-body{padding:2px 18px 8px}
+#loanDetailsModal .pp-bar{padding:15px 18px 11px}
+#loanDetailsModal .pp-foot{padding:13px 18px 20px}
+#loanDetailsModal .ld-val.muted{color:var(--txt2);font-weight:600}
 @media (max-width:360px){
   #loanDetailsModal .ld-lbl{font-size:11px}
   #loanDetailsModal .ld-val{font-size:11.5px}
@@ -1013,6 +1026,22 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .ph-row.invalid{border-bottom-color:var(--orange)}
 .ph-row input::placeholder{color:var(--txt3);font-weight:600;font-size:15px}
 .ph-row i#bankEditIcon.active{color:var(--orange)}
+
+#loanDetailsModal .ld-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:9px 0 1px}
+#loanDetailsModal .ld-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 9px;border-radius:20px;font-size:10.5px;font-weight:700;
+  color:var(--txt);background:rgba(255,255,255,.055);
+  border:1px solid rgba(29,219,128,.2);white-space:nowrap;
+}
+#loanDetailsModal .ld-chip i{font-size:9.5px;color:var(--p)}
+#loanDetailsModal .ld-chip b{font-weight:800;font-variant-numeric:tabular-nums}
+
+#loanDetailsModal .ld-status{
+  display:flex;align-items:center;gap:6px;justify-content:center;
+  font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  margin:0 0 8px;
+}
 </style>
 </head>
 <body>
@@ -1108,18 +1137,24 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <div class="ld-card pp ld-detail-card">
     <div class="pp-bar"><span class="pp-bar-title">Loan Details</span><button class="popup-close" aria-label="Close" onclick="closeModal('loanDetailsModal')"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="pp-body">
+      <div class="ld-status" id="ldStatusLine" style="display:none;"></div>
       <div class="ld-hero">
         <span class="ld-hero-k">Approved Loan Amount</span>
         <strong class="ld-hero-v" id="ldAmount">৳ 0</strong>
-        <span class="ld-hero-note" id="ldHeroNote">—</span>
+        <div class="ld-chips" id="ldHeroChips">
+          <span class="ld-chip"><i class="fa-regular fa-clock"></i> <b id="ldChipTerm">—</b></span>
+          <span class="ld-chip"><i class="fa-solid fa-percent"></i> <b id="ldChipRate">—</b></span>
+          <span class="ld-chip"><i class="fa-solid fa-calendar-check"></i> <b id="ldChipEmi">—</b></span>
+        </div>
+        <span class="ld-hero-note" id="ldCurrencyNote">All amounts are in BDT (৳)</span>
       </div>
       <div class="ld-sec">Loan Terms</div>
       <div class="ld-row"><span class="ld-lbl">Term</span><span class="ld-val" id="ldTerm">-</span></div>
-      <div class="ld-row"><span class="ld-lbl">Annual Interest</span><span class="ld-val" id="ldInterest">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Annual Interest Rate</span><span class="ld-val" id="ldInterest">-</span></div>
       <div class="ld-row"><span class="ld-lbl">Interest Amount</span><span class="ld-val int" id="ldInterestAmt">-</span></div>
       <div class="ld-sec">Charges</div>
       <div class="ld-row"><span class="ld-lbl">Origination Fee</span><span class="ld-val" id="ldOrgFee">-</span></div>
-      <div class="ld-row"><span class="ld-lbl">Service &amp; Processing</span><span class="ld-val" id="ldService">-</span></div>
+      <div class="ld-row"><span class="ld-lbl">Service &amp; Processing Fee</span><span class="ld-val" id="ldService">-</span></div>
       <div class="ld-row"><span class="ld-lbl">Total Upfront Fee</span><span class="ld-val" id="ldFeeTotal">-</span></div>
       <div class="ld-sec">Schedule</div>
       <div class="ld-row"><span class="ld-lbl">Start Date</span><span class="ld-val" id="ldStart">-</span></div>
@@ -2821,7 +2856,10 @@ function openLoanDetails(){
   const dfmt = d => isNaN(d.getTime()) ? '-' : d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
 
   set('ldAmount',      '৳ ' + _fmt(amount));
-  set('ldHeroNote',    `${months} ${months === 1 ? 'month' : 'months'} · ${rate}% p.a. · EMI ৳${_fmt(emi)}`);
+  set('ldCurrencyNote','All amounts are in BDT (৳)');
+  set('ldChipTerm',    `${months} ${months === 1 ? 'month' : 'months'}`);
+  set('ldChipRate',    `${rate}% p.a.`);
+  set('ldChipEmi',     `EMI ৳${_fmt(emi)}`);
   set('ldTerm',        months + (months === 1 ? ' month' : ' months'));
   set('ldInterest',    rate + '% per year');
   set('ldInterestAmt', '৳ ' + _fmt(interest));
@@ -2833,6 +2871,20 @@ function openLoanDetails(){
   set('ldEmi',         '৳ ' + _fmt(emi));
   set('ldReceive',     '৳ ' + _fmt(amount));
   set('ldTotal',       '৳ ' + _fmt(totalRepay));
+  const statusEl = document.getElementById('ldStatusLine');
+  if(statusEl){
+    const st = saved && saved.status ? String(saved.status) : '';
+    const map = {
+      'Pending Fee Payment':['Fee payment pending','var(--orange)'],
+      'TrxID Submitted':['Verification pending','var(--blue)'],
+      'Approved':['Active loan','var(--p)'],
+      'Disbursed':['Loan disbursed','var(--p)'],
+      'Rejected':['Application rejected','var(--red)']
+    };
+    const hit = map[st];
+    statusEl.style.display = hit ? 'flex' : 'none';
+    if(hit){ statusEl.innerHTML = `<i class="fa-solid fa-circle" style="font-size:6px;color:${hit[1]}"></i> ${hit[0]}`; statusEl.style.color = hit[1]; }
+  }
 
   document.getElementById('loanDetailsModal').classList.add('on');
 }
