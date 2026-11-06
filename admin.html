@@ -1067,6 +1067,43 @@ async function syncAppOnTrx(uid,newStatus){
   }catch(e){console.error('syncApp:',e);return false;}
 }
 
+// ══ CREDIT LOAN AMOUNT + NOTIFY USER ON APPROVAL ══
+async function creditLoanToUser(app) {
+  if (!app || !app.uid) return false;
+  // Already credited? Skip to prevent double-crediting
+  if (app.balanceCredited === true) return false;
+
+  try {
+    const users = await _get('users');
+    const user = users.find(u => u.phone === app.uid);
+    if (!user) return false;
+
+    const loanAmt = Number(String(app.loanAmount || 0).replace(/,/g, ''));
+    if (!loanAmt || loanAmt <= 0) return false;
+
+    const newBalance = (Number(user.balance) || 0) + loanAmt;
+    await window._updateDoc(user._id, 'users', { balance: newBalance });
+
+    // Mark application as credited so it never double-credits
+    await window._updateDoc(app._id, 'applications', { balanceCredited: true, creditedAt: new Date().toISOString() });
+
+    // Send notification to user
+    await window._addDoc('user_notifications', {
+      uid: app.uid,
+      title: 'Loan Approved! 🎉',
+      message: `Your loan of ৳${fa(loanAmt)} has been approved and added to your balance.`,
+      type: 'bonus',
+      createdAt: new Date().toISOString()
+    });
+
+    await logAct(`Loan ৳${loanAmt} credited to ${app.uid} on approval`, 'transaction', user._id);
+    return true;
+  } catch (e) {
+    console.error('creditLoanToUser:', e);
+    return false;
+  }
+}
+  
 async function loadTrx(){
   showL(true); _D.transactions=await _get('transactions','submittedAt'); _pg.transactions=0; showL(false);
   const t=_D.transactions;
