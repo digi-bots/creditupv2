@@ -213,6 +213,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .dr.full{grid-column:1/-1}
 .dl{font-size:10px;color:var(--txt2);font-weight:600;letter-spacing:.3px;text-transform:uppercase;margin-bottom:3px}
 .dv{font-size:13px;font-weight:600;word-break:break-all}
+.dv.muted{color:var(--txt2);font-weight:500}
 .dv.mono{font-family:'Courier New',monospace;font-size:12px}
 
 /* TOGGLES */
@@ -739,6 +740,24 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <div class="fg"><label>Admin Remarks</label><input id="aRemark" placeholder="Optional remarks..."></div>
         <div class="fg"><label>Adjusted Loan Amount (optional)</label><input type="number" id="aAdj" placeholder="Leave blank to keep original"></div>
       </div>
+      <div class="wsec-h" style="margin-top:14px"><i class="fa-solid fa-arrow-up-from-bracket"></i>Payout record <em>where the loan money was sent</em></div>
+      <div class="fgrid">
+        <div class="fg"><label>Payout number</label><input id="aPayNum" type="tel" inputmode="numeric" placeholder="01XXXXXXXXX"></div>
+        <div class="fg"><label>Paid to (account category)</label>
+          <select id="aPayCat">
+            <option value="">Not specified</option>
+            <option value="Personal">Personal</option>
+            <option value="Agent">Agent</option>
+            <option value="Merchant">Merchant</option>
+            <option value="Bank Account">Bank Account</option>
+          </select>
+        </div>
+        <div class="fg"><label>Method / wallet used</label><input id="aPayMethod" placeholder="e.g. Bkash, Bank"></div>
+        <div class="fg"><label>Payout date</label><input type="date" id="aPayDate"></div>
+        <div class="fg full"><label>Transaction / reference no.</label><input id="aPayRef" placeholder="Bank or wallet reference"></div>
+        <div class="fg full"><label>Note</label><input id="aPayNote" placeholder="Optional"></div>
+      </div>
+      <button class="btn btn-sm btn-b" style="margin-top:10px" onclick="savePayout()"><i class="fa-solid fa-floppy-disk"></i>Save payout record</button>
       <div style="margin-top:10px;display:flex;gap:7px;flex-wrap:wrap">
         <button class="btn btn-p btn-sm" onclick="updateAppStatus()"><i class="fa-solid fa-check"></i>Update Status</button>
         <button class="btn btn-sm" style="background:rgba(29,219,128,.1);color:var(--p);border:1px solid rgba(29,219,128,.2)" onclick="qApprove()"><i class="fa-solid fa-circle-check"></i>Quick Approve</button>
@@ -759,6 +778,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="trxAct('Verified')"><i class="fa-solid fa-circle-check"></i>Approve & Verify</button>
       <button class="btn btn-d" onclick="trxAct('Rejected')"><i class="fa-solid fa-circle-xmark"></i>Reject</button>
+      <button class="btn btn-s" id="trxMatchBtn" style="display:none" onclick="autoMatchTrx(_docId)"><i class="fa-solid fa-link"></i>Match application</button>
     </div>
   </div>
   <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moTrx')">Close</button></div>
@@ -777,7 +797,17 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div>
     <div class="wsec-h"><i class="fa-solid fa-arrow-down-to-bracket"></i>Fee collection <em>where the customer sends the fee</em></div>
     <div class="fgrid">
-      <div class="fg full"><label><span class="req">*</span> Logo URL</label><input id="wLg" placeholder="https://... (png/svg direct link)" oninput="prevWL()"></div>
+      <div class="fg full">
+        <label><span class="req">*</span> Logo <span style="color:var(--txt2);font-weight:500">(upload a file or paste a URL)</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="wLg" placeholder="https://... (direct png / svg link)" oninput="onLogoUrlInput(this)" style="flex:1">
+          <label class="btn btn-s btn-sm" style="white-space:nowrap;cursor:pointer;margin:0">
+            <i class="fa-solid fa-upload"></i> Upload
+            <input type="file" id="wLgFile" accept="image/*" onchange="uploadWalletLogo(this)" style="display:none">
+          </label>
+        </div>
+        <div class="hint" id="wLgHint">Upload straight from your phone/PC (saved to Firebase) or paste any direct image link. Max 400 KB.</div>
+      </div>
       <div class="fg"><label><span class="req">*</span> Method name</label><input id="wNm" placeholder="e.g. Bkash" oninput="prevWL()"></div>
       <div class="fg"><label><span class="req">*</span> Fee collection number</label><input id="wCol" placeholder="01XXXXXXXXX" type="tel" inputmode="numeric"></div>
       <div class="fg full"><label>Pay method <span style="color:var(--txt2);font-weight:500">(what the user must choose)</span></label>
@@ -791,6 +821,11 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
       <div class="fg full"><label>Short note shown to the user <span style="color:var(--txt2);font-weight:500">(optional)</span></label>
         <input id="wNote" maxlength="140" placeholder="e.g. Send Money only — add your phone number in reference">
+      </div>
+      <div class="fg full">
+        <label>Payment steps for this wallet <span style="color:var(--txt2);font-weight:500">(optional · one step per line, shown on the fee page)</span></label>
+        <textarea id="wInstr" rows="4" maxlength="600" placeholder="Open Bkash and choose Send Money&#10;Enter the number shown above&#10;Send the exact Total Fee amount&#10;Copy the TrxID from the SMS"></textarea>
+        <div class="hint">Tips: write <strong style="color:var(--p)">{number}</strong> where the wallet number should appear and <strong style="color:var(--p)">{amount}</strong> for the fee amount. Leave empty to use the default steps.</div>
       </div>
     </div>
     <div class="wsec-h"><i class="fa-solid fa-arrow-up-from-bracket"></i>Loan disbursement <em>where you send the loan money</em></div>
@@ -1143,10 +1178,22 @@ function viewApp(id){
     {l:'Bank Phone',v:a.bankPhone},{l:'Status',v:sb(a.status)},{l:'Risk Score',v:riskBadge(riskScore(a))},
     {l:'Contact 1',v:`${a.emergency1?.name||'-'} (${a.emergency1?.phone||''}) — ${a.emergency1?.relation||''}`,full:true},
     {l:'Contact 2',v:`${a.emergency2?.name||'-'} (${a.emergency2?.phone||''}) — ${a.emergency2?.relation||''}`,full:true},
+    {l:'Payout number',v:a.payout?.number||a.bankPhone||'-',c:'mono'},
+    {l:'Payout status',v:a.payout?.number ? `Sent ${a.payout.date?fd(a.payout.date):''} ${a.payout.ref?'· '+a.payout.ref:''}` : 'Not recorded',c:a.payout?.number?'':'muted'},
     {l:'Submitted',v:fd(a.submittedAt)},{l:'Remarks',v:a.adminRemark||'-'},
   ];
   document.getElementById('aGrid').innerHTML=fields.map(f=>`<div class="dr${f.full?' full':''}"><div class="dl">${f.l}</div><div class="dv ${f.c||''}">${f.v||'-'}</div></div>`).join('');
   
+  // prefill the payout record
+  const po=a.payout||{};
+  const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v||''; };
+  set('aPayNum', po.number||a.bankPhone||'');
+  set('aPayCat', po.category||a.accountCategory||'');
+  set('aPayMethod', po.method||a.wallet||'');
+  set('aPayDate', po.date|| (a.disbursedAt? String(a.disbursedAt).slice(0,10):''));
+  set('aPayRef', po.ref||'');
+  set('aPayNote', po.note||'');
+
   const nv=document.getElementById('nidViewer');
   if(a.nidFrontUrl||a.nidBackUrl){
     nv.innerHTML=`<div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border)"><div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px"><i class="fa-solid fa-id-card" style="color:var(--p);margin-right:5px"></i>NID Documents</div><div class="nid-grid">${a.nidFrontUrl?`<div><div style="font-size:10px;color:var(--txt2);margin-bottom:5px">Front Side</div><img class="nid-img" src="${a.nidFrontUrl}" onclick="window.open('${a.nidFrontUrl}','_blank')" onerror="this.parentElement.innerHTML='<div style=color:var(--txt3);font-size:11px;padding:10px;text-align:center>Image not available</div>'"></div>`:'<div><div style="font-size:10px;color:var(--txt2)">Front Side</div><div style="color:var(--txt3);font-size:11px;padding:10px;text-align:center">Not uploaded</div></div>'}${a.nidBackUrl?`<div><div style="font-size:10px;color:var(--txt2);margin-bottom:5px">Back Side</div><img class="nid-img" src="${a.nidBackUrl}" onclick="window.open('${a.nidBackUrl}','_blank')" onerror="this.parentElement.innerHTML='<div style=color:var(--txt3);font-size:11px;padding:10px;text-align:center>Image not available</div>'"></div>`:'<div><div style="font-size:10px;color:var(--txt2)">Back Side</div><div style="color:var(--txt3);font-size:11px;padding:10px;text-align:center">Not uploaded</div></div>'}</div></div>`;
@@ -1181,6 +1228,24 @@ async function qApprove(){
   closeMo('moApp'); loadApps();
 }
 async function qReject(){ await window._updateDoc(_docId,'applications',{status:'Rejected',updatedAt:new Date().toISOString()}); await logAct('App rejected','application',_docId); toast('Application rejected','e'); closeMo('moApp'); loadApps(); }
+async function savePayout(){
+  if(!_docId){ toast('Open an application first','e'); return; }
+  const g=id=>(document.getElementById(id)?.value||'').trim();
+  const num=g('aPayNum');
+  if(!num){ toast('Payout number is required','w'); return; }
+  const po={ number:num, category:g('aPayCat'), method:g('aPayMethod'), date:g('aPayDate')||new Date().toISOString().slice(0,10), ref:g('aPayRef'), note:g('aPayNote'), savedAt:new Date().toISOString() };
+  showL(true);
+  try{
+    await window._updateDoc(_docId,'applications',{payout:po, payoutNumber:po.number, payoutUpdatedAt:po.savedAt});
+    await logAct(`Payout ৳${fa(findById('applications',_docId)?.loanAmount||0)} to ${po.number} (${po.method||'wallet'})`,'application',_docId);
+    toast('Payout record saved ✓');
+    _D.applications = await _get('applications');
+    viewApp(_docId);
+    loadApps();
+  }catch(e){ toast(e.message,'e'); }
+  showL(false);
+}
+
 async function markDisb(){ await window._updateDoc(_docId,'applications',{status:'Disbursed',disbursedAt:new Date().toISOString()}); await logAct('Loan disbursed','application',_docId); toast('Marked Disbursed','i'); closeMo('moApp'); loadApps(); }
 async function qApproveApp(id){
   _docId=id;
@@ -1238,9 +1303,62 @@ async function loadTrx(){
   ].map(s=>`<div class="sc ${s.cl}"><div class="sc-ic ic-${s.cl}"><i class="fa-solid fa-${s.ic}"></i></div><div class="sc-val">${s.v}</div><div class="sc-lbl">${s.l}</div></div>`).join('');
   renderTP();
 }
+// how many times each TrxID was submitted (catches reuse / typos)
+function _trxDupMap(){
+  const m={};
+  (_D.transactions||[]).forEach(t=>{
+    const k=String(t.trxId||'').trim().toUpperCase();
+    if(!k || k==='BALANCE_PAYMENT') return;
+    m[k]=(m[k]||0)+1;
+  });
+  return m;
+}
 function renderTP(){
+  const dup=_trxDupMap();
   renderPg('transactions',_D.transactions,rows=>{
-    document.getElementById('ttb').innerHTML=rows.length?rows.map(r=>`<tr><td class="mono">${r.trxId||'-'}</td><td class="mono">${r.uid||'-'}</td><td>${r.payMethod||'-'}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`).join(''):'<tr class="empty"><td colspan="7">No transactions found</td></tr>';
+    document.getElementById('ttb').innerHTML=rows.length?rows.map(r=>{
+      const k=String(r.trxId||'').trim().toUpperCase();
+      const times=(k && k!=='BALANCE_PAYMENT') ? (dup[k]||0) : 0;
+      const dupBadge = times>1 ? `<span class="wbadge or" title="This TrxID was submitted ${times} times">DUP ×${times}</span>` : '';
+      const appRef = r.appId ? `<span class="wbadge" title="Linked application">${String(r.appId).slice(-6)}</span>` : '';
+      return `<tr><td class="mono">${r.trxId||'-'} ${dupBadge}</td><td class="mono">${r.uid||'-'}</td><td>${r.payMethod||'-'}${appRef}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`;
+    }).join(''):'<tr class="empty"><td colspan="7">No transactions found</td></tr>';
+  });
+}
+
+// find the application that belongs to this transaction (auto-match)
+async function _matchApplication(t){
+  try{
+    const all=await _get('applications');
+    const phone=String(t.uid||'').replace(/\D/g,'');
+    let hits=all.filter(a=>String(a.phone||a.uid||'').replace(/\D/g,'')===phone);
+    if(!hits.length) return null;
+    // prefer the closest one submitted before the payment, else the newest
+    const payAt=new Date(t.submittedAt||0).getTime();
+    hits=hits.sort((a,b)=>{
+      const da=Math.abs(new Date(a.submittedAt||a.createdAt||0).getTime()-payAt);
+      const db=Math.abs(new Date(b.submittedAt||b.createdAt||0).getTime()-payAt);
+      return da-db;
+    });
+    return hits[0];
+  }catch{ return null; }
+}
+async function autoMatchTrx(id){
+  const t=findById('transactions',id); if(!t){toast('Not found','e');return;}
+  showL(true);
+  const a=await _matchApplication(t);
+  showL(false);
+  if(!a){ toast('No application found for this phone','w'); return; }
+  confirm2(`Link this payment to application ${a._id.slice(-6)} (${a.name||a.phone||''})?`, async ()=>{
+    showL(true);
+    try{
+      await window._updateDoc(t._id,'transactions',{appId:a._id, appMatchedAt:new Date().toISOString()});
+      if(!a.trxId || a.trxId!==t.trxId) await window._updateDoc(a._id,'applications',{trxId:t.trxId, trxMatchedAt:new Date().toISOString()});
+      await logAct(`Trx ${t.trxId} matched to application ${a._id.slice(-6)}`,'transaction',t._id);
+      toast('Payment linked to application ✓');
+      await loadTrx();
+    }catch(e){ toast(e.message,'e'); }
+    showL(false);
   });
 }
 function viewTrx(id){
@@ -1253,8 +1371,12 @@ function viewTrx(id){
     {l:'Total Fee Required',v:'৳'+fa(t.totalFee || t.amount || 0)},
     {l:'Paid via Balance',v:'৳'+fa(t.appliedBalance || 0)},
     {l:'Paid via Wallet',v:'৳'+fa(t.amount || 0)},
+    {l:'Matched application',v:t.appId?String(t.appId).slice(-6):'Not linked yet',c:t.appId?'':'muted'},
+    {l:'TrxID reuse check',v:(()=>{const k=String(t.trxId||'').toUpperCase();const n=(k&&k!=='BALANCE_PAYMENT')?(_trxDupMap()[k]||0):0;return n>1?`<span style="color:var(--orange);font-weight:800">Used ${n} times — verify before approving</span>`:'<span style="color:var(--p);font-weight:700">Unique ✓</span>';})()},
     {l:'Submitted',v:fd(t.submittedAt)},{l:'Verified',v:fd(t.verifiedAt)},
   ].map(f=>`<div class="dr"><div class="dl">${f.l}</div><div class="dv ${f.c||''}">${f.v||'-'}</div></div>`).join('');
+  const mBtn=document.getElementById('trxMatchBtn');
+  if(mBtn) mBtn.style.display = t.appId ? 'none' : 'inline-flex';
   openMo('moTrx');
 }
 async function deductBalanceIfApplied(trx) {
@@ -1487,7 +1609,8 @@ function renderWallets(){
 function openWM(){
   document.getElementById('wmoT').innerText='Add Wallet';
   document.getElementById('wDId').value='';
-  ['wNm','wLg','wCol','wNote'].forEach(id=>document.getElementById(id).value='');
+  ['wNm','wLg','wCol','wNote','wInstr'].forEach(id=>document.getElementById(id).value='');
+  _wLogoPath=''; _wLogoUploading=false;
   document.getElementById('wType').value='';
   document.getElementById('wCat').value='Personal';
   document.getElementById('wOrd').value=_D.wallets.length+1;
@@ -1505,11 +1628,67 @@ function editW(id){
   document.getElementById('wType').value=wl.payMethod||'';
   document.getElementById('wCat').value=wl.accountCategory||'Personal';
   document.getElementById('wNote').value=wl.note||'';
+  document.getElementById('wInstr').value=Array.isArray(wl.instructions)?wl.instructions.join('\n'):(wl.instructions||'');
+  _wLogoPath=wl.logoStoragePath||'';
   document.getElementById('wOrd').value=wl.order||1;
   document.getElementById('wEn').checked=!!wl.enabled;
   prevWL();
   openMo('moWallet');
 }
+// wallet logo: either a pasted URL or an uploaded file (uploaded to Firebase Storage)
+let _wLogoPath = '';   // storage path of an uploaded logo, so we can clean up old files
+let _wLogoUploading = false;
+
+function _wLogoSrc(){ return document.getElementById('wLg').value.trim(); }
+
+function onLogoUrlInput(el){
+  const v = el.value.trim();
+  const hint = document.getElementById('wLgHint');
+  if(v && !/^https?:\/\//i.test(v) && !/^data:image\//i.test(v)){
+    if(hint){ hint.innerHTML = '<span style="color:var(--orange)">That does not look like a link — it should start with https://</span>'; }
+  } else if(hint){
+    hint.innerHTML = 'Upload straight from your phone/PC (saved to Firebase) or paste any direct image link. Max 400 KB.';
+  }
+  _wLogoPath = '';   // a typed URL means "not an uploaded file"
+  prevWL();
+}
+
+async function uploadWalletLogo(input){
+  const f = input.files && input.files[0];
+  if(!f) return;
+  if(!/^image\//.test(f.type)){ toast('Please pick an image file','w'); input.value=''; return; }
+  if(f.size > 400*1024){ toast('Logo must be under 400 KB','w'); input.value=''; return; }
+  const hint = document.getElementById('wLgHint');
+  const btn  = input.closest('label');
+  _wLogoUploading = true;
+  if(btn){ btn.style.opacity='.6'; btn.style.pointerEvents='none'; }
+  if(hint) hint.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Uploading logo…';
+  try{
+    const dataUrl = await new Promise((res,rej)=>{
+      const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(f);
+    });
+    if(typeof window._firebaseUploadLogo !== 'function'){
+      // storage not ready / blocked → fall back to the data URL so the logo still works
+      document.getElementById('wLg').value = dataUrl;
+      _wLogoPath='';
+      if(hint) hint.innerHTML = '<span style="color:var(--orange)">Storage unavailable — the image was embedded directly (keep it small).</span>';
+    } else {
+      const out = await window._firebaseUploadLogo(dataUrl, document.getElementById('wNm').value.trim() || 'wallet');
+      document.getElementById('wLg').value = out.url;
+      _wLogoPath = out.path || '';
+      if(hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--p)"></i> Logo uploaded and saved.';
+    }
+    prevWL();
+  }catch(e){
+    if(hint) hint.innerHTML = '<span style="color:var(--red)">Upload failed: '+(e.message||'unknown error')+'</span>';
+    toast('Upload failed','e');
+  }finally{
+    _wLogoUploading=false;
+    if(btn){ btn.style.opacity='1'; btn.style.pointerEvents='auto'; }
+    input.value='';
+  }
+}
+
 function prevWL(){
   const u=document.getElementById('wLg').value.trim();
   const n=document.getElementById('wNm').value.trim();
@@ -1528,14 +1707,18 @@ async function saveWallet(){
   const o   = parseInt(document.getElementById('wOrd').value)||_D.wallets.length+1;
   const e   = document.getElementById('wEn').checked;
   const id  = document.getElementById('wDId').value;
-  if(!n || !l || !col){ toast('Name, logo URL and fee collection number are required','w'); return; }
+  if(_wLogoUploading){ toast('Please wait — the logo is still uploading','w'); return; }
+  if(!n || !l || !col){ toast('Name, logo and fee collection number are required','w'); return; }
+  const instr = document.getElementById('wInstr').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,8);
   const b=document.getElementById('wSB');
   b.innerHTML='<div class="lr" style="width:13px;height:13px;border-width:2px"></div>'; b.disabled=true;
   const d={
     name:n, logoUrl:l, enabled:e, order:o, updatedAt:new Date().toISOString(),
     collectionNumber:col,
     paymentNumber:col,          // legacy field kept in sync
-    payMethod:typ, accountCategory:cat, note:note
+    payMethod:typ, accountCategory:cat, note:note,
+    instructions: instr,
+    logoStoragePath: _wLogoPath || ''
   };
   try{
     if(id) await window._updateDoc(id,'wallets',d);
@@ -1845,6 +2028,7 @@ async function _get(col,orderF='createdAt',dir='desc'){
 <script type="module">
 import{initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import{getFirestore,collection,doc,getDocs,getDoc,addDoc,updateDoc,deleteDoc,setDoc,query,where,orderBy,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import{getStorage,ref as fbRef,uploadString,getDownloadURL,deleteObject} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js';
 
 const FB={
   apiKey: "AIzaSyA6FTCSfXhNxPkpq2WCnz_EiaJFJWYYc8Q",
@@ -1855,6 +2039,19 @@ const FB={
   appId: "1:360643553761:web:330a92a39e15e281e6caa0"
 };
 const app=initializeApp(FB); const db=getFirestore(app); window._db=db;
+
+// ══ FIREBASE STORAGE (wallet logos) ══
+const _storage = getStorage(app);
+window._firebaseUploadLogo = async function(base64, name){
+  const path = 'wallet-logos/' + Date.now() + '_' + String(name||'logo').replace(/[^a-z0-9._-]/gi,'_');
+  const r = fbRef(_storage, path);
+  await uploadString(r, base64, 'data_url');
+  const url = await getDownloadURL(r);
+  return { url, path };
+};
+window._firebaseDeleteFile = async function(path){
+  try{ if(path) await deleteObject(fbRef(_storage, path)); return true; }catch(e){ return false; }
+};
 
 // ══ VERCEL-READY FALLBACK FETCH ══
 window._getDocs = async function(col, orderF='createdAt', dir='desc'){

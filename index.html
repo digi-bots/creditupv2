@@ -2353,12 +2353,14 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <div class="pay-instr">
     <h4><i class="fa-solid fa-circle-info"></i> Payment Instructions</h4>
     <p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> using <strong style="color:var(--txt)" id="payMethodLine">Send Money</strong> to:</p>
-    <div class="pay-num-wrap">
-      <div class="pay-num" id="adminNumber">-</div>
-      <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    <div id="payStepsList">
+      <div class="pay-num-wrap">
+        <div class="pay-num" id="adminNumber">-</div>
+        <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+      </div>
+      <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.</p>
+      <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>
     </div>
-    <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.</p>
-    <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>
   </div>
   <div class="admin-note" id="payNoteCard" style="display:none;">
     <h5><i class="fa-solid fa-thumbtack"></i> <span id="payNoteTitle">Note</span></h5>
@@ -3552,7 +3554,9 @@ function goToFeePayment(){
   const activeW = window._activeWallet && (window._wallets || []).find(w => w.id === window._activeWallet.id);
   const collNum = activeW ? walletCollectionNumber(activeW)
                 : (window._wallets && window._wallets[0] ? walletCollectionNumber(window._wallets[0]) : '');
-  document.getElementById('adminNumber').innerText = collNum || '-';
+  const shownW = activeW || (window._wallets && window._wallets[0]) || null;
+  if(collNum) renderPaySteps(shownW);
+  else { const an=document.getElementById('adminNumber'); if(an) an.innerText='-'; }
   if(!collNum) selPayMethod = '';
   const ml = document.getElementById('payMethodLine');
   if(ml){
@@ -3721,6 +3725,7 @@ async function submitTrx(){
       walletId: (window._activeWallet && window._activeWallet.id) || '',
       collectionNumber: document.getElementById('adminNumber').innerText,
       receivingNumber: document.getElementById('bankPhone')?.value || '',
+      appId: window._latestAppId || (window._latestApp && window._latestApp.id) || '',
       amount: finalTotal,
       totalFee: originalTotalFee,
       appliedBalance: appliedBalance,
@@ -4198,11 +4203,53 @@ function payMethodLabel(w){
 function _selPayDyn(w,ui=true){
   selPayMethod=w.name; window._activeWallet=w;
   if(ui){ document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); }
-  document.getElementById('adminNumber').innerText=walletCollectionNumber(w)||'-';
   const ml=document.getElementById('payMethodLine'); if(ml) ml.innerText=payMethodLabel(w);
+  renderPaySteps(w);
   // a wallet-specific note wins over the global fee-payment note
   if(w && w.note && String(w.note).trim()) applyFeePaymentNote(w.note, w.name + ' note');
   else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
+}
+
+// per-wallet instructions: numbered steps where {number} becomes the copyable number
+function renderPaySteps(w){
+  const box=document.getElementById('payStepsList');
+  if(!box) return;
+  const steps=(w && Array.isArray(w.instructions) ? w.instructions : []).filter(x=>String(x).trim());
+  if(!steps.length){
+    const num0 = walletCollectionNumber(w) || '-';
+    box.innerHTML = `<div class="pay-num-wrap">
+        <div class="pay-num" id="adminNumber">${num0}</div>
+        <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+      </div>
+      <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.</p>
+      <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>`;
+    return;
+  }
+  const num = walletCollectionNumber(w) || '-';
+  let n = 0;
+  const body = steps.map((raw)=>{
+    let t = String(raw).replace(/[<>]/g,'');
+    // the number placeholder becomes the real, copyable number block
+    const hasNum = /\{number\}/i.test(t);
+    t = t.replace(/\{number\}/gi, '');
+    t = t.replace(/\{amount\}/gi, '<strong style="color:var(--txt)">Total Fee</strong>');
+    const numBlock = hasNum ? `<div class="pay-num-wrap">
+        <div class="pay-num" id="adminNumber">${num}</div>
+        <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+      </div>` : '';
+    const label = t.trim().replace(/[:\-–]\s*$/,'').trim();
+    // a line that only holds the number gets no number prefix — the block speaks for itself
+    if(!label) return numBlock;
+    n++;
+    return `<p>${n}. ${label}</p>` + numBlock;
+  }).join('');
+  box.innerHTML = body;
+  if(!document.getElementById('adminNumber')){
+    box.insertAdjacentHTML('beforeend', `<div class="pay-num-wrap">
+        <div class="pay-num" id="adminNumber">${num}</div>
+        <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+      </div>`);
+  }
 }
 
 function applyFeePaymentNote(note, title){
@@ -4565,7 +4612,7 @@ window.saveApplicationToFirebase=async function(){
       emergency2: {name:document.getElementById('c2Name').value,phone:document.getElementById('c2Phone').value,relation:selRel2},
       wallet: selWallet, bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
       status: 'Pending Fee Payment', submittedAt:new Date().toISOString()
-    });
+    }).then(ref => { window._latestAppId = ref.id; return ref; });
   }catch(e){ console.error('saveApp:',e); }
 };
 
