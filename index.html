@@ -14,7 +14,7 @@
 input,textarea{-webkit-user-select:auto;user-select:auto}
 html,body{height:100%}
 body{background:#000;color:var(--txt);display:flex;justify-content:center;min-height:100dvh;overflow-x:hidden}
-#app{width:100%;max-width:420px;background:var(--bg);height:100dvh;overflow-y:auto;overflow-x:hidden;position:relative;box-shadow:0 0 80px rgba(0,0,0,.9);scrollbar-width:none;padding-bottom:80px}
+#app{width:100%;max-width:400px;background:var(--bg);height:100dvh;overflow-y:auto;overflow-x:hidden;position:relative;box-shadow:0 0 80px rgba(0,0,0,.9);scrollbar-width:none;padding-bottom:80px}
 #app::-webkit-scrollbar{display:none}
 #loader{position:fixed;inset:0;background:rgba(6,13,26,.92);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:99999;flex-direction:column;gap:16px}
 #loader.on{display:flex}
@@ -50,23 +50,6 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #screen-approved.active,#screen-fee-payment.active,#screen-waiting.active{display:flex;flex-direction:column;padding:0}
 #screen-review-progress.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative}
 #screen-home.active{display:block;padding:0}
-
-/* Global Back Button */
-.global-back-btn { position: fixed; top: 18px; left: calc(50% - 190px); z-index: 9998; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); border: 1px solid var(--bord); display: none; justify-content: center; align-items: center; color: #fff; font-size: 16px; cursor: pointer; transition: 0.3s; }
-.global-back-btn.show { display: flex; }
-@media(max-width: 420px) { .global-back-btn { left: 15px; } }
-
-/* Hot Offer Peek Effect */
-.hot-offer-floating{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 30px);max-width:380px;background:linear-gradient(90deg,#ff4d6a,#ff8c42);border-radius:14px;padding:10px 15px;box-shadow:0 10px 30px rgba(255,77,106,0.4),0 0 0 2px rgba(255,255,255,0.2) inset;z-index:99999;cursor:pointer;transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);display:none}
-.hot-offer-floating.peek { transform: translateX(calc(-50% + 140px)); opacity: 0.8; }
-.hot-offer-floating.peek:hover { opacity: 1; }
-.hot-offer-content{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.hot-icon{font-size:22px;animation:fire-shake 1.5s infinite}
-.hot-text h4{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;text-shadow:0 2px 4px rgba(0,0,0,0.2);margin-bottom:2px}
-.hot-text p{font-size:11px;font-weight:600;color:rgba(255,255,255,0.95);margin:0;line-height:1.3}
-.hot-close{background:rgba(0,0,0,0.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:12px;cursor:pointer;flex-shrink:0}
-@keyframes fire-shake{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.2) rotate(10deg)}}
-
 .ticker-wrap{width:100%;overflow:hidden;background:rgba(29,219,128,0.1);border-bottom:1px solid rgba(29,219,128,0.2);padding:8px 0;position:relative;z-index:10;display:flex;align-items:center}
 .ticker-title{background:var(--p);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:4px;margin-left:15px;z-index:2;white-space:nowrap;box-shadow:0 2px 8px rgba(29,219,128,.3)}
 .ticker{display:flex;white-space:nowrap;animation:ticker 20s linear infinite;padding-left:15px;will-change:transform}
@@ -78,7 +61,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .home-hdr::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(29,219,128,.1) 0%,transparent 70%);border-radius:50%;animation:orb 8s ease-in-out infinite reverse}
 @keyframes orb{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.15) translate(10px,-10px)}}
 .home-top-bar{display:flex;justify-content:space-between;align-items:center;padding:15px 0 10px;background:transparent;position:relative;z-index:20}
-.home-greeting h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:18px;font-weight:900;letter-spacing:-0.5px}
+.home-greeting h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:20px;font-weight:900;letter-spacing:-0.5px}
 .balance-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.35);border:1px solid rgba(29,219,128,0.4);border-radius:20px;padding:6px 14px;margin-top:8px;box-shadow:0 4px 15px rgba(29,219,128,0.15);backdrop-filter:blur(5px)}
 .balance-pill span{font-size:15px;font-weight:800;color:#fff}
 .balance-pill i{color:var(--p);cursor:pointer;font-size:14px;padding:4px}
@@ -97,7 +80,6 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .h-feat-txt{font-size:11px;color:rgba(255,255,255,.8);font-weight:500}
 .btn-borrow{background:rgba(255,255,255,.97);color:#0a5c2f;border:none;padding:17px 20px;border-radius:32px;font-size:17px;font-weight:800;width:100%;cursor:pointer;position:relative;z-index:2;box-shadow:0 8px 32px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s}
 .btn-borrow:active{transform:scale(.98)}
-.btn-borrow.secondary{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3);box-shadow:none;margin-top:10px;font-size:14px;padding:14px}
 .bn-div{height:20px;width:1.5px;background:#86efac}
 .bn-bn{font-family:'Hind Siliguri',sans-serif;font-weight:700;font-size:16px;color:#166534}
 .bn-hand{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:26px;animation:handPulse 1.5s infinite}
@@ -349,7 +331,6 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .rule-txt{color:var(--txt2);font-size:13px;line-height:1.6}
 .apv-foot{padding:16px;margin-top:auto}
 .btn-final{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:17px;border-radius:32px;font-size:17px;font-weight:800;width:100%;cursor:pointer;box-shadow:var(--glow);letter-spacing:.3px;transition:.2s}
-
 .fee-hdr{display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surf);border-bottom:1px solid var(--bord);position:relative}
 .fee-hdr .back-ic{position:absolute;left:16px;font-size:18px;color:var(--txt2);cursor:pointer}
 .fee-hdr .title{font-size:17px;font-weight:800;color:var(--txt)}
@@ -368,16 +349,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .pay-instr h4{font-size:14px;color:var(--txt);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .pay-instr h4 i{color:var(--p)}
 .pay-instr p{font-size:12.5px;color:var(--txt2);margin-bottom:8px;line-height:1.5}
-
-/* Copy Number & Timer */
-.pay-num-wrap { display: flex; align-items: center; gap: 10px; margin: 12px 0; padding: 12px; background: var(--bg2); border-radius: 10px; border: 1px solid rgba(29,219,128,.15); }
-.pay-num { flex: 1; font-size: 20px; font-weight: 900; color: var(--p); letter-spacing: 1.5px; text-align: center; }
-.copy-btn { background: rgba(29,219,128,.1); border: 1px solid rgba(29,219,128,.3); color: var(--p); width: 36px; height: 36px; border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
-.copy-btn:active { transform: scale(0.9); }
-.timer-box { display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255,77,106,0.1); border: 1px dashed var(--red); border-radius: 12px; padding: 10px; margin: 0 16px 16px; color: var(--red); font-size: 14px; font-weight: 700; }
-.timer-box i { animation: wait-pulse 2s infinite; }
-.timer-val { font-family: monospace; font-size: 18px; letter-spacing: 2px; }
-
+.pay-num{font-size:20px;font-weight:900;color:var(--p);letter-spacing:1.5px;margin:12px 0;padding:12px;background:var(--bg2);border-radius:10px;text-align:center;border:1px solid rgba(29,219,128,.15)}
 .trx-wrap{margin:0 16px 18px}
 .trx-wrap label{display:block;font-size:13px;color:var(--txt2);margin-bottom:8px;font-weight:500}
 .trx-wrap input{width:100%;padding:15px;border-radius:14px;background:var(--surf);border:1.5px solid var(--bord);color:var(--txt);font-size:16px;outline:none;font-weight:600;letter-spacing:.5px;transition:.2s}
@@ -385,7 +357,6 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .fee-foot{padding:16px;margin-top:auto}
 .btn-pay{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:17px;border-radius:32px;font-size:17px;font-weight:800;width:100%;cursor:pointer;box-shadow:var(--glow);opacity:.5;transition:all .3s;letter-spacing:.3px}
 .btn-pay.on{opacity:1}
-
 .wait-ic{width:82px;height:82px;background:rgba(255,140,66,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--orange);margin-bottom:20px;animation:wait-pulse 2s infinite;border:1px solid rgba(255,140,66,.2)}
 @keyframes wait-pulse{0%{box-shadow:0 0 0 0 rgba(255,140,66,.3)}70%{box-shadow:0 0 0 20px rgba(255,140,66,0)}100%{box-shadow:0 0 0 0 rgba(255,140,66,0)}}
 .wait-title{font-size:22px;font-weight:800;color:var(--txt);margin-bottom:10px;letter-spacing:-.5px}
@@ -480,32 +451,82 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .bonus-banner span{font-size:13px;font-weight:700;color:#fff}
 .shake-icon{font-size:20px;animation:shake 2s infinite cubic-bezier(.36,.07,.19,.97) both;display:inline-block}
 @keyframes shake{10%,90%{transform:translate3d(-2px,0,0) rotate(-10deg)}20%,80%{transform:translate3d(4px,0,0) rotate(10deg)}30%,50%,70%{transform:translate3d(-6px,0,0) rotate(-10deg)}40%,60%{transform:translate3d(6px,0,0) rotate(10deg)}}
-.bal-toggle-box { background: var(--surf); border: 1px solid var(--bord); border-radius: 14px; padding: 0; margin: 0 16px 16px; display: flex; flex-direction: column; transition: .3s; }
+.hot-offer-floating{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:calc(100% - 30px);max-width:380px;background:linear-gradient(90deg,#ff4d6a,#ff8c42);border-radius:14px;padding:10px 15px;box-shadow:0 10px 30px rgba(255,77,106,0.4),0 0 0 2px rgba(255,255,255,0.2) inset;z-index:99999;cursor:pointer;animation:floatBounce 3s ease-in-out infinite;display:none}
+.hot-offer-content{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hot-icon{font-size:22px;animation:fire-shake 1.5s infinite}
+.hot-text h4{font-size:14px;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:0.5px;text-shadow:0 2px 4px rgba(0,0,0,0.2);margin-bottom:2px}
+.hot-text p{font-size:11px;font-weight:600;color:rgba(255,255,255,0.95);margin:0;line-height:1.3}
+.hot-close{background:rgba(0,0,0,0.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:12px;cursor:pointer;flex-shrink:0}
+@keyframes floatBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+@keyframes fire-shake{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.2) rotate(10deg)}}
+.fomo-fire-icon{font-size:55px;animation:fire-shake 1.5s infinite;margin-bottom:10px;display:inline-block}
+.fomo-progress-wrap{background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.08)}
+.fomo-progress-header{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#fff;margin-bottom:8px}
+.fomo-progress-track{width:100%;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;margin-bottom:10px}
+.fomo-progress-fill{height:100%;background:linear-gradient(90deg,#ff416c,#ff4b2b);border-radius:5px;transition:width 1s ease}
+.fomo-warning{font-size:11px;color:var(--red);font-weight:700;margin:0;display:flex;align-items:center;justify-content:center;gap:5px}
+.bal-toggle-box { background: var(--surf); border: 1px solid var(--bord); border-radius: 14px; padding: 15px; margin: 0 16px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: .3s; }
 .bal-toggle-box.active { border-color: var(--p); background: rgba(29,219,128,.05); }
 .bal-left { display: flex; align-items: center; gap: 10px; }
 .bal-left i { color: var(--orange); font-size: 18px; }
 .bal-left h4 { font-size: 14px; color: var(--txt); margin-bottom: 2px; }
 .bal-left p { font-size: 11px; color: var(--txt2); }
-.bal-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--bord); display: flex; justify-content: center; align-items: center; color: transparent; transition: .2s; cursor: pointer; }
-.bal-check.active { background: var(--p); border-color: var(--p); color: #fff; }
+.bal-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--bord); display: flex; justify-content: center; align-items: center; color: transparent; transition: .2s; }
 .bal-toggle-box.active .bal-check { background: var(--p); border-color: var(--p); color: #fff; }
 #screen-fee-payment { padding-bottom: 100px !important; }
 .pay-instr { margin-bottom: 80px; }
 
-/* Premium Invite Modal Styles */
-.invite-premium-box { background: linear-gradient(145deg, #111f35, #060d1a); border: 1px solid rgba(29,219,128,0.3); box-shadow: 0 0 40px rgba(29,219,128,0.15); border-radius: 24px; padding: 25px; text-align: center; position: relative; overflow: hidden; }
-.invite-premium-box::before { content: ''; position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(29,219,128,0.2) 0%, transparent 70%); border-radius: 50%; }
-.invite-premium-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 5px; text-shadow: 0 2px 10px rgba(29,219,128,0.3); }
-.invite-premium-sub { font-size: 13px; color: var(--p); font-weight: 600; margin-bottom: 20px; letter-spacing: 0.5px; text-transform: uppercase; }
-.invite-card { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
-.invite-link { font-size: 14px; color: var(--orange); font-weight: 800; word-break: break-all; margin-bottom: 15px; }
+/* ─── SUPER PREMIUM SUPPORT POPUP ─── */
+.premium-cs-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.premium-cs-overlay.on { display: flex; opacity: 1; }
+
+.premium-cs-box {
+  background: linear-gradient(145deg, rgba(15,29,53,0.95), rgba(10,20,40,0.98));
+  border: 1px solid rgba(29,219,128,0.3); border-radius: 24px;
+  width: 100%; max-width: 380px; position: relative;
+  box-shadow: 0 0 40px rgba(29,219,128,0.15), inset 0 0 20px rgba(29,219,128,0.05);
+  transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.premium-cs-overlay.on .premium-cs-box { transform: scale(1) translateY(0); }
+
+.cs-close-btn {
+  position: absolute; top: 15px; right: 15px; width: 32px; height: 32px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%; color: var(--txt2); display: flex; justify-content: center;
+  align-items: center; cursor: pointer; transition: 0.3s; z-index: 10;
+}
+.cs-close-btn:hover { background: rgba(255,77,106,0.2); color: var(--red); transform: rotate(90deg); }
+
+#csChatInterface { display: none; flex-direction: column; height: 500px; max-height: 80vh; }
+.chat-header { background: rgba(29,219,128,0.1); padding: 15px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(29,219,128,0.2); }
+.chat-header i { color: var(--p); font-size: 20px; }
+.chat-header h4 { color: var(--txt); font-size: 15px; font-weight: 700; margin: 0; }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 13.5px; line-height: 1.5; animation: msgIn 0.3s ease; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.msg.ai { background: rgba(255,255,255,0.05); color: var(--txt); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.08); }
+.msg.user { background: linear-gradient(135deg, var(--p), var(--p2)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(29,219,128,0.2); }
+.chat-input-area { padding: 15px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px; background: rgba(0,0,0,0.2); }
+.chat-input-area input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 0 15px; color: #fff; font-size: 13px; outline: none; }
+.chat-input-area input:focus { border-color: var(--p); }
+.chat-send-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--p); color: #fff; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+.chat-send-btn:hover { background: var(--p2); transform: scale(1.05); }
+.quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.quick-reply-btn { background: rgba(29,219,128,0.1); border: 1px solid rgba(29,219,128,0.3); color: var(--p); padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: 0.2s; }
+.quick-reply-btn:hover { background: rgba(29,219,128,0.2); }
 </style>
 </head>
 <body>
 
 <div id="loader"><div class="loader-ring"></div><div class="loader-text">Please wait...</div></div>
 
-<div class="hot-offer-floating" id="hotOfferBanner" onclick="handleHotOfferClick(event)">
+<div class="hot-offer-floating" id="hotOfferBanner" onclick="openFomoModal()">
   <div class="hot-offer-content">
     <span class="hot-icon">🔥</span>
     <div class="hot-text">
@@ -516,17 +537,15 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   </div>
 </div>
 
-<div class="global-back-btn" id="globalBackBtn" onclick="nav('screen-home')"><i class="fa-solid fa-arrow-left"></i></div>
-
 <div class="modal-overlay premium-popup" id="fomoModal">
   <div class="mc" style="max-width: 360px; text-align: center;">
-    <div style="font-size:55px; animation:fire-shake 1.5s infinite; margin-bottom:10px; display:inline-block;">🔥</div>
+    <div class="fomo-fire-icon">🔥</div>
     <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
     <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">প্রথম ৫০ জন ইউজারের মধ্যে থাকলে আপনার লোনের <b style="color:var(--orange);">১ম মাসের কিস্তি সম্পূর্ণ ফ্রি!</b> <br><span style="font-size: 11px; color: var(--p);">(১ম মাসের কিস্তি কোম্পানিই বহন করবে, ২য় মাস থেকে পরিশোধ শুরু)</span></p>
-    <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:15px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.08)">
-      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#fff;margin-bottom:8px"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;">৩৮/৫০ জন</span></div>
-      <div style="width:100%;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;margin-bottom:10px"><div style="height:100%;background:linear-gradient(90deg,#ff416c,#ff4b2b);width: 76%;border-radius:5px;"></div></div>
-      <p style="font-size:11px;color:var(--red);font-weight:700;margin:0;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fa-solid fa-triangle-exclamation"></i> মাত্র ১২টি অফার বাকি!</p>
+    <div class="fomo-progress-wrap">
+      <div class="fomo-progress-header"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;">৩৮/৫০ জন</span></div>
+      <div class="fomo-progress-track"><div class="fomo-progress-fill" style="width: 76%;"></div></div>
+      <p class="fomo-warning"><i class="fa-solid fa-triangle-exclamation"></i> মাত্র ১২টি অফার বাকি!</p>
     </div>
     <button class="mbtn-full" style="background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255,75,43,0.4); font-size: 16px; margin-bottom: 12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
     <button class="mbtn-cancel" style="width: 100%; border: none; background: transparent; color: var(--txt2);" onclick="closeFomoModal()">আমি পরে দেখব</button>
@@ -651,31 +670,28 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   </div>
 </div>
 
-<!-- Premium Invite Modal (Restored) -->
 <div class="modal-overlay premium-popup" id="referModal">
-  <div class="mc invite-premium-box" style="max-width: 380px;">
-    <div style="position:absolute; top:15px; right:15px; cursor:pointer;" onclick="closeModal('referModal')"><i class="fa-solid fa-xmark" style="color:var(--txt2); font-size:18px;"></i></div>
-    <div style="width: 70px; height: 70px; background: linear-gradient(135deg, var(--orange), var(--red)); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px; box-shadow: 0 10px 20px rgba(255,77,106,0.3);">
-      <i class="fa-solid fa-gift" style="font-size: 30px; color: #fff;"></i>
-    </div>
-    <div class="invite-premium-title">Invite &amp; Win Big!</div>
-    <div class="invite-premium-sub">Exclusive Rewards Await</div>
-    
+  <div class="mc" style="max-height: 90dvh; overflow-y: auto;">
+    <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
+    <div class="m-title">Refer &amp; Win Big!</div>
+    <p class="m-msg">বন্ধুদের রেফার করে জিতুন বিশাল সব পুরস্কার!</p>
     <div style="display:flex; gap:10px; margin-bottom:15px;">
-      <div style="flex:1; background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase; margin-bottom:5px;">Total Refers</p><h3 style="font-size:20px; color:var(--txt); margin:0;" id="refTotalCount">0</h3></div>
-      <div style="flex:1; background:rgba(29,219,128,.1); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase; margin-bottom:5px;">Success</p><h3 style="font-size:20px; color:var(--p); margin:0;" id="refSuccessCount">0</h3></div>
+      <div style="flex:1; background:var(--bg2); padding:12px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase;">Total Refers</p><h3 style="font-size:18px; color:var(--txt);" id="refTotalCount">0</h3></div>
+      <div style="flex:1; background:rgba(29,219,128,.1); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase;">Success</p><h3 style="font-size:18px; color:var(--p);" id="refSuccessCount">0</h3></div>
     </div>
-
-    <div class="invite-card">
-      <p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Exclusive Referral Link</p>
-      <div class="invite-link" id="refLinkDisplay">Loading...</div>
-      <div style="display:flex; gap:10px;">
-        <button class="mbtn mbtn-cancel" style="flex:1; background:var(--surf2); font-size:13px;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button>
-        <button class="mbtn mbtn-ok" style="flex:2; font-size:13px;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button>
+    <div style="background:var(--bg2); border:1px solid var(--bord); border-radius:14px; padding:15px; margin-bottom:15px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:13px; font-weight:700; color:var(--txt);">Current Status:</span><span style="font-size:14px; font-weight:800; color:var(--orange);" id="currentTierName">Starter</span></div>
+      <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:8px;"><div id="tierProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff8c42, #ff4b2b); border-radius:5px; transition: width 0.5s;"></div></div>
+      <p style="font-size:11px; color:var(--txt2); text-align:center;" id="tierProgressText">পরবর্তী পুরস্কার পেতে আরও রেফার করুন!</p>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px; border-top:1px dashed var(--bord); padding-top:15px;">
+        <div id="tierRow20" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥉</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">২০ জন রেফারেল</div><div style="font-size:11px; color:var(--orange);">৳১০,০০০ এর নিচে লোনে ১ম কিস্তি মাফ!</div></div><i class="fa-solid fa-lock" id="tierLock20" style="color:var(--txt2); font-size:12px;"></i></div>
+        <div id="tierRow50" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥈</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">৫০ জন রেফারেল</div><div style="font-size:11px; color:var(--blue);">৳৫,০০০ ফ্রি লোন! (শোধ করতে হবে না)</div></div><i class="fa-solid fa-lock" id="tierLock50" style="color:var(--txt2); font-size:12px;"></i></div>
+        <div id="tierRow100" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥇</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">১০০ জন রেফারেল</div><div style="font-size:11px; color:var(--red);">ইনস্ট্যান্ট ৳৫০,০০০ জ্যাকপট!</div></div><i class="fa-solid fa-lock" id="tierLock100" style="color:var(--txt2); font-size:12px;"></i></div>
       </div>
     </div>
-    
-    <button class="mbtn-cancel" style="width:100%; border:none; background:transparent; color:var(--txt2); margin-top:10px;" onclick="closeModal('referModal')">Close</button>
+    <div style="background:var(--bg2); border-radius:14px; padding:15px; border:1px dashed var(--p); text-align:center;"><p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Referral Link</p><div style="font-size:12px; color:var(--p); word-break:break-all; font-weight:700;" id="refLinkDisplay">Loading...</div></div>
+    <div style="display:flex; gap:10px; margin-top:15px;"><button class="mbtn mbtn-cancel" style="flex:1; background:var(--surf2);" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button><button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button></div>
+    <button class="mbtn-cancel" style="width:100%; margin-top:10px; border:none; background:transparent; color:var(--txt2);" onclick="closeModal('referModal')">Close</button>
   </div>
 </div>
 
@@ -706,10 +722,12 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   </div>
 </div>
 
+<!-- SUPER PREMIUM CUSTOMER SUPPORT POPUP -->
 <div class="premium-cs-overlay" id="csPopup" onclick="toggleCS(event)">
   <div class="premium-cs-box" onclick="event.stopPropagation()">
     <button class="cs-close-btn" onclick="toggleCS()"><i class="fa-solid fa-xmark"></i></button>
     
+    <!-- MAIN MENU -->
     <div id="csMainMenu">
       <div style="text-align: center; padding: 30px 20px 20px;">
         <div style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(29,219,128,0.2), rgba(29,219,128,0.05)); border: 1px solid var(--p); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px;">
@@ -755,6 +773,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       </div>
     </div>
 
+    <!-- AI CHAT INTERFACE -->
     <div id="csChatInterface">
       <div class="chat-header">
         <button onclick="backToCsMenu()" style="background:none; border:none; color:#fff; margin-right:5px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
@@ -801,11 +820,10 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="home-hdr">
     <div class="home-top-bar">
       <div class="home-greeting">
-        <h3 id="userGreeting">Welcome to Credit Up</h3>
+        <h3 id="userGreeting">Hello, User 👋</h3>
         <div class="balance-pill" id="balanceContainer" style="display:none;"><span style="font-size:12px; color:var(--p);"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
       </div>
       <div style="display:flex; gap:10px;">
-        <div class="notif-btn" id="logoutBtnContainer" onclick="logoutUser()" style="display:none;"><i class="fa-solid fa-power-off"></i></div>
         <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
         <div class="notif-btn" onclick="toggleCS()"><i class="fa-solid fa-headset"></i></div>
       </div>
@@ -821,7 +839,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     </div>
     <div class="dual-btn-wrap">
       <button class="btn-borrow" id="mainBorrowBtn" onclick="handleMainAction()"><span id="mainBorrowBtnText">Borrow Now</span> <span class="bn-div"></span> <span class="bn-bn">লোন নিন</span><span class="bn-hand">👉</span></button>
-      <button class="btn-borrow secondary" id="secondaryApplyBtn" onclick="startNewApplication()" style="display:none;"><i class="fa-solid fa-plus"></i> Apply for Another Loan</button>
       <div style="text-align:center; margin-top:12px;" id="loginRegisterLink"><span style="font-size:13px; color:rgba(255,255,255,.7);">Already have an account? </span><a href="javascript:void(0)" onclick="nav('screen-login')" style="color:#fff; font-weight:700; text-decoration:underline;">Login / Register</a></div>
     </div>
   </div>
@@ -975,9 +992,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="form-top"><h2>Application</h2><span>Step 4 / 5</span></div>
   <div class="step-track"><div class="step-fill s4"></div></div>
   <h3 class="form-sec-title">Bank Information</h3>
-  
-  <div class="bank-warn" style="border-color:var(--red); background:rgba(255,77,106,0.08); color:var(--red);"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px"></i><strong>Important:</strong> Ensure the wallet number is correct and registered in your own name. Incorrect details will result in failed disbursement.</div>
-  
+  <div class="bank-warn"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>We've pre-filled your registered phone number. Tap the edit icon to change it.</div>
   <div class="ph-lbl">Select Wallet Type <span>*</span></div>
   <div class="wallet-grid" id="walletGrid">
     <div class="w-card sel" id="wBkash" onclick="selectWallet('Bkash')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="Bkash"><span>Bkash</span></div>
@@ -1081,15 +1096,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-approved')"></i>
     <div class="title">Fee Payment</div>
   </div>
-  
-  <div class="timer-box">
-    <i class="fa-solid fa-hourglass-half"></i> Complete payment within <span class="timer-val" id="payTimer">15:00</span>
-  </div>
-  
-  <div style="background:rgba(255,77,106,0.1); border:1px dashed var(--red); border-radius:12px; padding:10px 15px; margin:0 16px 16px; color:var(--red); font-size:12px; text-align:center;">
-    <i class="fa-solid fa-triangle-exclamation"></i> <strong>Careful:</strong> Send exact amount. Incorrect TrxID will cause delay.
-  </div>
-
   <div class="fee-sum">
     <div class="fee-row"><span>Loan Amount (You Receive)</span><span id="payAmount">-</span></div>
     <div class="fee-row"><span>Origination Fee</span><span class="red" id="payOrgFee">-</span></div>
@@ -1098,23 +1104,15 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     <div class="fee-row total"><span>Total Fee to Pay Now</span><span class="grn" id="payTotal">-</span></div>
   </div>
 
-  <div class="bal-toggle-box" id="balanceApplyBox" onclick="toggleBalanceApply()" style="display: flex; flex-direction: column; padding: 0;">
-    <div style="display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px;" id="balToggleHeader">
-      <div class="bal-left">
-        <i class="fa-solid fa-wallet"></i>
-        <div>
-          <h4>Use Account Balance</h4>
-          <p>Available: <strong id="dispAvailBalance">৳ 0</strong></p>
-        </div>
-      </div>
-      <i class="fa-solid fa-plus" id="balToggleIcon" style="color:var(--txt2); transition:0.3s;"></i>
-    </div>
-    <div id="balanceDetails" style="display:none; padding:0 15px 15px; border-top:1px dashed rgba(255,255,255,0.1); margin-top:5px; padding-top:15px; width:100%;">
-      <div style="display:flex; align-items:center; justify-content:space-between;">
-        <div style="font-size:13px; color:var(--txt);">Apply balance to fee?</div>
-        <div class="bal-check" id="balCheckIcon" onclick="applyBalanceCheck(event)"><i class="fa-solid fa-check"></i></div>
+  <div class="bal-toggle-box" id="balanceApplyBox" onclick="toggleBalanceApply()" style="display: none;">
+    <div class="bal-left">
+      <i class="fa-solid fa-wallet"></i>
+      <div>
+        <h4>Use Account Balance</h4>
+        <p>Available: <strong id="dispAvailBalance">৳ 0</strong></p>
       </div>
     </div>
+    <div class="bal-check" id="balCheckIcon"><i class="fa-solid fa-check"></i></div>
   </div>
 
   <div class="pm-title">Select Payment Method</div>
@@ -1126,10 +1124,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="pay-instr">
     <h4><i class="fa-solid fa-circle-info"></i> Payment Instructions</h4>
     <p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> amount using <strong style="color:var(--txt)">Send Money</strong> to:</p>
-    <div class="pay-num-wrap">
-      <div class="pay-num" id="adminNumber">-</div>
-      <button class="copy-btn" onclick="copyPayNumber()"><i class="fa-regular fa-copy"></i></button>
-    </div>
+    <div class="pay-num" id="adminNumber">-</div>
     <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS.</p>
     <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>
   </div>
@@ -1166,9 +1161,7 @@ const ADMIN = {
     Bkash:  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png',
     Nagad:  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png',
     Rocket: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png'
-  },
-  maxLoanLimit: 60000,
-  maxTerm: 36
+  }
 };
 
 let currentDashboardStep = 0;
@@ -1190,20 +1183,27 @@ let pendingLoginUser=null, modalCloseCb=null;
 let currentNidTarget='';
 window._userRealBalance = 0;
 window._isBalanceHidden = true;
-let timerInterval = null;
 
 window.isConfigLoaded = false;
+
 const splashCheck = setInterval(() => {
   if(window.isConfigLoaded) {
     clearInterval(splashCheck);
     const s = document.getElementById('splash');
-    if(s) { s.classList.add('out'); setTimeout(()=>s.remove(), 750); }
+    if(s) { 
+      s.classList.add('out'); 
+      setTimeout(()=>s.remove(), 750); 
+    }
   }
 }, 100);
+
 setTimeout(() => {
   clearInterval(splashCheck);
   const s = document.getElementById('splash');
-  if(s && !s.classList.contains('out')) { s.classList.add('out'); setTimeout(()=>s.remove(), 750); }
+  if(s && !s.classList.contains('out')) {
+    s.classList.add('out'); 
+    setTimeout(()=>s.remove(), 750);
+  }
 }, 5000);
 
 function showLoader(on){ document.getElementById('loader').classList.toggle('on',on); }
@@ -1215,17 +1215,6 @@ function initHotOffer() {
       banner.style.display = 'block';
     }
   }, 3500);
-}
-
-function handleHotOfferClick(e) {
-  if(e.target.closest('.hot-close')) return;
-  const banner = document.getElementById('hotOfferBanner');
-  if(banner.classList.contains('peek')) {
-    nav('screen-home');
-    banner.classList.remove('peek');
-  } else {
-    openFomoModal();
-  }
 }
 
 function openFomoModal() { document.getElementById('fomoModal').classList.add('on'); }
@@ -1369,25 +1358,17 @@ function nav(id){
   if(t){
     t.classList.add('active');
     document.getElementById('app').scrollTo({top: 0, behavior: 'instant'});
-    
-    const hotOffer = document.getElementById('hotOfferBanner');
-    if(hotOffer.style.display === 'block') {
-      if(id === 'screen-home') hotOffer.classList.remove('peek');
-      else hotOffer.classList.add('peek');
-    }
-
-    const backBtn = document.getElementById('globalBackBtn');
-    if(id === 'screen-home' || id === 'screen-login' || id === 'screen-register') backBtn.classList.remove('show');
-    else backBtn.classList.add('show');
-
     if(id === 'screen-home'){
       const u = _getUser();
-      if(u && typeof window.loadUserDashboardData === 'function') setTimeout(()=>window.loadUserDashboardData(), 100);
+      if(u && typeof window.loadUserDashboardData === 'function'){
+        setTimeout(()=>window.loadUserDashboardData(), 100);
+      }
       if(typeof updateUIForUser === 'function') updateUIForUser();
     }
   }
 }
 
+// ─── PREMIUM SUPPORT & AI CHAT LOGIC ─────────────────────────
 function toggleCS(e) { 
   if(e) e.stopPropagation(); 
   const popup = document.getElementById('csPopup');
@@ -1398,19 +1379,23 @@ function toggleCS(e) {
     popup.classList.add('on');
   }
 }
+
 function backToCsMenu() {
   document.getElementById('csMainMenu').style.display = 'block';
   document.getElementById('csChatInterface').style.display = 'none';
 }
+
 function startAIChat() {
   document.getElementById('csMainMenu').style.display = 'none';
   document.getElementById('csChatInterface').style.display = 'flex';
   document.getElementById('chatInput').focus();
 }
+
 function sendQuickReply(text) {
   document.getElementById('chatInput').value = text;
   sendChatMessage();
 }
+
 function addChatMessage(text, sender) {
   const container = document.getElementById('chatMessages');
   const msg = document.createElement('div');
@@ -1419,14 +1404,17 @@ function addChatMessage(text, sender) {
   container.appendChild(msg);
   container.scrollTop = container.scrollHeight;
 }
+
 async function sendChatMessage() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if(!text) return;
+
   addChatMessage(text, 'user');
   input.value = '';
-  document.getElementById('quickReplies').style.display = 'none';
   
+  document.getElementById('quickReplies').style.display = 'none';
+
   const typingId = 'typing_' + Date.now();
   const container = document.getElementById('chatMessages');
   const typingMsg = document.createElement('div');
@@ -1437,33 +1425,44 @@ async function sendChatMessage() {
   container.scrollTop = container.scrollHeight;
 
   setTimeout(async () => {
-    const el = document.getElementById(typingId); if(el) el.remove();
+    const tEl = document.getElementById(typingId);
+    if(tEl) tEl.remove();
     const lowerText = text.toLowerCase();
     let reply = "";
+
     if (lowerText.includes('limit') || lowerText.includes('max') || lowerText.includes('borrow')) {
-      reply = `Our current maximum loan limit is ৳${document.getElementById('homeMaxBorrow').innerText}. You can apply for any amount up to this limit.`;
+      const maxBorrowEl = document.getElementById('homeMaxBorrow');
+      const maxVal = maxBorrowEl ? maxBorrowEl.innerText : '60,000';
+      reply = `Our current maximum loan limit is ৳${maxVal}. You can apply for any amount up to this limit.`;
     } 
     else if (lowerText.includes('fee') || lowerText.includes('charge') || lowerText.includes('cost')) {
-      const totalFeeVal = (ADMIN.orgFee || 0) + (ADMIN.serviceCharge || 0) + (ADMIN.processingFee || 0);
-      reply = `Our standard fees include an Origination Fee (৳${ADMIN.orgFee}), Service Charge (৳${ADMIN.serviceCharge}), and Processing Fee (৳${ADMIN.processingFee}). The total upfront fee is ৳${totalFeeVal}, plus advance interest.`;
+      const totalFeeAmt = (ADMIN.orgFee || 0) + (ADMIN.serviceCharge || 0) + (ADMIN.processingFee || 0);
+      reply = `Our standard fees include an Origination Fee (৳${ADMIN.orgFee}), Service Charge (৳${ADMIN.serviceCharge}), and Processing Fee (৳${ADMIN.processingFee}). The total upfront fee is ৳${totalFeeAmt}, plus advance interest based on your term.`;
     }
     else if (lowerText.includes('complain') || lowerText.includes('problem') || lowerText.includes('admin') || lowerText.includes('help')) {
-      reply = "I understand you need human assistance. I have escalated this chat to our Admin team. They will review your message and contact you shortly.";
+      reply = "I understand you need human assistance. I have escalated this chat to our Admin team. They will review your message and contact you shortly via your registered number.";
       await escalateToAdmin(text);
     }
     else {
-      reply = "I am a smart assistant. For detailed queries, you can contact our WhatsApp or Telegram support, or type 'complaint' to reach an admin.";
+      reply = "I am a smart assistant and still learning. For detailed queries, you can contact our WhatsApp or Telegram support, or type 'complaint' to reach an admin.";
     }
+
     addChatMessage(reply, 'ai');
   }, 1000);
 }
+
 async function escalateToAdmin(userMessage) {
   const user = _getUser();
   if(!user || !user.phone) return;
-  if(typeof window._saveSupportTicket !== 'function') { console.log('Support ticket function not ready'); return; }
+  if(typeof window._saveSupportTicket !== 'function') {
+    console.log('Support ticket function not ready yet');
+    return;
+  }
   try {
     await window._saveSupportTicket(user.phone, userMessage);
-  } catch(e) { console.error('Support ticket error:', e); }
+  } catch(e) {
+    console.error("Failed to save support ticket:", e);
+  }
 }
 
 function closeModal(id){ document.getElementById(id).classList.remove('on'); }
@@ -1517,15 +1516,9 @@ function closeGlobalModal(clearLogin=false){
   const cb=modalCloseCb; modalCloseCb=null;
   if(cb) cb();
 }
-
-function acceptPolicy(){ 
-  if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; } 
-  const u = _getUser();
-  if(u && u.phone) {
-    nav('screen-application-progress');
-  } else {
-    nav('screen-login');
-  }
+function acceptPolicy(){
+  if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; }
+  nav('screen-login');
 }
 
 function checkLoginInput(el){ el.value=el.value.replace(/\D/g,''); document.getElementById('loginNextBtn').classList.toggle('go',el.value.length===10); }
@@ -1778,21 +1771,6 @@ function openRepaymentSchedule(){
 
 function openLoanDetails()  { document.getElementById('loanDetailsModal').classList.add('on'); }
 
-function startTimer(duration, display) {
-  let timer = duration, minutes, seconds;
-  if(timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(function () {
-    minutes = parseInt(timer / 60, 10); seconds = parseInt(timer % 60, 10);
-    minutes = minutes < 10 ? "0" + minutes : minutes; seconds = seconds < 10 ? "0" + seconds : seconds;
-    display.textContent = minutes + ":" + seconds;
-    if (--timer < 0) {
-      clearInterval(timerInterval);
-      display.textContent = "00:00";
-      showErrorModal('Session Expired', 'Your payment session has expired. Please go back and try again.');
-    }
-  }, 1000);
-}
-
 function goToFeePayment(){
   if(!selAmount || selAmount == '0') {
       if(window._latestApp) {
@@ -1824,43 +1802,25 @@ function goToFeePayment(){
 
   isBalanceApplied = false;
   appliedBalance = 0;
-  document.getElementById('balCheckIcon').classList.remove('active');
-  document.getElementById('balanceDetails').style.display = 'none';
-  document.getElementById('balToggleIcon').className = 'fa-solid fa-plus';
+  document.getElementById('balanceApplyBox').classList.remove('active');
   
   updateFeeDisplay();
   
   document.getElementById('adminNumber').innerText = ADMIN.paymentNumbers[selPayMethod] || '-';
-  
-  const fifteenMinutes = 60 * 15;
-  const display = document.querySelector('#payTimer');
-  startTimer(fifteenMinutes, display);
-
   nav('screen-fee-payment');
 }
 
 function toggleBalanceApply() {
-  const details = document.getElementById('balanceDetails');
-  const icon = document.getElementById('balToggleIcon');
-  if(details.style.display === 'none') {
-    details.style.display = 'block';
-    icon.className = 'fa-solid fa-minus';
-  } else {
-    details.style.display = 'none';
-    icon.className = 'fa-solid fa-plus';
-  }
-}
-
-function applyBalanceCheck(e) {
-  if(e) e.stopPropagation();
   const userBalance = window._userRealBalance || 0;
-  const checkIcon = document.getElementById('balCheckIcon');
+  const box = document.getElementById('balanceApplyBox');
+  
   isBalanceApplied = !isBalanceApplied;
+  
   if(isBalanceApplied) {
-      checkIcon.classList.add('active');
+      box.classList.add('active');
       appliedBalance = Math.min(userBalance, originalTotalFee);
   } else {
-      checkIcon.classList.remove('active');
+      box.classList.remove('active');
       appliedBalance = 0;
   }
   updateFeeDisplay();
@@ -1891,12 +1851,6 @@ function selectPayMethod(m){
 }
 function checkTrx(){ const ok=document.getElementById('trxInput').value.trim().length>=4; document.getElementById('btnTrx').classList.toggle('on',ok); }
 
-function copyPayNumber() {
-  const num = document.getElementById('adminNumber').innerText;
-  if(!num || num === '-') return;
-  navigator.clipboard.writeText(num).then(() => { showAlert('Copied!', 'Payment number copied to clipboard.', 'success'); });
-}
-
 async function submitTrx(){
   const trx = document.getElementById('trxInput').value.trim();
   const finalTotal = originalTotalFee - appliedBalance;
@@ -1917,10 +1871,9 @@ async function submitTrx(){
         if(existing){ showErrorModal('Already Submitted','This Transaction ID has already been used.'); return; }
     }
 
-    const trxId = trx || 'BALANCE_' + Date.now();
     await window.saveTransactionToFirebase({
       uid: user.phone, 
-      trxId: trxId, 
+      trxId: trx || 'BALANCE_PAYMENT', 
       payMethod: selPayMethod, 
       amount: finalTotal,
       totalFee: originalTotalFee,
@@ -1933,7 +1886,6 @@ async function submitTrx(){
     });
     
     const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted');
-    if(timerInterval) clearInterval(timerInterval);
     
     document.getElementById('dispTrx').innerText = trx || 'Balance Adjustment';
     document.getElementById('dispMethod').innerText = finalTotal > 0 ? selPayMethod : 'Account Balance';
@@ -1960,21 +1912,18 @@ function updateUIForUser() {
   const balanceContainer = document.getElementById('balanceContainer');
   const bonusBanner = document.getElementById('bonusBanner');
   const notifBtnContainer = document.getElementById('notifBtnContainer');
-  const logoutBtnContainer = document.getElementById('logoutBtnContainer');
   
   if (u) {
     if(balanceContainer) balanceContainer.style.display = 'inline-flex';
     if(notifBtnContainer) notifBtnContainer.style.display = 'flex';
-    if(logoutBtnContainer) logoutBtnContainer.style.display = 'flex';
     if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
     if(loginLink) loginLink.style.display = 'none';
     if(bonusBanner) bonusBanner.style.display = 'none';
     const greet = document.getElementById('userGreeting');
-    if(greet) greet.innerText = `Hello, ${u.phone}`; // No emoji, full number
+    if(greet) greet.innerText = `Hello, ${u.phone.slice(-4)} 👋`;
   } else {
     if(balanceContainer) balanceContainer.style.display = 'none';
     if(notifBtnContainer) notifBtnContainer.style.display = 'none';
-    if(logoutBtnContainer) logoutBtnContainer.style.display = 'none';
     if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
     if(loginLink) loginLink.style.display = 'block';
     if(bonusBanner) bonusBanner.style.display = 'flex';
@@ -2040,20 +1989,18 @@ function openReferModal() {
   if(typeof window.loadReferralStats === 'function') window.loadReferralStats(u.phone);
 }
 function openHistoryModal() { document.getElementById('historyModal').classList.add('on'); if (typeof window.loadTransactionHistory === 'function') window.loadTransactionHistory(); }
-
 function copyRefLink() {
   const user = _getUser(); if(!user) return;
   const link = `${BASE_URL}?ref=${user.phone}`;
-  const premiumText = `🎉 *Exclusive Invitation!* 🎉\n\nHello! I am using *Credit Up* to get instant personal loans with amazing features.\n\n🎁 *Why join?*\n✅ Instant Approval\n✅ Lowest Interest Rates\n✅ 100% Secure & Trusted\n\n🎁 Sign up using my link and we both get special bonuses!\n\n👉 *Click here to join:* ${link}`;
-  const done = () => showAlert('Copied!', 'Premium invitation message copied. Share it with your friends!', 'success');
-  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(premiumText).then(done).catch(done); } 
-  else { const tmp = document.createElement('textarea'); tmp.value = premiumText; document.body.appendChild(tmp); tmp.select(); document.execCommand('copy'); document.body.removeChild(tmp); done(); }
+  const done = () => showAlert('Copied!', 'Referral link copied.', 'success');
+  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(link).then(done).catch(done); } 
+  else { const tmp = document.createElement('textarea'); tmp.value = link; document.body.appendChild(tmp); tmp.select(); document.execCommand('copy'); document.body.removeChild(tmp); done(); }
 }
 function shareRefLink() {
   const user = _getUser(); if(!user) return;
   const link = `${BASE_URL}?ref=${user.phone}`;
-  const premiumText = `🎉 *Exclusive Invitation!* 🎉\n\nHello! I am using *Credit Up* to get instant personal loans with amazing features.\n\n🎁 *Why join?*\n✅ Instant Approval\n✅ Lowest Interest Rates\n✅ 100% Secure & Trusted\n\n🎁 Sign up using my link and we both get special bonuses!\n\n👉 *Click here to join:* ${link}`;
-  if (navigator.share) { navigator.share({ title: 'Join Credit Up', text: premiumText }).catch(console.error); } 
+  const text = `🎉 Hey! I am using Credit Up to get instant personal loans. Join using my link and we both get bonuses! 💸\n\nClick here: ${link}`;
+  if (navigator.share) { navigator.share({ title: 'Join Credit Up', text: text, url: link }).catch(console.error); } 
   else { copyRefLink(); }
 }
 
@@ -2197,8 +2144,6 @@ async function loadDynamicConfig() {
       if(cfg.maxBorrowAmount) {
         const mbEl = document.getElementById('homeMaxBorrow');
         if(mbEl) mbEl.innerText = cfg.maxBorrowAmount;
-        ADMIN.maxLoanLimit = Number(String(cfg.maxBorrowAmount).replace(/,/g,''));
-        document.getElementById('calcAmount').max = ADMIN.maxLoanLimit;
       }
 
       if(cfg.newUserBonus !== undefined) {
@@ -2209,10 +2154,7 @@ async function loadDynamicConfig() {
       if(cfg.orgFee !== undefined) ADMIN.orgFee = Number(cfg.orgFee);
       if(cfg.serviceCharge !== undefined) ADMIN.serviceCharge = Number(cfg.serviceCharge);
       if(cfg.processingFee !== undefined) ADMIN.processingFee = Number(cfg.processingFee);
-      if(cfg.annualInterestRate !== undefined) {
-        ADMIN.annualRate = Number(cfg.annualInterestRate);
-        document.getElementById('calcRateLabel').innerText = ADMIN.annualRate;
-      }
+      if(cfg.annualInterestRate !== undefined) ADMIN.annualRate = Number(cfg.annualInterestRate);
 
       if(cfg.paymentNumbers) {
         if(cfg.paymentNumbers.Bkash) ADMIN.paymentNumbers.Bkash = cfg.paymentNumbers.Bkash;
@@ -2225,8 +2167,6 @@ async function loadDynamicConfig() {
       }
       if(cfg.loanTerms && cfg.loanTerms.length > 0) {
         OPTS.term = cfg.loanTerms.map(t => String(t));
-        ADMIN.maxTerm = Math.max(...OPTS.term.map(Number));
-        document.getElementById('calcTerm').max = ADMIN.maxTerm;
       }
       if(cfg.loanPurposes && cfg.loanPurposes.length > 0) {
         OPTS.loanPurpose = cfg.loanPurposes;
@@ -2291,6 +2231,7 @@ async function loadDynamicConfig() {
   }
 }
 
+// Support ticket save helper (exposed globally)
 window._saveSupportTicket = async function(uid, userMessage) {
   if(!db) throw new Error('Database unavailable.');
   await addDoc(collection(db, 'support_tickets'), {
@@ -2331,7 +2272,7 @@ window.submitLoginPassword=function(){
     localStorage.setItem('creditUpUser',JSON.stringify(pendingLoginUser));
     closeGlobalModal();
     document.getElementById('dashSuccessText').innerText='Welcome back! 👋';
-    nav('screen-home');
+    nav('screen-application-progress');
     if(typeof updateUIForUser === 'function') updateUIForUser();
     setTimeout(() => { if(typeof window.loadUserDashboardData === 'function') window.loadUserDashboardData(); }, 500);
   } else { showAlert('Incorrect Password','The password you entered is incorrect.','error'); }
@@ -2364,7 +2305,7 @@ window.registerUser=async function(){
     showLoader(false);
     showAlert('Account Created! 🎉', `Welcome! You received ৳${bonusAmt} bonus.`, 'success', () => {
       document.getElementById('dashSuccessText').innerText = 'Registration Successful! 🎉';
-      nav('screen-home');
+      nav('screen-application-progress');
       if(typeof updateUIForUser === 'function') updateUIForUser();
       if(typeof window.loadUserDashboardData === 'function') window.loadUserDashboardData();
     });
@@ -2473,12 +2414,9 @@ window.loadUserDashboardData = async function() {
   try {
     const appSnap = await getDocs(query(collection(db, 'applications'), where('uid', '==', user.phone)));
     const card = document.getElementById('userStatusCard'), mainBtn = document.getElementById('mainBorrowBtn');
-    const secondaryBtn = document.getElementById('secondaryApplyBtn');
     const title = document.getElementById('statusCardTitle'), desc = document.getElementById('statusCardDesc');
     const iconEl = document.getElementById('statusCardIcon'), iconBox = card.querySelector('.status-icon-box');
-    
-    card.style.display = 'none'; mainBtn.style.display = 'flex'; secondaryBtn.style.display = 'none'; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
-    
+    card.style.display = 'none'; mainBtn.style.display = 'flex'; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
     if(!appSnap.empty) {
       const apps = appSnap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
       const latestApp = apps[0]; window._latestApp = latestApp;
@@ -2495,16 +2433,10 @@ window.loadUserDashboardData = async function() {
         if(iconEl) iconEl.className = `fa-solid ${info.icon}`;
         if(iconBox){ iconBox.style.color = info.color; iconBox.style.background = info.bg; }
         card.style.display = 'flex';
-        
         if(['Pending Fee Payment', 'TrxID Submitted'].includes(latestApp.status)) {
           mainBtn.style.display = 'none';
-          secondaryBtn.style.display = 'none';
-        } else if (['Approved', 'Disbursed'].includes(latestApp.status)) {
-          mainBtn.style.display = 'none';
-          secondaryBtn.style.display = 'flex';
-        } else if (latestApp.status === 'Rejected') {
-          mainBtn.style.display = 'flex';
-          mainBtn.innerText = 'Borrow Now';
+        } else if (['Approved', 'Disbursed', 'Rejected'].includes(latestApp.status)) {
+          document.getElementById('mainBorrowBtnText').innerText = 'Apply for Another';
         }
       }
     }
@@ -2536,6 +2468,25 @@ window.loadReferralStats = async function(phone) {
     document.getElementById('currentTierName').innerText = tierName;
     document.getElementById('tierProgressBar').style.width = pct + '%';
     document.getElementById('tierProgressText').innerText = txt;
+    const updateTierRow = (rowId, lockId, unlocked) => {
+      const row  = document.getElementById(rowId);
+      const lock = document.getElementById(lockId);
+      if (!row || !lock) return;
+      if (unlocked) {
+        row.style.border  = '1px solid var(--p)';
+        row.style.background = 'rgba(29,219,128,.06)';
+        lock.className    = 'fa-solid fa-circle-check';
+        lock.style.color  = 'var(--p)';
+      } else {
+        row.style.border  = '1px solid transparent';
+        row.style.background = 'rgba(255,255,255,0.03)';
+        lock.className    = 'fa-solid fa-lock';
+        lock.style.color  = 'var(--txt2)';
+      }
+    };
+    updateTierRow('tierRow20',  'tierLock20',  activeCount >= 20);
+    updateTierRow('tierRow50',  'tierLock50',  activeCount >= 50);
+    updateTierRow('tierRow100', 'tierLock100', activeCount >= 100);
   } catch(e) { console.log('Referral stats error:', e); }
 };
 
@@ -2610,7 +2561,6 @@ setTimeout(() => {
   if(typeof updateUIForUser === 'function') updateUIForUser();
   if(_getUser() && typeof window.loadUserDashboardData === 'function'){ window.loadUserDashboardData(); }
 }, 1500);
-
 </script>
 </body>
 </html>
