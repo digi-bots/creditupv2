@@ -512,9 +512,39 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   margin-left:16px;margin-right:16px;
 }
 .modal-overlay .mc.pp:has(.pp-bar) > .notif-list{margin-bottom:16px}
-.modal-overlay .mc.pp:has(.pp-bar) > .mbtn-full,
-.modal-overlay .ld-card.pp:has(.pp-bar) > .mbtn-full{margin-top:14px;margin-bottom:16px}
-.modal-overlay #statusModalContent > *:first-child{margin-top:4px}
+.modal-overlay .ld-card.pp:has(.pp-bar) > .mbtn-full{margin-top:14px;margin-bottom:18px}
+.modal-overlay .ld-card.pp:has(.pp-bar) > .rep-schedule{margin-bottom:0}
+/* body + pinned footer: buttons never touch the card edge */
+.modal-overlay .mc.pp .pp-body{padding:2px 16px 6px}
+.modal-overlay .mc.pp .pp-body .detail-row:first-child{padding-top:4px}
+.modal-overlay .mc.pp .pp-foot{
+  flex-shrink:0;padding:12px 16px 16px;
+  border-top:1px solid rgba(29,219,128,.14);
+  background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55));
+}
+.modal-overlay .mc.pp .pp-foot .mbtn-full,
+.modal-overlay .mc.pp .pp-foot .mbtn{margin:0 !important}
+/* status popup: scrolling rows, fixed header + footer */
+#appStatusModal .mc.pp{
+  max-height:min(86dvh,560px);
+  display:flex !important;flex-direction:column;overflow:hidden;
+}
+#appStatusModal #statusModalContent{
+  margin:0 !important;padding:0 !important;
+  display:flex;flex-direction:column;min-height:0;flex:1 1 auto;
+}
+#appStatusModal .pp-body{flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent}
+#appStatusModal .pp-body::-webkit-scrollbar{width:5px}
+#appStatusModal .pp-body::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#appStatusModal .pp-body::-webkit-scrollbar-track{background:transparent}
+/* tidy rows: aligned labels, tighter dividers */
+.modal-overlay .detail-row{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.modal-overlay .detail-row:last-child{border-bottom:none}
+.modal-overlay .detail-lbl{font-size:12.5px;color:var(--txt2);letter-spacing:.1px}
+.modal-overlay .detail-val{font-size:13px;font-weight:700;color:var(--txt)}
+.modal-overlay .detail-val.color-p{color:var(--p);font-weight:800}
+.modal-overlay .detail-val.fw8{font-weight:800}
+.modal-overlay .notif-list{margin-top:2px}
 .modal-overlay .m-title,.modal-overlay .conf-title,.modal-overlay .ld-title{
   text-shadow:0 2px 14px rgba(29,219,128,.2);letter-spacing:-.35px;
 }
@@ -587,6 +617,11 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .modal-overlay .conf-row:last-of-type,.modal-overlay .ld-row.total{border-bottom:none}
 .modal-overlay .ld-row.total{margin-top:2px;padding-top:12px;border-top:1px solid rgba(29,219,128,.22);border-bottom:none}
 .modal-overlay .mbtn-full{height:46px;border-radius:14px;font-size:14.5px;margin-top:16px}
+.modal-overlay .mc.pp > .mbtn-full:last-child{margin-bottom:2px}
+.modal-overlay .mc.pp > .m-acts:last-child{margin-bottom:2px}
+.modal-overlay .mbtn-cancel{padding:0}
+.modal-overlay .notif-item .notif-content h4{line-height:1.35}
+.modal-overlay .notif-item .notif-content p{line-height:1.5}
 .modal-overlay .mbtn{height:46px;border-radius:14px;font-size:14.5px}
 .modal-overlay .m-acts{margin-top:18px}
 .modal-overlay .detail-row{padding:11px 0}
@@ -611,8 +646,14 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .bottom-sheet > .popup-close{position:absolute;top:14px;right:16px;float:none;margin:0}
 /* Referral popup: full app width, no scroll, English, close in corner */
 #referModal{padding:8px}
-#referModal .refer-card{max-width:none;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;gap:0;max-height:none}
-#referModal .refer-head{padding:14px 2px 0;text-align:center}
+#referModal .refer-card{max-width:none;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;gap:0;max-height:min(94dvh,720px)}
+/* head/body/footer: content scrolls, close + actions stay put */
+#referModal .refer-head{flex-shrink:0;position:relative;padding:16px 18px 0;text-align:center}
+#referModal .refer-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:0 18px 4px;scrollbar-width:thin;scrollbar-color:rgba(29,219,128,.35) transparent}
+#referModal .refer-body::-webkit-scrollbar{width:5px}
+#referModal .refer-body::-webkit-scrollbar-thumb{background:rgba(29,219,128,.32);border-radius:10px}
+#referModal .refer-body::-webkit-scrollbar-track{background:transparent}
+#referModal .refer-card > .popup-close{top:14px;right:14px}
 #referModal .m-icon{width:44px;height:44px;font-size:18px;margin:0 auto 8px}
 #referModal .m-title{font-size:17px;margin-bottom:4px}
 #referModal .m-msg{font-size:12px;margin-bottom:12px;line-height:1.4}
@@ -637,8 +678,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 #referModal .ref-tier .tx b{font-weight:800}
 #referModal .ref-tier .tx em{font-style:normal;font-weight:600}
 #referModal .ref-tier .lk{color:var(--txt2);font-size:11px;flex-shrink:0}
-#referModal .refer-foot{display:flex;gap:8px;margin-top:12px}
-#referModal .refer-foot .mbtn{height:44px;font-size:14px;border-radius:13px}
+#referModal .refer-foot{display:flex;gap:8px;flex-shrink:0;padding:12px 18px 16px;border-top:1px solid rgba(29,219,128,.14);background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55))}
+#referModal .refer-foot .mbtn{height:44px;font-size:13.5px;border-radius:13px;margin:0}
 @media (max-width:360px){
   #referModal .ref-tier .tx{font-size:10.5px}
   #referModal .m-title{font-size:16px}
@@ -906,6 +947,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       <div class="m-title">Refer &amp; Win Big!</div>
       <p class="m-msg">Refer your friends and unlock big rewards.</p>
     </div>
+    <div class="refer-body">
     <div class="ref-stats">
       <div class="ref-stat"><p>Total Refers</p><h3 id="refTotalCount">0</h3></div>
       <div class="ref-stat success"><p>Success</p><h3 id="refSuccessCount">0</h3></div>
@@ -919,6 +961,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
         <div class="ref-tier" id="tierRow50"><span class="em">&#129352;</span><span class="tx">50 Referrals &mdash; <em>&#2547;5,000 free loan (no repayment)</em></span><i class="fa-solid fa-lock lk" id="tierLock50"></i></div>
         <div class="ref-tier" id="tierRow100"><span class="em">&#129351;</span><span class="tx">100 Referrals &mdash; <em>instant &#2547;50,000 jackpot</em></span><i class="fa-solid fa-lock lk" id="tierLock100"></i></div>
       </div>
+    </div>
     </div>
     <div class="refer-foot">
       <button class="mbtn mbtn-cancel" style="flex:1;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy Link</button>
@@ -2293,23 +2336,25 @@ function openAppStatusModal() {
   let statusHtml = '', btnHtml = '';
   if(a.status === 'Pending Fee Payment') {
     statusHtml = '<span style="color:var(--orange); font-weight:700;">Fee Payment Pending</span>';
-    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); goToFeePayment()">Pay Fee Now</button>`;
+    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); goToFeePayment()">Pay Fee Now</button>`;
   } else if(a.status === 'TrxID Submitted') {
     statusHtml = '<span style="color:var(--blue); font-weight:700;">Verification Pending ⏳</span>';
-    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); nav('screen-waiting')">View Verification Status</button>`;
+    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); nav('screen-waiting')">View Verification Status</button>`;
   } else if(a.status === 'Approved' || a.status === 'Disbursed') {
     statusHtml = '<span style="color:var(--p); font-weight:700;">Approved &amp; Active 💸</span>';
-    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); _populateApprovedScreen(window._latestApp); nav('screen-approved')">View Loan Details</button>`;
+    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); _populateApprovedScreen(window._latestApp); nav('screen-approved')">View Loan Details</button>`;
   } else if(a.status === 'Rejected') {
     statusHtml = '<span style="color:var(--red); font-weight:700;">Rejected ❌</span>';
-    btnHtml = `<button class="mbtn-full" style="margin-top:15px;" onclick="closeModal('appStatusModal'); startNewApplication()">Apply Again</button>`;
+    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); startNewApplication()">Apply Again</button>`;
   }
   content.innerHTML = `
-    <div class="detail-row"><div class="detail-lbl">Loan Amount</div><div class="detail-val color-p fw8">৳ ${a.loanAmount || '-'}</div></div>
-    <div class="detail-row"><div class="detail-lbl">Term</div><div class="detail-val">${a.term || '-'} Months</div></div>
-    <div class="detail-row"><div class="detail-lbl">Status</div><div class="detail-val">${statusHtml}</div></div>
-    <div class="detail-row"><div class="detail-lbl">Applied On</div><div class="detail-val">${a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '-'}</div></div>
-    ${btnHtml}
+    <div class="pp-body">
+      <div class="detail-row"><div class="detail-lbl">Loan Amount</div><div class="detail-val color-p fw8">৳ ${a.loanAmount || '-'}</div></div>
+      <div class="detail-row"><div class="detail-lbl">Term</div><div class="detail-val">${a.term || '-'} Months</div></div>
+      <div class="detail-row"><div class="detail-lbl">Status</div><div class="detail-val">${statusHtml}</div></div>
+      <div class="detail-row"><div class="detail-lbl">Applied On</div><div class="detail-val">${a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '-'}</div></div>
+    </div>
+    ${btnHtml ? `<div class="pp-foot">${btnHtml}</div>` : ''}
   `;
   document.getElementById('appStatusModal').classList.add('on');
 }
