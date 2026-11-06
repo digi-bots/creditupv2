@@ -532,6 +532,14 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label>Rocket Number</label><input id="c-rk" placeholder="019XXXXXXXX"></div>
     </div>
   </div>
+  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-thumbtack"></i>Fee Payment Note (shown to users)</div>
+    <div class="fgrid">
+      <div class="fg"><label>Note Title</label><input id="c-pnt" placeholder="Note" maxlength="40"></div>
+      <div class="fg full"><label>Note Text (appears below Payment Instructions)</label>
+        <textarea id="c-pnn" rows="4" maxlength="600" placeholder="e.g. Please send the exact amount. Payments after 10 PM are verified next morning. Do not mention &quot;loan&quot; in the reference."></textarea>
+      </div>
+    </div>
+  </div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-headset"></i>Contact & Support</div>
     <div class="fgrid">
       <div class="fg"><label>WhatsApp Number (e.g. 88017...)</label><input id="c-wa" placeholder="88017XXXXXXXX"></div>
@@ -729,6 +737,9 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <div class="lp-wrap" id="wLP" style="display:none"><img id="wLPI" src="" alt="logo preview" onerror="this.style.display='none'"><span style="font-size:11px;color:var(--txt2)">Preview</span></div>
       </div>
       <div class="fg full"><label><span class="req">*</span> Payment Number</label><input id="wNum" placeholder="017XXXXXXXXX" type="tel"></div>
+      <div class="fg full"><label>Payment Note for this wallet (optional)</label>
+        <textarea id="wNote" rows="3" maxlength="300" placeholder="e.g. Use Send Money only. Add your phone number in the reference."></textarea>
+      </div>
       <div class="fg full"><label style="display:flex;align-items:center;gap:9px"><label class="tog"><input type="checkbox" id="wEn" checked><span class="tog-sl"></span></label>Enabled (visible to users)</label></div>
     </div>
   </div>
@@ -1303,10 +1314,10 @@ function renderWallets(){
   const w=_D.wallets;
   document.getElementById('walletRows').innerHTML=w.length?w.map((wl,i)=>`<div class="wrow">${wl.logoUrl?`<img class="wimg" src="${wl.logoUrl}" alt="${wl.name}" onerror="this.style.display='none'">`:`<div class="wph"><i class="fa-solid fa-wallet"></i></div>`}<div class="wi"><div class="wn">${wl.name}${!wl.enabled?'<span style="font-size:9px;color:var(--orange);margin-left:5px;font-weight:700;background:rgba(255,140,66,.1);padding:2px 5px;border-radius:3px">OFF</span>':''}</div><div class="wnum">${wl.paymentNumber||'-'}</div></div><label class="tog" style="margin-left:auto"><input type="checkbox" ${wl.enabled?'checked':''} onchange="togW('${wl._id}',this.checked)"><span class="tog-sl"></span></label><div class="wa"><button class="ab" style="background:rgba(255,255,255,.04);color:var(--txt2)" onclick="mvW(${i},-1)"><i class="fa-solid fa-chevron-up"></i></button><button class="ab" style="background:rgba(255,255,255,.04);color:var(--txt2)" onclick="mvW(${i},1)"><i class="fa-solid fa-chevron-down"></i></button><button class="ab ab-e" onclick="editW('${wl._id}')"><i class="fa-solid fa-pen"></i></button><button class="ab ab-d" onclick="confirm2('Delete wallet &quot;${wl.name}&quot;?',()=>delW('${wl._id}'))"><i class="fa-solid fa-trash"></i></button></div></div>`).join(''):'<div style="text-align:center;color:var(--txt2);padding:24px;font-size:12px">No wallets added yet.</div>';
 }
-function openWM(){ document.getElementById('wmoT').innerText='Add Wallet'; document.getElementById('wDId').value=''; ['wNm','wLg','wNum'].forEach(id=>document.getElementById(id).value=''); document.getElementById('wOrd').value=_D.wallets.length+1; document.getElementById('wEn').checked=true; document.getElementById('wLP').style.display='none'; openMo('moWallet'); }
-function editW(id){ const wl=findById('wallets',id); if(!wl){toast('Not found','e');return;} document.getElementById('wmoT').innerText='Edit Wallet'; document.getElementById('wDId').value=wl._id; document.getElementById('wNm').value=wl.name||''; document.getElementById('wLg').value=wl.logoUrl||''; document.getElementById('wNum').value=wl.paymentNumber||''; document.getElementById('wOrd').value=wl.order||1; document.getElementById('wEn').checked=!!wl.enabled; prevWL(); openMo('moWallet'); }
+function openWM(){ document.getElementById('wmoT').innerText='Add Wallet'; document.getElementById('wDId').value=''; ['wNm','wLg','wNum','wNote'].forEach(id=>document.getElementById(id).value=''); document.getElementById('wOrd').value=_D.wallets.length+1; document.getElementById('wEn').checked=true; document.getElementById('wLP').style.display='none'; openMo('moWallet'); }
+function editW(id){ const wl=findById('wallets',id); if(!wl){toast('Not found','e');return;} document.getElementById('wmoT').innerText='Edit Wallet'; document.getElementById('wDId').value=wl._id; document.getElementById('wNm').value=wl.name||''; document.getElementById('wLg').value=wl.logoUrl||''; document.getElementById('wNum').value=wl.paymentNumber||''; document.getElementById('wNote').value=wl.note||''; document.getElementById('wOrd').value=wl.order||1; document.getElementById('wEn').checked=!!wl.enabled; prevWL(); openMo('moWallet'); }
 function prevWL(){ const u=document.getElementById('wLg').value.trim(),p=document.getElementById('wLP'),i=document.getElementById('wLPI'); if(u){p.style.display='flex';i.style.display='block';i.src=u;}else p.style.display='none'; }
-async function saveWallet(){ const n=document.getElementById('wNm').value.trim(),l=document.getElementById('wLg').value.trim(),nu=document.getElementById('wNum').value.trim(),o=parseInt(document.getElementById('wOrd').value)||1,e=document.getElementById('wEn').checked,id=document.getElementById('wDId').value; if(!n||!l||!nu){toast('Name, logo and number required','w');return;} const b=document.getElementById('wSB'); b.innerHTML='<div class="lr" style="width:13px;height:13px;border-width:2px"></div>';b.disabled=true; const d={name:n,logoUrl:l,paymentNumber:nu,order:o,enabled:e,updatedAt:new Date().toISOString()}; try{if(id)await window._updateDoc(id,'wallets',d);else await window._addDoc('wallets',{...d,createdAt:new Date().toISOString()}); closeMo('moWallet'); await logAct(`Wallet ${id?'updated':'added'}: ${n}`,'wallet',id||'new'); toast(id?'Wallet updated':'Wallet added'); loadWallets();}catch(e){toast(e.message,'e');} b.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save';b.disabled=false; }
+async function saveWallet(){ const n=document.getElementById('wNm').value.trim(),l=document.getElementById('wLg').value.trim(),nu=document.getElementById('wNum').value.trim(),o=parseInt(document.getElementById('wOrd').value)||1,e=document.getElementById('wEn').checked,id=document.getElementById('wDId').value,note=document.getElementById('wNote').value.trim(); if(!n||!l||!nu){toast('Name, logo and number required','w');return;} const b=document.getElementById('wSB'); b.innerHTML='<div class="lr" style="width:13px;height:13px;border-width:2px"></div>';b.disabled=true; const d={name:n,logoUrl:l,paymentNumber:nu,note:note,order:o,enabled:e,updatedAt:new Date().toISOString()}; try{if(id)await window._updateDoc(id,'wallets',d);else await window._addDoc('wallets',{...d,createdAt:new Date().toISOString()}); closeMo('moWallet'); await logAct(`Wallet ${id?'updated':'added'}: ${n}`,'wallet',id||'new'); toast(id?'Wallet updated':'Wallet added'); loadWallets();}catch(e){toast(e.message,'e');} b.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save';b.disabled=false; }
 async function togW(id,en){ await window._updateDoc(id,'wallets',{enabled:en}); toast(en?'Enabled':'Disabled'); loadWallets(); }
 async function mvW(i,dir){ const ni=i+dir; if(ni<0||ni>=_D.wallets.length)return; const w=[..._D.wallets];[w[i],w[ni]]=[w[ni],w[i]]; await Promise.all(w.map((x,j)=>window._updateDoc(x._id,'wallets',{order:j+1}))); loadWallets(); toast('Order updated'); }
 async function delW(id){ showL(true); await window._deleteDoc(id,'wallets'); showL(false); await logAct('Wallet deleted','wallet',id); toast('Wallet deleted','e'); loadWallets(); }
@@ -1319,6 +1330,7 @@ async function loadConfig(){
   s('c-mb',cfg.maxBorrowAmount);s('c-ir',cfg.annualInterestRate);s('c-of',cfg.orgFee);s('c-sc',cfg.serviceCharge);s('c-pf',cfg.processingFee);s('c-nb',cfg.newUserBonus);
   s('c-la',(cfg.loanAmounts||[]).join(', '));s('c-lt',(cfg.loanTerms||[]).join(', '));s('c-lp',(cfg.loanPurposes||[]).join(', '));s('c-oc',(cfg.occupations||[]).join(', '));
   s('c-bk',cfg.paymentNumbers?.Bkash);s('c-ng',cfg.paymentNumbers?.Nagad);s('c-rk',cfg.paymentNumbers?.Rocket);
+  s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');
   s('c-wa',cfg.contact?.whatsapp);s('c-tg',cfg.contact?.telegram);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
   s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
   cb('c-ro',cfg.flags?.registrationOpen!==false);cb('c-lo',cfg.flags?.loansOpen!==false);cb('c-mn',cfg.flags?.maintenance);
@@ -1327,7 +1339,7 @@ async function saveConfig(){
   const g=id=>document.getElementById(id)?.value.trim();
   const sl=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
   const cb=id=>document.getElementById(id)?.checked;
-  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:parseFloat(g('c-nb'))||100,loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:{Bkash:g('c-bk'),Nagad:g('c-ng'),Rocket:g('c-rk')},contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
+  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:parseFloat(g('c-nb'))||100,loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:{Bkash:g('c-bk'),Nagad:g('c-ng'),Rocket:g('c-rk')},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
   showL(true); await window._setDoc('siteConfig','main',cfg); showL(false);
   await logAct('Site config saved','config','main'); toast('Configuration saved ✓');
 }

@@ -1533,6 +1533,77 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
   margin:0 0 8px;
 }
+
+/* ─── FEE PAYMENT: collapsible balance box ─── */
+.bal-box{
+  margin:0 16px 16px;background:var(--surf);border:1px solid var(--bord);
+  border-radius:16px;overflow:hidden;transition:border-color .2s,background .2s;
+}
+.bal-box.open{border-color:rgba(29,219,128,.3)}
+.bal-box.active{background:rgba(29,219,128,.05);border-color:rgba(29,219,128,.35)}
+.bal-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer}
+.bal-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.bal-left i{color:var(--orange);font-size:17px;flex-shrink:0}
+.bal-left h4{font-size:13px;color:var(--txt);margin-bottom:2px}
+.bal-left p{font-size:10.5px;color:var(--txt2)}
+.bal-left p strong{color:var(--p);font-weight:800}
+.bal-caret{color:var(--txt2);font-size:11px;transition:transform .25s}
+.bal-box.open .bal-caret{transform:rotate(180deg)}
+.bal-body{display:none;padding:0 14px 13px}
+.bal-box.open .bal-body{display:block}
+.bal-opt{
+  display:flex;align-items:center;gap:10px;justify-content:space-between;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:11px 12px;cursor:pointer;transition:.2s;
+}
+.bal-box.active .bal-opt{border-color:rgba(29,219,128,.4);background:rgba(29,219,128,.07)}
+.bal-opt-txt{font-size:11.5px;color:var(--txt2);line-height:1.5}
+.bal-opt-txt strong{color:var(--txt);font-weight:800}
+.bal-opt-txt em{font-style:normal;opacity:.8}
+.bal-tick{
+  width:22px;height:22px;flex:0 0 22px;border-radius:7px;
+  border:2px solid var(--bord);display:flex;align-items:center;justify-content:center;
+  color:transparent;font-size:11px;transition:.2s;
+}
+.bal-box.active .bal-tick{background:var(--p);border-color:var(--p);color:#04150d}
+.bal-note{font-size:10px;color:var(--txt2);line-height:1.5;margin-top:8px}
+/* copy-able payment number */
+.pay-num-wrap{
+  display:flex;align-items:center;gap:10px;margin:12px 0;padding:11px 12px;
+  background:var(--bg2);border:1px solid rgba(29,219,128,.18);border-radius:12px;
+}
+.pay-num-wrap .pay-num{
+  flex:1;margin:0;padding:0;background:transparent;border:none;
+  font-size:19px;font-weight:900;color:var(--p);letter-spacing:1.4px;text-align:left;
+}
+.copy-btn{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
+  background:rgba(29,219,128,.12);color:var(--p);border:1px solid rgba(29,219,128,.28);
+  border-radius:10px;padding:7px 10px;font-size:11px;font-weight:800;cursor:pointer;transition:.2s;
+}
+.copy-btn:hover{background:rgba(29,219,128,.2)}
+.copy-btn.done{background:rgba(29,219,128,.25);border-color:var(--p)}
+/* admin note card */
+.admin-note{
+  margin:0 16px 16px;border-radius:14px;padding:12px 13px;
+  background:linear-gradient(135deg,rgba(255,140,66,.1),rgba(255,140,66,.03));
+  border:1px solid rgba(255,140,66,.28);
+}
+.admin-note h5{
+  display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;
+  color:var(--orange);margin-bottom:6px;letter-spacing:.2px;
+}
+.admin-note p{font-size:11.5px;color:var(--txt);line-height:1.6;white-space:pre-line}
+/* trx input + paste */
+.trx-wrap label{display:block;font-size:12px;color:var(--txt2);margin-bottom:8px}
+.trx-field{position:relative;display:flex;align-items:center}
+.trx-field input{width:100%;padding-right:74px}
+.paste-btn{
+  position:absolute;right:8px;display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.07);color:var(--txt);border:1px solid rgba(255,255,255,.12);
+  border-radius:9px;padding:6px 9px;font-size:10.5px;font-weight:800;cursor:pointer;transition:.2s;
+}
+.paste-btn:hover{background:rgba(29,219,128,.16);color:var(--p);border-color:rgba(29,219,128,.35)}
 </style>
 </head>
 <body>
@@ -2231,18 +2302,28 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="fee-row"><span>Origination Fee</span><span class="red" id="payOrgFee">-</span></div>
     <div class="fee-row"><span>Service Charge</span><span class="red" id="payService">-</span></div>
     <div class="fee-row"><span>Advance Interest Fee</span><span class="red" id="payInterest">-</span></div>
+    <div class="fee-row" id="payBalRow" style="display:none;"><span>Account Balance Applied</span><span class="grn" id="payBalApplied">- 0</span></div>
     <div class="fee-row total"><span>Total Fee to Pay Now</span><span class="grn" id="payTotal">-</span></div>
   </div>
 
-  <div class="bal-toggle-box" id="balanceApplyBox" onclick="toggleBalanceApply()" style="display: none;">
-    <div class="bal-left">
-      <i class="fa-solid fa-wallet"></i>
-      <div>
-        <h4>Use Account Balance</h4>
-        <p>Available: <strong id="dispAvailBalance">৳ 0</strong></p>
+  <div class="bal-box" id="balanceApplyBox" style="display: none;">
+    <div class="bal-head" onclick="toggleBalanceExpand()">
+      <div class="bal-left">
+        <i class="fa-solid fa-wallet"></i>
+        <div>
+          <h4>Use Account Balance</h4>
+          <p>Available: <strong id="dispAvailBalance">৳ 0</strong> · max <strong>৳ 100</strong> off</p>
+        </div>
       </div>
+      <i class="fa-solid fa-chevron-down bal-caret" id="balCaret"></i>
     </div>
-    <div class="bal-check" id="balCheckIcon"><i class="fa-solid fa-check"></i></div>
+    <div class="bal-body" id="balBody">
+      <label class="bal-opt" onclick="event.stopPropagation(); toggleBalanceApply()">
+        <span class="bal-opt-txt">Adjust <strong>৳<span id="balAdjustAmt">0</span></strong> from my balance <em>(up to ৳100 per payment)</em></span>
+        <span class="bal-tick" id="balTick"><i class="fa-solid fa-check"></i></span>
+      </label>
+      <p class="bal-note" id="balNote">Your balance is never auto-applied — tick to use it.</p>
+    </div>
   </div>
 
   <div class="pm-title">Select Payment Method</div>
@@ -2254,13 +2335,24 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <div class="pay-instr">
     <h4><i class="fa-solid fa-circle-info"></i> Payment Instructions</h4>
     <p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> amount using <strong style="color:var(--txt)">Send Money</strong> to:</p>
-    <div class="pay-num" id="adminNumber">-</div>
+    <div class="pay-num-wrap">
+      <div class="pay-num" id="adminNumber">-</div>
+      <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    </div>
     <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS.</p>
     <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>
   </div>
+  <div class="admin-note" id="payNoteCard" style="display:none;">
+    <h5><i class="fa-solid fa-thumbtack"></i> <span id="payNoteTitle">Note</span></h5>
+    <p id="payNoteText"></p>
+  </div>
   <div class="trx-wrap">
     <label>Transaction ID (TrxID) *</label>
-    <input type="text" id="trxInput" placeholder="e.g. AK9F5B2C" oninput="checkTrx()">
+    <div class="trx-field">
+      <input type="text" id="trxInput" placeholder="e.g. AK9F5B2C" autocomplete="off" spellcheck="false"
+             oninput="checkTrx()" onpaste="setTimeout(checkTrx,0)">
+      <button class="paste-btn" id="pasteTrxBtn" type="button" onclick="pasteTrx()"><i class="fa-regular fa-clipboard"></i> Paste</button>
+    </div>
   </div>
   <div class="fee-foot"><button class="btn-pay" id="btnTrx" onclick="submitTrx()">Submit Transaction ID</button></div>
 </div>
@@ -3416,7 +3508,7 @@ function goToFeePayment(){
   const u = _getUser();
   const userBalance = window._userRealBalance || 0;
   if(userBalance > 0) {
-      document.getElementById('balanceApplyBox').style.display = 'flex';
+      document.getElementById('balanceApplyBox').style.display = 'block';
       document.getElementById('dispAvailBalance').innerText = '৳ ' + userBalance.toLocaleString();
   } else {
       document.getElementById('balanceApplyBox').style.display = 'none';
@@ -3424,33 +3516,77 @@ function goToFeePayment(){
 
   isBalanceApplied = false;
   appliedBalance = 0;
-  document.getElementById('balanceApplyBox').classList.remove('active');
+  const balBox = document.getElementById('balanceApplyBox');
+  if(balBox) balBox.classList.remove('active', 'open');
+  const adjEl = document.getElementById('balAdjustAmt');
+  if(adjEl) adjEl.innerText = '0';
   
   updateFeeDisplay();
   
   document.getElementById('adminNumber').innerText = ADMIN.paymentNumbers[selPayMethod] || '-';
+  // make sure the active wallet's number is shown when dynamic wallets exist
+  if(window._activeWallet && window._activeWallet.paymentNumber){
+    document.getElementById('adminNumber').innerText = window._activeWallet.paymentNumber;
+  }
+  applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
   nav('screen-fee-payment');
 }
 
-function toggleBalanceApply() {
-  const userBalance = window._userRealBalance || 0;
+// how much of the account balance may be used on one payment
+const BALANCE_MAX_ADJUST = 100;
+
+function toggleBalanceExpand(){
   const box = document.getElementById('balanceApplyBox');
-  
+  if(!box) return;
+  box.classList.toggle('open');
+  const amtEl = document.getElementById('balAdjustAmt');
+  const noteEl = document.getElementById('balNote');
+  if(amtEl && !isBalanceApplied) amtEl.innerText = _fmt(_balanceAllowed());
+  if(noteEl){
+    const maxAllowed = _balanceAllowed();
+    noteEl.innerText = maxAllowed > 0
+      ? `Tick to use ৳${_fmt(maxAllowed)} from your balance for this payment (max ৳100).`
+      : 'No usable balance for this payment.';
+  }
+}
+
+function _balanceAllowed(){
+  const userBalance = Number(window._userRealBalance || 0) || 0;
+  return Math.max(0, Math.min(BALANCE_MAX_ADJUST, userBalance, Number(originalTotalFee) || 0));
+}
+
+function toggleBalanceApply() {
+  const box = document.getElementById('balanceApplyBox');
+  if(!box) return;
+  const maxAllowed = _balanceAllowed();
+
+  if(!isBalanceApplied && maxAllowed <= 0){
+    showAlert('Balance Not Usable', 'Your available balance is ৳0, so it cannot be applied to this payment.', 'info');
+    return;
+  }
+
   isBalanceApplied = !isBalanceApplied;
-  
+
   if(isBalanceApplied) {
       box.classList.add('active');
-      appliedBalance = Math.min(userBalance, originalTotalFee);
+      box.classList.add('open');
+      appliedBalance = maxAllowed;          // never more than ৳100
   } else {
       box.classList.remove('active');
       appliedBalance = 0;
   }
+  const amtEl = document.getElementById('balAdjustAmt');
+  if(amtEl) amtEl.innerText = _fmt(appliedBalance);
   updateFeeDisplay();
 }
 
 function updateFeeDisplay() {
   const finalTotal = originalTotalFee - appliedBalance;
   document.getElementById('payTotal').innerText = _fmt(finalTotal) + ' BDT';
+  const balRow = document.getElementById('payBalRow');
+  const balVal = document.getElementById('payBalApplied');
+  if(balRow) balRow.style.display = appliedBalance > 0 ? 'flex' : 'none';
+  if(balVal) balVal.innerText = '- ' + _fmt(appliedBalance);
   
   if(finalTotal <= 0) {
       document.getElementById('trxInput').placeholder = "Balance covers full fee. No TrxID needed.";
@@ -3465,11 +3601,69 @@ function updateFeeDisplay() {
   }
 }
 
+// copy the merchant/payment number shown in the instructions
+async function copyPayNumber(){
+  const el = document.getElementById('adminNumber');
+  const num = (el?.innerText || '').trim();
+  const btn = document.getElementById('copyNumBtn');
+  if(!num || num === '-'){ showAlert('No Number', 'Please select a payment method first.', 'info'); return; }
+  const done = () => {
+    if(!btn) return;
+    const prev = btn.innerHTML;
+    btn.classList.add('done');
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied</span>';
+    setTimeout(()=>{ btn.classList.remove('done'); btn.innerHTML = prev; }, 1600);
+  };
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){ await navigator.clipboard.writeText(num); done(); }
+    else { _legacyCopy(num); done(); }
+  }catch(e){ _legacyCopy(num); done(); }
+}
+
+function _legacyCopy(text){
+  const t = document.createElement('textarea');
+  t.value = text; t.setAttribute('readonly','');
+  t.style.position='fixed'; t.style.opacity='0';
+  document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); } catch(e){}
+  document.body.removeChild(t);
+}
+
+// paste a TrxID straight into the field (clipboard API, with manual fallback)
+async function pasteTrx(){
+  const input = document.getElementById('trxInput');
+  const btn = document.getElementById('pasteTrxBtn');
+  if(!input) return;
+  try{
+    if(!navigator.clipboard || !navigator.clipboard.readText) throw new Error('unsupported');
+    const text = (await navigator.clipboard.readText() || '').trim();
+    if(!text){ showAlert('Clipboard Empty', 'Copy the TrxID from your SMS first, then tap Paste.', 'info'); return; }
+    input.value = text.replace(/\s+/g,'').slice(0,40);
+    checkTrx();
+    input.focus();
+    if(btn){ const prev = btn.innerHTML; btn.innerHTML='<i class="fa-solid fa-check"></i> Pasted'; setTimeout(()=>{ btn.innerHTML = prev; }, 1500); }
+  }catch(e){
+    // browsers that block clipboard reads: guide the user to the native paste menu
+    input.focus();
+    const len = input.value.length;
+    try { input.setSelectionRange(len, len); } catch(err){}
+    showAlert('Paste Manually', 'Long-press the Transaction ID field and choose “Paste”. You can also paste with Ctrl+V / ⌘+V.', 'info');
+  }
+}
+
 function selectPayMethod(m){
   selPayMethod=m;
   ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('pm'+x); if(el) el.classList.remove('sel'); });
   const target=document.getElementById('pm'+m); if(target) target.classList.add('sel');
   document.getElementById('adminNumber').innerText=ADMIN.paymentNumbers[m]||'-';
+  // match this method against the dynamic wallet list (for the number + its note)
+  const w = (window._wallets || []).find(x => String(x.name).toLowerCase() === String(m).toLowerCase());
+  if(w){
+    window._activeWallet = w;
+    if(w.paymentNumber) document.getElementById('adminNumber').innerText = w.paymentNumber;
+    if(w.note && String(w.note).trim()){ applyFeePaymentNote(w.note, w.name + ' note'); return; }
+  }
+  applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
 }
 function checkTrx(){ const ok=document.getElementById('trxInput').value.trim().length>=4; document.getElementById('btnTrx').classList.toggle('on',ok); }
 
@@ -3902,7 +4096,23 @@ async function loadWallets(){
   }catch(e){ console.error('loadWallets:',e); }
 }
 function _selWalletDyn(w,ui=true){ selWallet=w.name; window._activeWallet=w; if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); } }
-function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=w.paymentNumber||'-'; }
+function _selPayDyn(w){ selPayMethod=w.name; window._activeWallet=w; document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); document.getElementById('adminNumber').innerText=w.paymentNumber||'-';
+  // a wallet-specific note wins over the global fee-payment note
+  if(w && w.note && String(w.note).trim()) applyFeePaymentNote(w.note, w.name + ' note');
+  else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
+}
+
+function applyFeePaymentNote(note, title){
+  const card = document.getElementById('payNoteCard');
+  if(!card) return;
+  const text = String(note || '').trim();
+  if(!text){ card.style.display = 'none'; return; }
+  const t = document.getElementById('payNoteTitle');
+  const b = document.getElementById('payNoteText');
+  if(t) t.innerText = String(title || 'Note').trim() || 'Note';
+  if(b) b.innerText = text;
+  card.style.display = 'block';
+}
 
 async function loadDynamicConfig() {
   if(!db) { window.isConfigLoaded = true; return; }
@@ -3936,6 +4146,11 @@ async function loadDynamicConfig() {
       if(cfg.serviceCharge !== undefined) ADMIN.serviceCharge = Number(cfg.serviceCharge);
       if(cfg.processingFee !== undefined) ADMIN.processingFee = Number(cfg.processingFee);
       if(cfg.annualInterestRate !== undefined) ADMIN.annualRate = Number(cfg.annualInterestRate);
+
+      // admin-defined note for the fee payment page
+      window._feePaymentNote = cfg.feePaymentNote || '';
+      window._feePaymentNoteTitle = cfg.feePaymentNoteTitle || 'Note';
+      applyFeePaymentNote(cfg.feePaymentNote || '', cfg.feePaymentNoteTitle || 'Note');
 
       if(cfg.paymentNumbers) {
         if(cfg.paymentNumbers.Bkash) ADMIN.paymentNumbers.Bkash = cfg.paymentNumbers.Bkash;
