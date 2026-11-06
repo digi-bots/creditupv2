@@ -489,9 +489,10 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   background: linear-gradient(145deg, rgba(15,29,53,0.95), rgba(10,20,40,0.98));
   border: 1px solid rgba(29,219,128,0.3); border-radius: 24px;
   width: 100%; max-width: 380px; position: relative;
+  max-height: 88dvh;
   box-shadow: 0 0 40px rgba(29,219,128,0.15), inset 0 0 20px rgba(29,219,128,0.05);
   transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  display: flex; flex-direction: column; overflow: hidden;
+  display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden;
 }
 .premium-cs-overlay.on .premium-cs-box { transform: scale(1) translateY(0); }
 
@@ -512,10 +513,10 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .msg.ai { background: rgba(255,255,255,0.05); color: var(--txt); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.08); }
 .msg.user { background: linear-gradient(135deg, var(--p), var(--p2)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(29,219,128,0.2); }
-.chat-input-area { padding: 15px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px; background: rgba(0,0,0,0.2); }
-.chat-input-area input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 0 15px; color: #fff; font-size: 13px; outline: none; }
+.chat-input-area { padding: 15px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 10px; background: rgba(0,0,0,0.2); align-items: center; }
+.chat-input-area input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 0 15px; height: 42px; color: #fff; font-size: 13px; outline: none; }
 .chat-input-area input:focus { border-color: var(--p); }
-.chat-send-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--p); color: #fff; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+.chat-send-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--p); color: #fff; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; flex-shrink:0; }
 .chat-send-btn:hover { background: var(--p2); transform: scale(1.05); }
 .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .quick-reply-btn { background: rgba(29,219,128,0.1); border: 1px solid rgba(29,219,128,0.3); color: var(--p); padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: 0.2s; }
@@ -525,16 +526,14 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .cs-unread-badge{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;background:var(--red);border-radius:10px;border:2px solid #0a5c2f;color:#fff;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px;z-index:10}
 .cs-unread-badge.on{display:flex}
 .cs-menu-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:18px;text-align:center;display:none}
-.cs-new-msg-banner{display:none;background:rgba(255,77,106,.15);border:1px solid rgba(255,77,106,.35);border-radius:12px;padding:10px 14px;margin:0 20px 12px;align-items:center;gap:10px;cursor:pointer}
-.cs-new-msg-banner.on{display:flex}
 .support-msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;margin-bottom:10px;animation:msgIn .3s ease;word-wrap:break-word}
 .support-msg.user{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;align-self:flex-end;margin-left:auto;border-bottom-right-radius:4px;box-shadow:0 4px 10px rgba(29,219,128,.2)}
 .support-msg.admin{background:rgba(77,143,255,.13);color:var(--txt);align-self:flex-start;border-bottom-left-radius:4px;border:1px solid rgba(77,143,255,.25)}
 .support-msg-meta{font-size:9px;opacity:.7;margin-top:3px}
 
 /* END CONVERSATION STYLES */
-.cs-end-btn{background:rgba(255,77,106,.15);border:1px solid rgba(255,77,106,.3);color:var(--red);padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;margin-left:auto;display:flex;align-items:center;gap:5px;transition:.2s}
-.cs-end-btn:hover{background:rgba(255,77,106,.3)}
+.cs-end-btn-inline{width:42px;height:42px;flex-shrink:0;border-radius:50%;background:rgba(255,77,106,.14);border:1px solid rgba(255,77,106,.3);color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:.2s}
+.cs-end-btn-inline:hover{background:rgba(255,77,106,.24)}
 .cs-closed-banner{background:rgba(123,144,180,.12);border:1px dashed var(--txt2);color:var(--txt2);border-radius:12px;padding:14px;text-align:center;font-size:12px;margin:10px 15px;display:none;flex-direction:column;gap:8px;align-items:center}
 .cs-closed-banner.on{display:flex}
 .cs-closed-banner strong{color:var(--txt);font-size:13px}
@@ -748,10 +747,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
     
     <!-- MAIN MENU -->
     <div id="csMainMenu">
-      <div class="cs-new-msg-banner" id="csNewMsgBanner" onclick="openSupportChat()">
-        <i class="fa-solid fa-bell shake-icon" style="color:var(--red);"></i>
-        <span style="font-size:12px; color:var(--txt); font-weight:600;">Support reply পেয়েছেন! <strong id="csNewMsgCount" style="color:var(--red);">0</strong> নতুন message(s) — দেখতে ক্লিক করুন</span>
-      </div>
       <div style="text-align: center; padding: 30px 20px 20px;">
         <div style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(29,219,128,0.2), rgba(29,219,128,0.05)); border: 1px solid var(--p); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px;">
           <i class="fa-solid fa-headset" style="font-size: 30px; color: var(--p);"></i>
@@ -833,7 +828,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
         <button onclick="backToCsMenu()" style="background:none; border:none; color:#fff; margin-right:5px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
         <i class="fa-solid fa-user-tie"></i>
         <h4>Admin Support</h4>
-        <button class="cs-end-btn" id="csEndChatBtn" onclick="endSupportConversation()"><i class="fa-solid fa-circle-stop"></i> End</button>
       </div>
       <div class="chat-messages" id="supportChatMessages"></div>
       <div class="cs-closed-banner" id="csClosedBanner">
@@ -843,6 +837,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
         <button class="cs-new-chat-btn" onclick="startNewSupportChat()"><i class="fa-solid fa-plus"></i> Start New Chat</button>
       </div>
       <div class="chat-input-area">
+        <button class="cs-end-btn-inline" id="csEndChatBtn" onclick="endSupportConversation()" title="End Conversation"><i class="fa-solid fa-circle-stop"></i></button>
         <input type="text" id="supportChatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendSupportMsg()">
         <button class="chat-send-btn" onclick="sendSupportMsg()"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
@@ -1579,11 +1574,9 @@ function acceptPolicy(){
   if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; }
   const u = _getUser();
   if(u){
-    // User already logged in → সরাসরি application steps dashboard-এ পাঠাও
     document.getElementById('dashSuccessText').innerText = "Let's get your application started ✅";
     nav('screen-application-progress');
   } else {
-    // নতুন / logged-out user → আগে login/register করতে হবে
     nav('screen-login');
   }
 }
@@ -2168,12 +2161,6 @@ function updateSupportBadges(count) {
     if (count > 0) { menuBadge.textContent = count > 9 ? '9+' : count; menuBadge.style.display = 'inline-block'; }
     else { menuBadge.style.display = 'none'; }
   }
-  const banner = document.getElementById('csNewMsgBanner');
-  const bannerCount = document.getElementById('csNewMsgCount');
-  if (banner && bannerCount) {
-    if (count > 0) { bannerCount.textContent = count; banner.classList.add('on'); }
-    else { banner.classList.remove('on'); }
-  }
 }
 
 function escapeSupportHtml(text) {
@@ -2672,8 +2659,8 @@ window.registerUser=async function(){
     localStorage.removeItem('referrerPhone');
     showLoader(false);
     showAlert('Account Created! 🎉', `Welcome! You received ৳${bonusAmt} bonus.`, 'success', () => {
-  nav('screen-home');
-});
+      nav('screen-home');
+    });
   }catch(e){ showLoader(false); showAlert('Error', e.message, 'error'); }
 };
 
