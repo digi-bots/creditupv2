@@ -476,33 +476,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 #screen-fee-payment { padding-bottom: 100px !important; }
 .pay-instr { margin-bottom: 80px; }
 
-/* ─── SUPER PREMIUM SUPPORT POPUP ─── */
-.premium-cs-overlay {
-  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-  z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px;
-  opacity: 0; transition: opacity 0.3s ease;
-}
-.premium-cs-overlay.on { display: flex; opacity: 1; }
-
-.premium-cs-box {
-  background: linear-gradient(145deg, rgba(15,29,53,0.95), rgba(10,20,40,0.98));
-  border: 1px solid rgba(29,219,128,0.3); border-radius: 24px;
-  width: 100%; max-width: 380px; position: relative;
-  box-shadow: 0 0 40px rgba(29,219,128,0.15), inset 0 0 20px rgba(29,219,128,0.05);
-  transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  display: flex; flex-direction: column; overflow: hidden;
-}
-.premium-cs-overlay.on .premium-cs-box { transform: scale(1) translateY(0); }
-
-.cs-close-btn {
-  position: absolute; top: 15px; right: 15px; width: 32px; height: 32px;
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 50%; color: var(--txt2); display: flex; justify-content: center;
-  align-items: center; cursor: pointer; transition: 0.3s; z-index: 10;
-}
-.cs-close-btn:hover { background: rgba(255,77,106,0.2); color: var(--red); transform: rotate(90deg); }
-
+/* Chat UI Fix */
 #csChatInterface { display: none; flex-direction: column; height: 500px; max-height: 80vh; }
 .chat-header { background: rgba(29,219,128,0.1); padding: 15px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(29,219,128,0.2); }
 .chat-header i { color: var(--p); font-size: 20px; }
@@ -670,28 +644,44 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   </div>
 </div>
 
+<!-- Premium Invite Modal with Tier Data -->
 <div class="modal-overlay premium-popup" id="referModal">
-  <div class="mc" style="max-height: 90dvh; overflow-y: auto;">
-    <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
-    <div class="m-title">Refer &amp; Win Big!</div>
-    <p class="m-msg">বন্ধুদের রেফার করে জিতুন বিশাল সব পুরস্কার!</p>
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-      <div style="flex:1; background:var(--bg2); padding:12px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase;">Total Refers</p><h3 style="font-size:18px; color:var(--txt);" id="refTotalCount">0</h3></div>
-      <div style="flex:1; background:rgba(29,219,128,.1); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase;">Success</p><h3 style="font-size:18px; color:var(--p);" id="refSuccessCount">0</h3></div>
+  <div class="mc invite-premium-box" style="max-width: 380px; max-height: 90dvh; overflow-y: auto;">
+    <div style="position:absolute; top:15px; right:15px; cursor:pointer;" onclick="closeModal('referModal')"><i class="fa-solid fa-xmark" style="color:var(--txt2); font-size:18px;"></i></div>
+    <div style="width: 70px; height: 70px; background: linear-gradient(135deg, var(--orange), var(--red)); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px; box-shadow: 0 10px 20px rgba(255,77,106,0.3);">
+      <i class="fa-solid fa-gift" style="font-size: 30px; color: #fff;"></i>
     </div>
-    <div style="background:var(--bg2); border:1px solid var(--bord); border-radius:14px; padding:15px; margin-bottom:15px;">
+    <div class="invite-premium-title">Invite &amp; Win Big!</div>
+    <div class="invite-premium-sub">Exclusive Rewards Await</div>
+    
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+      <div style="flex:1; background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; text-align:center; border:1px solid var(--bord);"><p style="font-size:10px; color:var(--txt2); text-transform:uppercase; margin-bottom:5px;">Total Refers</p><h3 style="font-size:20px; color:var(--txt); margin:0;" id="refTotalCount">0</h3></div>
+      <div style="flex:1; background:rgba(29,219,128,.1); padding:12px; border-radius:12px; text-align:center; border:1px solid rgba(29,219,128,.2);"><p style="font-size:10px; color:var(--p); text-transform:uppercase; margin-bottom:5px;">Success</p><h3 style="font-size:20px; color:var(--p); margin:0;" id="refSuccessCount">0</h3></div>
+    </div>
+
+    <!-- Tier System UI -->
+    <div style="background:var(--bg2); border:1px solid var(--bord); border-radius:14px; padding:15px; margin-bottom:15px; text-align:left;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:13px; font-weight:700; color:var(--txt);">Current Status:</span><span style="font-size:14px; font-weight:800; color:var(--orange);" id="currentTierName">Starter</span></div>
       <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:8px;"><div id="tierProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff8c42, #ff4b2b); border-radius:5px; transition: width 0.5s;"></div></div>
       <p style="font-size:11px; color:var(--txt2); text-align:center;" id="tierProgressText">পরবর্তী পুরস্কার পেতে আরও রেফার করুন!</p>
+      
       <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px; border-top:1px dashed var(--bord); padding-top:15px;">
         <div id="tierRow20" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥉</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">২০ জন রেফারেল</div><div style="font-size:11px; color:var(--orange);">৳১০,০০০ এর নিচে লোনে ১ম কিস্তি মাফ!</div></div><i class="fa-solid fa-lock" id="tierLock20" style="color:var(--txt2); font-size:12px;"></i></div>
         <div id="tierRow50" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥈</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">৫০ জন রেফারেল</div><div style="font-size:11px; color:var(--blue);">৳৫,০০০ ফ্রি লোন! (শোধ করতে হবে না)</div></div><i class="fa-solid fa-lock" id="tierLock50" style="color:var(--txt2); font-size:12px;"></i></div>
         <div id="tierRow100" style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid transparent; transition:.3s;"><div style="font-size:24px;">🥇</div><div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--txt);">১০০ জন রেফারেল</div><div style="font-size:11px; color:var(--red);">ইনস্ট্যান্ট ৳৫০,০০০ জ্যাকপট!</div></div><i class="fa-solid fa-lock" id="tierLock100" style="color:var(--txt2); font-size:12px;"></i></div>
       </div>
     </div>
-    <div style="background:var(--bg2); border-radius:14px; padding:15px; border:1px dashed var(--p); text-align:center;"><p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Referral Link</p><div style="font-size:12px; color:var(--p); word-break:break-all; font-weight:700;" id="refLinkDisplay">Loading...</div></div>
-    <div style="display:flex; gap:10px; margin-top:15px;"><button class="mbtn mbtn-cancel" style="flex:1; background:var(--surf2);" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button><button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button></div>
-    <button class="mbtn-cancel" style="width:100%; margin-top:10px; border:none; background:transparent; color:var(--txt2);" onclick="closeModal('referModal')">Close</button>
+
+    <div style="background:var(--bg2); border-radius:14px; padding:15px; border:1px dashed var(--p); text-align:center;">
+      <p style="font-size:12px; color:var(--txt2); margin-bottom:8px;">Your Exclusive Referral Link</p>
+      <div class="invite-link" id="refLinkDisplay">Loading...</div>
+      <div style="display:flex; gap:10px;">
+        <button class="mbtn mbtn-cancel" style="flex:1; background:var(--surf2); font-size:13px;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy</button>
+        <button class="mbtn mbtn-ok" style="flex:2; font-size:13px;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button>
+      </div>
+    </div>
+    
+    <button class="mbtn-cancel" style="width:100%; border:none; background:transparent; color:var(--txt2); margin-top:10px;" onclick="closeModal('referModal')">Close</button>
   </div>
 </div>
 
@@ -722,14 +712,13 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   </div>
 </div>
 
-<!-- SUPER PREMIUM CUSTOMER SUPPORT POPUP -->
-<div class="premium-cs-overlay" id="csPopup" onclick="toggleCS(event)">
-  <div class="premium-cs-box" onclick="event.stopPropagation()">
-    <button class="cs-close-btn" onclick="toggleCS()"><i class="fa-solid fa-xmark"></i></button>
+<!-- FIXED SUPER PREMIUM CUSTOMER SUPPORT POPUP -->
+<div class="modal-overlay premium-popup" id="csPopup" onclick="toggleCS(event)">
+  <div class="mc" onclick="event.stopPropagation()" style="max-width: 380px; padding: 0; overflow: hidden; position: relative;">
+    <button onclick="toggleCS()" style="position:absolute; top:15px; right:15px; width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,0.1); border:none; color:#fff; z-index:10;"><i class="fa-solid fa-xmark"></i></button>
     
-    <!-- MAIN MENU -->
     <div id="csMainMenu">
-      <div style="text-align: center; padding: 30px 20px 20px;">
+      <div style="text-align: center; padding: 30px 20px 20px; background:linear-gradient(180deg, rgba(29,219,128,0.1) 0%, transparent 100%);">
         <div style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(29,219,128,0.2), rgba(29,219,128,0.05)); border: 1px solid var(--p); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px;">
           <i class="fa-solid fa-headset" style="font-size: 30px; color: var(--p);"></i>
         </div>
@@ -738,7 +727,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       </div>
 
       <div style="padding: 0 20px 25px; display: flex; flex-direction: column; gap: 12px;">
-        <div class="premium-cs-item" onclick="startAIChat()" style="border-color: rgba(29,219,128,0.4); background: rgba(29,219,128,0.05);">
+        <div class="premium-cs-item" onclick="startAIChat()" style="border-color: rgba(29,219,128,0.4); background: rgba(29,219,128,0.05); cursor:pointer;">
           <div class="premium-cs-icon" style="background: rgba(29,219,128,0.15); color: var(--p);"><i class="fa-solid fa-robot"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:15px; font-weight:700; color:var(--txt);">AI Customer Chat</h4>
@@ -747,7 +736,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
           <i class="fa-solid fa-chevron-right" style="color:var(--p);"></i>
         </div>
 
-        <div class="premium-cs-item" id="csWhatsAppBtn" onclick="window.open('https://wa.me/8801700000000','_blank')">
+        <div class="premium-cs-item" id="csWhatsAppBtn" onclick="window.open('https://wa.me/8801700000000','_blank')" style="cursor:pointer;">
           <div class="premium-cs-icon" style="background:rgba(37,211,102,.15); color:#25D366;"><i class="fa-brands fa-whatsapp"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:14px; color:var(--txt); font-weight:600;">WhatsApp Support</h4>
@@ -755,7 +744,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
           </div>
         </div>
 
-        <div class="premium-cs-item" id="csTelegramBtn" onclick="window.open('https://t.me/yourusername','_blank')">
+        <div class="premium-cs-item" id="csTelegramBtn" onclick="window.open('https://t.me/yourusername','_blank')" style="cursor:pointer;">
           <div class="premium-cs-icon" style="background:rgba(0,136,204,.15); color:#0088cc;"><i class="fa-brands fa-telegram"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:14px; color:var(--txt); font-weight:600;">Telegram Support</h4>
@@ -763,7 +752,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
           </div>
         </div>
 
-        <div class="premium-cs-item" id="csEmailBtn" onclick="window.location.href='mailto:hello@synapsetech.cloud'">
+        <div class="premium-cs-item" id="csEmailBtn" onclick="window.location.href='mailto:hello@synapsetech.cloud'" style="cursor:pointer;">
           <div class="premium-cs-icon" style="background:rgba(77,143,255,.15); color:var(--blue);"><i class="fa-solid fa-envelope"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:14px; color:var(--txt); font-weight:600;">Email Support</h4>
@@ -773,7 +762,6 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
       </div>
     </div>
 
-    <!-- AI CHAT INTERFACE -->
     <div id="csChatInterface">
       <div class="chat-header">
         <button onclick="backToCsMenu()" style="background:none; border:none; color:#fff; margin-right:5px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
@@ -820,7 +808,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="home-hdr">
     <div class="home-top-bar">
       <div class="home-greeting">
-        <h3 id="userGreeting">Hello, User 👋</h3>
+        <h3 id="userGreeting">Welcome to Credit Up</h3>
         <div class="balance-pill" id="balanceContainer" style="display:none;"><span style="font-size:12px; color:var(--p);"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
       </div>
       <div style="display:flex; gap:10px;">
@@ -992,7 +980,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
   <div class="form-top"><h2>Application</h2><span>Step 4 / 5</span></div>
   <div class="step-track"><div class="step-fill s4"></div></div>
   <h3 class="form-sec-title">Bank Information</h3>
-  <div class="bank-warn"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>We've pre-filled your registered phone number. Tap the edit icon to change it.</div>
+  <div class="bank-warn" style="border-color:var(--red); background:rgba(255,77,106,0.08); color:var(--red);"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px"></i><strong>Important:</strong> Ensure the wallet number is correct and registered in your own name. Incorrect details will result in failed disbursement.</div>
   <div class="ph-lbl">Select Wallet Type <span>*</span></div>
   <div class="wallet-grid" id="walletGrid">
     <div class="w-card sel" id="wBkash" onclick="selectWallet('Bkash')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="Bkash"><span>Bkash</span></div>
@@ -1368,7 +1356,7 @@ function nav(id){
   }
 }
 
-// ─── PREMIUM SUPPORT & AI CHAT LOGIC ─────────────────────────
+// ─── AI CHAT LOGIC ───────────────────────────────────────────
 function toggleCS(e) { 
   if(e) e.stopPropagation(); 
   const popup = document.getElementById('csPopup');
@@ -1379,23 +1367,19 @@ function toggleCS(e) {
     popup.classList.add('on');
   }
 }
-
 function backToCsMenu() {
   document.getElementById('csMainMenu').style.display = 'block';
   document.getElementById('csChatInterface').style.display = 'none';
 }
-
 function startAIChat() {
   document.getElementById('csMainMenu').style.display = 'none';
   document.getElementById('csChatInterface').style.display = 'flex';
   document.getElementById('chatInput').focus();
 }
-
 function sendQuickReply(text) {
   document.getElementById('chatInput').value = text;
   sendChatMessage();
 }
-
 function addChatMessage(text, sender) {
   const container = document.getElementById('chatMessages');
   const msg = document.createElement('div');
@@ -1404,7 +1388,6 @@ function addChatMessage(text, sender) {
   container.appendChild(msg);
   container.scrollTop = container.scrollHeight;
 }
-
 async function sendChatMessage() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
@@ -1412,7 +1395,6 @@ async function sendChatMessage() {
 
   addChatMessage(text, 'user');
   input.value = '';
-  
   document.getElementById('quickReplies').style.display = 'none';
 
   const typingId = 'typing_' + Date.now();
@@ -1446,11 +1428,9 @@ async function sendChatMessage() {
     else {
       reply = "I am a smart assistant and still learning. For detailed queries, you can contact our WhatsApp or Telegram support, or type 'complaint' to reach an admin.";
     }
-
     addChatMessage(reply, 'ai');
   }, 1000);
 }
-
 async function escalateToAdmin(userMessage) {
   const user = _getUser();
   if(!user || !user.phone) return;
@@ -2561,6 +2541,7 @@ setTimeout(() => {
   if(typeof updateUIForUser === 'function') updateUIForUser();
   if(_getUser() && typeof window.loadUserDashboardData === 'function'){ window.loadUserDashboardData(); }
 }, 1500);
+
 </script>
 </body>
 </html>
