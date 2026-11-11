@@ -662,13 +662,33 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div class="sec" id="sec-broadcast">
   <div class="sec-head"><h2>Broadcast Messages</h2></div>
   <div class="bc-card">
-    <div class="bc-sec-title"><i class="fa-solid fa-paper-plane"></i>New Broadcast</div>
+    <div class="bc-sec-title"><i class="fa-solid fa-paper-plane"></i>New Broadcast / Message</div>
     <div class="fgrid">
-      <div class="fg"><label><span class="req">*</span> Title</label><input id="bc-t" placeholder="e.g. System Update"></div>
-      <div class="fg"><label>Type</label><select id="bc-ty"><option value="info">ℹ️ Info</option><option value="success">✅ Success</option><option value="warning">⚠️ Warning</option><option value="urgent">🚨 Urgent</option></select></div>
-      <div class="fg full"><label><span class="req">*</span> Message</label><textarea id="bc-m" rows="3" placeholder="Write your message..."></textarea></div>
+      <div class="fg"><label>Send to</label>
+        <select id="bc-aud" onchange="document.getElementById('bc-uWrap').style.display=this.value==='user'?'flex':'none'">
+          <option value="all">📢 All users</option>
+          <option value="user">👤 One specific user</option>
+        </select>
+      </div>
+      <div class="fg" id="bc-uWrap" style="display:none"><label><span class="req">*</span> User phone</label><input id="bc-u" placeholder="01XXXXXXXXX" inputmode="numeric"></div>
+      <div class="fg"><label>Type</label><select id="bc-ty"><option value="info">ℹ️ Info</option><option value="success">✅ Success</option><option value="offer">🎁 Offer</option><option value="warning">⚠️ Warning</option><option value="urgent">🚨 Urgent</option></select></div>
+      <div class="fg"><label><span class="req">*</span> Title</label><input id="bc-t" maxlength="80" placeholder="e.g. Eid Holiday Notice"></div>
+      <div class="fg full"><label>Subject <span style="color:var(--txt2);font-weight:500">(one short line under the title)</span></label><input id="bc-s" maxlength="120" placeholder="e.g. Office closed 15–18 June, online service open"></div>
+      <div class="fg full"><label><span class="req">*</span> Message body</label><textarea id="bc-m" rows="5" maxlength="2000" placeholder="Write the full message..."></textarea></div>
+      <div class="fg full">
+        <label>Attachment <span style="color:var(--txt2);font-weight:500">(image or PDF, optional · max 5 MB)</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="bc-a" placeholder="https://... or upload a file" style="flex:1" oninput="document.getElementById('bc-aName').value=''">
+          <label class="btn btn-s btn-sm" style="white-space:nowrap;cursor:pointer;margin:0"><i class="fa-solid fa-paperclip"></i> Upload
+            <input type="file" accept="image/*,application/pdf" style="display:none" onchange="uploadBcFile(this)"></label>
+        </div>
+        <input type="hidden" id="bc-aName">
+        <div class="hint" id="bc-aHint">Images show inside the notification; PDFs show as a download button.</div>
+      </div>
+      <div class="fg"><label>Button text <span style="color:var(--txt2);font-weight:500">(optional)</span></label><input id="bc-bt" maxlength="30" placeholder="e.g. Apply Now"></div>
+      <div class="fg"><label>Button link</label><input id="bc-bl" placeholder="https://creditup.online"></div>
     </div>
-    <div style="margin-top:12px"><button class="btn btn-p" onclick="sendBC()"><i class="fa-solid fa-paper-plane"></i>Send Broadcast</button></div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-p" id="bcSendBtn" onclick="sendBC()"><i class="fa-solid fa-paper-plane"></i>Send</button></div>
   </div>
   <div class="bc-card">
     <div class="bc-sec-title"><i class="fa-solid fa-history"></i>Broadcast History</div>
@@ -1147,6 +1167,8 @@ async function adjBal(action){
     const u=await window._getDoc('users',_userId); if(!u){toast('User not found','e');showL(false);return;}
     let b=Number(u.balance)||0; if(action==='add') b+=amt; else b=Math.max(0,b-amt);
     await window._updateDoc(_userId,'users',{balance:b,balanceUpdatedAt:new Date().toISOString()});
+    await _notifyUser(u.phone, action==='add' ? 'Balance Added 💰' : 'Balance Updated',
+      action==='add' ? `৳${fa(amt)} has been added to your Credit Up balance. New balance: ৳${fa(b)}.` : `৳${fa(amt)} was deducted from your Credit Up balance. New balance: ৳${fa(b)}.`, action==='add'?'bonus':'transaction');
     document.getElementById('uBal').innerText='৳ '+fa(b);
     document.getElementById('uAmt').value='';
     await logAct(`Balance ${action==='add'?'added':'deducted'}: ৳${amt}`,'user',_userId);
@@ -1160,6 +1182,7 @@ async function updateUserStatus(){
   const existing=findById('users',_userId)||{};
   const log=[...(existing.statusLog||[]),{status,reason,action:'Status changed',at:new Date().toISOString()}];
   await window._updateDoc(_userId,'users',{status,adminNote:note,suspendReason:reason,statusLog:log,updatedAt:new Date().toISOString()});
+  if(existing.status !== status) await _notifyAccountStatus(existing.phone, status, reason);
   await logAct(`User status → "${status}"`,'user',_userId);
   toast(`Status updated to "${status}"`); closeMo('moUser'); loadUsers();
 }
@@ -1168,6 +1191,7 @@ async function setUserStat(status){
   const existing=findById('users',_userId)||{};
   const log=[...(existing.statusLog||[]),{status,action:'Quick status set',at:new Date().toISOString()}];
   await window._updateDoc(_userId,'users',{status,statusLog:log,updatedAt:new Date().toISOString()});
+  if(existing.status !== status) await _notifyAccountStatus(existing.phone, status, '');
   await logAct(`User quick-set → "${status}"`,'user',_userId);
   toast(`User ${status}`,'s'); closeMo('moUser'); loadUsers();
 }
@@ -1260,6 +1284,13 @@ function _loanAmt(app){ return Number(String(app?.loanAmount || 0).replace(/,/g,
 async function _notifyUser(uid, title, message, type='info'){
   if(!uid) return;
   try{ await window._addDoc('user_notifications', { uid, title, message, type, createdAt: new Date().toISOString() }); }catch(e){ console.warn('notify:', e); }
+}
+async function _notifyAccountStatus(phone, status, reason){
+  if(!phone) return;
+  const r = reason ? ` Reason: ${reason}` : '';
+  if(status === 'active') await _notifyUser(phone, 'Account Active ✅', 'Your Credit Up account is active. You can use all services again.', 'info');
+  else if(status === 'suspended') await _notifyUser(phone, 'Account Suspended', 'Your account has been suspended by our team.' + r + ' Please contact support.', 'warning');
+  else if(status === 'inactive') await _notifyUser(phone, 'Account Inactive', 'Your account is marked inactive.' + r + ' Please contact support if this is a mistake.', 'warning');
 }
 async function _adjustBalance(phone, delta, why, ref){
   const users = await _get('users');
@@ -1597,9 +1628,11 @@ async function trxAct(status){
     if(status === 'Verified') {
       await deductBalanceIfApplied(trx);
       if(trx?.uid){ synced = await syncAppOnTrx(trx, 'Fee Verified'); }
+      if(trx?.uid && !synced) await _notifyUser(trx.uid, 'Payment Verified ✅', `Your payment of ৳${fa(trx.amount||0)} (TrxID ${trx.trxId||''}) has been verified.`, 'transaction');
     } else {
       await restoreBalanceAdjust(trx);
       if(trx?.uid){ synced = await syncAppOnTrx(trx, 'Pending Fee Payment'); }
+      if(trx?.uid && !synced) await _notifyUser(trx.uid,'Payment Not Verified',`We could not verify the Transaction ID ${trx.trxId||''}. Please check it and contact support if you need help.`,'warning');
     }
     await logAct(`TrxID ${status}${synced?' + app synced':''}`,'transaction',_docId);
     toast(`Transaction ${status}${synced?' & app updated':''}`,status==='Verified'?'s':'e');
@@ -1613,6 +1646,7 @@ async function qVTrx(id){
   await window._updateDoc(id,'transactions',{status:'Verified',verifiedAt:new Date().toISOString()});
   await deductBalanceIfApplied(trx);
   const synced=trx.uid?await syncAppOnTrx(trx,'Fee Verified'):false;
+  if(trx.uid && !synced) await _notifyUser(trx.uid, 'Payment Verified ✅', `Your payment of ৳${fa(trx.amount||0)} (TrxID ${trx.trxId||''}) has been verified.`, 'transaction');
   await logAct(`TrxID verified${synced?' + app fee verified':''}`,'transaction',id);
   toast(synced?'Fee verified — approve the loan from Applications':'Verified ✓'); showL(false); loadTrx();
 }
@@ -1622,6 +1656,7 @@ async function qRTrx(id){
   await window._updateDoc(id,'transactions',{status:'Rejected'});
   await restoreBalanceAdjust(trx);
   const synced=trx.uid?await syncAppOnTrx(trx,'Pending Fee Payment'):false;
+  if(trx.uid && !synced) await _notifyUser(trx.uid,'Payment Not Verified',`We could not verify the Transaction ID ${trx.trxId||''}. Please check it and contact support if you need help.`,'warning');
   await logAct('TrxID rejected','transaction',id);
   toast('Rejected','e'); showL(false); loadTrx();
 }
@@ -1999,8 +2034,63 @@ async function saveConfig(){
 }
 
 // ══ BROADCAST ════════════════════════════════════════
-async function loadBC(){ _D.broadcasts=await _get('broadcasts','createdAt','desc'); const l=document.getElementById('bcList'); l.innerHTML=_D.broadcasts.length?_D.broadcasts.slice(0,20).map(b=>`<div class="bc-item"><div class="bc-hdr"><div class="bc-title">${b.title||'Broadcast'}</div><div class="bc-date">${fd(b.createdAt)}</div></div><div class="bc-msg">${b.message||''}</div></div>`).join(''):'<div style="text-align:center;color:var(--txt2);padding:16px;font-size:12px">No broadcasts yet.</div>'; }
-async function sendBC(){ const t=document.getElementById('bc-t').value.trim(),m=document.getElementById('bc-m').value.trim(),ty=document.getElementById('bc-ty').value; if(!t||!m){toast('Title and message required','w');return;} showL(true); await window._addDoc('broadcasts',{title:t,message:m,type:ty,createdAt:new Date().toISOString()}); showL(false); document.getElementById('bc-t').value='';document.getElementById('bc-m').value=''; await logAct(`Broadcast: "${t}"`,'broadcast','new'); toast('Broadcast sent ✓'); loadBC(); }
+const _escB = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function loadBC(){
+  _D.broadcasts=await _get('broadcasts','createdAt','desc');
+  const l=document.getElementById('bcList');
+  l.innerHTML=_D.broadcasts.length?_D.broadcasts.slice(0,30).map(b=>`<div class="bc-item">
+    <div class="bc-hdr"><div class="bc-title">${_escB(b.title||'Broadcast')} <span class="wbadge">${_escB(b.type||'info')}</span></div>
+      <div style="display:flex;gap:8px;align-items:center"><div class="bc-date">${fd(b.createdAt)}</div>
+      <button class="ab ab-d" title="Delete" onclick="confirm2('Delete this broadcast for all users?',()=>delBC('${b._id}'))"><i class="fa-solid fa-trash"></i></button></div></div>
+    ${b.subject?`<div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px">${_escB(b.subject)}</div>`:''}
+    <div class="bc-msg" style="white-space:pre-line">${_escB(b.message||'')}</div>
+    ${b.attachmentUrl?`<div style="margin-top:6px;font-size:11px"><a href="${_escB(b.attachmentUrl)}" target="_blank" rel="noopener" style="color:var(--p)"><i class="fa-solid fa-paperclip"></i> ${_escB(b.attachmentName||'Attachment')}</a></div>`:''}
+  </div>`).join(''):'<div style="text-align:center;color:var(--txt2);padding:16px;font-size:12px">No broadcasts yet.</div>';
+}
+let _bcUploading=false;
+async function uploadBcFile(input){
+  const f=input.files&&input.files[0]; if(!f) return;
+  if(f.size>5*1024*1024){ toast('File must be under 5 MB','w'); input.value=''; return; }
+  const hint=document.getElementById('bc-aHint'); _bcUploading=true;
+  hint.innerHTML='<i class="fa-solid fa-circle-notch fa-spin"></i> Uploading…';
+  try{
+    const out=await window._cloudinaryUploadFile(f,'broadcasts');
+    document.getElementById('bc-a').value=out.url; document.getElementById('bc-aName').value=f.name;
+    hint.innerHTML='<i class="fa-solid fa-circle-check" style="color:var(--p)"></i> Uploaded: '+_escB(f.name);
+  }catch(e){ hint.innerHTML='<span style="color:var(--red)">Upload failed: '+_escB(e.message||'error')+'</span>'; }
+  finally{ _bcUploading=false; input.value=''; }
+}
+async function sendBC(){
+  const g=id=>document.getElementById(id).value.trim();
+  const aud=g('bc-aud'), t=g('bc-t'), sub=g('bc-s'), m=g('bc-m'), ty=g('bc-ty'), att=g('bc-a'), btnT=g('bc-bt'), btnL=g('bc-bl');
+  if(_bcUploading){ toast('Please wait — the file is still uploading','w'); return; }
+  if(!t||!m){ toast('Title and message are required','w'); return; }
+  if(att && !/^https?:\/\//i.test(att)){ toast('Attachment must be a https:// link','w'); return; }
+  if(btnL && !/^https?:\/\//i.test(btnL)){ toast('Button link must start with https://','w'); return; }
+  const isPdf = /\.pdf($|\?)/i.test(att) || /\.pdf$/i.test(g('bc-aName'));
+  const d={ title:t, subject:sub, message:m, type:ty, createdAt:new Date().toISOString(), from:'admin',
+    ...(att?{attachmentUrl:att, attachmentName:g('bc-aName')||(isPdf?'Document.pdf':'Image'), attachmentType:isPdf?'pdf':'image'}:{}),
+    ...(btnT&&btnL?{buttonText:btnT, buttonUrl:btnL}:{}) };
+  showL(true);
+  try{
+    if(aud==='user'){
+      const ph=g('bc-u').replace(/\D/g,'').replace(/^880/,'').replace(/^0+/,'');
+      if(!/^1[3-9]\d{8}$/.test(ph)){ showL(false); toast('Enter a valid user phone','w'); return; }
+      const users=await _get('users'); if(!users.find(u=>u.phone===ph)){ showL(false); toast('No user with that phone','w'); return; }
+      await window._addDoc('user_notifications',{...d, uid:ph, type:ty||'info'});
+      await logAct(`Message to ${ph}: "${t}"`,'broadcast',ph);
+      toast('Message sent to 0'+ph+' ✓');
+    } else {
+      await window._addDoc('broadcasts',d);
+      await logAct(`Broadcast: "${t}"`,'broadcast','new');
+      toast('Broadcast sent to all users ✓');
+    }
+    ['bc-t','bc-s','bc-m','bc-a','bc-aName','bc-bt','bc-bl','bc-u'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('bc-aHint').innerText='Images show inside the notification; PDFs show as a download button.';
+  }catch(e){ toast(e.message,'e'); }
+  showL(false); loadBC();
+}
+async function delBC(id){ showL(true); await window._deleteDoc(id,'broadcasts'); showL(false); await logAct('Broadcast deleted','broadcast',id); toast('Broadcast deleted','e'); loadBC(); }
 
 // ══ SUPPORT CHAT (Admin) ══════════════════════════════
 window._supportChatsCache = {};
@@ -2285,6 +2375,17 @@ const app=initializeApp(FB); const db=getFirestore(app); window._db=db;
 // Firebase Storage is not used anywhere.
 const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
 const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
+window._cloudinaryUploadFile = async function(file, folder){
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  fd.append('folder', folder || 'uploads');
+  const kind = /^image\//.test(file.type) ? 'image' : 'raw';
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${kind}/upload`, { method:'POST', body:fd });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
+  return { url: data.secure_url, publicId: data.public_id };
+};
 window._cloudinaryUploadLogo = async function(file, name){
   const fd = new FormData();
   fd.append('file', file);

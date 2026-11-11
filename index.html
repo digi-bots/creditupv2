@@ -77,6 +77,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #appBar .balance-pill i{font-size:12px;padding:2px}
 #appBar .ab-acts{display:flex;gap:7px;flex-shrink:0}
 #appBar .notif-btn{width:36px;height:36px;font-size:16px}
+#appBar .notif-badge{width:auto;min-width:17px;height:17px;border-radius:10px;top:-5px;right:-5px;font-size:9.5px;font-weight:800;color:#fff;align-items:center;justify-content:center;padding:0 4px;line-height:1}
 #appBar .ab-out{color:#ff8a8a}
 /* the bar above already has back + support: hide the per-screen copies */
 .screen .back-ic,.screen .dash-hdr .ic-headset,#screen-register .auth-hdr>.fa-arrow-left,.screen .auth-hdr .ic-headset{display:none !important}
@@ -462,6 +463,42 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .calc-row:last-child{border:none}
 .calc-row span:last-child{color:var(--txt);font-weight:700}
 .notif-list{display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:5px}
+#notifModal .nc-card{max-width:400px;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;max-height:86vh}
+.nc-head{display:flex;align-items:center;gap:11px;padding:16px 16px 12px;background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(77,143,255,.06));border-bottom:1px solid rgba(255,255,255,.07);position:relative}
+.nc-head-ic{width:40px;height:40px;border-radius:12px;background:rgba(29,219,128,.16);border:1px solid rgba(29,219,128,.35);color:var(--p);display:flex;align-items:center;justify-content:center;font-size:17px}
+.nc-head-t{flex:1;min-width:0}
+.nc-head-t strong{display:block;font-size:16px;font-weight:800;color:var(--txt)}
+.nc-head-t span{font-size:11.5px;color:var(--txt2)}
+#notifModal .nc-head{padding-right:56px}
+#notifModal .nc-head .popup-close{position:absolute !important;top:50% !important;right:14px !important;transform:translateY(-50%) !important;margin:0 !important}
+.nc-tabs{display:flex;gap:6px;padding:10px 14px 4px}
+.nc-tabs button{flex:1;padding:7px 6px;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--txt2);font-size:11.5px;font-weight:700;cursor:pointer}
+.nc-tabs button.on{background:rgba(29,219,128,.12);border-color:rgba(29,219,128,.35);color:var(--p)}
+#notifModal .nc-list{padding:8px 14px 16px !important;margin:0 !important;max-height:none;flex:1;gap:9px}
+.nc-item{display:flex;gap:11px;padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);position:relative}
+.nc-item.new{background:linear-gradient(135deg,rgba(29,219,128,.07),rgba(255,255,255,.02));border-color:rgba(29,219,128,.28)}
+.nc-item.new::before{content:'';position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:3px;background:var(--nc)}
+.nc-ic{width:38px;height:38px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--nc);background:color-mix(in srgb,var(--nc) 14%,transparent);border:1px solid color-mix(in srgb,var(--nc) 30%,transparent)}
+.nc-body{flex:1;min-width:0}
+.nc-meta{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.nc-tag{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--nc)}
+.nc-time{font-size:10px;color:var(--txt3,#5b6f90)}
+.nc-new{margin-left:auto;font-size:9px;font-weight:800;color:#04150d;background:var(--p);padding:2px 6px;border-radius:6px}
+.nc-body h4{font-size:13.5px;font-weight:800;color:var(--txt);margin:0 0 2px;line-height:1.35}
+.nc-subj{font-size:12px;font-weight:700;color:var(--txt);opacity:.85;margin-bottom:3px}
+.nc-body p{font-size:12px;color:var(--txt2);line-height:1.55;margin:0;white-space:pre-line;word-break:break-word}
+.nc-img{display:block;width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-top:8px;border:1px solid rgba(255,255,255,.08)}
+.nc-att{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 10px;border-radius:9px;background:rgba(255,77,106,.1);color:#ff8a8a;font-size:11.5px;font-weight:700;text-decoration:none}
+.nc-btn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-left:6px;padding:6px 12px;border-radius:9px;background:var(--p);color:#04150d;font-size:11.5px;font-weight:800;text-decoration:none}
+.nc-empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:34px 10px;color:var(--txt2);font-size:12.5px}
+.nc-empty i{font-size:28px;opacity:.5}
+.nc-toast{position:fixed;top:12px;left:50%;transform:translate(-50%,-140%);width:calc(min(100vw,400px) - 24px);z-index:100000;display:flex;gap:10px;align-items:center;padding:11px 13px;border-radius:14px;background:rgba(15,29,53,.96);border:1px solid rgba(29,219,128,.35);box-shadow:0 12px 34px rgba(0,0,0,.5);backdrop-filter:blur(14px);cursor:pointer;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.nc-toast.on{transform:translate(-50%,0)}
+.nc-toast-ic{width:34px;height:34px;flex-shrink:0;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:15px}
+.nc-toast-t{min-width:0}
+.nc-toast-t strong{display:block;font-size:13px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-toast-t span{display:block;font-size:11.5px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 .notif-item{background:var(--bg2);border-radius:14px;padding:16px;border:1px solid var(--bord);display:flex;gap:12px}
 .notif-item.unread{border-left:3px solid var(--p)}
 .notif-icon{width:36px;height:36px;border-radius:50%;background:rgba(29,219,128,.1);color:var(--p);display:flex;justify-content:center;align-items:center;font-size:14px;flex-shrink:0}
@@ -1908,11 +1945,21 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 <input type="file" accept="image/*" id="nidBackInput" style="display:none" onchange="handleFileUpload('nidBackInput','boxNidBack')">
 
 <div class="modal-overlay premium-popup" id="notifModal">
-  <div class="mc pp" style="max-width: 380px;">
-    <div class="pp-bar"><span class="pp-bar-title">Notifications</span><button class="popup-close" aria-label="Close" onclick="closeModal('notifModal')"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="notif-list" id="notifListContainer"></div>
+  <div class="mc pp nc-card">
+    <div class="nc-head">
+      <div class="nc-head-ic"><i class="fa-solid fa-bell"></i></div>
+      <div class="nc-head-t"><strong>Notifications</strong><span id="ncSub">You're all caught up</span></div>
+      <button class="popup-close" aria-label="Close" onclick="closeNotificationModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="nc-tabs" id="ncTabs">
+      <button class="on" data-f="all" onclick="setNotifFilter('all')">All</button>
+      <button data-f="personal" onclick="setNotifFilter('personal')">My updates</button>
+      <button data-f="broadcast" onclick="setNotifFilter('broadcast')">Announcements</button>
+    </div>
+    <div class="notif-list nc-list" id="notifListContainer"></div>
   </div>
 </div>
+<div class="nc-toast" id="ncToast" onclick="openNotificationModal()"><div class="nc-toast-ic" id="ncToastIc"><i class="fa-solid fa-bell"></i></div><div class="nc-toast-t"><strong id="ncToastTitle">New notification</strong><span id="ncToastMsg"></span></div></div>
 
 <div class="modal-overlay premium-popup" id="calcModal">
   <div class="mc pp">
@@ -4122,6 +4169,7 @@ function updateUIForUser() {
     // the previous user's pending loan may have hidden the button: always show it when logged out
     const mainBtn = document.getElementById('mainBorrowBtn');
     if(mainBtn) mainBtn.style.display = 'flex';
+    if(typeof window._stopNotifListener === 'function') window._stopNotifListener();
     // Stop support listener on logout
     if (window._supportUnsubscribe) { window._supportUnsubscribe(); window._supportUnsubscribe = null; }
     window._supportListenerStarted = false;
@@ -4199,7 +4247,15 @@ function startNewApplication(){
   resetPolicyCheck();   // every new application needs a fresh consent
   nav('screen-policy');
 }
-function openNotificationModal() { const badge = document.getElementById('notifBadge'); if(badge) badge.style.display = 'none'; document.getElementById('notifModal').classList.add('on'); }
+function openNotificationModal() {
+  document.getElementById('notifModal').classList.add('on');
+  const t=document.getElementById('ncToast'); if(t) t.classList.remove('on');
+  if(typeof window._renderNotifs === 'function') window._renderNotifs();
+  // opening the list marks everything as read (badge clears)
+  if(typeof window._markNotifsSeen === 'function') window._markNotifsSeen();
+}
+function closeNotificationModal(){ closeModal('notifModal'); if(typeof window._renderNotifs === 'function') window._renderNotifs(); }
+function setNotifFilter(f){ window._notifFilter = f; document.querySelectorAll('#ncTabs button').forEach(b=>b.classList.toggle('on', b.dataset.f===f)); if(typeof window._renderNotifs === 'function') window._renderNotifs(); }
 // the calculator only offers the amounts, terms and rate the admin set
 function _calcLists(){
   const num = v => Number(String(v).replace(/,/g,'')) || 0;
@@ -5224,6 +5280,136 @@ window._startSupportListener = function(uid) {
   }, (err) => { console.warn('Support listener error:', err); });
 };
 
+// ═══ NOTIFICATION CENTER (live, per-user read state) ═══
+async function _pushMyNotif(uid, title, message, type){
+  if(!db || !uid) return;
+  try{ await addDoc(collection(db,'user_notifications'), { uid, title, message, type: type || 'info', createdAt: new Date().toISOString() }); }
+  catch(e){ console.warn('notif:', e); }
+}
+window._notifs = { personal: [], broadcast: [] };
+window._notifSeenAt = 0;
+window._notifFilter = 'all';
+let _notifUnsubs = [];
+let _notifPhone = '';
+let _notifPrimed = { personal:false, broadcast:false };
+let _notifKnown = new Set();
+const _escN = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const NOTIF_STYLE = {
+  welcome:     ['fa-hand-sparkles',   '#1ddb80', 'Welcome'],
+  bonus:       ['fa-gift',            '#ff9f43', 'Bonus'],
+  transaction: ['fa-money-bill-transfer','#4d8fff','Payment'],
+  application: ['fa-file-signature',  '#a78bfa', 'Application'],
+  success:     ['fa-circle-check',    '#1ddb80', 'Update'],
+  info:        ['fa-circle-info',     '#4d8fff', 'Update'],
+  offer:       ['fa-tags',            '#ff6b9a', 'Offer'],
+  warning:     ['fa-triangle-exclamation','#ffb547','Important'],
+  urgent:      ['fa-bolt',            '#ff4d6a', 'Urgent']
+};
+function _seenKey(){ return 'notifSeenAt_' + _notifPhone; }
+function _relTime(iso){
+  const t = new Date(iso).getTime(); if(!t) return '';
+  const d = Math.max(0, Date.now() - t), m = Math.floor(d/60000);
+  if(m < 1) return 'Just now'; if(m < 60) return m + ' min ago';
+  const h = Math.floor(m/60); if(h < 24) return h + ' h ago';
+  const dd = Math.floor(h/24); if(dd < 7) return dd + ' d ago';
+  return new Date(t).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function _allNotifs(){
+  return [...window._notifs.personal, ...window._notifs.broadcast]
+    .sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
+}
+function _isUnread(n){ return new Date(n.createdAt||0).getTime() > (window._notifSeenAt||0); }
+window._renderNotifs = function(){
+  const all = _allNotifs();
+  const unread = all.filter(_isUnread).length;
+  const badge = document.getElementById('notifBadge');
+  if(badge){ badge.style.display = unread ? 'flex' : 'none'; badge.textContent = unread > 9 ? '9+' : (unread || ''); }
+  const sub = document.getElementById('ncSub');
+  if(sub) sub.innerText = unread ? `${unread} new` : (all.length ? "You're all caught up" : 'Nothing here yet');
+  const box = document.getElementById('notifListContainer'); if(!box) return;
+  const f = window._notifFilter || 'all';
+  const list = all.filter(n => f === 'all' || (f === 'personal' ? n._src === 'personal' : n._src === 'broadcast'));
+  if(!list.length){ box.innerHTML = '<div class="nc-empty"><i class="fa-regular fa-bell-slash"></i><span>No notifications yet</span></div>'; return; }
+  box.innerHTML = list.map(n => {
+    const [ic, col, tag] = NOTIF_STYLE[n.type] || NOTIF_STYLE.info;
+    const isNew = _isUnread(n);
+    const att = n.attachmentUrl ? (n.attachmentType === 'pdf'
+      ? `<a class="nc-att" href="${_escN(n.attachmentUrl)}" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i>${_escN(n.attachmentName||'Open attachment')}</a>`
+      : `<a href="${_escN(n.attachmentUrl)}" target="_blank" rel="noopener"><img class="nc-img" src="${_escN(n.attachmentUrl)}" alt="" loading="lazy" onerror="this.style.display='none'"></a>`) : '';
+    const btn = (n.buttonText && /^https?:\/\//i.test(n.buttonUrl||'')) ? `<a class="nc-btn" href="${_escN(n.buttonUrl)}" target="_blank" rel="noopener">${_escN(n.buttonText)} <i class="fa-solid fa-arrow-right"></i></a>` : '';
+    return `<div class="nc-item${isNew ? ' new' : ''}" style="--nc:${col}">
+      <div class="nc-ic"><i class="fa-solid ${ic}"></i></div>
+      <div class="nc-body">
+        <div class="nc-meta"><span class="nc-tag">${n._src === 'broadcast' ? 'Announcement' : tag}</span><span class="nc-time">${_relTime(n.createdAt)}</span>${isNew ? '<span class="nc-new">NEW</span>' : ''}</div>
+        <h4>${_escN(n.title || 'Notification')}</h4>
+        ${n.subject ? `<div class="nc-subj">${_escN(n.subject)}</div>` : ''}
+        <p>${_escN(n.message || '')}</p>
+        ${att}${btn}
+      </div>
+    </div>`;
+  }).join('');
+};
+function _showNotifToast(n){
+  const t = document.getElementById('ncToast'); if(!t) return;
+  if(document.getElementById('notifModal')?.classList.contains('on')) return;
+  const [ic, col] = NOTIF_STYLE[n.type] || NOTIF_STYLE.info;
+  document.getElementById('ncToastIc').innerHTML = `<i class="fa-solid ${ic}"></i>`;
+  document.getElementById('ncToastIc').style.color = col;
+  document.getElementById('ncToastTitle').innerText = n.title || 'New notification';
+  document.getElementById('ncToastMsg').innerText = String(n.subject || n.message || '').slice(0, 90);
+  t.classList.add('on');
+  clearTimeout(window._ncToastT); window._ncToastT = setTimeout(()=>t.classList.remove('on'), 5000);
+}
+function _onNotifSnap(kind, docs){
+  const fresh = [];
+  window._notifs[kind] = docs.map(d => {
+    const n = { ...d.data(), _id: d.id, _src: kind };
+    const key = kind + ':' + d.id;
+    if(_notifPrimed[kind] && !_notifKnown.has(key) && _isUnread(n)) fresh.push(n);
+    _notifKnown.add(key);
+    return n;
+  });
+  _notifPrimed[kind] = true;
+  window._renderNotifs();
+  if(fresh.length) _showNotifToast(fresh.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0]);
+}
+window._stopNotifListener = function(){
+  _notifUnsubs.forEach(u=>{ try{ u(); }catch(e){} }); _notifUnsubs = [];
+  _notifPhone = ''; _notifKnown = new Set(); _notifPrimed = { personal:false, broadcast:false };
+  window._notifs = { personal: [], broadcast: [] }; window._notifSeenAt = 0;
+  const b = document.getElementById('notifBadge'); if(b) b.style.display = 'none';
+};
+window._startNotifListener = async function(phone){
+  if(!db || !phone) return;
+  if(_notifPhone === phone && _notifUnsubs.length) return;
+  window._stopNotifListener();
+  _notifPhone = phone;
+  // read state: saved on the user profile (all devices) with a local copy as fallback
+  let seen = 0;
+  try{ seen = Number(localStorage.getItem(_seenKey())) || 0; }catch(e){}
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
+    if(!u.empty) seen = Math.max(seen, new Date(u.docs[0].data().notifSeenAt || 0).getTime() || 0);
+  }catch(e){}
+  window._notifSeenAt = seen;
+  _notifUnsubs.push(onSnapshot(query(collection(db,'user_notifications'), where('uid','==',phone)),
+    snap => _onNotifSnap('personal', snap.docs), err => console.warn('notif listener:', err)));
+  _notifUnsubs.push(onSnapshot(query(collection(db,'broadcasts'), orderBy('createdAt','desc')),
+    snap => _onNotifSnap('broadcast', snap.docs), err => console.warn('broadcast listener:', err)));
+};
+window._markNotifsSeen = async function(){
+  if(!_notifPhone) return;
+  const newest = Math.max(Date.now(), ..._allNotifs().map(n => new Date(n.createdAt||0).getTime() || 0));
+  window._notifSeenAt = newest;
+  try{ localStorage.setItem(_seenKey(), String(newest)); }catch(e){}
+  setTimeout(()=>window._renderNotifs(), 1200);   // keep the NEW tags visible for a moment
+  const b = document.getElementById('notifBadge'); if(b) b.style.display = 'none';
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',_notifPhone)));
+    if(!u.empty) await updateDoc(u.docs[0].ref, { notifSeenAt: new Date(newest).toISOString() });
+  }catch(e){ console.warn('notif seen:', e); }
+};
+
 window.checkPhoneAndProceed=async function(){
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('loginPhone').value;
@@ -5324,6 +5510,7 @@ window.saveApplicationToFirebase=async function(){
       status: 'Pending Fee Payment', submittedAt:new Date().toISOString(),
       ...(window._promoClaimed ? { promo: 'First installment free' } : {})
     }).then(ref => { window._latestAppId = ref.id; return ref; });
+    _pushMyNotif(u?.phone, 'Application Received 📝', `Your loan application ${'CU-' + String(window._latestAppId||'').slice(-6).toUpperCase()} for ৳${selAmount} (${selTerm} months) has been received. Next step: pay the fee to start verification.`, 'application');
     return true;
   }catch(e){ console.error('saveApp:',e); return false; }
 };
@@ -5379,7 +5566,12 @@ window.checkTrxExists = async function(trxId){
 };
 window.saveTransactionToFirebase = async function(data){
   if(!db) throw new Error('Database unavailable.');
-  const refDoc = await addDoc(collection(db,'transactions'), data); return refDoc.id;
+  const refDoc = await addDoc(collection(db,'transactions'), data);
+  const ref = data.appId ? ' for CU-' + String(data.appId).slice(-6).toUpperCase() : '';
+  _pushMyNotif(data.uid, 'Payment Submitted ⏳', data.trxId && data.trxId !== 'BALANCE_PAYMENT'
+    ? `We received your TrxID ${data.trxId} (৳${Number(data.amount||0).toLocaleString('en-US')} via ${data.payMethod||'wallet'})${ref}. Our team will verify it shortly.`
+    : `Your fee${ref} was paid from your account balance. Our team will verify it shortly.`, 'transaction');
+  return refDoc.id;
 };
 window.updateApplicationStatusByPhone = async function(phone, status, appId){
   if(!db) return false;
@@ -5446,22 +5638,8 @@ window.loadUserDashboardData = async function() {
     }
   } catch(e) {}
 
-  try {
-    const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
-    const pSnap = await getDocs(query(collection(db, 'user_notifications'), where('uid', '==', user.phone)));
-    const allNotifs = [...gSnap.docs.map(d => ({...d.data(), isPersonal: false})), ...pSnap.docs.map(d => ({...d.data(), isPersonal: true}))].sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
-    
-    if(allNotifs.length > 0) {
-      document.getElementById('notifBadge').style.display = 'block';
-      document.getElementById('notifListContainer').innerHTML = allNotifs.map(n => `
-        <div class="notif-item ${n.isPersonal ? 'unread' : ''}">
-          <div class="notif-icon" style="background:${n.type === 'bonus' ? 'rgba(255,140,66,.1)' : 'rgba(29,219,128,.1)'}; color:${n.type === 'bonus' ? 'var(--orange)' : 'var(--p)'}">
-            <i class="fa-solid fa-${n.type === 'bonus' ? 'gift' : n.type === 'welcome' ? 'hand-sparkles' : 'bullhorn'}"></i>
-          </div>
-          <div class="notif-content"><h4>${n.title}</h4><p>${n.message}</p><div class="notif-date">${new Date(n.createdAt).toLocaleString()}</div></div>
-        </div>`).join('');
-    }
-  } catch(e) {}
+  // live notification center (welcome, bonus, payments, status updates, admin messages, broadcasts)
+  if(typeof window._startNotifListener === 'function') window._startNotifListener(user.phone);
 
   try {
     const appSnap = await getDocs(query(collection(db, 'applications'), where('uid', '==', user.phone)));
