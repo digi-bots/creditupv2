@@ -2015,15 +2015,15 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           <i class="fa-solid fa-headset" style="font-size: 30px; color: var(--p);"></i>
         </div>
         <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 5px;">How can we help?</h2>
-        <p style="font-size: 13px; color: var(--txt2);">Our support team is available 24/7.</p>
+        <p style="font-size: 13px; color: var(--txt2);">Chat with our team or get quick answers below.</p>
       </div>
 
       <div style="padding: 0 20px 25px; display: flex; flex-direction: column; gap: 12px;">
         <div class="premium-cs-item" onclick="startAIChat()" style="border-color: rgba(29,219,128,0.4); background: rgba(29,219,128,0.05);">
           <div class="premium-cs-icon" style="background: rgba(29,219,128,0.15); color: var(--p);"><i class="fa-solid fa-robot"></i></div>
           <div style="flex:1;">
-            <h4 style="font-size:15px; font-weight:700; color:var(--txt);">AI Customer Chat</h4>
-            <p style="font-size:12px; color:var(--p);">Instant answers about loans & fees</p>
+            <h4 style="font-size:15px; font-weight:700; color:var(--txt);">Quick Help</h4>
+            <p style="font-size:12px; color:var(--p);">Instant answers about loans &amp; fees</p>
           </div>
           <i class="fa-solid fa-chevron-right" style="color:var(--p);"></i>
         </div>
@@ -2038,7 +2038,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           <i class="fa-solid fa-chevron-right" style="color:var(--txt2); margin-left:6px;"></i>
         </div>
 
-        <div class="premium-cs-item" id="csWhatsAppBtn" onclick="window.open('https://wa.me/8801700000000','_blank')">
+        <div class="premium-cs-item" id="csWhatsAppBtn" style="display:none">
           <div class="premium-cs-icon" style="background:rgba(37,211,102,.15); color:#25D366;"><i class="fa-brands fa-whatsapp"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:14px; color:var(--txt); font-weight:600;">WhatsApp Support</h4>
@@ -2046,7 +2046,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           </div>
         </div>
 
-        <div class="premium-cs-item" id="csTelegramBtn" onclick="window.open('https://t.me/yourusername','_blank')">
+        <div class="premium-cs-item" id="csTelegramBtn" style="display:none">
           <div class="premium-cs-icon" style="background:rgba(0,136,204,.15); color:#0088cc;"><i class="fa-brands fa-telegram"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:14px; color:var(--txt); font-weight:600;">Telegram Support</h4>
@@ -2054,7 +2054,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           </div>
         </div>
 
-        <div class="premium-cs-item" id="csEmailBtn" onclick="window.location.href='mailto:hello@synapsetech.cloud'">
+        <div class="premium-cs-item" id="csEmailBtn" style="display:none">
           <div class="premium-cs-icon" style="background:rgba(77,143,255,.15); color:var(--blue);"><i class="fa-solid fa-envelope"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:14px; color:var(--txt); font-weight:600;">Email Support</h4>
@@ -2069,10 +2069,10 @@ input.pf-filled{padding-left:8px;padding-right:8px}
       <div class="chat-header">
         <button onclick="backToCsMenu()" style="background:none; border:none; color:#fff; margin-right:5px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
         <i class="fa-solid fa-robot"></i>
-        <h4>Credit Up AI Assistant</h4>
+        <h4>Credit Up Quick Help</h4>
       </div>
       <div class="chat-messages" id="chatMessages">
-        <div class="msg ai">Hello! I am your AI assistant. How can I help you today? (You can ask about loan limits, fees, or apply for a loan).</div>
+        <div class="msg ai">Hello! I can answer common questions about loan limits and fees. For anything else, type "complaint" and your message goes to our support team.</div>
         <div class="quick-replies" id="quickReplies">
           <div class="quick-reply-btn" onclick="sendQuickReply('What is the maximum loan limit?')">Max Loan Limit</div>
           <div class="quick-reply-btn" onclick="sendQuickReply('What are the processing fees?')">Processing Fees</div>
@@ -3098,8 +3098,12 @@ async function sendChatMessage() {
       reply = `Our standard fees include an Origination Fee (৳${ADMIN.orgFee}), Service Charge (৳${ADMIN.serviceCharge}), and Processing Fee (৳${ADMIN.processingFee}). The total upfront fee is ৳${totalFeeAmt}, plus advance interest based on your term.`;
     }
     else if (lowerText.includes('complain') || lowerText.includes('problem') || lowerText.includes('admin') || lowerText.includes('help')) {
-      reply = "I understand you need human assistance. I have escalated this chat to our Admin team. They will review your message and contact you shortly via your registered number.";
-      await escalateToAdmin(text);
+      const sent = await escalateToAdmin(text);
+      reply = sent === 'ok'
+        ? "Your message has been sent to our support team. You will see their reply in Admin Support Chat (you will also get a red badge on the support icon)."
+        : sent === 'login'
+          ? "Please log in first so our support team can reply to you. You can also use the WhatsApp or Telegram buttons in the support menu."
+          : "Sorry, your message could not be sent right now. Please try Admin Support Chat again in a moment.";
     }
     else {
       reply = "I am a smart assistant and still learning. For detailed queries, you can contact our WhatsApp or Telegram support, or type 'complaint' to reach an admin.";
@@ -3111,15 +3115,22 @@ async function sendChatMessage() {
 
 async function escalateToAdmin(userMessage) {
   const user = _getUser();
-  if(!user || !user.phone) return;
+  if(!user || !user.phone) return 'login';
+  let ok = false;
   // Save legacy ticket
   if(typeof window._saveSupportTicket === 'function') {
     try { await window._saveSupportTicket(user.phone, userMessage); } catch(e) { console.error(e); }
   }
   // Save into support_chats (two-way chat)
   if(typeof window._supportSendMessage === 'function') {
-    try { await window._supportSendMessage(user.phone, userMessage); } catch(e) { console.error(e); }
+    try { await window._supportSendMessage(user.phone, userMessage); ok = true; }
+    catch(e) {
+      // a closed conversation is reopened so the complaint still reaches the team
+      try { await window._supportStartNewChat(user.phone); await window._supportSendMessage(user.phone, userMessage); ok = true; }
+      catch(e2) { console.error(e2); }
+    }
   }
+  return ok ? 'ok' : 'error';
 }
 
 function closeModal(id){ document.getElementById(id).classList.remove('on'); }
@@ -4192,9 +4203,13 @@ function openNotificationModal() { const badge = document.getElementById('notifB
 // the calculator only offers the amounts, terms and rate the admin set
 function _calcLists(){
   const num = v => Number(String(v).replace(/,/g,'')) || 0;
-  const max = num(document.getElementById('homeMaxBorrow')?.innerText || '');
-  let amts = (OPTS.loanAmount || []).map(num).filter(v => v > 0).sort((a,b)=>a-b);
-  if(max > 0) amts = amts.filter(v => v <= max);
+  // the highest loan the admin allows (Site Config → Max Borrow Amount)
+  const max = Number(window._maxBorrow) || num(document.getElementById('homeMaxBorrow')?.innerText || '');
+  let amts = [...new Set((OPTS.loanAmount || []).map(num).filter(v => v > 0))].sort((a,b)=>a-b);
+  if(max > 0){
+    amts = amts.filter(v => v <= max);
+    if(!amts.length || amts[amts.length-1] < max) amts.push(max);   // the limit itself is always the top of the slider
+  }
   const terms = (OPTS.term || []).map(Number).filter(v => v > 0).sort((a,b)=>a-b);
   return { amts: amts.length ? amts : [10000], terms: terms.length ? terms : [6] };
 }
@@ -4937,6 +4952,7 @@ async function loadDynamicConfig() {
         document.getElementById('maintenanceScreen').style.display = 'flex';
       }
 
+      if(cfg.maxBorrowAmount) window._maxBorrow = Number(String(cfg.maxBorrowAmount).replace(/,/g,'')) || 0;
       if(cfg.maxBorrowAmount) {
         const mbEl = document.getElementById('homeMaxBorrow');
         if(mbEl) mbEl.innerText = cfg.maxBorrowAmount;
@@ -5008,17 +5024,20 @@ async function loadDynamicConfig() {
       if(feeEl) feeEl.innerText = '৳ ' + totalProcFee.toLocaleString();
 
       // কাস্টমার সাপোর্ট লিঙ্ক আপডেট
-      if(cfg.contact?.whatsapp) {
+      // support links: shown only when the admin has filled them in (no placeholder numbers)
+      const waNum = String(cfg.contact?.whatsapp || '').replace(/\D/g,'').replace(/^0(?=1)/,'880').replace(/^(?=1[3-9]\d{8}$)/,'880');
+      if(waNum.length >= 10) {
         const waBtn = document.getElementById('csWhatsAppBtn');
-        if(waBtn) waBtn.onclick = () => window.open('https://wa.me/' + cfg.contact.whatsapp, '_blank');
+        if(waBtn){ waBtn.onclick = () => window.open('https://wa.me/' + waNum, '_blank'); waBtn.style.display = 'flex'; }
       }
-      if(cfg.contact?.telegram) {
+      const tgUser = String(cfg.contact?.telegram || '').trim().replace(/^https?:\/\/(t\.me|telegram\.me)\//i,'').replace(/^@/,'').replace(/[^A-Za-z0-9_+]/g,'');
+      if(tgUser) {
         const tgBtn = document.getElementById('csTelegramBtn');
-        if(tgBtn) tgBtn.onclick = () => window.open('https://t.me/' + cfg.contact.telegram, '_blank');
+        if(tgBtn){ tgBtn.onclick = () => window.open('https://t.me/' + tgUser, '_blank'); tgBtn.style.display = 'flex'; }
       }
       if(cfg.contact?.email) {
         const emBtn = document.getElementById('csEmailBtn');
-        if(emBtn) emBtn.onclick = () => window.location.href = 'mailto:' + cfg.contact.email;
+        if(emBtn){ emBtn.onclick = () => window.location.href = 'mailto:' + cfg.contact.email; emBtn.style.display = 'flex'; }
         
         const rvEm = document.getElementById('rvFootEmail');
         if(rvEm) { rvEm.href = 'mailto:' + cfg.contact.email; rvEm.innerText = cfg.contact.email; }
