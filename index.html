@@ -2068,11 +2068,11 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="info-card">
       <div class="info-card-title" id="homeTagline">...</div>
       <div class="step-row"><div class="step-ic bg-g"><i class="fa-regular fa-comment-dots"></i></div><div class="step-cont"><span class="step-badge bd-g">Step 1</span><div class="step-title">Apply Online</div><div class="step-desc">Fill basic info in under a minute — no complex documents needed.</div></div></div>
-      <div class="step-row"><div class="step-ic bg-o"><i class="fa-solid fa-clipboard-check"></i></div><div class="step-cont"><span class="step-badge bd-o">Step 2</span><div class="step-title">Fast Approval</div><div class="step-desc">Automated review with instant results and funding in minutes.</div></div></div>
+      <div class="step-row"><div class="step-ic bg-o"><i class="fa-solid fa-clipboard-check"></i></div><div class="step-cont"><span class="step-badge bd-o">Step 2</span><div class="step-title">Review</div><div class="step-desc">Our team reviews your application and payment, and you can follow the status in the app.</div></div></div>
       <div class="step-row"><div class="step-ic bg-b"><i class="fa-solid fa-credit-card"></i></div><div class="step-cont"><span class="step-badge bd-b">Step 3</span><div class="step-title">Receive Funds</div><div class="step-desc">Approved funds deposited directly into your mobile wallet.</div></div></div>
     </div>
     <div class="live-section" id="liveSection" style="margin-top: 25px;">
-      <div class="live-title">লাইভ ট্রানজেকশন <span style="color:var(--p); font-size:12px; font-weight:400; float:right;"><i class="fa-solid fa-circle" style="font-size:6px; animation:wait-pulse 1.5s infinite;"></i> Live</span></div>
+      <div class="live-title" id="liveFeedTitle">লাইভ ট্রানজেকশন <span style="color:var(--p); font-size:12px; font-weight:400; float:right;"><i class="fa-solid fa-circle" style="font-size:6px; animation:wait-pulse 1.5s infinite;"></i> Live</span></div>
       <div class="live-feed" id="liveFeedContainer"><div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Loading recent activity...</div></div>
       <div class="live-title" style="margin-top:20px;">আমাদের পার্টনার</div>
       <div class="partner-grid">
@@ -5006,20 +5006,20 @@ window.loadLiveFeed = async function() {
   try {
     const snap = await getDocs(query(collection(db, 'applications'), orderBy('submittedAt', 'desc')));
     const approvedApps = snap.docs.map(d => d.data()).filter(a => ['Approved', 'Disbursed'].includes(a.status)).slice(0, 5);
+    // only real, approved applications are shown; with none, the section is hidden
     if(approvedApps.length === 0) {
-      container.innerHTML = `
-        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>মো: সাইফুল ইসলাম</h4><p>১০ মিনিট আগে</p></div></div><div class="live-amount">+ ৳ ১০,০০০</div></div>
-        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>মো: রফিকুল ইসলাম</h4><p>২৫ মিনিট আগে</p></div></div><div class="live-amount">+ ৳ ৫,০০০</div></div>
-        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>মো: আব্দুর রহিম</h4><p>১ ঘন্টা আগে</p></div></div><div class="live-amount">+ ৳ ২০,০০০</div></div>
-      `;
+      container.innerHTML = '';
+      const sec = document.getElementById('liveFeedTitle'); if(sec) sec.style.display = 'none';
       return;
     }
     container.innerHTML = approvedApps.map(a => {
-      let name = a.name || 'User';
+      let name = String(a.name || 'User');
       if(name.length > 4) name = name.substring(0, 4) + '***';
-      const diffMs = new Date() - new Date(a.submittedAt || Date.now());
-      const diffMins = Math.floor(diffMs / 60000);
-      let timeText = diffMins < 60 ? `${diffMins} মিনিট আগে` : `${Math.floor(diffMins/60)} ঘন্টা আগে`;
+      name = name.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      // time since the loan was actually approved / sent, not since it was applied for
+      const at = a.disbursedAt || a.creditedAt || a.approvedAt || a.statusUpdatedAt || a.submittedAt || Date.now();
+      const diffMins = Math.max(0, Math.floor((new Date() - new Date(at)) / 60000));
+      const timeText = diffMins < 60 ? `${diffMins} মিনিট আগে` : diffMins < 1440 ? `${Math.floor(diffMins/60)} ঘন্টা আগে` : `${Math.floor(diffMins/1440)} দিন আগে`;
       return `
         <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>${name}</h4><p>${timeText}</p></div></div><div class="live-amount">+ ৳ ${Number(String(a.loanAmount).replace(/,/g,'')).toLocaleString()}</div></div>
       `;
