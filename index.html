@@ -1641,18 +1641,24 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .pm-empty span{font-size:11px;color:var(--txt2);line-height:1.5}
 /* two numbers per wallet badge */
 .pm-nums{font-size:9px;color:var(--txt3);letter-spacing:.2px;font-weight:700;text-transform:uppercase}
+
+/* hot offer: a drawer pinned to the right edge — folded shows only the 🔥 tab */
+.hot-offer-floating{left:auto;right:15px;bottom:15px;transform:translateX(0);animation:none;transition:transform .45s cubic-bezier(.22,1,.36,1),border-radius .3s}
+.hot-offer-floating.folded{transform:translateX(calc(100% + 15px - 46px));border-radius:14px 0 0 14px;box-shadow:0 6px 20px rgba(255,77,106,.45)}
+.hot-offer-floating.folded .hot-close{visibility:hidden}
+.hot-offer-floating.folded .hot-icon{animation:fire-shake 1.5s infinite}
 </style>
 </head>
 <body>
 
 <div id="loader"><div class="loader-ring"></div><div class="loader-text">Please wait...</div></div>
 
-<div class="hot-offer-floating" id="hotOfferBanner" onclick="openFomoModal()">
+<div class="hot-offer-floating" id="hotOfferBanner" onclick="onHotOfferTap()">
   <div class="hot-offer-content">
     <span class="hot-icon">🔥</span>
     <div class="hot-text">
       <h4>SUPER HOT OFFER!</h4>
-      <p>প্রথম ৫০ জন লাকি ইউজারের জন্য <b>১ম মাসের লোন ফ্রি!</b></p>
+      <p>প্রথম ৫০ জন লাকি ইউজারের জন্য <b>১ম মাসের কিস্তি ফ্রি!</b></p>
     </div>
     <button class="hot-close" onclick="event.stopPropagation(); closeHotOffer();"><i class="fa-solid fa-xmark"></i></button>
   </div>
@@ -1665,9 +1671,9 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
     <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">প্রথম ৫০ জন ইউজারের মধ্যে থাকলে আপনার লোনের <b style="color:var(--orange);">১ম মাসের কিস্তি সম্পূর্ণ ফ্রি!</b> <br><span style="font-size: 11px; color: var(--p);">(১ম মাসের কিস্তি কোম্পানিই বহন করবে, ২য় মাস থেকে পরিশোধ শুরু)</span></p>
     <div class="fomo-progress-wrap">
-      <div class="fomo-progress-header"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;">৩৮/৫০ জন</span></div>
-      <div class="fomo-progress-track"><div class="fomo-progress-fill" style="width: 76%;"></div></div>
-      <p class="fomo-warning"><i class="fa-solid fa-triangle-exclamation"></i> মাত্র ১২টি অফার বাকি!</p>
+      <div class="fomo-progress-header"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;" id="offerCount">…/৫০ জন</span></div>
+      <div class="fomo-progress-track"><div class="fomo-progress-fill" id="offerFill" style="width: 0%;"></div></div>
+      <p class="fomo-warning" id="offerLeft"><i class="fa-solid fa-triangle-exclamation"></i> …</p>
     </div>
     <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
   </div>
@@ -2488,27 +2494,60 @@ setTimeout(() => {
 
 function showLoader(on){ document.getElementById('loader').classList.toggle('on',on); }
 
+const OFFER_LIMIT = 50;
+const _bnDigits = n => String(n).replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+function _offerFolded(){ try{ return localStorage.getItem('hotOfferClosed') === 'true'; }catch(e){ return false; } }
+function _setOfferFolded(f){
+  const b = document.getElementById('hotOfferBanner'); if(!b) return;
+  b.classList.toggle('folded', f);
+  try{ localStorage.setItem('hotOfferClosed', f ? 'true' : 'false'); }catch(e){}
+}
 function initHotOffer() {
-  setTimeout(() => {
+  setTimeout(async () => {
     const banner = document.getElementById('hotOfferBanner');
-    if(banner && !localStorage.getItem('hotOfferClosed')) {
-      banner.style.display = 'block';
-    }
+    if(!banner) return;
+    // the offer ends for real once 50 users have claimed it
+    const n = (typeof window.getOfferClaimCount === 'function') ? await window.getOfferClaimCount() : null;
+    if(n !== null && n >= OFFER_LIMIT) { banner.remove(); return; }
+    _updateOfferCounter(n);
+    banner.classList.toggle('folded', _offerFolded());   // closed before → stays pinned to the side
+    banner.style.display = 'block';
   }, 3500);
 }
-
-function openFomoModal() { document.getElementById('fomoModal').classList.add('on'); }
-function closeFomoModal() { document.getElementById('fomoModal').classList.remove('on'); }
-function closeHotOffer() {
-  document.getElementById('hotOfferBanner').style.display = 'none';
-  localStorage.setItem('hotOfferClosed', 'true');
+function _updateOfferCounter(n){
+  const c = document.getElementById('offerCount'), f = document.getElementById('offerFill'), l = document.getElementById('offerLeft');
+  if(n === null || n === undefined){ if(c) c.innerText = ''; if(f) f.parentElement.style.display = 'none'; if(l) l.style.display = 'none'; return; }
+  const used = Math.min(n, OFFER_LIMIT);
+  if(c) c.innerText = `${_bnDigits(used)}/${_bnDigits(OFFER_LIMIT)} জন`;
+  if(f) f.style.width = Math.round(used / OFFER_LIMIT * 100) + '%';
+  if(l) l.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${_bnDigits(OFFER_LIMIT - used)}টি অফার বাকি`;
 }
+// tap: folded tab slides out like a drawer; tap again (expanded) opens the popup
+function onHotOfferTap(){
+  const b = document.getElementById('hotOfferBanner'); if(!b) return;
+  if(b.classList.contains('folded')) { _setOfferFolded(false); return; }
+  openFomoModal();
+}
+async function openFomoModal() {
+  document.getElementById('fomoModal').classList.add('on');
+  if(typeof window.getOfferClaimCount === 'function') _updateOfferCounter(await window.getOfferClaimCount());
+}
+function closeFomoModal() {
+  document.getElementById('fomoModal').classList.remove('on');
+  _setOfferFolded(true);    // back to the side, a little of it still showing
+}
+function closeHotOffer() { _setOfferFolded(true); }
 
-function claimFomoOffer() {
+async function claimFomoOffer() {
   closeFomoModal();
-  closeHotOffer();
   const u = _getUser();
   if (u) {
+    // the claim is saved on the profile and carried onto the next application, so the admin can honour it
+    const res = (typeof window.claimOffer === 'function') ? await window.claimOffer(u.phone) : 'error';
+    if(res === 'full'){ showAlert('অফার শেষ', 'দুঃখিত, ৫০ জনের অফারটি শেষ হয়ে গেছে।', 'info'); const b=document.getElementById('hotOfferBanner'); if(b) b.remove(); return; }
+    if(res === 'already'){ showAlert('অফার আগেই নেওয়া হয়েছে', 'আপনি ইতিমধ্যে এই অফারটি নিয়েছেন। আপনার পরের লোন আবেদনে এটি যুক্ত থাকবে।', 'info'); return; }
+    if(res !== 'ok'){ showAlert('Error', 'অফারটি এখন নেওয়া যাচ্ছে না, একটু পরে আবার চেষ্টা করুন।', 'error'); return; }
+    window._promoClaimed = true;
     showAlert('অফার একটিভেটেড! 🎉', 'অভিনন্দন! আপনি ১ম মাসের ফ্রি কিস্তির অফার পেয়েছেন। আপনার লোন অ্যাপ্রুভ হলে ১ম মাসের কিস্তি কোম্পানিই দিয়ে দিবে!', 'success', () => {
       startNewApplication();
     });
@@ -3919,7 +3958,7 @@ function _clearUserSession(){
   nidFrontUrl = ''; nidBackUrl = ''; nidFrontOk = false; nidBackOk = false;
   pendingLoginUser = null;
   window._latestApp = null; window._latestAppId = null; window._userDocId = null;
-  window._userRealBalance = 0;
+  window._userRealBalance = 0; window._promoClaimed = false; window._balanceAdjustUsed = false;
   const hb = document.getElementById('headerBalance'); if(hb) hb.innerText = '৳ ••••';
   const nl = document.getElementById('notifListContainer'); if(nl) nl.innerHTML = '';
   const nb = document.getElementById('notifBadge'); if(nb) nb.style.display = 'none';
@@ -4824,7 +4863,8 @@ window.saveApplicationToFirebase=async function(){
       emergency1: {name:document.getElementById('c1Name').value,phone:document.getElementById('c1Phone').value,relation:selRel1},
       emergency2: {name:document.getElementById('c2Name').value,phone:document.getElementById('c2Phone').value,relation:selRel2},
       wallet: selWallet, bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
-      status: 'Pending Fee Payment', submittedAt:new Date().toISOString()
+      status: 'Pending Fee Payment', submittedAt:new Date().toISOString(),
+      ...(window._promoClaimed ? { promo: 'First installment free' } : {})
     }).then(ref => { window._latestAppId = ref.id; return ref; });
     return true;
   }catch(e){ console.error('saveApp:',e); return false; }
@@ -4856,6 +4896,24 @@ window.markBalanceAdjustUsed = async function(phone, used){
     const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
     if(!u.empty) await updateDoc(u.docs[0].ref, { balanceAdjustUsed: used, balanceAdjustAt: new Date().toISOString() });
   }catch(e){ console.warn('balance flag:', e); }
+};
+// "first 50 users" offer: counted from real claims on user profiles
+window.getOfferClaimCount = async function(){
+  if(!db) return null;
+  try{ const snap = await getDocs(query(collection(db,'users'), where('promoClaimed','==',true))); return snap.size; }
+  catch(e){ console.warn('offer count:', e); return null; }
+};
+window.claimOffer = async function(phone){
+  if(!db) return 'error';
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
+    if(u.empty) return 'error';
+    if(u.docs[0].data().promoClaimed === true) return 'already';
+    const n = await window.getOfferClaimCount();
+    if(n !== null && n >= 50) return 'full';
+    await updateDoc(u.docs[0].ref, { promoClaimed: true, promoClaimedAt: new Date().toISOString(), promo: 'First installment free' });
+    return 'ok';
+  }catch(e){ console.warn('claim offer:', e); return 'error'; }
 };
 window.checkTrxExists = async function(trxId){
   if(!db) return null;
@@ -4923,6 +4981,7 @@ window.loadUserDashboardData = async function() {
         if(profileNid) _savedNid = profileNid;
         window._userDocId = uDoc.id;
         window._balanceAdjustUsed = uDoc.data().balanceAdjustUsed === true;
+        window._promoClaimed = uDoc.data().promoClaimed === true;
       } catch(e) {}
       window._userRealBalance = uSnap.docs[0].data().balance || 0;
       document.getElementById('headerBalance').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + window._userRealBalance.toLocaleString();

@@ -1271,7 +1271,7 @@ function viewApp(id){
     {l:'Date of Birth',v:a.dob},{l:'Income',v:a.income},{l:'Loan Amount',v:'৳'+fa(a.loanAmount)},{l:'Term',v:(a.term||'-')+' months'},
     {l:'Purpose',v:a.loanPurpose},{l:'Occupation',v:a.occupation},{l:'Education',v:a.education},{l:'Marital',v:a.marital},
     {l:'Children',v:a.children},{l:'Company',v:a.company},{l:'Address',v:a.address,full:true},{l:'Wallet',v:a.wallet},
-    {l:'Bank Phone',v:a.bankPhone},{l:'Status',v:sb(a.status)},{l:'Risk Score',v:riskBadge(riskScore(a))},
+    {l:'Bank Phone',v:a.bankPhone},{l:'Status',v:sb(a.status)},{l:'Risk Score',v:riskBadge(riskScore(a))},{l:'Promo',v:a.promo?'🔥 '+a.promo:'-'},
     {l:'Contact 1',v:`${a.emergency1?.name||'-'} (${a.emergency1?.phone||''}) — ${a.emergency1?.relation||''}`,full:true},
     {l:'Contact 2',v:`${a.emergency2?.name||'-'} (${a.emergency2?.phone||''}) — ${a.emergency2?.relation||''}`,full:true},
     {l:'Payout number',v:a.payout?.number||a.bankPhone||'-',c:'mono'},
