@@ -3821,7 +3821,7 @@ async function submitTrx(){
       submittedAt: new Date().toISOString()
     });
     
-    const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted');
+    const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted', window._latestAppId || (window._latestApp && window._latestApp.id) || '');
     
     document.getElementById('dispTrx').innerText = trx || 'Balance Adjustment';
     document.getElementById('dispMethod').innerText = finalTotal > 0 ? selPayMethod : 'Account Balance';
@@ -3985,6 +3985,10 @@ function openAppStatusModal() {
   } else if(a.status === 'TrxID Submitted') {
     statusHtml = '<span style="color:var(--blue); font-weight:700;">Verification Pending ⏳</span>';
     btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); nav('screen-waiting')">View Verification Status</button>`;
+  } else if(a.status === 'Fee Verified') {
+    statusHtml = '<span style="color:var(--blue); font-weight:700;">Fee Verified — Under Review 🔎</span>';
+  } else if(a.status === 'Disbursement Rejected') {
+    statusHtml = '<span style="color:var(--orange); font-weight:700;">Sending failed — amount is back in your balance</span>';
   } else if(a.status === 'Approved' || a.status === 'Disbursed') {
     statusHtml = '<span style="color:var(--p); font-weight:700;">Approved &amp; Active 💸</span>';
     btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); _populateApprovedScreen(window._latestApp); nav('screen-approved')">View Loan Details</button>`;
@@ -4835,9 +4839,14 @@ window.saveTransactionToFirebase = async function(data){
   if(!db) throw new Error('Database unavailable.');
   const refDoc = await addDoc(collection(db,'transactions'), data); return refDoc.id;
 };
-window.updateApplicationStatusByPhone = async function(phone, status){
+window.updateApplicationStatusByPhone = async function(phone, status, appId){
   if(!db) return false;
   try{
+    // the application this payment belongs to, when known
+    if(appId){
+      const one = await getDoc(doc(db,'applications',appId));
+      if(one.exists() && one.data().uid === phone){ await updateDoc(one.ref, { status, statusUpdatedAt: new Date().toISOString() }); return true; }
+    }
     const snap = await getDocs(query(collection(db,'applications'), where('uid','==',phone)));
     if(snap.empty) return false;
     const active = snap.docs.filter(d => !['Rejected','Disbursed'].includes(d.data().status)).sort((a,b) => new Date(b.data().submittedAt||0) - new Date(a.data().submittedAt||0));
@@ -4932,6 +4941,8 @@ window.loadUserDashboardData = async function() {
       const statusMap = {
         'Pending Fee Payment': { icon: 'fa-hourglass-half', title: 'Fee Payment Pending', desc: 'Tap to pay processing fee', color: 'var(--orange)', bg: 'rgba(255,140,66,.15)' },
         'TrxID Submitted':     { icon: 'fa-circle-check',   title: 'Verification Pending', desc: 'Tap to view verification status', color: 'var(--blue)',   bg: 'rgba(77,143,255,.15)' },
+        'Fee Verified':        { icon: 'fa-clipboard-check',title: 'Fee Verified',         desc: 'Your application is under review', color: 'var(--blue)',   bg: 'rgba(77,143,255,.15)' },
+        'Disbursement Rejected': { icon: 'fa-rotate-left',  title: 'Disbursement Pending', desc: 'Amount is in your balance — tap for details', color: 'var(--orange)', bg: 'rgba(255,140,66,.15)' },
         'Approved':            { icon: 'fa-money-bill-wave',title: 'Loan Active',            desc: 'Tap to view loan details',       color: 'var(--p)',      bg: 'rgba(29,219,128,.15)' },
         'Disbursed':           { icon: 'fa-money-bill-wave',title: 'Loan Disbursed',         desc: 'Tap to view loan details',       color: 'var(--p)',      bg: 'rgba(29,219,128,.15)' },
         'Rejected':            { icon: 'fa-circle-xmark',   title: 'Application Rejected',  desc: 'Tap to reapply',                 color: 'var(--red)',    bg: 'rgba(255,77,106,.15)' },
