@@ -2535,7 +2535,8 @@ function saveFormState(isSubmitted){
     selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2,
     selWallet, currentDashboardStep,
     _nidFront: nidFrontUrl || '', _nidBack: nidBackUrl || '',
-    _submitted: isSubmitted === true
+    _submitted: isSubmitted === true,
+    _owner: (_getUser() && _getUser().phone) || ''
   };
   localStorage.setItem('creditUpFormDraft', JSON.stringify(state));
 }
@@ -2544,6 +2545,11 @@ function restoreFormState(src){
   try {
     const draft = src || JSON.parse(localStorage.getItem('creditUpFormDraft'));
     if(!draft) return;
+    // a saved draft is only restored for the user who wrote it
+    if(!src){
+      const me = (_getUser() && _getUser().phone) || '';
+      if(!me || (draft._owner || '') !== me) return;
+    }
     
     if(document.getElementById('infoName')) document.getElementById('infoName').value = draft.infoName || '';
     if(document.getElementById('infoEmail')) document.getElementById('infoEmail').value = draft.infoEmail || '';
@@ -3857,8 +3863,23 @@ function openProfileModal() {
   document.getElementById('profPhone').innerText = '+880 ' + u.phone;
   document.getElementById('profileModal').classList.add('on');
 }
-function logoutUser(silent) {
+// forget everything that belongs to the signed-out user, so the next person on this device sees none of it
+function _clearUserSession(){
   localStorage.removeItem('creditUpUser');
+  try { clearFormState(); } catch(e) { localStorage.removeItem('creditUpFormDraft'); }
+  const bp = document.getElementById('bankPhone'); if(bp) bp.value = '';
+  ['loginPhone','loginPassInput','regPhone','regPassword','regConfirmPassword'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  _lastBankPhone = ''; _savedApp = null; _savedNid = '';
+  nidFrontUrl = ''; nidBackUrl = ''; nidFrontOk = false; nidBackOk = false;
+  pendingLoginUser = null;
+  window._latestApp = null; window._latestAppId = null; window._userDocId = null;
+  window._userRealBalance = 0;
+  const hb = document.getElementById('headerBalance'); if(hb) hb.innerText = '৳ ••••';
+  const nl = document.getElementById('notifListContainer'); if(nl) nl.innerHTML = '';
+  const nb = document.getElementById('notifBadge'); if(nb) nb.style.display = 'none';
+}
+function logoutUser(silent) {
+  _clearUserSession();
   closeModal('profileModal');
   if(typeof updateUIForUser === 'function') updateUIForUser();
   nav('screen-home');
