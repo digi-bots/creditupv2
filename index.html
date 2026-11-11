@@ -3848,6 +3848,9 @@ function updateUIForUser() {
     if(greet) greet.innerText = 'Welcome to Credit Up';
     const statusCard = document.getElementById('userStatusCard');
     if(statusCard) statusCard.style.display = 'none';
+    // the previous user's pending loan may have hidden the button: always show it when logged out
+    const mainBtn = document.getElementById('mainBorrowBtn');
+    if(mainBtn) mainBtn.style.display = 'flex';
     // Stop support listener on logout
     if (window._supportUnsubscribe) { window._supportUnsubscribe(); window._supportUnsubscribe = null; }
     window._supportListenerStarted = false;
