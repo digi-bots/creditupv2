@@ -539,7 +539,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
   <div class="cfg-blk" style="margin-top:12px">
     <div class="cfg-t"><i class="fa-solid fa-circle-info"></i>Logo URL Tips</div>
-    <div style="font-size:12px;color:var(--txt2);line-height:1.8">• Upload logos to <strong style="color:var(--txt)">imgbb.com</strong> or <strong style="color:var(--txt)">postimages.org</strong> → direct link<br>• Firebase Storage public URL (most reliable)<br>• <span style="color:var(--red)">Avoid Wikipedia / Wikimedia</span> — blocked on mobile</div>
+    <div style="font-size:12px;color:var(--txt2);line-height:1.8">• Upload logos to <strong style="color:var(--txt)">imgbb.com</strong> or <strong style="color:var(--txt)">postimages.org</strong> → direct link<br>• Or use the <strong style="color:var(--txt)">Upload</strong> button — the logo is stored on Cloudinary (most reliable)<br>• <span style="color:var(--red)">Avoid Wikipedia / Wikimedia</span> — blocked on mobile</div>
   </div>
 </div>
 
@@ -806,7 +806,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
             <input type="file" id="wLgFile" accept="image/*" onchange="uploadWalletLogo(this)" style="display:none">
           </label>
         </div>
-        <div class="hint" id="wLgHint">Upload straight from your phone/PC (saved to Firebase) or paste any direct image link. Max 400 KB.</div>
+        <div class="hint" id="wLgHint">Upload straight from your phone/PC (saved to Cloudinary) or paste any direct image link. Max 400 KB.</div>
       </div>
       <div class="fg"><label><span class="req">*</span> Method name</label><input id="wNm" placeholder="e.g. Bkash" oninput="prevWL()"></div>
       <div class="fg"><label><span class="req">*</span> Fee collection number</label><input id="wCol" placeholder="01XXXXXXXXX" type="tel" inputmode="numeric"></div>
@@ -1635,8 +1635,8 @@ function editW(id){
   prevWL();
   openMo('moWallet');
 }
-// wallet logo: either a pasted URL or an uploaded file (uploaded to Firebase Storage)
-let _wLogoPath = '';   // storage path of an uploaded logo, so we can clean up old files
+// wallet logo: either a pasted URL or an uploaded file (uploaded to Cloudinary)
+let _wLogoPath = '';   // Cloudinary public_id of an uploaded logo (empty for a pasted URL)
 let _wLogoUploading = false;
 
 function _wLogoSrc(){ return document.getElementById('wLg').value.trim(); }
@@ -1647,7 +1647,7 @@ function onLogoUrlInput(el){
   if(v && !/^https?:\/\//i.test(v) && !/^data:image\//i.test(v)){
     if(hint){ hint.innerHTML = '<span style="color:var(--orange)">That does not look like a link — it should start with https://</span>'; }
   } else if(hint){
-    hint.innerHTML = 'Upload straight from your phone/PC (saved to Firebase) or paste any direct image link. Max 400 KB.';
+    hint.innerHTML = 'Upload straight from your phone/PC (saved to Cloudinary) or paste any direct image link. Max 400 KB.';
   }
   _wLogoPath = '';   // a typed URL means "not an uploaded file"
   prevWL();
@@ -1664,20 +1664,11 @@ async function uploadWalletLogo(input){
   if(btn){ btn.style.opacity='.6'; btn.style.pointerEvents='none'; }
   if(hint) hint.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Uploading logo…';
   try{
-    const dataUrl = await new Promise((res,rej)=>{
-      const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(f);
-    });
-    if(typeof window._firebaseUploadLogo !== 'function'){
-      // storage not ready / blocked → fall back to the data URL so the logo still works
-      document.getElementById('wLg').value = dataUrl;
-      _wLogoPath='';
-      if(hint) hint.innerHTML = '<span style="color:var(--orange)">Storage unavailable — the image was embedded directly (keep it small).</span>';
-    } else {
-      const out = await window._firebaseUploadLogo(dataUrl, document.getElementById('wNm').value.trim() || 'wallet');
-      document.getElementById('wLg').value = out.url;
-      _wLogoPath = out.path || '';
-      if(hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--p)"></i> Logo uploaded and saved.';
-    }
+    if(typeof window._cloudinaryUploadLogo !== 'function') throw new Error('Image upload is not ready yet — reload and try again.');
+    const out = await window._cloudinaryUploadLogo(f, document.getElementById('wNm').value.trim() || 'wallet');
+    document.getElementById('wLg').value = out.url;
+    _wLogoPath = out.publicId || '';
+    if(hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--p)"></i> Logo uploaded to Cloudinary.';
     prevWL();
   }catch(e){
     if(hint) hint.innerHTML = '<span style="color:var(--red)">Upload failed: '+(e.message||'unknown error')+'</span>';
@@ -2028,7 +2019,6 @@ async function _get(col,orderF='createdAt',dir='desc'){
 <script type="module">
 import{initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import{getFirestore,collection,doc,getDocs,getDoc,addDoc,updateDoc,deleteDoc,setDoc,query,where,orderBy,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-import{getStorage,ref as fbRef,uploadString,getDownloadURL,deleteObject} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js';
 
 const FB={
   apiKey: "AIzaSyA6FTCSfXhNxPkpq2WCnz_EiaJFJWYYc8Q",
@@ -2040,20 +2030,21 @@ const FB={
 };
 const app=initializeApp(FB); const db=getFirestore(app); window._db=db;
 
-// ══ FIREBASE STORAGE (wallet logos) ══
-// NOTE: enable Storage in Firebase console (Rules: allow write for authenticated/any, read public)
-// and make sure the bucket below exists. If Storage is unavailable the admin logo upload
-// automatically falls back to embedding the image as a data URL.
-const _storage = getStorage(app);
-window._firebaseUploadLogo = async function(base64, name){
-  const path = 'wallet-logos/' + Date.now() + '_' + String(name||'logo').replace(/[^a-z0-9._-]/gi,'_');
-  const r = fbRef(_storage, path);
-  await uploadString(r, base64, 'data_url');
-  const url = await getDownloadURL(r);
-  return { url, path };
-};
-window._firebaseDeleteFile = async function(path){
-  try{ if(path) await deleteObject(fbRef(_storage, path)); return true; }catch(e){ return false; }
+// ══ CLOUDINARY (wallet logos) ══
+// All images go to Cloudinary (same account and unsigned preset as the NID uploads in index.html).
+// Firebase Storage is not used anywhere.
+const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
+const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
+window._cloudinaryUploadLogo = async function(file, name){
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  fd.append('folder', 'wallet-logos');
+  fd.append('public_id', Date.now() + '_' + String(name||'logo').replace(/[^a-z0-9_-]/gi,'_'));
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method:'POST', body:fd });
+  const data = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
+  return { url: data.secure_url, publicId: data.public_id };
 };
 
 // ══ VERCEL-READY FALLBACK FETCH ══
