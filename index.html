@@ -4138,7 +4138,7 @@ async function startNewSupportChat() {
 
 <script type="module">
 import{initializeApp} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,doc,orderBy,onSnapshot} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,doc,orderBy,onSnapshot,runTransaction} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
 const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
 const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
@@ -4654,7 +4654,9 @@ window.submitLoginPassword=function(){
   } else { showAlert('Incorrect Password','The password you entered is incorrect.','error'); }
 };
 
+let _registering=false;
 window.registerUser=async function(){
+  if(_registering) return;   // a double tap must not create two accounts
   if(window.siteFlags && window.siteFlags.registration === false) {
       showAlert('Registration Closed', 'New user registration is currently disabled.', 'error');
       return;
@@ -4664,6 +4666,7 @@ window.registerUser=async function(){
   if(!isValidBDPhone(ph)){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number (1XXXXXXXXX).','error'); return; }
   if(pw.length<6){ showAlert('Weak Password','Password must be at least 6 characters.','error'); return; }
   if(pw!==cp){ showAlert('Mismatch','Passwords do not match.','error'); return; }
+  _registering=true;
   showLoader(true);
   try{
     const ex=await getDocs(query(collection(db,'users'),where('phone','==',ph)));
@@ -4679,7 +4682,16 @@ window.registerUser=async function(){
     const referrer = localStorage.getItem('referrerPhone');
     const u = { phone: ph, password: pw, createdAt: new Date().toISOString(), appStatus: 0, balance: bonusAmt, status: 'active' };
     if(referrer && referrer !== ph) u.referredBy = referrer;
-    const userRef = await addDoc(collection(db,'users'), u);
+    // new accounts use the phone number as the document id, created in a transaction,
+    // so two registrations of the same number can never both succeed
+    const userRef = doc(db,'users',ph);
+    const created = await runTransaction(db, async (tx)=>{
+      const cur = await tx.get(userRef);
+      if(cur.exists()) return false;
+      tx.set(userRef, u);
+      return true;
+    });
+    if(!created){ showLoader(false); showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
     localStorage.setItem('creditUpUser', JSON.stringify({...u, id: userRef.id}));
     await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Welcome to Credit Up! 🎉', message: 'Your account is created successfully.', type: 'welcome', createdAt: new Date(Date.now() - 2000).toISOString() });
     await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonusAmt} sign-up bonus.`, type: 'bonus', createdAt: new Date().toISOString() });
@@ -4689,6 +4701,7 @@ window.registerUser=async function(){
       nav('screen-home');
     });
   }catch(e){ showLoader(false); showAlert('Error', e.message, 'error'); }
+  finally{ _registering=false; }
 };
 
 window.saveApplicationToFirebase=async function(){
