@@ -2421,7 +2421,8 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 <script>
 const BASE_URL = window.location.origin + window.location.pathname;
 const refCode = new URLSearchParams(window.location.search).get('ref');
-if(refCode) localStorage.setItem('referrerPhone', refCode);
+// only a well-formed BD number is kept as a referral code
+if(refCode){ const rc = String(refCode).replace(/\D/g,'').replace(/^(880)?0*/,''); if(/^1[0-9]{9}$/.test(rc)) localStorage.setItem('referrerPhone', rc); }
 
 const ADMIN = {
   orgFee: 200, serviceCharge: 100, processingFee: 100, annualRate: 18,
@@ -4686,7 +4687,13 @@ window.registerUser=async function(){
     const bonusAmt = (rawBonus === undefined || rawBonus === null || rawBonus === '' || isNaN(Number(rawBonus))) ? 100 : Math.max(0, Number(rawBonus));
     const referrer = localStorage.getItem('referrerPhone');
     const u = { phone: ph, password: pw, createdAt: new Date().toISOString(), appStatus: 0, balance: bonusAmt, status: 'active' };
-    if(referrer && referrer !== ph) u.referredBy = referrer;
+    // credit the referral only to a number that is really registered
+    if(referrer && referrer !== ph && isValidBDPhone(referrer)){
+      try{
+        const refSnap = await getDocs(query(collection(db,'users'),where('phone','==',referrer)));
+        if(!refSnap.empty) u.referredBy = referrer;
+      }catch(e){ console.warn('referrer check:', e); }
+    }
     // new accounts use the phone number as the document id, created in a transaction,
     // so two registrations of the same number can never both succeed
     const userRef = doc(db,'users',ph);
