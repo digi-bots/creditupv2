@@ -1769,6 +1769,57 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .hot-offer-floating.away{transform:translateX(calc(100% + 15px - 46px));border-radius:14px 0 0 14px;bottom:96px}
 .hot-offer-floating.away .hot-close{visibility:hidden}
 .hot-offer-floating.away .hot-icon{animation:fire-shake 1.5s infinite}
+
+/* ═══ UNIFIED POPUPS: same width as the app column, smooth scroll, centered text, one close position ═══ */
+:root{--app-gut:max(0px,calc((100vw - 400px) / 2));--pop-gap:14px;--pop-x:14px}
+/* overlays never leave the 400px app column */
+.modal-overlay,.premium-cs-overlay,.sheet-back{left:var(--app-gut) !important;right:var(--app-gut) !important;width:auto !important}
+.modal-overlay,.premium-cs-overlay{padding:var(--pop-gap) !important;overscroll-behavior:contain}
+/* every card fills the column (minus the gutter) and never grows past the screen */
+.modal-overlay .mc,.modal-overlay .conf-card,.modal-overlay .ld-card,#repaymentModal .rep-card,#notifModal .nc-card,#referModal .refer-card,.premium-cs-box,#globalModal > .mc{
+  width:100% !important;max-width:100% !important;box-sizing:border-box;
+  max-height:calc(100dvh - (var(--pop-gap) * 2)) !important;margin:auto !important}
+#fomoModal .mc{max-width:100% !important}
+/* smooth, contained scrolling (no page scrolling behind the popup) */
+.modal-overlay .mc,.modal-overlay .conf-card,.modal-overlay .ld-card,.premium-cs-box,.modal-overlay .notif-list,.modal-overlay .rep-schedule,
+#referModal .refer-body,.pick-list,.dob-col,.chat-messages,.modal-overlay .pp-body{
+  scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+/* centered text */
+.modal-overlay .m-title,.modal-overlay .m-msg,.modal-overlay .m-err-msg,.modal-overlay .m-icon,.picker-hdr,.sheet-title,.sheet-sub{text-align:center !important}
+.modal-overlay .m-icon{margin-left:auto !important;margin-right:auto !important}
+.modal-overlay .m-title,.picker-hdr,.sheet-title{padding-left:42px !important;padding-right:42px !important}
+.modal-overlay .mc.pp > .m-title{padding-top:0 !important}
+
+/* ── one close button: 32px circle, 14px from the top and right edge of every popup ── */
+.popup-close,.cs-close-btn{width:32px !important;height:32px !important;flex:0 0 32px !important;border-radius:50% !important;
+  transform:none;z-index:30 !important;background:rgba(255,255,255,.07) !important;border:1px solid rgba(255,255,255,.13) !important;
+  color:var(--txt2) !important;display:flex !important;align-items:center !important;justify-content:center !important;font-size:13px !important;padding:0 !important}
+.popup-close:hover,.cs-close-btn:hover{background:rgba(255,77,106,.22) !important;color:var(--red) !important;border-color:rgba(255,77,106,.4) !important}
+/* cards whose whole body scrolls: close sticks in the corner while scrolling (takes no space) */
+.modal-overlay .mc:not(:has(.pp-bar)):not(.refer-card):not(.nc-card){padding:22px 20px 22px !important}
+.modal-overlay .mc:not(.refer-card):not(.nc-card) > .popup-close{
+  position:sticky !important;top:-8px !important;right:auto !important;float:none !important;align-self:flex-end !important;
+  margin:-8px -6px -24px 0 !important}
+.premium-cs-box > .cs-close-btn{position:sticky !important;top:var(--pop-x) !important;right:auto !important;align-self:flex-end !important;
+  margin:var(--pop-x) var(--pop-x) -46px 0 !important;flex-shrink:0}
+/* cards with a header bar: close sits in the bar at the same spot, title centered */
+.modal-overlay .pp-bar,#confirmModal .pp-bar,#loanDetailsModal .pp-bar,#repaymentModal .pp-bar,#historyModal .pp-bar,#appStatusModal .pp-bar{
+  padding:var(--pop-x) var(--pop-x) 12px var(--pop-x) !important;min-height:58px;align-items:center !important;gap:8px}
+.modal-overlay .pp-bar > .pp-bar-title{text-align:center !important;padding-left:40px !important}
+.modal-overlay .pp-bar .popup-close{position:static !important;margin:0 !important}
+/* fixed headers (no card scroll): absolute corner */
+#referModal .refer-card > .popup-close,#referModal .refer-head > .popup-close,
+.picker-card > .popup-close,.bottom-sheet > .popup-close{position:absolute !important;top:var(--pop-x) !important;right:var(--pop-x) !important;margin:0 !important;float:none !important}
+#notifModal .nc-head{padding:10px 56px 10px 16px !important}
+#notifModal .nc-head .popup-close{position:absolute !important;top:var(--pop-x) !important;right:var(--pop-x) !important;transform:none !important;margin:0 !important}
+/* bottom sheets: same column, title clear of the close button */
+.picker-card,.bottom-sheet{max-width:400px !important}
+.bottom-sheet{max-height:calc(100dvh - 40px);overflow-y:auto;overscroll-behavior:contain}
+/* support chat headers leave room for the close button */
+.premium-cs-box .chat-header{padding-right:56px !important}
+/* while any popup is open: page behind does not scroll, floating offer steps aside */
+body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) #app{overflow:hidden !important}
+body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-floating{opacity:0 !important;pointer-events:none !important}
 </style>
 </head>
 <body>
