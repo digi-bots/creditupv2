@@ -4374,7 +4374,10 @@ async function loadDynamicConfig() {
         if(mbEl) mbEl.innerText = cfg.maxBorrowAmount;
       }
 
-      if(cfg.newUserBonus !== undefined) {
+      if(cfg.newUserBonus !== undefined && !(Number(cfg.newUserBonus) > 0)) {
+        // bonus switched off by the admin: drop the banner instead of advertising ৳0
+        const bb = document.getElementById('bonusBanner'); if(bb) bb.remove();
+      } else if(cfg.newUserBonus !== undefined) {
         const bonusEl = document.getElementById('bonusBannerText');
         if(bonusEl) bonusEl.innerHTML = `নতুন ইউজারদের জন্য <b style="color:var(--orange);">${cfg.newUserBonus} টাকা</b> সাইন-আপ বোনাস!`;
       }
@@ -4678,7 +4681,9 @@ window.registerUser=async function(){
       showAlert('Registration Closed', 'New user registration is currently disabled.', 'error');
       return;
     }
-    const bonusAmt = cfgSnap.exists() ? (cfgSnap.data().newUserBonus || 100) : 100;
+    // 0 is a valid admin choice (no bonus); only a missing value falls back to 100
+    const rawBonus = cfgSnap.exists() ? cfgSnap.data().newUserBonus : undefined;
+    const bonusAmt = (rawBonus === undefined || rawBonus === null || rawBonus === '' || isNaN(Number(rawBonus))) ? 100 : Math.max(0, Number(rawBonus));
     const referrer = localStorage.getItem('referrerPhone');
     const u = { phone: ph, password: pw, createdAt: new Date().toISOString(), appStatus: 0, balance: bonusAmt, status: 'active' };
     if(referrer && referrer !== ph) u.referredBy = referrer;
@@ -4694,10 +4699,10 @@ window.registerUser=async function(){
     if(!created){ showLoader(false); showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
     localStorage.setItem('creditUpUser', JSON.stringify({...u, id: userRef.id}));
     await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Welcome to Credit Up! 🎉', message: 'Your account is created successfully.', type: 'welcome', createdAt: new Date(Date.now() - 2000).toISOString() });
-    await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonusAmt} sign-up bonus.`, type: 'bonus', createdAt: new Date().toISOString() });
+    if(bonusAmt > 0) await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonusAmt} sign-up bonus.`, type: 'bonus', createdAt: new Date().toISOString() });
     localStorage.removeItem('referrerPhone');
     showLoader(false);
-    showAlert('Account Created! 🎉', `Welcome! You received ৳${bonusAmt} bonus.`, 'success', () => {
+    showAlert('Account Created! 🎉', bonusAmt > 0 ? `Welcome! You received ৳${bonusAmt} bonus.` : 'Welcome to Credit Up!', 'success', () => {
       nav('screen-home');
     });
   }catch(e){ showLoader(false); showAlert('Error', e.message, 'error'); }
