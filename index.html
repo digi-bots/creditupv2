@@ -2339,7 +2339,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 <div id="screen-fee-payment" class="screen">
   <div class="fee-hdr">
     <i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-approved')"></i>
-    <div class="title">Fee Payment</div>
+    <div class="title" id="feePageTitle">Fee Payment</div>
   </div>
   <div class="fee-sum">
     <div class="fee-row"><span>Loan Amount (You Receive)</span><span id="payAmount">-</span></div>
@@ -2416,6 +2416,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <h2 class="wait-title">Verification Pending</h2>
   <p class="wait-desc">Your Transaction ID has been submitted. Our team is verifying your payment. This usually takes 5–15 minutes.</p>
   <div class="wait-card">
+    <div class="st-row"><span class="st-lbl">Application</span><span class="st-val" id="dispAppRef">-</span></div>
     <div class="st-row"><span class="st-lbl">Transaction ID</span><span class="st-val" id="dispTrx">-</span></div>
     <div class="st-row"><span class="st-lbl">Payment Method</span><span class="st-val" id="dispMethod">-</span></div>
     <div class="st-row"><span class="st-lbl">Status</span><span class="st-val pend">⏳ Pending Verification</span></div>
@@ -3674,6 +3675,9 @@ function goToFeePayment(){
   else _clearPaySelection();
   if(!collNum) selPayMethod = '';
   applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
+  // which application this fee is for
+  const feeAppId = window._latestAppId || (window._latestApp && window._latestApp.id) || '';
+  const ft = document.getElementById('feePageTitle'); if(ft) ft.innerText = feeAppId ? `Fee Payment · ${appRef(feeAppId)}` : 'Fee Payment';
   nav('screen-fee-payment');
 }
 
@@ -3875,6 +3879,8 @@ async function submitTrx(){
     const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted', window._latestAppId || (window._latestApp && window._latestApp.id) || '');
     
     document.getElementById('dispTrx').innerText = trx || 'Balance Adjustment';
+    const payAppId = window._latestAppId || (window._latestApp && window._latestApp.id) || '';
+    const refEl = document.getElementById('dispAppRef'); if(refEl) refEl.innerText = appRef(payAppId) + ' · ৳' + (selAmount || '-');
     document.getElementById('dispMethod').innerText = finalTotal > 0 ? selPayMethod : 'Account Balance';
     
     document.getElementById('trxInput').value = '';
@@ -3960,7 +3966,7 @@ function _clearUserSession(){
   _lastBankPhone = ''; _savedApp = null; _savedNid = '';
   nidFrontUrl = ''; nidBackUrl = ''; nidFrontOk = false; nidBackOk = false;
   pendingLoginUser = null;
-  window._latestApp = null; window._latestAppId = null; window._pendingFeeApp = null; window._userDocId = null;
+  window._latestApp = null; window._latestAppId = null; window._pendingFeeApp = null; window._allApps = []; window._trxByApp = {}; window._userDocId = null;
   window._userRealBalance = 0; window._promoClaimed = false; window._balanceAdjustUsed = false;
   const hb = document.getElementById('headerBalance'); if(hb) hb.innerText = '৳ ••••';
   const nl = document.getElementById('notifListContainer'); if(nl) nl.innerHTML = '';
@@ -4029,37 +4035,62 @@ function shareRefLink() {
   else { copyRefLink(); }
 }
 
+// short, human-readable application id shown everywhere (app, fee page, history, admin)
+function appRef(id){ return id ? 'CU-' + String(id).slice(-6).toUpperCase() : '—'; }
+const _escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const APP_STATUS_UI = {
+  'Pending Fee Payment':  ['Fee Payment Pending', 'var(--orange)'],
+  'TrxID Submitted':      ['Verification Pending ⏳', 'var(--blue)'],
+  'Fee Verified':         ['Fee Verified — Under Review 🔎', 'var(--blue)'],
+  'Approved':             ['Approved 💸', 'var(--p)'],
+  'Disbursed':            ['Disbursed ✅', 'var(--p)'],
+  'Disbursement Rejected':['Sending failed — amount back in balance', 'var(--orange)'],
+  'Rejected':             ['Rejected ❌', 'var(--red)']
+};
+// every application of the user, newest first, each with its own id, fee status and TrxID
 function openAppStatusModal() {
-  const a = window._latestApp; if(!a) return;
+  const apps = (window._allApps && window._allApps.length) ? window._allApps : (window._latestApp ? [window._latestApp] : []);
+  if(!apps.length) return;
   const content = document.getElementById('statusModalContent');
-  let statusHtml = '', btnHtml = '';
-  if(a.status === 'Pending Fee Payment') {
-    statusHtml = '<span style="color:var(--orange); font-weight:700;">Fee Payment Pending</span>';
-    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); goToFeePayment()">Pay Fee Now</button>`;
-  } else if(a.status === 'TrxID Submitted') {
-    statusHtml = '<span style="color:var(--blue); font-weight:700;">Verification Pending ⏳</span>';
-    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); nav('screen-waiting')">View Verification Status</button>`;
-  } else if(a.status === 'Fee Verified') {
-    statusHtml = '<span style="color:var(--blue); font-weight:700;">Fee Verified — Under Review 🔎</span>';
-  } else if(a.status === 'Disbursement Rejected') {
-    statusHtml = '<span style="color:var(--orange); font-weight:700;">Sending failed — amount is back in your balance</span>';
-  } else if(a.status === 'Approved' || a.status === 'Disbursed') {
-    statusHtml = '<span style="color:var(--p); font-weight:700;">Approved &amp; Active 💸</span>';
-    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); _populateApprovedScreen(window._latestApp); nav('screen-approved')">View Loan Details</button>`;
-  } else if(a.status === 'Rejected') {
-    statusHtml = '<span style="color:var(--red); font-weight:700;">Rejected ❌</span>';
-    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); startNewApplication()">Apply Again</button>`;
-  }
-  content.innerHTML = `
-    <div class="pp-body">
-      <div class="detail-row"><div class="detail-lbl">Loan Amount</div><div class="detail-val color-p fw8">৳ ${a.loanAmount || '-'}</div></div>
-      <div class="detail-row"><div class="detail-lbl">Term</div><div class="detail-val">${a.term || '-'} Months</div></div>
-      <div class="detail-row"><div class="detail-lbl">Status</div><div class="detail-val">${statusHtml}</div></div>
+  const rows = apps.map((a, i) => {
+    const [label, color] = APP_STATUS_UI[a.status] || [a.status || '-', 'var(--txt2)'];
+    const trx = (window._trxByApp || {})[a.id];
+    let btn = '';
+    if(a.status === 'Pending Fee Payment') btn = `<button class="mbtn-full" style="margin-top:10px" onclick="_appAction(${i},'pay')">Pay Fee for ${appRef(a.id)}</button>`;
+    else if(a.status === 'TrxID Submitted') btn = `<button class="mbtn-full" style="margin-top:10px" onclick="_appAction(${i},'wait')">View Verification Status</button>`;
+    else if(['Approved','Disbursed'].includes(a.status)) btn = `<button class="mbtn-full" style="margin-top:10px" onclick="_appAction(${i},'loan')">View Loan Details</button>`;
+    return `<div style="border:1px solid var(--border,rgba(255,255,255,.08));border-radius:12px;padding:10px 12px;margin-bottom:10px;${a.status==='Pending Fee Payment'?'border-color:rgba(255,140,66,.5);':''}">
+      <div class="detail-row"><div class="detail-lbl">Application</div><div class="detail-val fw8" style="font-family:monospace">${appRef(a.id)}</div></div>
+      <div class="detail-row"><div class="detail-lbl">Loan Amount</div><div class="detail-val color-p fw8">৳ ${_escH(a.loanAmount || '-')} · ${_escH(a.term || '-')} mo</div></div>
+      <div class="detail-row"><div class="detail-lbl">Status</div><div class="detail-val"><span style="color:${color};font-weight:700">${_escH(label)}</span></div></div>
+      <div class="detail-row"><div class="detail-lbl">Fee TrxID</div><div class="detail-val" style="font-family:monospace">${trx ? _escH(trx.trxId) + ' <span style="color:var(--txt2);font-size:11px">(' + _escH(trx.status || 'Pending') + ')</span>' : '—'}</div></div>
       <div class="detail-row"><div class="detail-lbl">Applied On</div><div class="detail-val">${a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '-'}</div></div>
-    </div>
-    ${btnHtml ? `<div class="pp-foot">${btnHtml}</div>` : ''}
-  `;
+      ${btn}
+    </div>`;
+  }).join('');
+  const unpaid = apps.filter(a => a.status === 'Pending Fee Payment').length;
+  content.innerHTML = `<div class="pp-body" style="max-height:60vh;overflow-y:auto">
+      ${apps.length > 1 ? `<p style="font-size:12px;color:var(--txt2);margin-bottom:10px">You have ${apps.length} applications${unpaid ? ` · <strong style="color:var(--orange)">${unpaid} fee unpaid</strong>` : ''}.</p>` : ''}
+      ${rows}
+    </div>`;
   document.getElementById('appStatusModal').classList.add('on');
+}
+function _appAction(i, kind){
+  const apps = (window._allApps && window._allApps.length) ? window._allApps : [window._latestApp];
+  const a = apps[i]; if(!a) return;
+  closeModal('appStatusModal');
+  if(kind === 'pay'){ window._latestAppId = a.id; _restoreAppState(a); goToFeePayment(); }
+  else if(kind === 'wait'){ _showWaitingFor(a); }
+  else if(kind === 'loan'){ _restoreAppState(a); _populateApprovedScreen(a); nav('screen-approved'); }
+}
+// the verification screen shows which application and which TrxID it is about
+function _showWaitingFor(a){
+  const t = (window._trxByApp || {})[a.id];
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+  set('dispAppRef', appRef(a.id) + ' · ৳' + (a.loanAmount || '-'));
+  set('dispTrx', t ? (t.trxId === 'PAID_BY_BALANCE' || t.trxId === 'BALANCE_PAYMENT' ? 'Balance Adjustment' : t.trxId) : '-');
+  set('dispMethod', t ? (t.payMethod || 'Account Balance') : '-');
+  nav('screen-waiting');
 }
 
 function updateCalc() {
@@ -5032,6 +5063,19 @@ window.loadUserDashboardData = async function() {
       const latestApp = apps[0]; window._latestApp = latestApp;
       // newest application (any, not only the latest) whose fee is still unpaid
       window._pendingFeeApp = apps.find(x => x.status === 'Pending Fee Payment') || null;
+      window._allApps = apps;
+      try{
+        const tSnap = await getDocs(query(collection(db, 'transactions'), where('uid', '==', user.phone)));
+        const map = {};
+        tSnap.docs.map(d => d.data()).sort((x,y) => new Date(x.submittedAt||0) - new Date(y.submittedAt||0))
+          .forEach(t => { if(t.appId) map[t.appId] = t; });   // newest payment per application wins
+        window._trxByApp = map;
+      }catch(e){ window._trxByApp = {}; }
+      // with more than one application the card says so
+      if(apps.length > 1){
+        const unpaid = apps.filter(x => x.status === 'Pending Fee Payment').length;
+        setTimeout(() => { const d = document.getElementById('statusCardDesc'); if(d) d.innerText = `${apps.length} applications${unpaid ? ` · ${unpaid} fee unpaid` : ''} — tap to see all`; }, 0);
+      }
       const statusMap = {
         'Pending Fee Payment': { icon: 'fa-hourglass-half', title: 'Fee Payment Pending', desc: 'Tap to pay processing fee', color: 'var(--orange)', bg: 'rgba(255,140,66,.15)' },
         'TrxID Submitted':     { icon: 'fa-circle-check',   title: 'Verification Pending', desc: 'Tap to view verification status', color: 'var(--blue)',   bg: 'rgba(77,143,255,.15)' },
@@ -5116,7 +5160,7 @@ window.loadTransactionHistory = async function() {
           <i class="fa-solid fa-money-bill-transfer"></i>
         </div>
         <div class="notif-content"><h4 style="display:flex; justify-content:space-between;">৳ ${t.amount} <span style="font-size:10px; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">${t.status}</span></h4>
-          <p>TrxID: <strong>${t.trxId}</strong> via ${t.payMethod}</p>
+          <p>TrxID: <strong>${t.trxId}</strong> via ${t.payMethod}${t.appId ? ` · for <strong>CU-${String(t.appId).slice(-6).toUpperCase()}</strong>` : ''}</p>
           <div class="notif-date">${new Date(t.submittedAt).toLocaleString()}</div>
         </div>
       </div>`).join('');

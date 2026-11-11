@@ -1111,7 +1111,7 @@ async function loadApps(){
 function renderAP(){
   _selApps=new Set();
   renderPg('applications',_D.applications,rows=>{
-    document.getElementById('atb').innerHTML=rows.length?rows.map(r=>`<tr><td><input type="checkbox" class="ack" value="${r._id}" onchange="togAck(this)"></td><td class="mono">${r.uid||'-'}</td><td>${r.name||'-'}</td><td style="color:var(--p);font-weight:700">৳${fa(r.loanAmount)}</td><td>${riskBadge(riskScore(r))}</td><td>${sb(r.status)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewApp('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qApproveApp('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRejectApp('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`).join(''):'<tr class="empty"><td colspan="8">No applications found</td></tr>';
+    document.getElementById('atb').innerHTML=rows.length?rows.map(r=>`<tr><td><input type="checkbox" class="ack" value="${r._id}" onchange="togAck(this)"></td><td class="mono">${r.uid||'-'}<div style="font-size:10px;color:var(--txt2)">CU-${String(r._id).slice(-6).toUpperCase()}</div></td><td>${r.name||'-'}</td><td style="color:var(--p);font-weight:700">৳${fa(r.loanAmount)}</td><td>${riskBadge(riskScore(r))}</td><td>${sb(r.status)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewApp('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qApproveApp('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRejectApp('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`).join(''):'<tr class="empty"><td colspan="8">No applications found</td></tr>';
   });
 }
 function toggleAll(cb){ document.querySelectorAll('.ack').forEach(c=>{c.checked=cb.checked; if(cb.checked)_selApps.add(c.value); else _selApps.delete(c.value);}); }
@@ -1267,7 +1267,7 @@ function viewApp(id){
   const pi=PIPE_MAP[a.status]||0;
   document.getElementById('appPipe').innerHTML=PIPE_STEPS.map((s,i)=>`<div class="pipe-step${i<pi?' done':i===pi?' current':''}"><div class="pipe-dot">${i<pi?'✓':i+1}</div><div class="pipe-lbl">${s}</div></div>`).join('');
   const fields=[
-    {l:'Phone',v:a.uid,c:'mono'},{l:'Full Name',v:a.name},{l:'Email',v:a.email},{l:'Gender',v:a.gender},
+    {l:'Application ID',v:'CU-'+String(a._id).slice(-6).toUpperCase(),c:'mono'},{l:'Phone',v:a.uid,c:'mono'},{l:'Full Name',v:a.name},{l:'Email',v:a.email},{l:'Gender',v:a.gender},
     {l:'Date of Birth',v:a.dob},{l:'Income',v:a.income},{l:'Loan Amount',v:'৳'+fa(a.loanAmount)},{l:'Term',v:(a.term||'-')+' months'},
     {l:'Purpose',v:a.loanPurpose},{l:'Occupation',v:a.occupation},{l:'Education',v:a.education},{l:'Marital',v:a.marital},
     {l:'Children',v:a.children},{l:'Company',v:a.company},{l:'Address',v:a.address,full:true},{l:'Wallet',v:a.wallet},
@@ -1422,7 +1422,7 @@ function renderTP(){
       const k=String(r.trxId||'').trim().toUpperCase();
       const times=(k && k!=='BALANCE_PAYMENT') ? (dup[k]||0) : 0;
       const dupBadge = times>1 ? `<span class="wbadge or" title="This TrxID was submitted ${times} times">DUP ×${times}</span>` : '';
-      const appRef = r.appId ? `<span class="wbadge" title="Linked application">${String(r.appId).slice(-6)}</span>` : '';
+      const appRef = r.appId ? `<span class="wbadge" title="Linked application">CU-${String(r.appId).slice(-6).toUpperCase()}</span>` : '';
       return `<tr><td class="mono">${r.trxId||'-'} ${dupBadge}</td><td class="mono">${r.uid||'-'}</td><td>${r.payMethod||'-'}${appRef}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`;
     }).join(''):'<tr class="empty"><td colspan="7">No transactions found</td></tr>';
   });
