@@ -278,6 +278,12 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .wopt-h button{background:none;border:none;color:var(--red);cursor:pointer;font-size:13px}
 .gw-logos{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .gw-logos span{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.05);color:var(--txt2)}
+.gw-guide{border:1.5px solid rgba(255,190,60,.55);background:rgba(255,190,60,.08);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:12.5px;line-height:1.75;color:var(--txt)}
+.gw-guide-h{font-weight:800;color:#ffbe3c;font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.gw-guide p{margin:0 0 6px}
+.gw-guide ol{margin:4px 0 8px;padding-left:20px}
+.gw-guide li{margin-bottom:4px}
+.gw-guide code{background:rgba(0,0,0,.35);color:#ffbe3c;padding:1px 6px;border-radius:5px;font-family:'Courier New',monospace;font-size:11.5px;font-weight:700}
 /* LOGO PREVIEW */
 .lp-wrap{display:flex;align-items:center;gap:8px;margin-top:7px}
 .lp-wrap img{width:36px;height:36px;border-radius:8px;background:#fff;padding:4px;object-fit:contain;border:1px solid var(--border)}
@@ -539,6 +545,18 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div style="font-size:12px;color:var(--txt2);line-height:1.7;margin-bottom:10px">
       Users pay the fee on the SSLCommerz page (bKash, Nagad, Rocket, Visa, Mastercard, net banking). The payment is checked with SSLCommerz and the application moves to <strong style="color:var(--p)">Fee Verified</strong> on its own, so no TrxID is needed.
       The store ID and password are kept on the server (Vercel settings), never here.
+    </div>
+    <div class="gw-guide">
+      <div class="gw-guide-h"><i class="fa-solid fa-triangle-exclamation"></i> একবার সেটআপ করতে হবে (Setup once)</div>
+      <p>অনলাইন পেমেন্ট চালু করতে <strong>Vercel → Project → Settings → Environment Variables</strong>-এ নিচের ভ্যালুগুলো বসান, তারপর <strong>Redeploy</strong> করুন। এগুলো গোপন, তাই এই প্যানেলে বা Firestore-এ রাখা হয় না।</p>
+      <ol>
+        <li><code>SSLCZ_STORE_ID</code> — SSLCommerz merchant panel থেকে পাওয়া <b>Store ID</b></li>
+        <li><code>SSLCZ_STORE_PASSWD</code> — SSLCommerz-এর <b>Store Password</b> (API password)</li>
+        <li><code>SSLCZ_SANDBOX</code> — টেস্টের জন্য <b>true</b>, আসল পেমেন্টের জন্য <b>false</b></li>
+        <li><code>FIREBASE_SERVICE_ACCOUNT</code> — Firebase Console → Project settings → Service accounts → <b>Generate new private key</b> চাপলে যে JSON ফাইল নামে, তার পুরো লেখা কপি করে বসান</li>
+        <li><code>PUBLIC_BASE_URL</code> (ঐচ্ছিক) — যেমন <b>https://creditup.online</b></li>
+      </ol>
+      <p>সব ঠিক থাকলে নিচের বক্সে সবুজ টিক আর <b>"Server is ready"</b> দেখাবে। তারপর <b>"Show online payment to users"</b> চালু করে Save করুন। প্রথমে Sandbox-এ টেস্ট করে নিন।</p>
     </div>
     <div id="gwStatus" class="fnote" style="margin-bottom:10px"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking the server…</div>
     <div class="fgrid">
