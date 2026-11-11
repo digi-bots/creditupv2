@@ -2134,7 +2134,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <div class="auth-hdr"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer;color:var(--txt2)" onclick="nav('screen-login')"></i><div class="auth-logo" style="font-size:24px;position:absolute;left:50%;transform:translateX(-50%)">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
   <div class="auth-title" style="font-size:26px;margin-top:8px;margin-bottom:26px">Create Account</div>
   <div class="ph-wrap"><span class="ph-cc">+880</span><input type="tel" id="regPhone" placeholder="Enter mobile number" maxlength="10" inputmode="numeric" oninput="checkRegisterInputs()"></div>
-  <div class="ibox"><input type="password" id="regPassword" placeholder="Create password (min 6 chars)" oninput="checkRegisterInputs()"></div>
+  <div class="ibox"><input type="password" id="regPassword" placeholder="Create password (min 8, letters + numbers)" oninput="checkRegisterInputs()"></div>
   <div class="ibox" style="margin-bottom:28px"><input type="password" id="regConfirmPassword" placeholder="Confirm password" oninput="checkRegisterInputs()"></div>
   <button class="btn-auth" id="registerBtn" onclick="registerUser()">Create Account</button>
   <label class="auth-check"><input type="checkbox" class="ck" checked><span>By continuing you agree to our <span class="green-link">Privacy Policy</span></span></label>
@@ -3044,8 +3044,18 @@ function checkRegisterInputs(){
   const ph=phEl.value;
   const pw=document.getElementById('regPassword').value;
   const cp=document.getElementById('regConfirmPassword').value;
-  document.getElementById('registerBtn').classList.toggle('go', isValidBDPhone(ph) && pw.length>=6 && pw===cp);
+  document.getElementById('registerBtn').classList.toggle('go', isValidBDPhone(ph) && isStrongPassword(pw) && pw===cp);
 }
+// new passwords: at least 8 characters with a letter and a number (existing passwords still log in)
+function isStrongPassword(pw){ return typeof pw === 'string' && pw.length >= 8 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw); }
+// Enter submits each auth step, like the buttons
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Enter' || !e.target || !e.target.id) return;
+  const id = e.target.id;
+  if(id === 'loginPhone'){ e.preventDefault(); if(typeof checkPhoneAndProceed === 'function') checkPhoneAndProceed(); }
+  else if(id === 'loginPassInput'){ e.preventDefault(); if(typeof submitLoginPassword === 'function') submitLoginPassword(); }
+  else if(id === 'regPhone' || id === 'regPassword' || id === 'regConfirmPassword'){ e.preventDefault(); if(typeof registerUser === 'function') registerUser(); }
+});
 function isValidBDPhone(p){ return /^1[0-9]{9}$/.test(p); }
 
 const OPTS = {
@@ -4689,7 +4699,7 @@ window.registerUser=async function(){
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('regPhone').value, pw=document.getElementById('regPassword').value, cp=document.getElementById('regConfirmPassword').value;
   if(!isValidBDPhone(ph)){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number (1XXXXXXXXX).','error'); return; }
-  if(pw.length<6){ showAlert('Weak Password','Password must be at least 6 characters.','error'); return; }
+  if(!isStrongPassword(pw)){ showAlert('Weak Password','Password must be at least 8 characters and contain both letters and numbers.','error'); return; }
   if(pw!==cp){ showAlert('Mismatch','Passwords do not match.','error'); return; }
   _registering=true;
   showLoader(true);
