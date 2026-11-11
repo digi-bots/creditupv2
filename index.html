@@ -1641,18 +1641,24 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .pm-empty span{font-size:11px;color:var(--txt2);line-height:1.5}
 /* two numbers per wallet badge */
 .pm-nums{font-size:9px;color:var(--txt3);letter-spacing:.2px;font-weight:700;text-transform:uppercase}
+
+/* hot offer: a drawer pinned to the right edge — folded shows only the 🔥 tab */
+.hot-offer-floating{left:auto;right:15px;bottom:15px;transform:translateX(0);animation:none;transition:transform .45s cubic-bezier(.22,1,.36,1),border-radius .3s}
+.hot-offer-floating.folded{transform:translateX(calc(100% + 15px - 46px));border-radius:14px 0 0 14px;box-shadow:0 6px 20px rgba(255,77,106,.45)}
+.hot-offer-floating.folded .hot-close{visibility:hidden}
+.hot-offer-floating.folded .hot-icon{animation:fire-shake 1.5s infinite}
 </style>
 </head>
 <body>
 
 <div id="loader"><div class="loader-ring"></div><div class="loader-text">Please wait...</div></div>
 
-<div class="hot-offer-floating" id="hotOfferBanner" onclick="openFomoModal()">
+<div class="hot-offer-floating" id="hotOfferBanner" onclick="onHotOfferTap()">
   <div class="hot-offer-content">
     <span class="hot-icon">🔥</span>
     <div class="hot-text">
       <h4>SUPER HOT OFFER!</h4>
-      <p>প্রথম ৫০ জন লাকি ইউজারের জন্য <b>১ম মাসের লোন ফ্রি!</b></p>
+      <p>প্রথম ৫০ জন লাকি ইউজারের জন্য <b>১ম মাসের কিস্তি ফ্রি!</b></p>
     </div>
     <button class="hot-close" onclick="event.stopPropagation(); closeHotOffer();"><i class="fa-solid fa-xmark"></i></button>
   </div>
@@ -1665,9 +1671,9 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
     <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">প্রথম ৫০ জন ইউজারের মধ্যে থাকলে আপনার লোনের <b style="color:var(--orange);">১ম মাসের কিস্তি সম্পূর্ণ ফ্রি!</b> <br><span style="font-size: 11px; color: var(--p);">(১ম মাসের কিস্তি কোম্পানিই বহন করবে, ২য় মাস থেকে পরিশোধ শুরু)</span></p>
     <div class="fomo-progress-wrap">
-      <div class="fomo-progress-header"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;">৩৮/৫০ জন</span></div>
-      <div class="fomo-progress-track"><div class="fomo-progress-fill" style="width: 76%;"></div></div>
-      <p class="fomo-warning"><i class="fa-solid fa-triangle-exclamation"></i> মাত্র ১২টি অফার বাকি!</p>
+      <div class="fomo-progress-header"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;" id="offerCount">…/৫০ জন</span></div>
+      <div class="fomo-progress-track"><div class="fomo-progress-fill" id="offerFill" style="width: 0%;"></div></div>
+      <p class="fomo-warning" id="offerLeft"><i class="fa-solid fa-triangle-exclamation"></i> …</p>
     </div>
     <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
   </div>
@@ -2068,11 +2074,11 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="info-card">
       <div class="info-card-title" id="homeTagline">...</div>
       <div class="step-row"><div class="step-ic bg-g"><i class="fa-regular fa-comment-dots"></i></div><div class="step-cont"><span class="step-badge bd-g">Step 1</span><div class="step-title">Apply Online</div><div class="step-desc">Fill basic info in under a minute — no complex documents needed.</div></div></div>
-      <div class="step-row"><div class="step-ic bg-o"><i class="fa-solid fa-clipboard-check"></i></div><div class="step-cont"><span class="step-badge bd-o">Step 2</span><div class="step-title">Fast Approval</div><div class="step-desc">Automated review with instant results and funding in minutes.</div></div></div>
+      <div class="step-row"><div class="step-ic bg-o"><i class="fa-solid fa-clipboard-check"></i></div><div class="step-cont"><span class="step-badge bd-o">Step 2</span><div class="step-title">Review</div><div class="step-desc">Our team reviews your application and payment, and you can follow the status in the app.</div></div></div>
       <div class="step-row"><div class="step-ic bg-b"><i class="fa-solid fa-credit-card"></i></div><div class="step-cont"><span class="step-badge bd-b">Step 3</span><div class="step-title">Receive Funds</div><div class="step-desc">Approved funds deposited directly into your mobile wallet.</div></div></div>
     </div>
     <div class="live-section" id="liveSection" style="margin-top: 25px;">
-      <div class="live-title">লাইভ ট্রানজেকশন <span style="color:var(--p); font-size:12px; font-weight:400; float:right;"><i class="fa-solid fa-circle" style="font-size:6px; animation:wait-pulse 1.5s infinite;"></i> Live</span></div>
+      <div class="live-title" id="liveFeedTitle">লাইভ ট্রানজেকশন <span style="color:var(--p); font-size:12px; font-weight:400; float:right;"><i class="fa-solid fa-circle" style="font-size:6px; animation:wait-pulse 1.5s infinite;"></i> Live</span></div>
       <div class="live-feed" id="liveFeedContainer"><div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Loading recent activity...</div></div>
       <div class="live-title" style="margin-top:20px;">আমাদের পার্টনার</div>
       <div class="partner-grid">
@@ -2101,6 +2107,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <button class="pf-clear" onclick="clearApplicationForm()"><i class="fa-solid fa-eraser"></i> Clear all</button>
   </div>
   <div class="pol-body">
+    <div class="fee-disc" id="feeDisclosure" style="background:rgba(255,140,66,.08);border:1px solid rgba(255,140,66,.35);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12.5px;line-height:1.6;color:var(--txt2)"></div>
     <div class="pol-updated" id="policyDateText">...</div>
     <p>This Privacy Agreement explains how we collect, use, store, share and protect your personal information when you use Credit Up services.</p>
     <div class="pol-h">How we collect and use your personal information</div>
@@ -2115,7 +2122,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <p>Be cautious of messages, websites or people impersonating Credit Up. Never disclose your passwords or OTP codes to anyone.</p>
     <div style="margin-top:22px;"><p style="font-weight:700;color:var(--txt);">Contact Us</p><p>Email: <a href="mailto:stormltdgames@gmail.com" id="policyEmailLink" style="color:var(--blue)">stormltdgames@gmail.com</a></p><p id="policyAddressText">Address: STORM SKIN LTD, 12 Constance Street, London, E16 2DQ</p></div>
   </div>
-  <div class="pol-foot"><label class="agree-wrap"><input type="checkbox" id="policyCheck"><span>I have read and agree to the Privacy Policy and Terms &amp; Conditions.</span></label><button class="btn-pol" onclick="acceptPolicy()">OK, I Agree</button></div>
+  <div class="pol-foot"><label class="agree-wrap"><input type="checkbox" id="policyCheck"><span>I have read and agree to the fees and refund policy above, the Privacy Policy and Terms &amp; Conditions.</span></label><button class="btn-pol" onclick="acceptPolicy()">OK, I Agree</button></div>
 </div>
 
 <div id="screen-login" class="screen">
@@ -2134,7 +2141,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <div class="auth-hdr"><i class="fa-solid fa-arrow-left" style="font-size:20px;cursor:pointer;color:var(--txt2)" onclick="nav('screen-login')"></i><div class="auth-logo" style="font-size:24px;position:absolute;left:50%;transform:translateX(-50%)">Credit <span>Up</span></div><i class="fa-solid fa-headset ic-headset" onclick="toggleCS()"></i></div>
   <div class="auth-title" style="font-size:26px;margin-top:8px;margin-bottom:26px">Create Account</div>
   <div class="ph-wrap"><span class="ph-cc">+880</span><input type="tel" id="regPhone" placeholder="Enter mobile number" maxlength="10" inputmode="numeric" oninput="checkRegisterInputs()"></div>
-  <div class="ibox"><input type="password" id="regPassword" placeholder="Create password (min 6 chars)" oninput="checkRegisterInputs()"></div>
+  <div class="ibox"><input type="password" id="regPassword" placeholder="Create password (min 8, letters + numbers)" oninput="checkRegisterInputs()"></div>
   <div class="ibox" style="margin-bottom:28px"><input type="password" id="regConfirmPassword" placeholder="Confirm password" oninput="checkRegisterInputs()"></div>
   <button class="btn-auth" id="registerBtn" onclick="registerUser()">Create Account</button>
   <label class="auth-check"><input type="checkbox" class="ck" checked><span>By continuing you agree to our <span class="green-link">Privacy Policy</span></span></label>
@@ -2278,10 +2285,10 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <div class="rv-hdr"><h2>All documents submitted successfully ✓</h2></div>
   <div class="rv-card">
     <div class="rv-ic"><i class="fa-regular fa-clock"></i></div>
-    <h3>Review in Progress</h3>
-    <p>Your application is under review. Our system is verifying your information automatically.</p>
+    <h3>Submitting Application</h3>
+    <p>We are saving your application. It will be reviewed by our team — this is not an approval.</p>
     <div class="rv-divider"></div>
-    <div class="rv-load-txt" id="rvText">Reviewing...</div>
+    <div class="rv-load-txt" id="rvText">Submitting...</div>
     <div class="rv-track"><div class="rv-bar" id="rvBar"></div><div class="rv-knob" id="rvKnob"></div></div>
     <div class="rv-pct" id="rvPct">0%</div>
   </div>
@@ -2294,20 +2301,20 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="logo" style="font-size:18px;font-weight:900;color:var(--txt)">Credit Up</div>
   </div>
   <div class="apv-green-box">
-    <div class="apv-banner"><i class="fa-solid fa-circle-check"></i> Your application has been approved!</div>
-    <div class="apv-prog-txt"><span>Application Complete</span><span>100%</span></div>
-    <div class="apv-prog-bg"><div class="apv-prog-fill"></div></div>
+    <div class="apv-banner" id="apvBanner"><i class="fa-solid fa-circle-check"></i> <span id="apvBannerText">Application received</span></div>
+    <div class="apv-prog-txt"><span id="apvProgLbl">Application submitted</span><span id="apvProgPct">25%</span></div>
+    <div class="apv-prog-bg"><div class="apv-prog-fill" id="apvProgFill"></div></div>
   </div>
   <div class="apv-content">
     <div class="loan-card">
-      <p>Loan amount available (BDT)</p>
+      <p id="loanCardLbl">Requested loan amount (BDT)</p>
       <h1 id="finalAmount">0</h1>
       <div class="loan-meta">
         <span>Term: <strong id="finalTerm">-</strong> months</span>
         <a href="javascript:void(0)" onclick="openLoanDetails()">View Details <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></a>
       </div>
     </div>
-    <p class="disb-title">Your loan will be disbursed into</p>
+    <p class="disb-title" id="disbTitle">If approved, your loan will be sent to</p>
     <div class="disb-card">
       <div class="disb-left">
         <img class="disb-img" id="finalWalletLogo" src="" alt="Wallet">
@@ -2326,7 +2333,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
       <div class="rule-row"><div class="rule-num">3</div><div class="rule-txt">Repay on time to qualify for higher amounts and better interest rates in future.</div></div>
     </div>
   </div>
-  <div class="apv-foot"><button class="btn-final" onclick="goToFeePayment()">Proceed to Pay Fee</button></div>
+  <div class="apv-foot" id="apvFoot"><button class="btn-final" onclick="goToFeePayment()">Proceed to Pay Fee</button></div>
 </div>
 
 <div id="screen-fee-payment" class="screen">
@@ -2421,7 +2428,8 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 <script>
 const BASE_URL = window.location.origin + window.location.pathname;
 const refCode = new URLSearchParams(window.location.search).get('ref');
-if(refCode) localStorage.setItem('referrerPhone', refCode);
+// only a well-formed BD number is kept as a referral code
+if(refCode){ const rc = String(refCode).replace(/\D/g,'').replace(/^(880)?0*/,''); if(/^1[0-9]{9}$/.test(rc)) localStorage.setItem('referrerPhone', rc); }
 
 const ADMIN = {
   orgFee: 200, serviceCharge: 100, processingFee: 100, annualRate: 18,
@@ -2486,27 +2494,60 @@ setTimeout(() => {
 
 function showLoader(on){ document.getElementById('loader').classList.toggle('on',on); }
 
+const OFFER_LIMIT = 50;
+const _bnDigits = n => String(n).replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+function _offerFolded(){ try{ return localStorage.getItem('hotOfferClosed') === 'true'; }catch(e){ return false; } }
+function _setOfferFolded(f){
+  const b = document.getElementById('hotOfferBanner'); if(!b) return;
+  b.classList.toggle('folded', f);
+  try{ localStorage.setItem('hotOfferClosed', f ? 'true' : 'false'); }catch(e){}
+}
 function initHotOffer() {
-  setTimeout(() => {
+  setTimeout(async () => {
     const banner = document.getElementById('hotOfferBanner');
-    if(banner && !localStorage.getItem('hotOfferClosed')) {
-      banner.style.display = 'block';
-    }
+    if(!banner) return;
+    // the offer ends for real once 50 users have claimed it
+    const n = (typeof window.getOfferClaimCount === 'function') ? await window.getOfferClaimCount() : null;
+    if(n !== null && n >= OFFER_LIMIT) { banner.remove(); return; }
+    _updateOfferCounter(n);
+    banner.classList.toggle('folded', _offerFolded());   // closed before → stays pinned to the side
+    banner.style.display = 'block';
   }, 3500);
 }
-
-function openFomoModal() { document.getElementById('fomoModal').classList.add('on'); }
-function closeFomoModal() { document.getElementById('fomoModal').classList.remove('on'); }
-function closeHotOffer() {
-  document.getElementById('hotOfferBanner').style.display = 'none';
-  localStorage.setItem('hotOfferClosed', 'true');
+function _updateOfferCounter(n){
+  const c = document.getElementById('offerCount'), f = document.getElementById('offerFill'), l = document.getElementById('offerLeft');
+  if(n === null || n === undefined){ if(c) c.innerText = ''; if(f) f.parentElement.style.display = 'none'; if(l) l.style.display = 'none'; return; }
+  const used = Math.min(n, OFFER_LIMIT);
+  if(c) c.innerText = `${_bnDigits(used)}/${_bnDigits(OFFER_LIMIT)} জন`;
+  if(f) f.style.width = Math.round(used / OFFER_LIMIT * 100) + '%';
+  if(l) l.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${_bnDigits(OFFER_LIMIT - used)}টি অফার বাকি`;
 }
+// tap: folded tab slides out like a drawer; tap again (expanded) opens the popup
+function onHotOfferTap(){
+  const b = document.getElementById('hotOfferBanner'); if(!b) return;
+  if(b.classList.contains('folded')) { _setOfferFolded(false); return; }
+  openFomoModal();
+}
+async function openFomoModal() {
+  document.getElementById('fomoModal').classList.add('on');
+  if(typeof window.getOfferClaimCount === 'function') _updateOfferCounter(await window.getOfferClaimCount());
+}
+function closeFomoModal() {
+  document.getElementById('fomoModal').classList.remove('on');
+  _setOfferFolded(true);    // back to the side, a little of it still showing
+}
+function closeHotOffer() { _setOfferFolded(true); }
 
-function claimFomoOffer() {
+async function claimFomoOffer() {
   closeFomoModal();
-  closeHotOffer();
   const u = _getUser();
   if (u) {
+    // the claim is saved on the profile and carried onto the next application, so the admin can honour it
+    const res = (typeof window.claimOffer === 'function') ? await window.claimOffer(u.phone) : 'error';
+    if(res === 'full'){ showAlert('অফার শেষ', 'দুঃখিত, ৫০ জনের অফারটি শেষ হয়ে গেছে।', 'info'); const b=document.getElementById('hotOfferBanner'); if(b) b.remove(); return; }
+    if(res === 'already'){ showAlert('অফার আগেই নেওয়া হয়েছে', 'আপনি ইতিমধ্যে এই অফারটি নিয়েছেন। আপনার পরের লোন আবেদনে এটি যুক্ত থাকবে।', 'info'); return; }
+    if(res !== 'ok'){ showAlert('Error', 'অফারটি এখন নেওয়া যাচ্ছে না, একটু পরে আবার চেষ্টা করুন।', 'error'); return; }
+    window._promoClaimed = true;
     showAlert('অফার একটিভেটেড! 🎉', 'অভিনন্দন! আপনি ১ম মাসের ফ্রি কিস্তির অফার পেয়েছেন। আপনার লোন অ্যাপ্রুভ হলে ১ম মাসের কিস্তি কোম্পানিই দিয়ে দিবে!', 'success', () => {
       startNewApplication();
     });
@@ -2534,7 +2575,8 @@ function saveFormState(isSubmitted){
     selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2,
     selWallet, currentDashboardStep,
     _nidFront: nidFrontUrl || '', _nidBack: nidBackUrl || '',
-    _submitted: isSubmitted === true
+    _submitted: isSubmitted === true,
+    _owner: (_getUser() && _getUser().phone) || ''
   };
   localStorage.setItem('creditUpFormDraft', JSON.stringify(state));
 }
@@ -2543,6 +2585,11 @@ function restoreFormState(src){
   try {
     const draft = src || JSON.parse(localStorage.getItem('creditUpFormDraft'));
     if(!draft) return;
+    // a saved draft is only restored for the user who wrote it
+    if(!src){
+      const me = (_getUser() && _getUser().phone) || '';
+      if(!me || (draft._owner || '') !== me) return;
+    }
     
     if(document.getElementById('infoName')) document.getElementById('infoName').value = draft.infoName || '';
     if(document.getElementById('infoEmail')) document.getElementById('infoEmail').value = draft.infoEmail || '';
@@ -3013,7 +3060,23 @@ function _continueAfterStep(){
 }
 function _backToProgress(){ nav('screen-application-progress'); }
 
+// fees, upfront interest and the refund rule, shown (and accepted) before every application
+const DEFAULT_REFUND_POLICY = 'If your application is rejected, the full fee you paid is refunded to the number you paid from.';
+function renderFeeDisclosure(){
+  const box = document.getElementById('feeDisclosure');
+  if(!box) return;
+  const fixed = (ADMIN.orgFee||0) + (ADMIN.serviceCharge||0) + (ADMIN.processingFee||0);
+  const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const refund = (window._refundPolicy && String(window._refundPolicy).trim()) || DEFAULT_REFUND_POLICY;
+  box.innerHTML = `<div style="font-weight:800;color:var(--txt);margin-bottom:6px"><i class="fa-solid fa-circle-info" style="color:var(--orange)"></i> Fees you pay before the loan is reviewed</div>
+    <div>Origination fee: <strong style="color:var(--txt)">৳${_fmt(ADMIN.orgFee||0)}</strong></div>
+    <div>Service charge + processing fee: <strong style="color:var(--txt)">৳${_fmt((ADMIN.serviceCharge||0)+(ADMIN.processingFee||0))}</strong></div>
+    <div>Interest: <strong style="color:var(--txt)">${esc(ADMIN.annualRate)}% per year for the whole term, paid in advance</strong></div>
+    <div style="margin-top:4px">Example: ৳10,000 for 6 months = ৳${_fmt(fixed + Math.round(10000*(ADMIN.annualRate/100)*0.5))} total fee.</div>
+    <div style="margin-top:6px">Paying the fee does <strong style="color:var(--txt)">not</strong> guarantee approval. ${esc(refund)}</div>`;
+}
 function resetPolicyCheck(){
+  renderFeeDisclosure();
   const c = document.getElementById('policyCheck');
   if(c) c.checked = false;
 }
@@ -3028,13 +3091,27 @@ function acceptPolicy(){
   }
 }
 
-function checkLoginInput(el){ el.value=el.value.replace(/\D/g,''); document.getElementById('loginNextBtn').classList.toggle('go',el.value.length===10); }
+// digits only, and a leading 0 is dropped so "017…" typed out of habit becomes "17…"
+function _cleanBDPhone(v){ return String(v||'').replace(/\D/g,'').replace(/^0+/,'').slice(0,10); }
+function checkLoginInput(el){ el.value=_cleanBDPhone(el.value); document.getElementById('loginNextBtn').classList.toggle('go',isValidBDPhone(el.value)); }
 function checkRegisterInputs(){
-  const ph=document.getElementById('regPhone').value;
+  const phEl=document.getElementById('regPhone');
+  phEl.value=_cleanBDPhone(phEl.value);
+  const ph=phEl.value;
   const pw=document.getElementById('regPassword').value;
   const cp=document.getElementById('regConfirmPassword').value;
-  document.getElementById('registerBtn').classList.toggle('go', ph.length===10 && pw.length>=6 && pw===cp);
+  document.getElementById('registerBtn').classList.toggle('go', isValidBDPhone(ph) && isStrongPassword(pw) && pw===cp);
 }
+// new passwords: at least 8 characters with a letter and a number (existing passwords still log in)
+function isStrongPassword(pw){ return typeof pw === 'string' && pw.length >= 8 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw); }
+// Enter submits each auth step, like the buttons
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Enter' || !e.target || !e.target.id) return;
+  const id = e.target.id;
+  if(id === 'loginPhone'){ e.preventDefault(); if(typeof checkPhoneAndProceed === 'function') checkPhoneAndProceed(); }
+  else if(id === 'loginPassInput'){ e.preventDefault(); if(typeof submitLoginPassword === 'function') submitLoginPassword(); }
+  else if(id === 'regPhone' || id === 'regPassword' || id === 'regConfirmPassword'){ e.preventDefault(); if(typeof registerUser === 'function') registerUser(); }
+});
 function isValidBDPhone(p){ return /^1[0-9]{9}$/.test(p); }
 
 const OPTS = {
@@ -3388,10 +3465,17 @@ function submitApplication(){
   document.getElementById('finalWalletLogo').src = (window._activeWallet && window._activeWallet.logoUrl) ? window._activeWallet.logoUrl : (ADMIN.walletLogos[selWallet] || '');
   const u=_getUser(); if(u?.phone) document.getElementById('approvedPhone').innerText='0'+u.phone;
 
-  if(typeof saveApplicationToFirebase==='function') saveApplicationToFirebase();
+  const saving = (typeof saveApplicationToFirebase==='function') ? saveApplicationToFirebase() : Promise.resolve(false);
+  _setAppScreenStatus('Pending Fee Payment');
 
   nav('screen-review-progress');
-  _runReviewAnim(()=>{ 
+  _runReviewAnim(async ()=>{ 
+    const ok = await saving;
+    if(!ok){
+      nav('screen-application-progress');
+      showErrorModal('Submission Failed', 'Your application could not be saved. Please check your connection and try again.');
+      return;
+    }
     // keep the details (and NID photos) for the next application instead of wiping them
     saveFormState(true);
     hidePrefillBanner();
@@ -3404,9 +3488,9 @@ function _runReviewAnim(onDone){
   let p=0; txt.innerText='Reviewing...';
   const iv=setInterval(()=>{
     p+=2; bar.style.width=p+'%'; knob.style.left=p+'%'; pct.innerText=p+'%';
-    if(p===40) txt.innerText='Verifying identity...';
-    if(p===75) txt.innerText='Calculating offer...';
-    if(p>=100){ clearInterval(iv); txt.innerText='Approved! ✓'; setTimeout(onDone,800); }
+    if(p===40) txt.innerText='Uploading details...';
+    if(p===75) txt.innerText='Saving application...';
+    if(p>=100){ clearInterval(iv); txt.innerText='Application received ✓'; setTimeout(onDone,800); }
   },30);
 }
 
@@ -3561,7 +3645,8 @@ function goToFeePayment(){
   
   const u = _getUser();
   const userBalance = window._userRealBalance || 0;
-  if(userBalance > 0) {
+  // the balance can be used against a fee only once per user
+  if(userBalance > 0 && !window._balanceAdjustUsed) {
       document.getElementById('balanceApplyBox').style.display = 'block';
       document.getElementById('dispAvailBalance').innerText = '৳ ' + userBalance.toLocaleString();
   } else {
@@ -3602,7 +3687,7 @@ function toggleBalanceExpand(){
   if(noteEl){
     const maxAllowed = _balanceAllowed();
     noteEl.innerText = maxAllowed > 0
-      ? `Tick to use ৳${_fmt(maxAllowed)} from your balance for this payment (max ৳100).`
+      ? `Tick to use ৳${_fmt(maxAllowed)} from your balance for this payment (max ৳100, can be used only once).`
       : 'No usable balance for this payment.';
   }
 }
@@ -3756,6 +3841,12 @@ async function submitTrx(){
         const existing = await window.checkTrxExists(trx);
         if(existing){ showErrorModal('Already Submitted','This Transaction ID has already been used.'); return; }
     }
+    // one balance adjustment per user, checked again here in case another device already used it
+    if(appliedBalance > 0 && await window.isBalanceAdjustUsed(user.phone)){
+        window._balanceAdjustUsed = true;
+        showErrorModal('Balance Already Used', 'Your balance can be used for a fee payment only once. Please untick "use balance" and pay the full fee.');
+        return;
+    }
 
     await window.saveTransactionToFirebase({
       uid: user.phone, 
@@ -3776,7 +3867,9 @@ async function submitTrx(){
       submittedAt: new Date().toISOString()
     });
     
-    const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted');
+    if(appliedBalance > 0){ await window.markBalanceAdjustUsed(user.phone, true); window._balanceAdjustUsed = true; }
+
+    const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted', window._latestAppId || (window._latestApp && window._latestApp.id) || '');
     
     document.getElementById('dispTrx').innerText = trx || 'Balance Adjustment';
     document.getElementById('dispMethod').innerText = finalTotal > 0 ? selPayMethod : 'Account Balance';
@@ -3807,7 +3900,7 @@ function updateUIForUser() {
   if (u) {
     if(balanceContainer) balanceContainer.style.display = 'inline-flex';
     if(notifBtnContainer) notifBtnContainer.style.display = 'flex';
-    if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
+    // button text for a logged-in user is decided by loadUserDashboardData (Borrow Now / Apply for Another)
     if(loginLink) loginLink.style.display = 'none';
     if(bonusBanner) bonusBanner.style.display = 'none';
     const greet = document.getElementById('userGreeting');
@@ -3827,6 +3920,9 @@ function updateUIForUser() {
     if(greet) greet.innerText = 'Welcome to Credit Up';
     const statusCard = document.getElementById('userStatusCard');
     if(statusCard) statusCard.style.display = 'none';
+    // the previous user's pending loan may have hidden the button: always show it when logged out
+    const mainBtn = document.getElementById('mainBorrowBtn');
+    if(mainBtn) mainBtn.style.display = 'flex';
     // Stop support listener on logout
     if (window._supportUnsubscribe) { window._supportUnsubscribe(); window._supportUnsubscribe = null; }
     window._supportListenerStarted = false;
@@ -3852,12 +3948,32 @@ function openProfileModal() {
   document.getElementById('profPhone').innerText = '+880 ' + u.phone;
   document.getElementById('profileModal').classList.add('on');
 }
-function logoutUser() {
+// forget everything that belongs to the signed-out user, so the next person on this device sees none of it
+function _clearUserSession(){
   localStorage.removeItem('creditUpUser');
+  try { clearFormState(); } catch(e) { localStorage.removeItem('creditUpFormDraft'); }
+  const bp = document.getElementById('bankPhone'); if(bp) bp.value = '';
+  ['loginPhone','loginPassInput','regPhone','regPassword','regConfirmPassword'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  _lastBankPhone = ''; _savedApp = null; _savedNid = '';
+  nidFrontUrl = ''; nidBackUrl = ''; nidFrontOk = false; nidBackOk = false;
+  pendingLoginUser = null;
+  window._latestApp = null; window._latestAppId = null; window._userDocId = null;
+  window._userRealBalance = 0; window._promoClaimed = false; window._balanceAdjustUsed = false;
+  const hb = document.getElementById('headerBalance'); if(hb) hb.innerText = '৳ ••••';
+  const nl = document.getElementById('notifListContainer'); if(nl) nl.innerHTML = '';
+  const nb = document.getElementById('notifBadge'); if(nb) nb.style.display = 'none';
+}
+function logoutUser(silent) {
+  _clearUserSession();
   closeModal('profileModal');
   if(typeof updateUIForUser === 'function') updateUIForUser();
   nav('screen-home');
-  showAlert('Logged Out', 'You have been successfully logged out.', 'success');
+  if(!silent) showAlert('Logged Out', 'You have been successfully logged out.', 'success');
+}
+// a user the admin banned is signed out on the next data refresh, not only at the next login
+function forceLogoutBanned(){
+  logoutUser(true);
+  showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.');
 }
 
 function startNewApplication(){
@@ -3917,6 +4033,10 @@ function openAppStatusModal() {
   } else if(a.status === 'TrxID Submitted') {
     statusHtml = '<span style="color:var(--blue); font-weight:700;">Verification Pending ⏳</span>';
     btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); nav('screen-waiting')">View Verification Status</button>`;
+  } else if(a.status === 'Fee Verified') {
+    statusHtml = '<span style="color:var(--blue); font-weight:700;">Fee Verified — Under Review 🔎</span>';
+  } else if(a.status === 'Disbursement Rejected') {
+    statusHtml = '<span style="color:var(--orange); font-weight:700;">Sending failed — amount is back in your balance</span>';
   } else if(a.status === 'Approved' || a.status === 'Disbursed') {
     statusHtml = '<span style="color:var(--p); font-weight:700;">Approved &amp; Active 💸</span>';
     btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); _populateApprovedScreen(window._latestApp); nav('screen-approved')">View Loan Details</button>`;
@@ -3965,8 +4085,30 @@ function _restoreAppState(app){
   const interest = Math.round(amt * (ADMIN.annualRate/100) * (months/12));
   totalFee = ADMIN.orgFee + ADMIN.serviceCharge + ADMIN.processingFee + interest;
 }
+// the application screen only says "approved" when the admin has actually approved the loan
+function _setAppScreenStatus(status){
+  const approved = ['Approved','Disbursed','Active','Repaid'].includes(status);
+  const STEPS = {
+    'Pending Fee Payment': ['Application received — fee payment pending. Not approved yet.', 'Application submitted', 25],
+    'TrxID Submitted':     ['Application received — fee verification pending. Not approved yet.', 'Fee submitted', 50],
+    'Fee Verified':        ['Fee verified — your application is under review. Not approved yet.', 'Fee verified', 75],
+    'Approved':            ['Your loan has been approved!', 'Approved', 100],
+    'Disbursed':           ['Your loan has been sent to your account.', 'Disbursed', 100],
+    'Rejected':            ['Your application was not approved.', 'Rejected', 100]
+  };
+  const st = STEPS[status] || [approved ? 'Your loan has been approved!' : 'Application received — under review. Not approved yet.', approved ? 'Approved' : 'Under review', approved ? 100 : 25];
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+  set('apvBannerText', st[0]); set('apvProgLbl', st[1]); set('apvProgPct', st[2] + '%');
+  const fill = document.getElementById('apvProgFill'); if(fill) fill.style.width = st[2] + '%';
+  const ic = document.querySelector('#apvBanner i');
+  if(ic) ic.className = approved ? 'fa-solid fa-circle-check' : (status === 'Rejected' ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-hourglass-half');
+  set('loanCardLbl', approved ? 'Approved loan amount (BDT)' : 'Requested loan amount (BDT)');
+  set('disbTitle', approved ? 'Your loan will be disbursed into' : 'If approved, your loan will be sent to');
+  const foot = document.getElementById('apvFoot'); if(foot) foot.style.display = (status === 'Pending Fee Payment') ? '' : 'none';
+}
 function _populateApprovedScreen(app){
   if(!app) return;
+  _setAppScreenStatus(app.status);
   const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0;
   const months = Number(app.term) || 0;
   document.getElementById('finalAmount').innerText = _fmt(amt);
@@ -4129,7 +4271,7 @@ async function startNewSupportChat() {
 
 <script type="module">
 import{initializeApp} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,doc,orderBy,onSnapshot} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,doc,orderBy,onSnapshot,runTransaction} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
 const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
 const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
@@ -4365,7 +4507,10 @@ async function loadDynamicConfig() {
         if(mbEl) mbEl.innerText = cfg.maxBorrowAmount;
       }
 
-      if(cfg.newUserBonus !== undefined) {
+      if(cfg.newUserBonus !== undefined && !(Number(cfg.newUserBonus) > 0)) {
+        // bonus switched off by the admin: drop the banner instead of advertising ৳0
+        const bb = document.getElementById('bonusBanner'); if(bb) bb.remove();
+      } else if(cfg.newUserBonus !== undefined) {
         const bonusEl = document.getElementById('bonusBannerText');
         if(bonusEl) bonusEl.innerHTML = `নতুন ইউজারদের জন্য <b style="color:var(--orange);">${cfg.newUserBonus} টাকা</b> সাইন-আপ বোনাস!`;
       }
@@ -4377,6 +4522,8 @@ async function loadDynamicConfig() {
 
       // admin-defined note for the fee payment page
       window._feePaymentNote = cfg.feePaymentNote || '';
+      window._refundPolicy = cfg.refundPolicy || '';
+      if(typeof renderFeeDisclosure === 'function') renderFeeDisclosure();
       window._feePaymentNoteTitle = cfg.feePaymentNoteTitle || 'Note';
       applyFeePaymentNote(cfg.feePaymentNote || '', cfg.feePaymentNoteTitle || 'Note');
 
@@ -4624,7 +4771,7 @@ window._startSupportListener = function(uid) {
 window.checkPhoneAndProceed=async function(){
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('loginPhone').value;
-  if(ph.length!==10||!ph.startsWith('1')){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number.','error'); return; }
+  if(!isValidBDPhone(ph)){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number.','error'); return; }
   showLoader(true);
   try{
     const snap=await getDocs(query(collection(db,'users'),where('phone','==',ph)));
@@ -4645,39 +4792,66 @@ window.submitLoginPassword=function(){
   } else { showAlert('Incorrect Password','The password you entered is incorrect.','error'); }
 };
 
+let _registering=false;
 window.registerUser=async function(){
+  if(_registering) return;   // a double tap must not create two accounts
   if(window.siteFlags && window.siteFlags.registration === false) {
       showAlert('Registration Closed', 'New user registration is currently disabled.', 'error');
       return;
   }
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('regPhone').value, pw=document.getElementById('regPassword').value, cp=document.getElementById('regConfirmPassword').value;
-  if(ph.length!==10){ showAlert('Invalid Number','Enter a valid 10-digit number.','error'); return; }
-  if(pw.length<6){ showAlert('Weak Password','Password must be at least 6 characters.','error'); return; }
+  if(!isValidBDPhone(ph)){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number (1XXXXXXXXX).','error'); return; }
+  if(!isStrongPassword(pw)){ showAlert('Weak Password','Password must be at least 8 characters and contain both letters and numbers.','error'); return; }
   if(pw!==cp){ showAlert('Mismatch','Passwords do not match.','error'); return; }
+  _registering=true;
   showLoader(true);
   try{
     const ex=await getDocs(query(collection(db,'users'),where('phone','==',ph)));
     if(!ex.empty){ showLoader(false); showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
+    // read the switch fresh: the page may not have loaded the config yet
     const cfgSnap = await getDoc(doc(db, 'siteConfig', 'main'));
-    const bonusAmt = cfgSnap.exists() ? (cfgSnap.data().newUserBonus || 100) : 100;
+    if(cfgSnap.exists() && cfgSnap.data().flags?.registrationOpen === false){
+      showLoader(false);
+      showAlert('Registration Closed', 'New user registration is currently disabled.', 'error');
+      return;
+    }
+    // 0 is a valid admin choice (no bonus); only a missing value falls back to 100
+    const rawBonus = cfgSnap.exists() ? cfgSnap.data().newUserBonus : undefined;
+    const bonusAmt = (rawBonus === undefined || rawBonus === null || rawBonus === '' || isNaN(Number(rawBonus))) ? 100 : Math.max(0, Number(rawBonus));
     const referrer = localStorage.getItem('referrerPhone');
     const u = { phone: ph, password: pw, createdAt: new Date().toISOString(), appStatus: 0, balance: bonusAmt, status: 'active' };
-    if(referrer && referrer !== ph) u.referredBy = referrer;
-    const userRef = await addDoc(collection(db,'users'), u);
+    // credit the referral only to a number that is really registered
+    if(referrer && referrer !== ph && isValidBDPhone(referrer)){
+      try{
+        const refSnap = await getDocs(query(collection(db,'users'),where('phone','==',referrer)));
+        if(!refSnap.empty) u.referredBy = referrer;
+      }catch(e){ console.warn('referrer check:', e); }
+    }
+    // new accounts use the phone number as the document id, created in a transaction,
+    // so two registrations of the same number can never both succeed
+    const userRef = doc(db,'users',ph);
+    const created = await runTransaction(db, async (tx)=>{
+      const cur = await tx.get(userRef);
+      if(cur.exists()) return false;
+      tx.set(userRef, u);
+      return true;
+    });
+    if(!created){ showLoader(false); showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
     localStorage.setItem('creditUpUser', JSON.stringify({...u, id: userRef.id}));
     await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Welcome to Credit Up! 🎉', message: 'Your account is created successfully.', type: 'welcome', createdAt: new Date(Date.now() - 2000).toISOString() });
-    await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonusAmt} sign-up bonus.`, type: 'bonus', createdAt: new Date().toISOString() });
+    if(bonusAmt > 0) await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonusAmt} sign-up bonus.`, type: 'bonus', createdAt: new Date().toISOString() });
     localStorage.removeItem('referrerPhone');
     showLoader(false);
-    showAlert('Account Created! 🎉', `Welcome! You received ৳${bonusAmt} bonus.`, 'success', () => {
+    showAlert('Account Created! 🎉', bonusAmt > 0 ? `Welcome! You received ৳${bonusAmt} bonus.` : 'Welcome to Credit Up!', 'success', () => {
       nav('screen-home');
     });
   }catch(e){ showLoader(false); showAlert('Error', e.message, 'error'); }
+  finally{ _registering=false; }
 };
 
 window.saveApplicationToFirebase=async function(){
-  if(!db) return;
+  if(!db) return false;
   const u=_getUser();
   try{
     await addDoc(collection(db,'applications'),{
@@ -4689,9 +4863,11 @@ window.saveApplicationToFirebase=async function(){
       emergency1: {name:document.getElementById('c1Name').value,phone:document.getElementById('c1Phone').value,relation:selRel1},
       emergency2: {name:document.getElementById('c2Name').value,phone:document.getElementById('c2Phone').value,relation:selRel2},
       wallet: selWallet, bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
-      status: 'Pending Fee Payment', submittedAt:new Date().toISOString()
+      status: 'Pending Fee Payment', submittedAt:new Date().toISOString(),
+      ...(window._promoClaimed ? { promo: 'First installment free' } : {})
     }).then(ref => { window._latestAppId = ref.id; return ref; });
-  }catch(e){ console.error('saveApp:',e); }
+    return true;
+  }catch(e){ console.error('saveApp:',e); return false; }
 };
 
 window._uploadNidImage = async function(phone, side, file){
@@ -4704,6 +4880,41 @@ window._uploadNidImage = async function(phone, side, file){
   return data.secure_url;
 };
 
+// one-time "use balance for the fee": flag on the user profile, plus any earlier payment that used it
+window.isBalanceAdjustUsed = async function(phone){
+  if(!db) return false;
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
+    if(!u.empty && u.docs[0].data().balanceAdjustUsed === true) return true;
+    const t = await getDocs(query(collection(db,'transactions'), where('uid','==',phone)));
+    return t.docs.some(d => Number(d.data().appliedBalance) > 0 && d.data().status !== 'Rejected');
+  }catch(e){ console.warn('balance check:', e); return false; }
+};
+window.markBalanceAdjustUsed = async function(phone, used){
+  if(!db) return;
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
+    if(!u.empty) await updateDoc(u.docs[0].ref, { balanceAdjustUsed: used, balanceAdjustAt: new Date().toISOString() });
+  }catch(e){ console.warn('balance flag:', e); }
+};
+// "first 50 users" offer: counted from real claims on user profiles
+window.getOfferClaimCount = async function(){
+  if(!db) return null;
+  try{ const snap = await getDocs(query(collection(db,'users'), where('promoClaimed','==',true))); return snap.size; }
+  catch(e){ console.warn('offer count:', e); return null; }
+};
+window.claimOffer = async function(phone){
+  if(!db) return 'error';
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
+    if(u.empty) return 'error';
+    if(u.docs[0].data().promoClaimed === true) return 'already';
+    const n = await window.getOfferClaimCount();
+    if(n !== null && n >= 50) return 'full';
+    await updateDoc(u.docs[0].ref, { promoClaimed: true, promoClaimedAt: new Date().toISOString(), promo: 'First installment free' });
+    return 'ok';
+  }catch(e){ console.warn('claim offer:', e); return 'error'; }
+};
 window.checkTrxExists = async function(trxId){
   if(!db) return null;
   try{ const snap = await getDocs(query(collection(db,'transactions'), where('trxId','==',trxId))); return snap.empty ? null : snap.docs[0].data(); }catch(e){ return null; }
@@ -4712,9 +4923,14 @@ window.saveTransactionToFirebase = async function(data){
   if(!db) throw new Error('Database unavailable.');
   const refDoc = await addDoc(collection(db,'transactions'), data); return refDoc.id;
 };
-window.updateApplicationStatusByPhone = async function(phone, status){
+window.updateApplicationStatusByPhone = async function(phone, status, appId){
   if(!db) return false;
   try{
+    // the application this payment belongs to, when known
+    if(appId){
+      const one = await getDoc(doc(db,'applications',appId));
+      if(one.exists() && one.data().uid === phone){ await updateDoc(one.ref, { status, statusUpdatedAt: new Date().toISOString() }); return true; }
+    }
     const snap = await getDocs(query(collection(db,'applications'), where('uid','==',phone)));
     if(snap.empty) return false;
     const active = snap.docs.filter(d => !['Rejected','Disbursed'].includes(d.data().status)).sort((a,b) => new Date(b.data().submittedAt||0) - new Date(a.data().submittedAt||0));
@@ -4753,6 +4969,10 @@ window.loadUserDashboardData = async function() {
   
   try {
     const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
+    if(!uSnap.empty && uSnap.docs[0].data().status === 'banned') {
+      if(typeof forceLogoutBanned === 'function') forceLogoutBanned();
+      return;
+    }
     if(!uSnap.empty) {
       // NID kept on the profile so it survives every new application
       try {
@@ -4760,6 +4980,8 @@ window.loadUserDashboardData = async function() {
         const profileNid = uDoc.data().nid || '';
         if(profileNid) _savedNid = profileNid;
         window._userDocId = uDoc.id;
+        window._balanceAdjustUsed = uDoc.data().balanceAdjustUsed === true;
+        window._promoClaimed = uDoc.data().promoClaimed === true;
       } catch(e) {}
       window._userRealBalance = uSnap.docs[0].data().balance || 0;
       document.getElementById('headerBalance').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + window._userRealBalance.toLocaleString();
@@ -4805,6 +5027,8 @@ window.loadUserDashboardData = async function() {
       const statusMap = {
         'Pending Fee Payment': { icon: 'fa-hourglass-half', title: 'Fee Payment Pending', desc: 'Tap to pay processing fee', color: 'var(--orange)', bg: 'rgba(255,140,66,.15)' },
         'TrxID Submitted':     { icon: 'fa-circle-check',   title: 'Verification Pending', desc: 'Tap to view verification status', color: 'var(--blue)',   bg: 'rgba(77,143,255,.15)' },
+        'Fee Verified':        { icon: 'fa-clipboard-check',title: 'Fee Verified',         desc: 'Your application is under review', color: 'var(--blue)',   bg: 'rgba(77,143,255,.15)' },
+        'Disbursement Rejected': { icon: 'fa-rotate-left',  title: 'Disbursement Pending', desc: 'Amount is in your balance — tap for details', color: 'var(--orange)', bg: 'rgba(255,140,66,.15)' },
         'Approved':            { icon: 'fa-money-bill-wave',title: 'Loan Active',            desc: 'Tap to view loan details',       color: 'var(--p)',      bg: 'rgba(29,219,128,.15)' },
         'Disbursed':           { icon: 'fa-money-bill-wave',title: 'Loan Disbursed',         desc: 'Tap to view loan details',       color: 'var(--p)',      bg: 'rgba(29,219,128,.15)' },
         'Rejected':            { icon: 'fa-circle-xmark',   title: 'Application Rejected',  desc: 'Tap to reapply',                 color: 'var(--red)',    bg: 'rgba(255,77,106,.15)' },
@@ -4815,12 +5039,10 @@ window.loadUserDashboardData = async function() {
         if(iconEl) iconEl.className = `fa-solid ${info.icon}`;
         if(iconBox){ iconBox.style.color = info.color; iconBox.style.background = info.bg; }
         card.style.display = 'flex';
-        if(['Pending Fee Payment', 'TrxID Submitted'].includes(latestApp.status)) {
-          mainBtn.style.display = 'none';
-        } else if (['Approved', 'Disbursed', 'Rejected'].includes(latestApp.status)) {
-          document.getElementById('mainBorrowBtnText').innerText = 'Apply for Another';
-        }
       }
+      // anyone who already has an application (pending, approved, rejected …) is offered another one;
+      // only users with no application see "Borrow Now"
+      document.getElementById('mainBorrowBtnText').innerText = 'Apply for Another';
     }
   } catch(e) {}
   if(typeof updateUIForUser === 'function') updateUIForUser();
@@ -4900,20 +5122,20 @@ window.loadLiveFeed = async function() {
   try {
     const snap = await getDocs(query(collection(db, 'applications'), orderBy('submittedAt', 'desc')));
     const approvedApps = snap.docs.map(d => d.data()).filter(a => ['Approved', 'Disbursed'].includes(a.status)).slice(0, 5);
+    // only real, approved applications are shown; with none, the section is hidden
     if(approvedApps.length === 0) {
-      container.innerHTML = `
-        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>মো: সাইফুল ইসলাম</h4><p>১০ মিনিট আগে</p></div></div><div class="live-amount">+ ৳ ১০,০০০</div></div>
-        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>মো: রফিকুল ইসলাম</h4><p>২৫ মিনিট আগে</p></div></div><div class="live-amount">+ ৳ ৫,০০০</div></div>
-        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>মো: আব্দুর রহিম</h4><p>১ ঘন্টা আগে</p></div></div><div class="live-amount">+ ৳ ২০,০০০</div></div>
-      `;
+      container.innerHTML = '';
+      const sec = document.getElementById('liveFeedTitle'); if(sec) sec.style.display = 'none';
       return;
     }
     container.innerHTML = approvedApps.map(a => {
-      let name = a.name || 'User';
+      let name = String(a.name || 'User');
       if(name.length > 4) name = name.substring(0, 4) + '***';
-      const diffMs = new Date() - new Date(a.submittedAt || Date.now());
-      const diffMins = Math.floor(diffMs / 60000);
-      let timeText = diffMins < 60 ? `${diffMins} মিনিট আগে` : `${Math.floor(diffMins/60)} ঘন্টা আগে`;
+      name = name.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      // time since the loan was actually approved / sent, not since it was applied for
+      const at = a.disbursedAt || a.creditedAt || a.approvedAt || a.statusUpdatedAt || a.submittedAt || Date.now();
+      const diffMins = Math.max(0, Math.floor((new Date() - new Date(at)) / 60000));
+      const timeText = diffMins < 60 ? `${diffMins} মিনিট আগে` : diffMins < 1440 ? `${Math.floor(diffMins/60)} ঘন্টা আগে` : `${Math.floor(diffMins/1440)} দিন আগে`;
       return `
         <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>${name}</h4><p>${timeText}</p></div></div><div class="live-amount">+ ৳ ${Number(String(a.loanAmount).replace(/,/g,'')).toLocaleString()}</div></div>
       `;
@@ -4923,6 +5145,10 @@ window.loadLiveFeed = async function() {
     container.innerHTML = '<div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Could not load recent activity.</div>';
   }
 };
+
+// functions defined in this module but called from the classic script or from inline
+// onclick/onerror attributes must be on window, or those calls throw ReferenceError
+Object.assign(window, { walletCollectionNumber, walletReceivingNumber, logoFallback, _clearPaySelection, _selPayDyn, applyFeePaymentNote });
 
 loadWallets();
 loadDynamicConfig();

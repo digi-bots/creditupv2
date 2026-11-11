@@ -447,7 +447,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="sec-head"><h2>Loan Applications</h2><div class="sec-head-r"><button class="btn btn-sm btn-p" onclick="openBulk()"><i class="fa-solid fa-layer-group"></i>Bulk Action</button><button class="btn btn-sm btn-s" onclick="exportCSV('applications')"><i class="fa-solid fa-download"></i>Export</button></div></div>
   <div class="stats" id="aStats"></div>
   <div class="tc">
-    <div class="tc-hdr"><div class="tc-title">All Applications</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Phone / name..." oninput="ftbl('atb',this.value,[0,1])"></div><select class="fsel" onchange="fstat('atb',this.value,5)"><option value="">All Status</option><option>Pending Fee Payment</option><option>TrxID Submitted</option><option>Approved</option><option>Disbursed</option><option>Active</option><option>Repaid</option><option>Overdue</option><option>Defaulted</option><option>Rejected</option></select></div></div>
+    <div class="tc-hdr"><div class="tc-title">All Applications</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Phone / name..." oninput="ftbl('atb',this.value,[0,1])"></div><select class="fsel" onchange="fstat('atb',this.value,5)"><option value="">All Status</option><option>Pending Fee Payment</option><option>TrxID Submitted</option><option>Fee Verified</option><option>Approved</option><option>Disbursed</option><option>Disbursement Rejected</option><option>Active</option><option>Repaid</option><option>Overdue</option><option>Defaulted</option><option>Rejected</option></select></div></div>
     <div class="tw"><table><thead><tr><th><input type="checkbox" id="ckAll" onchange="toggleAll(this)"></th><th>Phone</th><th>Name</th><th>Amount</th><th>Risk</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="atb"></tbody></table></div>
     <div class="pgn"><button class="pg" onclick="prevP('applications')">‹ Prev</button><button class="pg" onclick="nextP('applications')">Next ›</button><div class="pgn-i" id="applications-pi"></div></div>
   </div>
@@ -539,7 +539,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
   <div class="cfg-blk" style="margin-top:12px">
     <div class="cfg-t"><i class="fa-solid fa-circle-info"></i>Logo URL Tips</div>
-    <div style="font-size:12px;color:var(--txt2);line-height:1.8">• Upload logos to <strong style="color:var(--txt)">imgbb.com</strong> or <strong style="color:var(--txt)">postimages.org</strong> → direct link<br>• Firebase Storage public URL (most reliable)<br>• <span style="color:var(--red)">Avoid Wikipedia / Wikimedia</span> — blocked on mobile</div>
+    <div style="font-size:12px;color:var(--txt2);line-height:1.8">• Upload logos to <strong style="color:var(--txt)">imgbb.com</strong> or <strong style="color:var(--txt)">postimages.org</strong> → direct link<br>• Or use the <strong style="color:var(--txt)">Upload</strong> button — the logo is stored on Cloudinary (most reliable)<br>• <span style="color:var(--red)">Avoid Wikipedia / Wikimedia</span> — blocked on mobile</div>
   </div>
 </div>
 
@@ -578,6 +578,14 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label>Note Title</label><input id="c-pnt" placeholder="Note" maxlength="40"></div>
       <div class="fg full"><label>Note Text (appears below Payment Instructions)</label>
         <textarea id="c-pnn" rows="4" maxlength="600" placeholder="e.g. Please send the exact amount. Payments after 10 PM are verified next morning. Do not mention &quot;loan&quot; in the reference."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-rotate-left"></i>Fee Refund Policy (shown before applying)</div>
+    <div class="fgrid">
+      <div class="fg full"><label>Refund policy text</label>
+        <textarea id="c-rfp" rows="3" maxlength="600" placeholder="If your application is rejected, the full fee you paid is refunded to the number you paid from."></textarea>
+        <div class="hint">Users see this, with the full fee breakdown, and must accept it before they apply. Leave empty to use the default text above.</div>
       </div>
     </div>
   </div>
@@ -736,7 +744,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div id="nidViewer"></div>
     <div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border)">
       <div class="fgrid">
-        <div class="fg"><label>Update Loan Status</label><select id="aStatSel"><option>Pending Fee Payment</option><option>TrxID Submitted</option><option>Approved</option><option>Disbursed</option><option>Active</option><option>Overdue</option><option>Repaid</option><option>Defaulted</option><option>Rejected</option></select></div>
+        <div class="fg"><label>Update Loan Status</label><select id="aStatSel"><option>Pending Fee Payment</option><option>TrxID Submitted</option><option>Fee Verified</option><option>Approved</option><option>Disbursed</option><option>Disbursement Rejected</option><option>Active</option><option>Overdue</option><option>Repaid</option><option>Defaulted</option><option>Rejected</option></select></div>
         <div class="fg"><label>Admin Remarks</label><input id="aRemark" placeholder="Optional remarks..."></div>
         <div class="fg"><label>Adjusted Loan Amount (optional)</label><input type="number" id="aAdj" placeholder="Leave blank to keep original"></div>
       </div>
@@ -763,6 +771,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <button class="btn btn-sm" style="background:rgba(29,219,128,.1);color:var(--p);border:1px solid rgba(29,219,128,.2)" onclick="qApprove()"><i class="fa-solid fa-circle-check"></i>Quick Approve</button>
         <button class="btn btn-sm btn-d" onclick="qReject()"><i class="fa-solid fa-circle-xmark"></i>Reject</button>
         <button class="btn btn-sm btn-b" onclick="markDisb()"><i class="fa-solid fa-paper-plane"></i>Mark Disbursed</button>
+        <button class="btn btn-sm btn-d" onclick="rejectDisb()"><i class="fa-solid fa-rotate-left"></i>Disbursement Rejected</button>
+        <button class="btn btn-sm btn-s" onclick="markFeeRefunded()"><i class="fa-solid fa-money-bill-transfer"></i>Mark Fee Refunded</button>
       </div>
     </div>
   </div>
@@ -806,7 +816,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
             <input type="file" id="wLgFile" accept="image/*" onchange="uploadWalletLogo(this)" style="display:none">
           </label>
         </div>
-        <div class="hint" id="wLgHint">Upload straight from your phone/PC (saved to Firebase) or paste any direct image link. Max 400 KB.</div>
+        <div class="hint" id="wLgHint">Upload straight from your phone/PC (saved to Cloudinary) or paste any direct image link. Max 400 KB.</div>
       </div>
       <div class="fg"><label><span class="req">*</span> Method name</label><input id="wNm" placeholder="e.g. Bkash" oninput="prevWL()"></div>
       <div class="fg"><label><span class="req">*</span> Fee collection number</label><input id="wCol" placeholder="01XXXXXXXXX" type="tel" inputmode="numeric"></div>
@@ -882,8 +892,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
 // ══ CONFIG ══════════════════════════════════════════
 const PG = 20;
 const TITLES = {dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',emi:'EMI Calculator',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Admin Settings'};
-const PIPE_STEPS = ['Applied','Fee Pending','Fee Submitted','Approved','Disbursed','Active','Repaid'];
-const PIPE_MAP = {'Pending Fee Payment':1,'TrxID Submitted':2,'Approved':3,'Disbursed':4,'Active':5,'Repaid':6};
+const PIPE_STEPS = ['Applied','Fee Pending','Fee Submitted','Fee Verified','Approved','Disbursed','Active','Repaid'];
+const PIPE_MAP = {'Pending Fee Payment':1,'TrxID Submitted':2,'Fee Verified':3,'Approved':4,'Disbursement Rejected':4,'Disbursed':5,'Active':6,'Repaid':7};
 
 // ══ STATE ════════════════════════════════════════════
 let _db=null, _sec='dashboard', _docId='', _userId='';
@@ -936,7 +946,7 @@ function closeMo(id){ document.getElementById(id).classList.remove('on'); }
 function confirm2(msg,fn){ document.getElementById('cfMsg').innerText=msg; document.getElementById('cfOk').onclick=()=>{ closeMo('moConfirm'); fn(); }; openMo('moConfirm'); }
 
 function sb(s){
-  const m={'active':'b-active','inactive':'b-inactive','suspended':'b-suspended','banned':'b-banned','Pending Fee Payment':'b-pending','TrxID Submitted':'b-submitted','Approved':'b-approved','Disbursed':'b-disbursed','Active':'b-approved','Repaid':'b-repaid','Overdue':'b-overdue','Defaulted':'b-defaulted','Rejected':'b-rejected','Pending':'b-pending','Verified':'b-verified','Under Review':'b-review','Resolved':'b-verified','resolved':'b-verified','open':'b-pending','closed':'b-inactive'};
+  const m={'active':'b-active','inactive':'b-inactive','suspended':'b-suspended','banned':'b-banned','Pending Fee Payment':'b-pending','TrxID Submitted':'b-submitted','Fee Verified':'b-submitted','Approved':'b-approved','Disbursed':'b-disbursed','Disbursement Rejected':'b-rejected','Active':'b-approved','Repaid':'b-repaid','Overdue':'b-overdue','Defaulted':'b-defaulted','Rejected':'b-rejected','Pending':'b-pending','Verified':'b-verified','Under Review':'b-review','Resolved':'b-verified','resolved':'b-verified','open':'b-pending','closed':'b-inactive'};
   return s?`<span class="b ${m[s]||'b-inactive'}">${s}</span>`:'';
 }
 
@@ -1137,8 +1147,8 @@ async function creditLoanToUser(app) {
     // Notify the user — shows up via the home screen's notification bell
     await window._addDoc('user_notifications', {
       uid: app.uid,
-      title: 'Loan Approved! 🎉',
-      message: `Your loan of ৳${fa(loanAmt)} has been approved and added to your balance.`,
+      title: 'Congratulations! Your loan is approved 🎉',
+      message: `Your loan of ৳${fa(loanAmt)} has been approved and added to your Credit Up balance. We will send it to your receiving number ${app.payout?.number || app.bankPhone || ''} shortly.`,
       type: 'bonus',
       createdAt: new Date().toISOString()
     });
@@ -1151,16 +1161,102 @@ async function creditLoanToUser(app) {
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   APPLICATION STATUS → BALANCE + NOTIFICATIONS
+   Every status change goes through setAppStatus so the user's
+   balance always follows the loan:
+     Fee Verified          → user is told the fee was verified
+     Approved              → loan amount added to balance (once)
+     Disbursed             → loan amount taken off the balance (once)
+     Disbursement Rejected → that amount is put back on the balance
+     Rejected              → an approved-but-unsent amount is removed
+   Flags on the application (balanceCredited / balanceDebited)
+   stop any amount being added or removed twice.
+   ═══════════════════════════════════════════════════════ */
+function _loanAmt(app){ return Number(String(app?.loanAmount || 0).replace(/,/g, '')) || 0; }
+async function _notifyUser(uid, title, message, type='info'){
+  if(!uid) return;
+  try{ await window._addDoc('user_notifications', { uid, title, message, type, createdAt: new Date().toISOString() }); }catch(e){ console.warn('notify:', e); }
+}
+async function _adjustBalance(phone, delta, why, ref){
+  const users = await _get('users');
+  const user = users.find(u => u.phone === phone);
+  if(!user) return false;
+  const nb = Math.max(0, (Number(user.balance) || 0) + delta);
+  await window._updateDoc(user._id, 'users', { balance: nb });
+  await logAct(`${why}: ${delta >= 0 ? '+' : '-'}৳${fa(Math.abs(delta))} → ${phone}`, 'transaction', ref || user._id);
+  return true;
+}
+async function _referralBonus(app){
+  const users = await _get('users');
+  const applicant = users.find(u => u.phone === app.uid);
+  if(!applicant || !applicant.referredBy || applicant.referredBy === app.uid) return;
+  const bonusKey = `refBonus_${applicant.referredBy}_${app._id}`;
+  if(app[bonusKey]) return;
+  const referrer = users.find(u => u.phone === applicant.referredBy);
+  if(!referrer) return;
+  const bonus = 50;
+  await window._updateDoc(referrer._id, 'users', { balance: (Number(referrer.balance) || 0) + bonus });
+  await _notifyUser(applicant.referredBy, 'Referral Bonus! 🎁', `Your friend got approved! You earned ৳${bonus} bonus!`, 'bonus');
+  await window._updateDoc(app._id, 'applications', { [bonusKey]: true, referralBonusAmount: bonus });
+  await logAct(`Referral bonus ৳${bonus} to ${applicant.referredBy}`, 'transaction', referrer._id);
+}
+async function setAppStatus(appOrId, status, extra = {}){
+  const id = typeof appOrId === 'string' ? appOrId : appOrId?._id;
+  if(!id) throw new Error('Application not found');
+  // always work from the stored document so the credit/debit flags are current
+  const cur = (await window._getDoc('applications', id)) || findById('applications', id);
+  if(!cur) throw new Error('Application not found');
+  const now = new Date().toISOString();
+  const upd = { status, updatedAt: now, statusUpdatedAt: now, ...extra };
+  if(status === 'Fee Verified') upd.feeVerifiedAt = now;
+  if(status === 'Approved') upd.approvedAt = now;
+  if(status === 'Disbursed') upd.disbursedAt = now;
+  await window._updateDoc(id, 'applications', upd);
+  const app = { ...cur, ...upd, _id: id };
+  const amt = _loanAmt(app);
+  const to = app.payout?.number || app.bankPhone || '';
+  // saving the same status again (e.g. to add a remark) must not notify the user twice
+  const notify = cur.status !== status ? _notifyUser : async()=>{};
+
+  if(status === 'Fee Verified'){
+    await notify(app.uid, 'Fee Verified ✅', `Your fee payment for the ৳${fa(amt)} loan application has been verified. Our team is now reviewing your application.`, 'info');
+  }
+  else if(status === 'Approved'){
+    await creditLoanToUser(app);
+    await _referralBonus(app);
+  }
+  else if(status === 'Disbursed'){
+    if(app.balanceCredited === true && app.balanceDebited !== true){
+      await _adjustBalance(app.uid, -amt, 'Loan disbursed', id);
+      await window._updateDoc(id, 'applications', { balanceDebited: true, debitedAt: now });
+    }
+    await notify(app.uid, 'Loan Sent 💸', `৳${fa(amt)} has been sent to your number ${to}. Please check your account.`, 'bonus');
+  }
+  else if(status === 'Disbursement Rejected'){
+    if(app.balanceDebited === true){
+      await _adjustBalance(app.uid, amt, 'Disbursement rejected, amount returned', id);
+      await window._updateDoc(id, 'applications', { balanceDebited: false, disbursementRejectedAt: now });
+    }
+    await notify(app.uid, 'Disbursement Not Completed', `We could not send ৳${fa(amt)} to ${to}. The amount is back in your Credit Up balance and our team will contact you.`, 'info');
+  }
+  else if(status === 'Rejected'){
+    if(app.balanceCredited === true && app.balanceDebited !== true){
+      await _adjustBalance(app.uid, -amt, 'Approval withdrawn', id);
+      await window._updateDoc(id, 'applications', { balanceCredited: false });
+    }
+    await notify(app.uid, 'Application Not Approved', `Your ৳${fa(amt)} loan application was not approved. If you paid a fee, it will be refunded to the number you paid from.`, 'info');
+  }
+  return app;
+}
+
 async function applyBulk(){
   const action=document.getElementById('bulkAct').value;
   if(!_selApps.size){toast('No applications selected','w');return;}
   showL(true);
   for(const id of _selApps) {
-    await window._updateDoc(id,'applications',{status:action,updatedAt:new Date().toISOString()});
-    if(action === 'Approved'){
-      const app = findById('applications', id);
-      if(app) await creditLoanToUser({...app, status:'Approved'});
-    }
+    try{ await setAppStatus(id, action); }catch(e){ console.error('bulk', id, e); }
   }
   showL(false);
   await logAct(`Bulk ${action} on ${_selApps.size} apps`,'application','bulk');
@@ -1175,7 +1271,7 @@ function viewApp(id){
     {l:'Date of Birth',v:a.dob},{l:'Income',v:a.income},{l:'Loan Amount',v:'৳'+fa(a.loanAmount)},{l:'Term',v:(a.term||'-')+' months'},
     {l:'Purpose',v:a.loanPurpose},{l:'Occupation',v:a.occupation},{l:'Education',v:a.education},{l:'Marital',v:a.marital},
     {l:'Children',v:a.children},{l:'Company',v:a.company},{l:'Address',v:a.address,full:true},{l:'Wallet',v:a.wallet},
-    {l:'Bank Phone',v:a.bankPhone},{l:'Status',v:sb(a.status)},{l:'Risk Score',v:riskBadge(riskScore(a))},
+    {l:'Bank Phone',v:a.bankPhone},{l:'Status',v:sb(a.status)},{l:'Risk Score',v:riskBadge(riskScore(a))},{l:'Promo',v:a.promo?'🔥 '+a.promo:'-'},
     {l:'Contact 1',v:`${a.emergency1?.name||'-'} (${a.emergency1?.phone||''}) — ${a.emergency1?.relation||''}`,full:true},
     {l:'Contact 2',v:`${a.emergency2?.name||'-'} (${a.emergency2?.phone||''}) — ${a.emergency2?.relation||''}`,full:true},
     {l:'Payout number',v:a.payout?.number||a.bankPhone||'-',c:'mono'},
@@ -1206,28 +1302,21 @@ function viewApp(id){
 }
 async function updateAppStatus(){
   const status=document.getElementById('aStatSel').value, remark=document.getElementById('aRemark').value, adj=document.getElementById('aAdj').value;
-  const upd={status,adminRemark:remark,updatedAt:new Date().toISOString()};
-  if(adj) upd.loanAmount=adj;
-  await window._updateDoc(_docId,'applications',upd);
-
-  if(status === 'Approved'){
-    const app = findById('applications', _docId);
-    if(app) await creditLoanToUser({...app, loanAmount: adj || app.loanAmount, status:'Approved'});
-  }
+  const extra={adminRemark:remark};
+  if(adj) extra.loanAmount=adj;
+  try{ await setAppStatus(_docId, status, extra); }catch(e){ toast(e.message,'e'); return; }
 
   await logAct(`App status → ${status}`,'application',_docId);
   toast(`Status: ${status}`); closeMo('moApp'); loadApps();
 }
 async function qApprove(){
   if(!_docId)return;
-  await window._updateDoc(_docId,'applications',{status:'Approved',updatedAt:new Date().toISOString()});
-  const app = findById('applications', _docId);
-  if(app) await creditLoanToUser({...app, status:'Approved'});
+  await setAppStatus(_docId, 'Approved');
   await logAct('App approved','application',_docId);
   toast('Application approved — balance credited & user notified');
   closeMo('moApp'); loadApps();
 }
-async function qReject(){ await window._updateDoc(_docId,'applications',{status:'Rejected',updatedAt:new Date().toISOString()}); await logAct('App rejected','application',_docId); toast('Application rejected','e'); closeMo('moApp'); loadApps(); }
+async function qReject(){ await setAppStatus(_docId, 'Rejected'); await logAct('App rejected','application',_docId); toast('Application rejected','e'); closeMo('moApp'); loadApps(); }
 async function savePayout(){
   if(!_docId){ toast('Open an application first','e'); return; }
   const g=id=>(document.getElementById(id)?.value||'').trim();
@@ -1246,47 +1335,60 @@ async function savePayout(){
   showL(false);
 }
 
-async function markDisb(){ await window._updateDoc(_docId,'applications',{status:'Disbursed',disbursedAt:new Date().toISOString()}); await logAct('Loan disbursed','application',_docId); toast('Marked Disbursed','i'); closeMo('moApp'); loadApps(); }
+async function markDisb(){
+  if(!_docId) return;
+  const a=findById('applications',_docId)||{};
+  if(!(a.payout?.number||a.bankPhone)){ toast('Save the payout record (number) first','w'); return; }
+  showL(true);
+  try{ await setAppStatus(_docId,'Disbursed'); await logAct('Loan disbursed','application',_docId); toast('Marked Disbursed — balance updated & user notified','i'); closeMo('moApp'); loadApps(); }
+  catch(e){ toast(e.message,'e'); }
+  showL(false);
+}
+async function rejectDisb(){
+  if(!_docId) return;
+  showL(true);
+  try{ await setAppStatus(_docId,'Disbursement Rejected'); await logAct('Disbursement rejected','application',_docId); toast('Disbursement rejected — amount returned to balance','w'); closeMo('moApp'); loadApps(); }
+  catch(e){ toast(e.message,'e'); }
+  showL(false);
+}
+async function markFeeRefunded(){
+  if(!_docId) return;
+  const a=findById('applications',_docId)||{};
+  if(a.feeRefunded){ toast('Fee already marked as refunded','i'); return; }
+  const now=new Date().toISOString();
+  await window._updateDoc(_docId,'applications',{feeRefunded:true,feeRefundedAt:now});
+  await _notifyUser(a.uid,'Fee Refunded','The fee you paid for your loan application has been refunded to the number you paid from.','info');
+  await logAct('Fee refunded','application',_docId);
+  toast('Fee refund recorded & user notified'); closeMo('moApp'); loadApps();
+}
 async function qApproveApp(id){
   _docId=id;
-  await window._updateDoc(id,'applications',{status:'Approved',updatedAt:new Date().toISOString()});
-  const app = findById('applications', id);
-  if(app) await creditLoanToUser({...app, status:'Approved'});
+  await setAppStatus(id, 'Approved');
   await logAct('Quick-approved','application',id);
   toast('Approved — balance credited');
   loadApps();
 }
-async function qRejectApp(id){ await window._updateDoc(id,'applications',{status:'Rejected',updatedAt:new Date().toISOString()}); await logAct('Quick-rejected','application',id); toast('Rejected','e'); loadApps(); }
+async function qRejectApp(id){ await setAppStatus(id, 'Rejected'); await logAct('Quick-rejected','application',id); toast('Rejected','e'); loadApps(); }
 
 // ══ TRANSACTIONS ═════════════════════════════════════
-async function syncAppOnTrx(uid,newStatus){
+// a verified fee moves its application to "Fee Verified" (the loan itself is approved separately);
+// a rejected TrxID sends it back to "Pending Fee Payment" so the user can submit the right one
+async function syncAppOnTrx(trx,newStatus){
+  const uid = trx?.uid;
   if(!uid)return false;
   try{
-    const apps=await _get('applications','submittedAt');
-    const active=apps.filter(x=>x.uid===uid&&!['Rejected','Disbursed','Repaid'].includes(x.status)).sort((a,b)=>new Date(b.submittedAt||0)-new Date(a.submittedAt||0));
-    if(!active.length)return false;
-    const upd={status:newStatus,statusUpdatedAt:new Date().toISOString()};
-    if(newStatus==='Approved') upd.approvedAt=new Date().toISOString();
-    await window._updateDoc(active[0]._id,'applications',upd);
-
-    if(newStatus==='Approved'){
-      // Credit the loan amount to the user's balance + send notification (guarded against double-credit)
-      await creditLoanToUser({...active[0], status:'Approved'});
-
-      const users=await _get('users');
-      const applicant=users.find(u=>u.phone===uid);
-      const bonusKey = applicant && applicant.referredBy ? `refBonus_${applicant.referredBy}_${active[0]._id}` : null;
-      
-      if(applicant&&applicant.referredBy&&applicant.referredBy!==uid && !applicant[bonusKey]){
-        const referrer=users.find(u=>u.phone===applicant.referredBy);
-        if(referrer){
-          const bonus=50, nb=(Number(referrer.balance)||0)+bonus;
-          await window._updateDoc(referrer._id,'users',{balance:nb});
-          await window._addDoc('user_notifications',{uid:applicant.referredBy,title:'Referral Bonus! 🎁',message:`Your friend got approved! You earned ৳${bonus} bonus!`,type:'bonus',createdAt:new Date().toISOString()});
-          await window._updateDoc(active[0]._id,'applications',{[bonusKey]:true,referralBonusAmount:bonus});
-          await logAct(`Referral bonus ৳${bonus} to ${applicant.referredBy}`,'transaction',referrer._id);
-        }
-      }
+    let target = null;
+    if(trx.appId) target = await window._getDoc('applications', trx.appId);
+    if(!target){
+      const apps=await _get('applications','submittedAt');
+      const active=apps.filter(x=>x.uid===uid&&['Pending Fee Payment','TrxID Submitted'].includes(x.status)).sort((a,b)=>new Date(b.submittedAt||0)-new Date(a.submittedAt||0));
+      target = active[0] || null;
+    }
+    if(!target)return false;
+    if(['Approved','Disbursed','Active','Repaid','Rejected'].includes(target.status)) return false;   // never move a decided loan backwards
+    await setAppStatus(target._id||target.id, newStatus);
+    if(newStatus==='Pending Fee Payment'){
+      await _notifyUser(uid,'Payment Not Verified',`We could not verify the Transaction ID ${trx.trxId||''}. Please check it and submit the correct TrxID.`,'info');
     }
     return true;
   }catch(e){console.error('syncApp:',e);return false;}
@@ -1379,6 +1481,15 @@ function viewTrx(id){
   if(mBtn) mBtn.style.display = t.appId ? 'none' : 'inline-flex';
   openMo('moTrx');
 }
+// a rejected payment gives the user their one-time balance adjustment back
+async function restoreBalanceAdjust(trx){
+  if(!(trx?.appliedBalance && Number(trx.appliedBalance) > 0 && trx.uid)) return;
+  try{
+    const users = await _get('users');
+    const user = users.find(u => u.phone === trx.uid);
+    if(user) await window._updateDoc(user._id, 'users', { balanceAdjustUsed: false });
+  }catch(e){ console.error('restoreBalanceAdjust:', e); }
+}
 async function deductBalanceIfApplied(trx) {
   if(trx?.appliedBalance && Number(trx.appliedBalance) > 0 && trx.uid) {
     try {
@@ -1401,9 +1512,10 @@ async function trxAct(status){
     let synced=false;
     if(status === 'Verified') {
       await deductBalanceIfApplied(trx);
-      if(trx?.uid){ synced = await syncAppOnTrx(trx.uid, 'Approved'); }
+      if(trx?.uid){ synced = await syncAppOnTrx(trx, 'Fee Verified'); }
     } else {
-      if(trx?.uid){ synced = await syncAppOnTrx(trx.uid, 'Rejected'); }
+      await restoreBalanceAdjust(trx);
+      if(trx?.uid){ synced = await syncAppOnTrx(trx, 'Pending Fee Payment'); }
     }
     await logAct(`TrxID ${status}${synced?' + app synced':''}`,'transaction',_docId);
     toast(`Transaction ${status}${synced?' & app updated':''}`,status==='Verified'?'s':'e');
@@ -1416,15 +1528,16 @@ async function qVTrx(id){
   const trx=findById('transactions',id)||{_id:id};
   await window._updateDoc(id,'transactions',{status:'Verified',verifiedAt:new Date().toISOString()});
   await deductBalanceIfApplied(trx);
-  const synced=trx.uid?await syncAppOnTrx(trx.uid,'Approved'):false;
-  await logAct(`TrxID verified${synced?' + app approved':''}`,'transaction',id);
-  toast(synced?'Verified, balance deducted & app approved!':'Verified ✓'); showL(false); loadTrx();
+  const synced=trx.uid?await syncAppOnTrx(trx,'Fee Verified'):false;
+  await logAct(`TrxID verified${synced?' + app fee verified':''}`,'transaction',id);
+  toast(synced?'Fee verified — approve the loan from Applications':'Verified ✓'); showL(false); loadTrx();
 }
 async function qRTrx(id){
   showL(true);
   const trx=findById('transactions',id)||{_id:id};
   await window._updateDoc(id,'transactions',{status:'Rejected'});
-  const synced=trx.uid?await syncAppOnTrx(trx.uid,'Rejected'):false;
+  await restoreBalanceAdjust(trx);
+  const synced=trx.uid?await syncAppOnTrx(trx,'Pending Fee Payment'):false;
   await logAct('TrxID rejected','transaction',id);
   toast('Rejected','e'); showL(false); loadTrx();
 }
@@ -1456,7 +1569,7 @@ function renderPP(){
     }).join(''):'<tr class="empty"><td colspan="7">No active loans</td></tr>';
   });
 }
-async function mrkStat(id,status){ await window._updateDoc(id,'applications',{status}); toast(`Marked as ${status}`); loadPortfolio(); }
+async function mrkStat(id,status){ await setAppStatus(id,status); toast(`Marked as ${status}`); loadPortfolio(); }
 
 // ══ ANALYTICS ════════════════════════════════════════
 async function loadAnalytics(){
@@ -1635,8 +1748,8 @@ function editW(id){
   prevWL();
   openMo('moWallet');
 }
-// wallet logo: either a pasted URL or an uploaded file (uploaded to Firebase Storage)
-let _wLogoPath = '';   // storage path of an uploaded logo, so we can clean up old files
+// wallet logo: either a pasted URL or an uploaded file (uploaded to Cloudinary)
+let _wLogoPath = '';   // Cloudinary public_id of an uploaded logo (empty for a pasted URL)
 let _wLogoUploading = false;
 
 function _wLogoSrc(){ return document.getElementById('wLg').value.trim(); }
@@ -1647,7 +1760,7 @@ function onLogoUrlInput(el){
   if(v && !/^https?:\/\//i.test(v) && !/^data:image\//i.test(v)){
     if(hint){ hint.innerHTML = '<span style="color:var(--orange)">That does not look like a link — it should start with https://</span>'; }
   } else if(hint){
-    hint.innerHTML = 'Upload straight from your phone/PC (saved to Firebase) or paste any direct image link. Max 400 KB.';
+    hint.innerHTML = 'Upload straight from your phone/PC (saved to Cloudinary) or paste any direct image link. Max 400 KB.';
   }
   _wLogoPath = '';   // a typed URL means "not an uploaded file"
   prevWL();
@@ -1664,20 +1777,11 @@ async function uploadWalletLogo(input){
   if(btn){ btn.style.opacity='.6'; btn.style.pointerEvents='none'; }
   if(hint) hint.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Uploading logo…';
   try{
-    const dataUrl = await new Promise((res,rej)=>{
-      const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(f);
-    });
-    if(typeof window._firebaseUploadLogo !== 'function'){
-      // storage not ready / blocked → fall back to the data URL so the logo still works
-      document.getElementById('wLg').value = dataUrl;
-      _wLogoPath='';
-      if(hint) hint.innerHTML = '<span style="color:var(--orange)">Storage unavailable — the image was embedded directly (keep it small).</span>';
-    } else {
-      const out = await window._firebaseUploadLogo(dataUrl, document.getElementById('wNm').value.trim() || 'wallet');
-      document.getElementById('wLg').value = out.url;
-      _wLogoPath = out.path || '';
-      if(hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--p)"></i> Logo uploaded and saved.';
-    }
+    if(typeof window._cloudinaryUploadLogo !== 'function') throw new Error('Image upload is not ready yet — reload and try again.');
+    const out = await window._cloudinaryUploadLogo(f, document.getElementById('wNm').value.trim() || 'wallet');
+    document.getElementById('wLg').value = out.url;
+    _wLogoPath = out.publicId || '';
+    if(hint) hint.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--p)"></i> Logo uploaded to Cloudinary.';
     prevWL();
   }catch(e){
     if(hint) hint.innerHTML = '<span style="color:var(--red)">Upload failed: '+(e.message||'unknown error')+'</span>';
@@ -1743,7 +1847,7 @@ async function loadConfig(){
   s('c-mb',cfg.maxBorrowAmount);s('c-ir',cfg.annualInterestRate);s('c-of',cfg.orgFee);s('c-sc',cfg.serviceCharge);s('c-pf',cfg.processingFee);s('c-nb',cfg.newUserBonus);
   s('c-la',(cfg.loanAmounts||[]).join(', '));s('c-lt',(cfg.loanTerms||[]).join(', '));s('c-lp',(cfg.loanPurposes||[]).join(', '));s('c-oc',(cfg.occupations||[]).join(', '));
   // payment numbers live in the Wallets section now (kept untouched in the saved config)
-  s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');
+  s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');s('c-rfp',cfg.refundPolicy||'');
   s('c-wa',cfg.contact?.whatsapp);s('c-tg',cfg.contact?.telegram);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
   s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
   cb('c-ro',cfg.flags?.registrationOpen!==false);cb('c-lo',cfg.flags?.loansOpen!==false);cb('c-mn',cfg.flags?.maintenance);
@@ -1752,7 +1856,7 @@ async function saveConfig(){
   const g=id=>document.getElementById(id)?.value.trim();
   const sl=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
   const cb=id=>document.getElementById(id)?.checked;
-  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:parseFloat(g('c-nb'))||100,loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
+  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:(g('c-nb')===''||isNaN(parseFloat(g('c-nb'))))?100:Math.max(0,parseFloat(g('c-nb'))),loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',refundPolicy:g('c-rfp')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
   showL(true); await window._setDoc('siteConfig','main',cfg); showL(false);
   await logAct('Site config saved','config','main'); toast('Configuration saved ✓');
 }
@@ -2028,7 +2132,6 @@ async function _get(col,orderF='createdAt',dir='desc'){
 <script type="module">
 import{initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import{getFirestore,collection,doc,getDocs,getDoc,addDoc,updateDoc,deleteDoc,setDoc,query,where,orderBy,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-import{getStorage,ref as fbRef,uploadString,getDownloadURL,deleteObject} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js';
 
 const FB={
   apiKey: "AIzaSyA6FTCSfXhNxPkpq2WCnz_EiaJFJWYYc8Q",
@@ -2040,20 +2143,21 @@ const FB={
 };
 const app=initializeApp(FB); const db=getFirestore(app); window._db=db;
 
-// ══ FIREBASE STORAGE (wallet logos) ══
-// NOTE: enable Storage in Firebase console (Rules: allow write for authenticated/any, read public)
-// and make sure the bucket below exists. If Storage is unavailable the admin logo upload
-// automatically falls back to embedding the image as a data URL.
-const _storage = getStorage(app);
-window._firebaseUploadLogo = async function(base64, name){
-  const path = 'wallet-logos/' + Date.now() + '_' + String(name||'logo').replace(/[^a-z0-9._-]/gi,'_');
-  const r = fbRef(_storage, path);
-  await uploadString(r, base64, 'data_url');
-  const url = await getDownloadURL(r);
-  return { url, path };
-};
-window._firebaseDeleteFile = async function(path){
-  try{ if(path) await deleteObject(fbRef(_storage, path)); return true; }catch(e){ return false; }
+// ══ CLOUDINARY (wallet logos) ══
+// All images go to Cloudinary (same account and unsigned preset as the NID uploads in index.html).
+// Firebase Storage is not used anywhere.
+const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
+const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
+window._cloudinaryUploadLogo = async function(file, name){
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  fd.append('folder', 'wallet-logos');
+  fd.append('public_id', Date.now() + '_' + String(name||'logo').replace(/[^a-z0-9_-]/gi,'_'));
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method:'POST', body:fd });
+  const data = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
+  return { url: data.secure_url, publicId: data.public_id };
 };
 
 // ══ VERCEL-READY FALLBACK FETCH ══
