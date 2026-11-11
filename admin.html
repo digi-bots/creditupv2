@@ -1481,6 +1481,15 @@ function viewTrx(id){
   if(mBtn) mBtn.style.display = t.appId ? 'none' : 'inline-flex';
   openMo('moTrx');
 }
+// a rejected payment gives the user their one-time balance adjustment back
+async function restoreBalanceAdjust(trx){
+  if(!(trx?.appliedBalance && Number(trx.appliedBalance) > 0 && trx.uid)) return;
+  try{
+    const users = await _get('users');
+    const user = users.find(u => u.phone === trx.uid);
+    if(user) await window._updateDoc(user._id, 'users', { balanceAdjustUsed: false });
+  }catch(e){ console.error('restoreBalanceAdjust:', e); }
+}
 async function deductBalanceIfApplied(trx) {
   if(trx?.appliedBalance && Number(trx.appliedBalance) > 0 && trx.uid) {
     try {
@@ -1505,6 +1514,7 @@ async function trxAct(status){
       await deductBalanceIfApplied(trx);
       if(trx?.uid){ synced = await syncAppOnTrx(trx, 'Fee Verified'); }
     } else {
+      await restoreBalanceAdjust(trx);
       if(trx?.uid){ synced = await syncAppOnTrx(trx, 'Pending Fee Payment'); }
     }
     await logAct(`TrxID ${status}${synced?' + app synced':''}`,'transaction',_docId);
@@ -1526,6 +1536,7 @@ async function qRTrx(id){
   showL(true);
   const trx=findById('transactions',id)||{_id:id};
   await window._updateDoc(id,'transactions',{status:'Rejected'});
+  await restoreBalanceAdjust(trx);
   const synced=trx.uid?await syncAppOnTrx(trx,'Pending Fee Payment'):false;
   await logAct('TrxID rejected','transaction',id);
   toast('Rejected','e'); showL(false); loadTrx();

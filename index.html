@@ -3606,7 +3606,8 @@ function goToFeePayment(){
   
   const u = _getUser();
   const userBalance = window._userRealBalance || 0;
-  if(userBalance > 0) {
+  // the balance can be used against a fee only once per user
+  if(userBalance > 0 && !window._balanceAdjustUsed) {
       document.getElementById('balanceApplyBox').style.display = 'block';
       document.getElementById('dispAvailBalance').innerText = '৳ ' + userBalance.toLocaleString();
   } else {
@@ -3647,7 +3648,7 @@ function toggleBalanceExpand(){
   if(noteEl){
     const maxAllowed = _balanceAllowed();
     noteEl.innerText = maxAllowed > 0
-      ? `Tick to use ৳${_fmt(maxAllowed)} from your balance for this payment (max ৳100).`
+      ? `Tick to use ৳${_fmt(maxAllowed)} from your balance for this payment (max ৳100, can be used only once).`
       : 'No usable balance for this payment.';
   }
 }
@@ -3801,6 +3802,12 @@ async function submitTrx(){
         const existing = await window.checkTrxExists(trx);
         if(existing){ showErrorModal('Already Submitted','This Transaction ID has already been used.'); return; }
     }
+    // one balance adjustment per user, checked again here in case another device already used it
+    if(appliedBalance > 0 && await window.isBalanceAdjustUsed(user.phone)){
+        window._balanceAdjustUsed = true;
+        showErrorModal('Balance Already Used', 'Your balance can be used for a fee payment only once. Please untick "use balance" and pay the full fee.');
+        return;
+    }
 
     await window.saveTransactionToFirebase({
       uid: user.phone, 
@@ -3821,6 +3828,8 @@ async function submitTrx(){
       submittedAt: new Date().toISOString()
     });
     
+    if(appliedBalance > 0){ await window.markBalanceAdjustUsed(user.phone, true); window._balanceAdjustUsed = true; }
+
     const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted', window._latestAppId || (window._latestApp && window._latestApp.id) || '');
     
     document.getElementById('dispTrx').innerText = trx || 'Balance Adjustment';
@@ -4831,6 +4840,23 @@ window._uploadNidImage = async function(phone, side, file){
   return data.secure_url;
 };
 
+// one-time "use balance for the fee": flag on the user profile, plus any earlier payment that used it
+window.isBalanceAdjustUsed = async function(phone){
+  if(!db) return false;
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
+    if(!u.empty && u.docs[0].data().balanceAdjustUsed === true) return true;
+    const t = await getDocs(query(collection(db,'transactions'), where('uid','==',phone)));
+    return t.docs.some(d => Number(d.data().appliedBalance) > 0 && d.data().status !== 'Rejected');
+  }catch(e){ console.warn('balance check:', e); return false; }
+};
+window.markBalanceAdjustUsed = async function(phone, used){
+  if(!db) return;
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
+    if(!u.empty) await updateDoc(u.docs[0].ref, { balanceAdjustUsed: used, balanceAdjustAt: new Date().toISOString() });
+  }catch(e){ console.warn('balance flag:', e); }
+};
 window.checkTrxExists = async function(trxId){
   if(!db) return null;
   try{ const snap = await getDocs(query(collection(db,'transactions'), where('trxId','==',trxId))); return snap.empty ? null : snap.docs[0].data(); }catch(e){ return null; }
@@ -4896,6 +4922,7 @@ window.loadUserDashboardData = async function() {
         const profileNid = uDoc.data().nid || '';
         if(profileNid) _savedNid = profileNid;
         window._userDocId = uDoc.id;
+        window._balanceAdjustUsed = uDoc.data().balanceAdjustUsed === true;
       } catch(e) {}
       window._userRealBalance = uSnap.docs[0].data().balance || 0;
       document.getElementById('headerBalance').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + window._userRealBalance.toLocaleString();
@@ -5059,6 +5086,10 @@ window.loadLiveFeed = async function() {
     container.innerHTML = '<div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Could not load recent activity.</div>';
   }
 };
+
+// functions defined in this module but called from the classic script or from inline
+// onclick/onerror attributes must be on window, or those calls throw ReferenceError
+Object.assign(window, { walletCollectionNumber, walletReceivingNumber, logoFallback, _clearPaySelection, _selPayDyn, applyFeePaymentNote });
 
 loadWallets();
 loadDynamicConfig();
