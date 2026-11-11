@@ -4664,7 +4664,13 @@ window.registerUser=async function(){
   try{
     const ex=await getDocs(query(collection(db,'users'),where('phone','==',ph)));
     if(!ex.empty){ showLoader(false); showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
+    // read the switch fresh: the page may not have loaded the config yet
     const cfgSnap = await getDoc(doc(db, 'siteConfig', 'main'));
+    if(cfgSnap.exists() && cfgSnap.data().flags?.registrationOpen === false){
+      showLoader(false);
+      showAlert('Registration Closed', 'New user registration is currently disabled.', 'error');
+      return;
+    }
     const bonusAmt = cfgSnap.exists() ? (cfgSnap.data().newUserBonus || 100) : 100;
     const referrer = localStorage.getItem('referrerPhone');
     const u = { phone: ph, password: pw, createdAt: new Date().toISOString(), appStatus: 0, balance: bonusAmt, status: 'active' };
