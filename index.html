@@ -1690,7 +1690,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="m-acts"><button class="mbtn mbtn-cancel" onclick="closeGlobalModal(true)">Cancel</button><button class="mbtn mbtn-ok" onclick="submitLoginPassword()">Login</button></div>
   </div>
   <div class="mc pp" id="modal-alert" style="display:none;">
-    <button class="popup-close" id="alertCloseBtn" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
+    <button class="popup-close" id="alertCloseBtn" aria-label="Close" onclick="closeGlobalModal(false,true)"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon" id="m-icon-wrap"><i id="m-icon" class="fa-solid fa-circle-info"></i></div>
     <div class="m-title" id="m-title"></div>
     <div class="m-msg" id="m-msg"></div>
@@ -2985,7 +2985,9 @@ function openPasswordModal() {
   }
 }
 
-function showAlert(title,msg,type='info',cb=null){
+let _modalCbOkOnly=false;
+// okOnly: the callback runs only when OK is pressed, not when the alert is dismissed with ✕
+function showAlert(title,msg,type='info',cb=null,okOnly=false){
   _showModal(false,true,false);
   document.getElementById('m-title').innerText=title;
   document.getElementById('m-msg').innerText=msg;
@@ -2996,18 +2998,19 @@ function showAlert(title,msg,type='info',cb=null){
   const types={ success:['m-ic-suc','fa-solid fa-check'], error:['m-ic-err','fa-solid fa-xmark'], info:['m-ic-lock','fa-solid fa-circle-info'] };
   const[cls,icn]=types[type]||types.info;
   w.className='m-icon '+cls; i.className=icn;
-  modalCloseCb=cb;
+  modalCloseCb=cb; _modalCbOkOnly=okOnly;
 }
 function showErrorModal(title,msg){
   _showModal(false,false,true);
   document.getElementById('err-title').innerText=title;
   document.getElementById('err-msg').innerText=msg;
 }
-function closeGlobalModal(clearLogin=false){
+function closeGlobalModal(clearLogin=false, viaX=false){
   document.getElementById('globalModal').classList.remove('on');
   if(clearLogin) pendingLoginUser=null;
   const cb=modalCloseCb; modalCloseCb=null;
-  if(cb) cb();
+  const skip = viaX && _modalCbOkOnly; _modalCbOkOnly=false;
+  if(cb && !skip) cb();
 }
 // keep the NID on the user's profile so the next application has it already filled
 async function saveUserNid(nid){
@@ -3984,7 +3987,13 @@ function startNewApplication(){
   const u = _getUser();
   if(!u) { nav('screen-login'); return; }
   if(window._latestApp && window._latestApp.status === 'Pending Fee Payment') {
-    showAlert('Action Required', 'Please pay the fee for your previous application first.', 'error');
+    // OK takes the user straight to the fee page of that unpaid application
+    const pending = window._latestApp;
+    showAlert('Action Required', 'Please pay the fee for your previous application first. Tap OK to go to its payment page.', 'error', () => {
+      window._latestAppId = pending.id || window._latestAppId;
+      _restoreAppState(pending);
+      goToFeePayment();
+    }, true);
     return;
   }
   if(window._latestApp && window._latestApp.status === 'TrxID Submitted') {
