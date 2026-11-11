@@ -3028,12 +3028,16 @@ function acceptPolicy(){
   }
 }
 
-function checkLoginInput(el){ el.value=el.value.replace(/\D/g,''); document.getElementById('loginNextBtn').classList.toggle('go',el.value.length===10); }
+// digits only, and a leading 0 is dropped so "017…" typed out of habit becomes "17…"
+function _cleanBDPhone(v){ return String(v||'').replace(/\D/g,'').replace(/^0+/,'').slice(0,10); }
+function checkLoginInput(el){ el.value=_cleanBDPhone(el.value); document.getElementById('loginNextBtn').classList.toggle('go',isValidBDPhone(el.value)); }
 function checkRegisterInputs(){
-  const ph=document.getElementById('regPhone').value;
+  const phEl=document.getElementById('regPhone');
+  phEl.value=_cleanBDPhone(phEl.value);
+  const ph=phEl.value;
   const pw=document.getElementById('regPassword').value;
   const cp=document.getElementById('regConfirmPassword').value;
-  document.getElementById('registerBtn').classList.toggle('go', ph.length===10 && pw.length>=6 && pw===cp);
+  document.getElementById('registerBtn').classList.toggle('go', isValidBDPhone(ph) && pw.length>=6 && pw===cp);
 }
 function isValidBDPhone(p){ return /^1[0-9]{9}$/.test(p); }
 
@@ -4629,7 +4633,7 @@ window._startSupportListener = function(uid) {
 window.checkPhoneAndProceed=async function(){
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('loginPhone').value;
-  if(ph.length!==10||!ph.startsWith('1')){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number.','error'); return; }
+  if(!isValidBDPhone(ph)){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number.','error'); return; }
   showLoader(true);
   try{
     const snap=await getDocs(query(collection(db,'users'),where('phone','==',ph)));
@@ -4657,7 +4661,7 @@ window.registerUser=async function(){
   }
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('regPhone').value, pw=document.getElementById('regPassword').value, cp=document.getElementById('regConfirmPassword').value;
-  if(ph.length!==10){ showAlert('Invalid Number','Enter a valid 10-digit number.','error'); return; }
+  if(!isValidBDPhone(ph)){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number (1XXXXXXXXX).','error'); return; }
   if(pw.length<6){ showAlert('Weak Password','Password must be at least 6 characters.','error'); return; }
   if(pw!==cp){ showAlert('Mismatch','Passwords do not match.','error'); return; }
   showLoader(true);
