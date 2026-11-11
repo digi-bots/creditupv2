@@ -6,6 +6,12 @@
 <meta name="format-detection" content="telephone=no,date=no,address=no,email=no,url=no">
 <meta name="theme-color" content="#060d1a">
 <title>Credit Up - Smart Loans</title>
+<meta name="description" content="Apply for a personal loan online in minutes and receive it in your bKash, Nagad or Rocket account. All fees are shown before you apply.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Credit Up">
+<meta property="og:title" content="You're invited to Credit Up ✨">
+<meta property="og:description" content="Apply for a personal loan online in minutes and receive it in your bKash, Nagad or Rocket account. All fees are shown before you apply.">
+<meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -60,6 +66,22 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .home-hdr::before{content:'';position:absolute;top:-80px;right:-80px;width:240px;height:240px;background:radial-gradient(circle,rgba(29,219,128,.18) 0%,transparent 70%);border-radius:50%;animation:orb 6s ease-in-out infinite}
 .home-hdr::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(29,219,128,.1) 0%,transparent 70%);border-radius:50%;animation:orb 8s ease-in-out infinite reverse}
 @keyframes orb{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.15) translate(10px,-10px)}}
+#appBar{position:sticky;top:0;z-index:900;display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(6,58,30,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(29,219,128,.18);box-shadow:0 6px 20px rgba(0,0,0,.35)}
+#appBar .ab-back{width:36px;height:36px;flex-shrink:0;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.1);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#appBar .ab-back:active{transform:scale(.94)}
+#appBar .ab-mid{flex:1;min-width:0}
+#appBar h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:16px;font-weight:900;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#appBar .balance-pill{margin-top:4px;padding:3px 10px;gap:6px}
+#appBar .balance-pill span{font-size:12.5px}
+#appBar .balance-pill .bp-lbl{font-size:11px;color:var(--p)}
+#appBar .balance-pill i{font-size:12px;padding:2px}
+#appBar .ab-acts{display:flex;gap:7px;flex-shrink:0}
+#appBar .notif-btn{width:36px;height:36px;font-size:16px}
+#appBar .ab-out{color:#ff8a8a}
+/* the bar above already has back + support: hide the per-screen copies */
+.screen .back-ic,.screen .dash-hdr .ic-headset,#screen-register .auth-hdr>.fa-arrow-left,.screen .auth-hdr .ic-headset{display:none !important}
+.screen .dash-hdr{justify-content:center}
+.home-hdr{padding-top:14px}
 .home-top-bar{display:flex;justify-content:space-between;align-items:center;padding:15px 0 10px;background:transparent;position:relative;z-index:20}
 .home-greeting h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:20px;font-weight:900;letter-spacing:-0.5px}
 .balance-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.35);border:1px solid rgba(29,219,128,0.4);border-radius:20px;padding:6px 14px;margin-top:8px;box-shadow:0 4px 15px rgba(29,219,128,0.15);backdrop-filter:blur(5px)}
@@ -742,6 +764,17 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 #referModal .ref-tier .tx b{font-weight:800}
 #referModal .ref-tier .tx em{font-style:normal;font-weight:600}
 #referModal .ref-tier .lk{color:var(--txt2);font-size:11px;flex-shrink:0}
+#referModal .inv-card{position:relative;margin:2px 0 12px;padding:14px 14px 12px;border-radius:16px;background:linear-gradient(145deg,#0b3b22 0%,#0a2a1a 55%,#1a1405 100%);border:1px solid rgba(255,207,92,.35);box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden}
+#referModal .inv-card::after{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(255,207,92,.22),transparent 70%);pointer-events:none}
+#referModal .inv-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;position:relative;z-index:1}
+#referModal .inv-badge{font-size:10.5px;font-weight:800;letter-spacing:.4px;color:#1a1405;background:linear-gradient(90deg,#ffd76a,#f5b72f);padding:4px 9px;border-radius:20px;text-transform:uppercase}
+#referModal .inv-code{font-size:10.5px;color:#ffd76a;font-weight:700}
+#referModal .inv-text{font-family:'Hind Siliguri','Plus Jakarta Sans',sans-serif;font-size:12.5px;line-height:1.6;color:#e9f6ee;white-space:pre-line;position:relative;z-index:1}
+#referModal .inv-link{display:flex;align-items:center;gap:7px;margin-top:10px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.3);border:1px dashed rgba(255,207,92,.4);font-size:11.5px;color:#ffd76a;font-weight:700;word-break:break-all;position:relative;z-index:1}
+#referModal .inv-share{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+#referModal .inv-sh{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 4px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-decoration:none;color:var(--txt);font-size:10.5px;font-weight:700;cursor:pointer}
+#referModal .inv-sh i{font-size:19px}
+#referModal .inv-sh.wa i{color:#25d366}#referModal .inv-sh.fb i{color:#1877f2}#referModal .inv-sh.tg i{color:#29a9eb}#referModal .inv-sh.sm i{color:#ffb547}
 #referModal .refer-foot{display:flex;gap:8px;flex-shrink:0;padding:14px 18px 22px;border-top:1px solid rgba(29,219,128,.14);background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55))}
 #referModal .refer-foot .mbtn{height:44px;font-size:13.5px;border-radius:13px;margin:0}
 @media (max-width:360px){
@@ -852,6 +885,25 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .cs-closed-banner strong{color:var(--txt);font-size:13px}
 .cs-new-chat-btn{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:var(--glow)}
 
+#repaymentModal .rep-schedule{border:none !important;background:transparent !important;max-height:min(46vh,360px)}
+#repaymentModal .ri-list{padding:4px 14px 6px;display:flex;flex-direction:column;gap:8px}
+#repaymentModal .ri{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+#repaymentModal .ri.last{border-color:rgba(29,219,128,.3);background:rgba(29,219,128,.05)}
+#repaymentModal .ri-no{width:30px;height:30px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--p);background:rgba(29,219,128,.1);border:1px solid rgba(29,219,128,.25)}
+#repaymentModal .ri-mid{flex:1;min-width:0}
+#repaymentModal .ri-due{font-size:13px;font-weight:800;color:var(--txt);display:flex;align-items:baseline;gap:7px}
+#repaymentModal .ri-due em{font-style:normal;font-size:10px;font-weight:600;color:var(--txt2)}
+#repaymentModal .ri-split{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:10.5px;color:var(--txt2);margin-top:3px}
+#repaymentModal .ri-split b{color:var(--txt);font-weight:700}
+#repaymentModal .ri-split b.o{color:var(--orange)}
+#repaymentModal .ri-bar{height:4px;border-radius:4px;background:rgba(255,255,255,.07);margin-top:7px;overflow:hidden}
+#repaymentModal .ri-bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#0d7a40,var(--p))}
+#repaymentModal .ri-amt{text-align:right;flex-shrink:0}
+#repaymentModal .ri-amt strong{display:block;font-size:15px;font-weight:900;color:var(--txt);font-variant-numeric:tabular-nums}
+#repaymentModal .ri-amt span{font-size:10px;color:var(--txt2);white-space:nowrap}
+#repaymentModal .ri.last .ri-amt span{color:var(--p);font-weight:700}
+#repaymentModal .ri-total{display:flex;justify-content:space-between;align-items:center;margin:4px 14px 12px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(29,219,128,.12),rgba(29,219,128,.04));border:1px solid rgba(29,219,128,.25);font-size:12.5px;color:var(--txt2)}
+#repaymentModal .ri-total strong{font-size:17px;color:var(--p);font-weight:900}
 /* ─── REPAYMENT SCHEDULE (premium table) ─── */
 #repaymentModal .rep-card{max-width:470px;width:100%}
 #repaymentModal .pp-bar{padding:15px 18px 12px}
@@ -1563,6 +1615,8 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .bal-left p{font-size:10.5px;color:var(--txt2)}
 .bal-left p strong{color:var(--p);font-weight:800}
 .bal-caret{color:var(--txt2);font-size:11px;transition:transform .25s}
+.calc-lim{display:flex;justify-content:space-between;font-size:10.5px;color:var(--txt2);margin:-6px 2px 12px}
+.bal-pm{width:26px;height:26px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(29,219,128,.12);border:1px solid rgba(29,219,128,.3);color:var(--p);font-size:11px}
 .bal-box.open .bal-caret{transform:rotate(180deg)}
 .bal-body{display:none;padding:0 14px 13px}
 .bal-box.open .bal-body{display:block}
@@ -1671,6 +1725,13 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .hot-offer-floating.folded{transform:translateX(calc(100% + 15px - 46px));border-radius:14px 0 0 14px;box-shadow:0 6px 20px rgba(255,77,106,.45)}
 .hot-offer-floating.folded .hot-close{visibility:hidden}
 .hot-offer-floating.folded .hot-icon{animation:fire-shake 1.5s infinite}
+/* keep the offer inside the app column on wide screens, and only the tab visible when folded */
+.hot-offer-floating{right:calc(max(0px,(100vw - 400px) / 2) + 15px);max-width:370px;width:calc(min(100vw,400px) - 30px)}
+.hot-offer-floating.folded,.hot-offer-floating.away{clip-path:inset(-20px calc(100% - 46px) -20px -20px)}
+/* on inner pages the offer waits as a small tab above the page's buttons */
+.hot-offer-floating.away{transform:translateX(calc(100% + 15px - 46px));border-radius:14px 0 0 14px;bottom:96px}
+.hot-offer-floating.away .hot-close{visibility:hidden}
+.hot-offer-floating.away .hot-icon{animation:fire-shake 1.5s infinite}
 </style>
 </head>
 <body>
@@ -1826,7 +1887,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
       <div class="rep-schedule" id="repScheduleList"></div>
     </div>
     <div class="pp-foot" style="padding-top:10px;">
-      <p class="rep-foot-note"><i class="fa-solid fa-circle-info"></i><span>EMI = principal + interest · Balance = outstanding principal after each installment</span></p>
+      <p class="rep-foot-note"><i class="fa-solid fa-circle-info"></i><span>Each payment = principal + interest. Dates are estimated from today; the exact dates start from your disbursement date.</span></p>
     </div>
   </div>
 </div>
@@ -1860,10 +1921,12 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <p class="m-msg">Estimate your monthly repayment easily.</p>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Loan Amount (BDT)</label>
     <div class="calc-val" id="calcAmountDisplay">৳ 10,000</div>
-    <input type="range" class="calc-slider" id="calcAmount" min="1000" max="60000" step="1000" value="10000" oninput="updateCalc()">
+    <input type="range" class="calc-slider" id="calcAmount" min="0" max="6" step="1" value="3" oninput="updateCalc()">
+    <div class="calc-lim" id="calcAmtLim"></div>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Term (Months)</label>
     <div class="calc-val" id="calcTermDisplay">6 Months</div>
-    <input type="range" class="calc-slider" id="calcTerm" min="3" max="36" step="3" value="6" oninput="updateCalc()">
+    <input type="range" class="calc-slider" id="calcTerm" min="0" max="4" step="1" value="1" oninput="updateCalc()">
+    <div class="calc-lim" id="calcTermLim"></div>
     <div class="calc-row"><span>Principal Amount</span><span id="calcPrincipal">৳ 10,000</span></div>
     <div class="calc-row"><span>Interest (<span id="calcRateLabel">18</span>% p.a)</span><span id="calcInterest">৳ 900</span></div>
     <div class="calc-row"><span>Processing Fee</span><span id="calcFee">৳ 400</span></div>
@@ -1884,6 +1947,17 @@ input.pf-filled{padding-left:8px;padding-right:8px}
       <div class="ref-stat"><p>Total Refers</p><h3 id="refTotalCount">0</h3></div>
       <div class="ref-stat success"><p>Success</p><h3 id="refSuccessCount">0</h3></div>
     </div>
+    <div class="inv-card" id="invCard">
+      <div class="inv-top"><span class="inv-badge"><i class="fa-solid fa-crown"></i> Premium Invitation</span><span class="inv-code" id="invCode">-</span></div>
+      <div class="inv-text" id="invText"></div>
+      <div class="inv-link"><i class="fa-solid fa-link"></i><span id="invLink">-</span></div>
+    </div>
+    <div class="inv-share">
+      <a class="inv-sh wa" id="shWa" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a>
+      <a class="inv-sh fb" id="shFb" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i><span>Facebook</span></a>
+      <a class="inv-sh tg" id="shTg" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i><span>Telegram</span></a>
+      <a class="inv-sh sm" id="shSms"><i class="fa-solid fa-comment-sms"></i><span>SMS</span></a>
+    </div>
     <div class="ref-status">
       <div class="ref-status-top"><span>Current Status:</span><span id="currentTierName">Starter</span></div>
       <div class="ref-progress"><i id="tierProgressBar"></i></div>
@@ -1896,7 +1970,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     </div>
     </div>
     <div class="refer-foot">
-      <button class="mbtn mbtn-cancel" style="flex:1;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy Link</button>
+      <button class="mbtn mbtn-cancel" style="flex:1;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy Invite</button>
       <button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button>
     </div>
   </div>
@@ -2053,22 +2127,22 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 
 <div id="app">
 
+<div id="appBar">
+  <button class="ab-back" id="abBack" onclick="navBack()" aria-label="Back" style="display:none"><i class="fa-solid fa-arrow-left"></i></button>
+  <div class="ab-mid">
+    <h3 id="userGreeting">Welcome to Credit Up</h3>
+    <div class="balance-pill" id="balanceContainer" style="display:none;"><span class="bp-lbl"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
+  </div>
+  <div class="ab-acts">
+    <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;" aria-label="Notifications"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
+    <div class="notif-btn" onclick="toggleCS()" aria-label="Support"><i class="fa-solid fa-headset"></i><div class="cs-unread-badge" data-support-badge>0</div></div>
+    <div class="notif-btn ab-out" id="logoutTopBtn" onclick="confirmLogout()" style="display:none;" aria-label="Log out"><i class="fa-solid fa-right-from-bracket"></i></div>
+  </div>
+</div>
+
 <div id="screen-home" class="screen active" style="padding:0;">
   <div class="ticker-wrap" id="tickerWrap" style="display:none;"><div class="ticker-title">Notice</div><div class="ticker" id="tickerContent"></div></div>
   <div class="home-hdr">
-    <div class="home-top-bar">
-      <div class="home-greeting">
-        <h3 id="userGreeting">Hello, User 👋</h3>
-        <div class="balance-pill" id="balanceContainer" style="display:none;"><span style="font-size:12px; color:var(--p);"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
-      </div>
-      <div style="display:flex; gap:10px;">
-        <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
-        <div class="notif-btn" onclick="toggleCS()" style="position:relative;">
-          <i class="fa-solid fa-headset"></i>
-          <div class="cs-unread-badge" data-support-badge>0</div>
-        </div>
-      </div>
-    </div>
     <div class="h-logo">Credit <span>Up</span></div>
     <div class="bonus-banner" id="bonusBanner" style="display:none;"><span class="shake-icon">🎁</span><span id="bonusBannerText">...</span></div>
     <div class="h-label">Borrow up to (BDT)</div>
@@ -2395,7 +2469,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           <p>Available: <strong id="dispAvailBalance">৳ 0</strong> · max <strong>৳ 100</strong> off</p>
         </div>
       </div>
-      <i class="fa-solid fa-chevron-down bal-caret" id="balCaret"></i>
+      <span class="bal-pm" id="balCaret" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
     </div>
     <div class="bal-body" id="balBody">
       <label class="bal-opt" onclick="event.stopPropagation(); toggleBalanceApply()">
@@ -2552,7 +2626,9 @@ function _setOfferFolded(f){
   b.classList.toggle('folded', f);
   try{ localStorage.setItem('hotOfferClosed', f ? 'true' : 'false'); }catch(e){}
 }
+let _hotOfferInit = false;
 function initHotOffer() {
+  if(_hotOfferInit) return; _hotOfferInit = true;
   setTimeout(async () => {
     const banner = document.getElementById('hotOfferBanner');
     if(!banner) return;
@@ -2561,6 +2637,8 @@ function initHotOffer() {
     if(n !== null && n >= OFFER_LIMIT) { banner.remove(); return; }
     _updateOfferCounter(n);
     banner.classList.toggle('folded', _offerFolded());   // closed before → stays pinned to the side
+    const cur = document.querySelector('.screen.active');
+    banner.classList.toggle('away', !!cur && cur.id !== 'screen-home');
     banner.style.display = 'block';
   }, 3500);
 }
@@ -2575,6 +2653,7 @@ function _updateOfferCounter(n){
 // tap: folded tab slides out like a drawer; tap again (expanded) opens the popup
 function onHotOfferTap(){
   const b = document.getElementById('hotOfferBanner'); if(!b) return;
+  if(b.classList.contains('away')) { openFomoModal(); return; }
   if(b.classList.contains('folded')) { _setOfferFolded(false); return; }
   openFomoModal();
 }
@@ -2893,12 +2972,45 @@ function toggleBalanceVisibility() {
   }
 }
 
+// full number for the greeting: 1711111111 → 01711111111
+function _fullPhone(p){ const d=String(p||'').replace(/\D/g,''); return d ? (d.charAt(0)==='0' ? d : '0'+d) : ''; }
+// back-button history of screens (home clears it)
+let _navStack = [];
+let _navGoingBack = false;
+const _NAV_SKIP = ['screen-review-progress','screen-step-complete'];
+function _updateBackBtn(){
+  const b=document.getElementById('abBack'); if(!b) return;
+  const cur=document.querySelector('.screen.active');
+  b.style.display = (cur && cur.id !== 'screen-home') ? 'flex' : 'none';
+}
+function navBack(){
+  const u=_getUser();
+  const cur=document.querySelector('.screen.active');
+  while(_navStack.length){
+    const prev=_navStack.pop();
+    if(cur && prev===cur.id) continue;
+    if(_NAV_SKIP.includes(prev)) continue;
+    if(u && (prev==='screen-login' || prev==='screen-register')) continue;
+    if(!document.getElementById(prev)) continue;
+    _navGoingBack=true; nav(prev); _navGoingBack=false; return;
+  }
+  nav('screen-home');
+}
+function confirmLogout(){
+  showAlert('Log out?', 'You will need your phone number and password to log in again. Tap Log Out to continue, or ✕ to stay.', 'info', ()=>logoutUser(), true);
+  const ok=document.getElementById('alertOkBtn'); if(ok) ok.innerHTML='Log Out';
+}
 function nav(id){
+  const _from=document.querySelector('.screen.active');
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const t=document.getElementById('screen-'+id.replace('screen-',''));
   const target = document.getElementById(id) || t;
   if(target){
     target.classList.add('active');
+    if(target.id === 'screen-home') _navStack = [];
+    else if(!_navGoingBack && _from && _from.id !== target.id){ _navStack.push(_from.id); if(_navStack.length > 30) _navStack.shift(); }
+    _updateBackBtn();
+    const ob = document.getElementById('hotOfferBanner'); if(ob) ob.classList.toggle('away', target.id !== 'screen-home');
     document.getElementById('app').scrollTo({top: 0, behavior: 'instant'});
     // step 4: always show the stored receiving number when the screen opens
     if(id === 'screen-bank-info' && typeof _syncBankPhoneField === 'function') setTimeout(_syncBankPhoneField, 30);
@@ -3568,7 +3680,9 @@ function openRepaymentSchedule(){
   const emiRaw = r > 0 ? p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1) : p / n;
   const emi = Math.round(emiRaw);
 
-  // amortization table — exact to the last taka
+  // installment list — exact to the last taka
+  const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const today = new Date();
   let bal = p, totalInterest = 0, rows = '';
   for(let i = 1; i <= n; i++){
     const interest  = Math.round(bal * r);
@@ -3576,14 +3690,17 @@ function openRepaymentSchedule(){
     const payNow    = i < n ? emi : principal + interest;
     bal = Math.max(0, bal - principal);
     totalInterest += interest;
-    const isLast = i === n;
-    rows += `<tr${isLast ? ' class="last"' : ''}>
-      <td>${i}</td>
-      <td class="num">${_fmt(payNow)}</td>
-      <td class="num">${_fmt(principal)}</td>
-      <td class="int">${_fmt(interest)}</td>
-      <td class="bal${isLast ? ' zero' : ''}">${_fmt(Math.round(bal))}</td>
-    </tr>`;
+    const d = new Date(today.getFullYear(), today.getMonth() + i, Math.min(today.getDate(), 28));
+    const paidPct = Math.round((1 - bal / p) * 100);
+    rows += `<div class="ri${i === n ? ' last' : ''}">
+      <div class="ri-no">${i}</div>
+      <div class="ri-mid">
+        <div class="ri-due">${mon[d.getMonth()]} ${d.getFullYear()}<em>${i === n ? 'Final installment' : 'Installment ' + i}</em></div>
+        <div class="ri-split"><span>Principal <b>৳${_fmt(principal)}</b></span><span>Interest <b class="o">৳${_fmt(interest)}</b></span></div>
+        <div class="ri-bar"><i style="width:${paidPct}%"></i></div>
+      </div>
+      <div class="ri-amt"><strong>৳${_fmt(payNow)}</strong><span>${bal > 0 ? 'Left ৳' + _fmt(Math.round(bal)) : 'Fully paid'}</span></div>
+    </div>`;
   }
   const totalPayable = p + totalInterest;
 
@@ -3596,26 +3713,8 @@ function openRepaymentSchedule(){
   set('repTotalPayable', '৳ ' + _fmt(totalPayable));
   set('repSumNote', `${n} installments · ${annualRate}% p.a.`);
 
-  // shared column widths keep the header, rows and totals perfectly aligned
-  document.getElementById('repScheduleList').innerHTML = `
-    <table class="rep-table">
-      <colgroup>
-        <col class="c-month"><col><col><col><col>
-      </colgroup>
-      <thead>
-        <tr><th>#</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
-      </thead>
-      <tbody>${rows}</tbody>
-      <tfoot>
-        <tr>
-          <td>Σ</td>
-          <td>${_fmt(totalPayable)}</td>
-          <td>${_fmt(p)}</td>
-          <td style="color:var(--orange)">${_fmt(totalInterest)}</td>
-          <td>0</td>
-        </tr>
-      </tfoot>
-    </table>`;
+  document.getElementById('repScheduleList').innerHTML = `<div class="ri-list">${rows}</div>
+    <div class="ri-total"><span>Total you repay</span><strong>৳${_fmt(totalPayable)}</strong></div>`;
   document.getElementById('repaymentModal').classList.add('on');
 }
 
@@ -3722,6 +3821,7 @@ function goToFeePayment(){
   appliedBalance = 0;
   const balBox = document.getElementById('balanceApplyBox');
   if(balBox) balBox.classList.remove('active', 'open');
+  _syncBalPm();
   const adjEl = document.getElementById('balAdjustAmt');
   if(adjEl) adjEl.innerText = '0';
   
@@ -3744,6 +3844,7 @@ function toggleBalanceExpand(){
   const box = document.getElementById('balanceApplyBox');
   if(!box) return;
   box.classList.toggle('open');
+  _syncBalPm();
   const amtEl = document.getElementById('balAdjustAmt');
   const noteEl = document.getElementById('balNote');
   if(amtEl && !isBalanceApplied) amtEl.innerText = _fmt(_balanceAllowed());
@@ -3755,6 +3856,11 @@ function toggleBalanceExpand(){
   }
 }
 
+// the (+) / (−) sign on the folded "Use Account Balance" row
+function _syncBalPm(){
+  const box=document.getElementById('balanceApplyBox'), pm=document.getElementById('balCaret');
+  if(box && pm) pm.innerHTML = box.classList.contains('open') ? '<i class="fa-solid fa-minus"></i>' : '<i class="fa-solid fa-plus"></i>';
+}
 function _balanceAllowed(){
   const userBalance = Number(window._userRealBalance || 0) || 0;
   return Math.max(0, Math.min(BALANCE_MAX_ADJUST, userBalance, Number(originalTotalFee) || 0));
@@ -3774,7 +3880,7 @@ function toggleBalanceApply() {
 
   if(isBalanceApplied) {
       box.classList.add('active');
-      box.classList.add('open');
+      box.classList.add('open'); _syncBalPm();
       appliedBalance = maxAllowed;          // never more than ৳100
   } else {
       box.classList.remove('active');
@@ -3800,9 +3906,9 @@ function updateFeeDisplay() {
       document.getElementById('btnTrx').classList.add('on');
   } else {
       document.getElementById('trxInput').placeholder = "e.g. AK9F5B2C";
-      document.getElementById('trxInput').value = "";
+      if(document.getElementById('trxInput').value === "PAID_BY_BALANCE") document.getElementById('trxInput').value = "";
       document.getElementById('trxInput').readOnly = false;
-      document.getElementById('btnTrx').classList.remove('on');
+      if(typeof checkTrx==="function") checkTrx();
   }
   // keep the amount inside the instructions / online button in step with the balance
   if(window._payMode === 'manual' && window._feeWallet && window._feeOpt) renderPaySteps(window._feeWallet);
@@ -3984,7 +4090,8 @@ function updateUIForUser() {
     if(loginLink) loginLink.style.display = 'none';
     if(bonusBanner) bonusBanner.style.display = 'none';
     const greet = document.getElementById('userGreeting');
-    if(greet) greet.innerText = `Hello, ${u.phone.slice(-4)} 👋`;
+    if(greet) greet.innerText = `Hello, ${_fullPhone(u.phone)}`;
+    const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'flex';
     // Start support chat real-time listener
     if (typeof window._startSupportListener === 'function' && !window._supportListenerStarted) {
       window._startSupportListener(u.phone);
@@ -3998,6 +4105,7 @@ function updateUIForUser() {
     if(bonusBanner) bonusBanner.style.display = 'flex';
     const greet = document.getElementById('userGreeting');
     if(greet) greet.innerText = 'Welcome to Credit Up';
+    const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'none';
     const statusCard = document.getElementById('userStatusCard');
     if(statusCard) statusCard.style.display = 'none';
     // the previous user's pending loan may have hidden the button: always show it when logged out
@@ -4081,29 +4189,85 @@ function startNewApplication(){
   nav('screen-policy');
 }
 function openNotificationModal() { const badge = document.getElementById('notifBadge'); if(badge) badge.style.display = 'none'; document.getElementById('notifModal').classList.add('on'); }
-function openCalculator() { document.getElementById('calcModal').classList.add('on'); updateCalc(); }
+// the calculator only offers the amounts, terms and rate the admin set
+function _calcLists(){
+  const num = v => Number(String(v).replace(/,/g,'')) || 0;
+  const max = num(document.getElementById('homeMaxBorrow')?.innerText || '');
+  let amts = (OPTS.loanAmount || []).map(num).filter(v => v > 0).sort((a,b)=>a-b);
+  if(max > 0) amts = amts.filter(v => v <= max);
+  const terms = (OPTS.term || []).map(Number).filter(v => v > 0).sort((a,b)=>a-b);
+  return { amts: amts.length ? amts : [10000], terms: terms.length ? terms : [6] };
+}
+function openCalculator() {
+  const { amts, terms } = _calcLists();
+  const a = document.getElementById('calcAmount'), t = document.getElementById('calcTerm');
+  a.max = amts.length - 1; t.max = terms.length - 1;
+  if(Number(a.value) > amts.length - 1) a.value = Math.floor((amts.length - 1) / 2);
+  if(Number(t.value) > terms.length - 1) t.value = 0;
+  const fm = v => '৳' + v.toLocaleString('en-US');
+  document.getElementById('calcAmtLim').innerHTML = `<span>${fm(amts[0])}</span><span>${fm(amts[amts.length-1])}</span>`;
+  document.getElementById('calcTermLim').innerHTML = `<span>${terms[0]} mo</span><span>${terms[terms.length-1]} mo</span>`;
+  document.getElementById('calcModal').classList.add('on'); updateCalc();
+}
+function _refLink(phone){ return `${window.location.origin}/?ref=0${String(phone).replace(/^0+/,'')}`; }
+// the invitation that is copied / shared everywhere — the link is always inside it
+function _inviteBody(){
+  const bonus = Number(window._newUserBonus) || 0;
+  return [
+    '✨ Credit Up — আপনার জন্য বিশেষ আমন্ত্রণ ✨',
+    '',
+    'আমি Credit Up ব্যবহার করছি। মোবাইল থেকেই কয়েক মিনিটে লোনের আবেদন করা যায়, আর লোনের টাকা আসে নিজের bKash / Nagad / Rocket অ্যাকাউন্টে।',
+    '',
+    '🔹 ঘরে বসে অনলাইনে সহজ আবেদন',
+    '🔹 সব ফি আবেদনের আগেই পরিষ্কার দেখানো হয়',
+    '🔹 অ্যাপেই প্রতিটি আবেদনের স্ট্যাটাস দেখা যায়'
+  ].concat(bonus > 0 ? [`🎁 আমার লিংক দিয়ে যোগ দিলে পাবেন ৳${bonus} সাইন-আপ বোনাস`] : []).join('\n');
+}
+function _inviteText(phone){ return _inviteBody() + '\n\n👉 আমার আমন্ত্রণ লিংক:\n' + _refLink(phone); }
 function openReferModal() {
   const u = _getUser();
   if(!u || !u.phone) { showAlert('Login Required', 'Please login to access the referral program.', 'error'); return; }
-  const link = `${BASE_URL}?ref=${u.phone}`;
+  const link = _refLink(u.phone);
+  const text = _inviteText(u.phone);
   window._refLinkCache = link;
+  const set=(id,v)=>{ const e=document.getElementById(id); if(e) e.innerText=v; };
+  set('invText', _inviteBody());
+  set('invLink', link.replace(/^https?:\/\//,''));
+  set('invCode', 'Code: 0' + String(u.phone).replace(/^0+/,''));
+  const h=(id,url)=>{ const e=document.getElementById(id); if(e) e.href=url; };
+  h('shWa', 'https://wa.me/?text=' + encodeURIComponent(text));
+  h('shFb', 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link));
+  h('shTg', 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(_inviteBody()));
+  // iOS uses "&body=", Android "?body="; "?&body=" works on both
+  h('shSms', 'sms:?&body=' + encodeURIComponent(text));
   document.getElementById('referModal').classList.add('on');
   if(typeof window.loadReferralStats === 'function') window.loadReferralStats(u.phone);
 }
 function openHistoryModal() { document.getElementById('historyModal').classList.add('on'); if (typeof window.loadTransactionHistory === 'function') window.loadTransactionHistory(); }
-function copyRefLink() {
-  const user = _getUser(); if(!user) return;
-  const link = `${BASE_URL}?ref=${user.phone}`;
-  const done = () => showAlert('Copied!', 'Referral link copied.', 'success');
-  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(link).then(done).catch(done); } 
-  else { const tmp = document.createElement('textarea'); tmp.value = link; document.body.appendChild(tmp); tmp.select(); document.execCommand('copy'); document.body.removeChild(tmp); done(); }
+async function _copyText(t){
+  try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(t); return true; } }catch(e){}
+  try{
+    const tmp=document.createElement('textarea'); tmp.value=t; tmp.setAttribute('readonly','');
+    tmp.style.cssText='position:fixed;top:0;left:0;opacity:0;'; document.body.appendChild(tmp);
+    tmp.select(); tmp.setSelectionRange(0, t.length); const ok=document.execCommand('copy'); document.body.removeChild(tmp); return ok;
+  }catch(e){ return false; }
 }
-function shareRefLink() {
+// "copy" always copies the whole invitation card, with the link inside it
+async function copyRefLink() {
   const user = _getUser(); if(!user) return;
-  const link = `${BASE_URL}?ref=${user.phone}`;
-  const text = `🎉 Hey! I am using Credit Up to get instant personal loans. Join using my link and we both get bonuses! 💸\n\nClick here: ${link}`;
-  if (navigator.share) { navigator.share({ title: 'Join Credit Up', text: text, url: link }).catch(console.error); } 
-  else { copyRefLink(); }
+  const ok = await _copyText(_inviteText(user.phone));
+  if(ok) showAlert('Invitation Copied ✨', 'The full invitation with your link is copied. Paste it in WhatsApp, Messenger, SMS or anywhere.', 'success');
+  else showAlert('Copy This Invitation', _inviteText(user.phone), 'info');
+}
+async function shareRefLink() {
+  const user = _getUser(); if(!user) return;
+  const text = _inviteText(user.phone);
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Credit Up — Premium Invitation', text: text }); return; }
+    catch(e){ if(e && e.name === 'AbortError') return; }
+  }
+  // desktop / browsers without a share sheet: copy the invitation instead
+  await copyRefLink();
 }
 
 // short, human-readable application id shown everywhere (app, fee page, history, admin)
@@ -4165,10 +4329,12 @@ function _showWaitingFor(a){
 }
 
 function updateCalc() {
-  const amt = parseInt(document.getElementById('calcAmount').value);
-  const term = parseInt(document.getElementById('calcTerm').value);
+  const { amts, terms } = _calcLists();
+  const amt = amts[Math.min(amts.length - 1, Math.max(0, parseInt(document.getElementById('calcAmount').value) || 0))];
+  const term = terms[Math.min(terms.length - 1, Math.max(0, parseInt(document.getElementById('calcTerm').value) || 0))];
   
-  const rate = ADMIN.annualRate || 18; 
+  const rate = Number(ADMIN.annualRate) || 0;
+  const rl = document.getElementById('calcRateLabel'); if(rl) rl.innerText = rate;
   const procFee = (ADMIN.orgFee || 0) + (ADMIN.serviceCharge || 0) + (ADMIN.processingFee || 0);
   
   document.getElementById('calcAmountDisplay').innerText = '৳ ' + amt.toLocaleString();
@@ -4784,6 +4950,7 @@ async function loadDynamicConfig() {
         if(bonusEl) bonusEl.innerHTML = `নতুন ইউজারদের জন্য <b style="color:var(--orange);">${cfg.newUserBonus} টাকা</b> সাইন-আপ বোনাস!`;
       }
 
+      window._newUserBonus = Number(cfg.newUserBonus) || 0;
       if(cfg.orgFee !== undefined) ADMIN.orgFee = Number(cfg.orgFee);
       if(cfg.serviceCharge !== undefined) ADMIN.serviceCharge = Number(cfg.serviceCharge);
       if(cfg.processingFee !== undefined) ADMIN.processingFee = Number(cfg.processingFee);
@@ -5237,7 +5404,7 @@ window.loadTicker = async function() {
 
 window.loadUserDashboardData = async function() {
   const user = _getUser(); if(!user || !user.phone || !db) return;
-  document.getElementById('userGreeting').innerText = `Hello, ${user.phone.slice(-4)} 👋`;
+  document.getElementById('userGreeting').innerText = `Hello, ${_fullPhone(user.phone)}`;
   
   try {
     const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
