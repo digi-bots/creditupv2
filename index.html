@@ -3852,12 +3852,17 @@ function openProfileModal() {
   document.getElementById('profPhone').innerText = '+880 ' + u.phone;
   document.getElementById('profileModal').classList.add('on');
 }
-function logoutUser() {
+function logoutUser(silent) {
   localStorage.removeItem('creditUpUser');
   closeModal('profileModal');
   if(typeof updateUIForUser === 'function') updateUIForUser();
   nav('screen-home');
-  showAlert('Logged Out', 'You have been successfully logged out.', 'success');
+  if(!silent) showAlert('Logged Out', 'You have been successfully logged out.', 'success');
+}
+// a user the admin banned is signed out on the next data refresh, not only at the next login
+function forceLogoutBanned(){
+  logoutUser(true);
+  showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.');
 }
 
 function startNewApplication(){
@@ -4753,6 +4758,10 @@ window.loadUserDashboardData = async function() {
   
   try {
     const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
+    if(!uSnap.empty && uSnap.docs[0].data().status === 'banned') {
+      if(typeof forceLogoutBanned === 'function') forceLogoutBanned();
+      return;
+    }
     if(!uSnap.empty) {
       // NID kept on the profile so it survives every new application
       try {
