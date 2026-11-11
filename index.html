@@ -2101,6 +2101,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <button class="pf-clear" onclick="clearApplicationForm()"><i class="fa-solid fa-eraser"></i> Clear all</button>
   </div>
   <div class="pol-body">
+    <div class="fee-disc" id="feeDisclosure" style="background:rgba(255,140,66,.08);border:1px solid rgba(255,140,66,.35);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12.5px;line-height:1.6;color:var(--txt2)"></div>
     <div class="pol-updated" id="policyDateText">...</div>
     <p>This Privacy Agreement explains how we collect, use, store, share and protect your personal information when you use Credit Up services.</p>
     <div class="pol-h">How we collect and use your personal information</div>
@@ -2115,7 +2116,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <p>Be cautious of messages, websites or people impersonating Credit Up. Never disclose your passwords or OTP codes to anyone.</p>
     <div style="margin-top:22px;"><p style="font-weight:700;color:var(--txt);">Contact Us</p><p>Email: <a href="mailto:stormltdgames@gmail.com" id="policyEmailLink" style="color:var(--blue)">stormltdgames@gmail.com</a></p><p id="policyAddressText">Address: STORM SKIN LTD, 12 Constance Street, London, E16 2DQ</p></div>
   </div>
-  <div class="pol-foot"><label class="agree-wrap"><input type="checkbox" id="policyCheck"><span>I have read and agree to the Privacy Policy and Terms &amp; Conditions.</span></label><button class="btn-pol" onclick="acceptPolicy()">OK, I Agree</button></div>
+  <div class="pol-foot"><label class="agree-wrap"><input type="checkbox" id="policyCheck"><span>I have read and agree to the fees and refund policy above, the Privacy Policy and Terms &amp; Conditions.</span></label><button class="btn-pol" onclick="acceptPolicy()">OK, I Agree</button></div>
 </div>
 
 <div id="screen-login" class="screen">
@@ -3020,7 +3021,23 @@ function _continueAfterStep(){
 }
 function _backToProgress(){ nav('screen-application-progress'); }
 
+// fees, upfront interest and the refund rule, shown (and accepted) before every application
+const DEFAULT_REFUND_POLICY = 'If your application is rejected, the full fee you paid is refunded to the number you paid from.';
+function renderFeeDisclosure(){
+  const box = document.getElementById('feeDisclosure');
+  if(!box) return;
+  const fixed = (ADMIN.orgFee||0) + (ADMIN.serviceCharge||0) + (ADMIN.processingFee||0);
+  const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const refund = (window._refundPolicy && String(window._refundPolicy).trim()) || DEFAULT_REFUND_POLICY;
+  box.innerHTML = `<div style="font-weight:800;color:var(--txt);margin-bottom:6px"><i class="fa-solid fa-circle-info" style="color:var(--orange)"></i> Fees you pay before the loan is reviewed</div>
+    <div>Origination fee: <strong style="color:var(--txt)">৳${_fmt(ADMIN.orgFee||0)}</strong></div>
+    <div>Service charge + processing fee: <strong style="color:var(--txt)">৳${_fmt((ADMIN.serviceCharge||0)+(ADMIN.processingFee||0))}</strong></div>
+    <div>Interest: <strong style="color:var(--txt)">${esc(ADMIN.annualRate)}% per year for the whole term, paid in advance</strong></div>
+    <div style="margin-top:4px">Example: ৳10,000 for 6 months = ৳${_fmt(fixed + Math.round(10000*(ADMIN.annualRate/100)*0.5))} total fee.</div>
+    <div style="margin-top:6px">Paying the fee does <strong style="color:var(--txt)">not</strong> guarantee approval. ${esc(refund)}</div>`;
+}
 function resetPolicyCheck(){
+  renderFeeDisclosure();
   const c = document.getElementById('policyCheck');
   if(c) c.checked = false;
 }
@@ -4453,6 +4470,8 @@ async function loadDynamicConfig() {
 
       // admin-defined note for the fee payment page
       window._feePaymentNote = cfg.feePaymentNote || '';
+      window._refundPolicy = cfg.refundPolicy || '';
+      if(typeof renderFeeDisclosure === 'function') renderFeeDisclosure();
       window._feePaymentNoteTitle = cfg.feePaymentNoteTitle || 'Note';
       applyFeePaymentNote(cfg.feePaymentNote || '', cfg.feePaymentNoteTitle || 'Note');
 

@@ -581,6 +581,14 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
   </div>
+  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-rotate-left"></i>Fee Refund Policy (shown before applying)</div>
+    <div class="fgrid">
+      <div class="fg full"><label>Refund policy text</label>
+        <textarea id="c-rfp" rows="3" maxlength="600" placeholder="If your application is rejected, the full fee you paid is refunded to the number you paid from."></textarea>
+        <div class="hint">Users see this, with the full fee breakdown, and must accept it before they apply. Leave empty to use the default text above.</div>
+      </div>
+    </div>
+  </div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-headset"></i>Contact & Support</div>
     <div class="fgrid">
       <div class="fg"><label>WhatsApp Number (e.g. 88017...)</label><input id="c-wa" placeholder="88017XXXXXXXX"></div>
@@ -1734,7 +1742,7 @@ async function loadConfig(){
   s('c-mb',cfg.maxBorrowAmount);s('c-ir',cfg.annualInterestRate);s('c-of',cfg.orgFee);s('c-sc',cfg.serviceCharge);s('c-pf',cfg.processingFee);s('c-nb',cfg.newUserBonus);
   s('c-la',(cfg.loanAmounts||[]).join(', '));s('c-lt',(cfg.loanTerms||[]).join(', '));s('c-lp',(cfg.loanPurposes||[]).join(', '));s('c-oc',(cfg.occupations||[]).join(', '));
   // payment numbers live in the Wallets section now (kept untouched in the saved config)
-  s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');
+  s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');s('c-rfp',cfg.refundPolicy||'');
   s('c-wa',cfg.contact?.whatsapp);s('c-tg',cfg.contact?.telegram);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
   s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
   cb('c-ro',cfg.flags?.registrationOpen!==false);cb('c-lo',cfg.flags?.loansOpen!==false);cb('c-mn',cfg.flags?.maintenance);
@@ -1743,7 +1751,7 @@ async function saveConfig(){
   const g=id=>document.getElementById(id)?.value.trim();
   const sl=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
   const cb=id=>document.getElementById(id)?.checked;
-  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:(g('c-nb')===''||isNaN(parseFloat(g('c-nb'))))?100:Math.max(0,parseFloat(g('c-nb'))),loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
+  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:(g('c-nb')===''||isNaN(parseFloat(g('c-nb'))))?100:Math.max(0,parseFloat(g('c-nb'))),loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',refundPolicy:g('c-rfp')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
   showL(true); await window._setDoc('siteConfig','main',cfg); showL(false);
   await logAct('Site config saved','config','main'); toast('Configuration saved ✓');
 }
