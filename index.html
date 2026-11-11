@@ -2278,10 +2278,10 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <div class="rv-hdr"><h2>All documents submitted successfully ✓</h2></div>
   <div class="rv-card">
     <div class="rv-ic"><i class="fa-regular fa-clock"></i></div>
-    <h3>Review in Progress</h3>
-    <p>Your application is under review. Our system is verifying your information automatically.</p>
+    <h3>Submitting Application</h3>
+    <p>We are saving your application. It will be reviewed by our team — this is not an approval.</p>
     <div class="rv-divider"></div>
-    <div class="rv-load-txt" id="rvText">Reviewing...</div>
+    <div class="rv-load-txt" id="rvText">Submitting...</div>
     <div class="rv-track"><div class="rv-bar" id="rvBar"></div><div class="rv-knob" id="rvKnob"></div></div>
     <div class="rv-pct" id="rvPct">0%</div>
   </div>
@@ -2294,20 +2294,20 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="logo" style="font-size:18px;font-weight:900;color:var(--txt)">Credit Up</div>
   </div>
   <div class="apv-green-box">
-    <div class="apv-banner"><i class="fa-solid fa-circle-check"></i> Your application has been approved!</div>
-    <div class="apv-prog-txt"><span>Application Complete</span><span>100%</span></div>
-    <div class="apv-prog-bg"><div class="apv-prog-fill"></div></div>
+    <div class="apv-banner" id="apvBanner"><i class="fa-solid fa-circle-check"></i> <span id="apvBannerText">Application received</span></div>
+    <div class="apv-prog-txt"><span id="apvProgLbl">Application submitted</span><span id="apvProgPct">25%</span></div>
+    <div class="apv-prog-bg"><div class="apv-prog-fill" id="apvProgFill"></div></div>
   </div>
   <div class="apv-content">
     <div class="loan-card">
-      <p>Loan amount available (BDT)</p>
+      <p id="loanCardLbl">Requested loan amount (BDT)</p>
       <h1 id="finalAmount">0</h1>
       <div class="loan-meta">
         <span>Term: <strong id="finalTerm">-</strong> months</span>
         <a href="javascript:void(0)" onclick="openLoanDetails()">View Details <i class="fa-solid fa-chevron-right" style="font-size:10px"></i></a>
       </div>
     </div>
-    <p class="disb-title">Your loan will be disbursed into</p>
+    <p class="disb-title" id="disbTitle">If approved, your loan will be sent to</p>
     <div class="disb-card">
       <div class="disb-left">
         <img class="disb-img" id="finalWalletLogo" src="" alt="Wallet">
@@ -2326,7 +2326,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
       <div class="rule-row"><div class="rule-num">3</div><div class="rule-txt">Repay on time to qualify for higher amounts and better interest rates in future.</div></div>
     </div>
   </div>
-  <div class="apv-foot"><button class="btn-final" onclick="goToFeePayment()">Proceed to Pay Fee</button></div>
+  <div class="apv-foot" id="apvFoot"><button class="btn-final" onclick="goToFeePayment()">Proceed to Pay Fee</button></div>
 </div>
 
 <div id="screen-fee-payment" class="screen">
@@ -3409,10 +3409,17 @@ function submitApplication(){
   document.getElementById('finalWalletLogo').src = (window._activeWallet && window._activeWallet.logoUrl) ? window._activeWallet.logoUrl : (ADMIN.walletLogos[selWallet] || '');
   const u=_getUser(); if(u?.phone) document.getElementById('approvedPhone').innerText='0'+u.phone;
 
-  if(typeof saveApplicationToFirebase==='function') saveApplicationToFirebase();
+  const saving = (typeof saveApplicationToFirebase==='function') ? saveApplicationToFirebase() : Promise.resolve(false);
+  _setAppScreenStatus('Pending Fee Payment');
 
   nav('screen-review-progress');
-  _runReviewAnim(()=>{ 
+  _runReviewAnim(async ()=>{ 
+    const ok = await saving;
+    if(!ok){
+      nav('screen-application-progress');
+      showErrorModal('Submission Failed', 'Your application could not be saved. Please check your connection and try again.');
+      return;
+    }
     // keep the details (and NID photos) for the next application instead of wiping them
     saveFormState(true);
     hidePrefillBanner();
@@ -3425,9 +3432,9 @@ function _runReviewAnim(onDone){
   let p=0; txt.innerText='Reviewing...';
   const iv=setInterval(()=>{
     p+=2; bar.style.width=p+'%'; knob.style.left=p+'%'; pct.innerText=p+'%';
-    if(p===40) txt.innerText='Verifying identity...';
-    if(p===75) txt.innerText='Calculating offer...';
-    if(p>=100){ clearInterval(iv); txt.innerText='Approved! ✓'; setTimeout(onDone,800); }
+    if(p===40) txt.innerText='Uploading details...';
+    if(p===75) txt.innerText='Saving application...';
+    if(p>=100){ clearInterval(iv); txt.innerText='Application received ✓'; setTimeout(onDone,800); }
   },30);
 }
 
@@ -4009,8 +4016,30 @@ function _restoreAppState(app){
   const interest = Math.round(amt * (ADMIN.annualRate/100) * (months/12));
   totalFee = ADMIN.orgFee + ADMIN.serviceCharge + ADMIN.processingFee + interest;
 }
+// the application screen only says "approved" when the admin has actually approved the loan
+function _setAppScreenStatus(status){
+  const approved = ['Approved','Disbursed','Active','Repaid'].includes(status);
+  const STEPS = {
+    'Pending Fee Payment': ['Application received — fee payment pending. Not approved yet.', 'Application submitted', 25],
+    'TrxID Submitted':     ['Application received — fee verification pending. Not approved yet.', 'Fee submitted', 50],
+    'Fee Verified':        ['Fee verified — your application is under review. Not approved yet.', 'Fee verified', 75],
+    'Approved':            ['Your loan has been approved!', 'Approved', 100],
+    'Disbursed':           ['Your loan has been sent to your account.', 'Disbursed', 100],
+    'Rejected':            ['Your application was not approved.', 'Rejected', 100]
+  };
+  const st = STEPS[status] || [approved ? 'Your loan has been approved!' : 'Application received — under review. Not approved yet.', approved ? 'Approved' : 'Under review', approved ? 100 : 25];
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+  set('apvBannerText', st[0]); set('apvProgLbl', st[1]); set('apvProgPct', st[2] + '%');
+  const fill = document.getElementById('apvProgFill'); if(fill) fill.style.width = st[2] + '%';
+  const ic = document.querySelector('#apvBanner i');
+  if(ic) ic.className = approved ? 'fa-solid fa-circle-check' : (status === 'Rejected' ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-hourglass-half');
+  set('loanCardLbl', approved ? 'Approved loan amount (BDT)' : 'Requested loan amount (BDT)');
+  set('disbTitle', approved ? 'Your loan will be disbursed into' : 'If approved, your loan will be sent to');
+  const foot = document.getElementById('apvFoot'); if(foot) foot.style.display = (status === 'Pending Fee Payment') ? '' : 'none';
+}
 function _populateApprovedScreen(app){
   if(!app) return;
+  _setAppScreenStatus(app.status);
   const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0;
   const months = Number(app.term) || 0;
   document.getElementById('finalAmount').innerText = _fmt(amt);
@@ -4751,7 +4780,7 @@ window.registerUser=async function(){
 };
 
 window.saveApplicationToFirebase=async function(){
-  if(!db) return;
+  if(!db) return false;
   const u=_getUser();
   try{
     await addDoc(collection(db,'applications'),{
@@ -4765,7 +4794,8 @@ window.saveApplicationToFirebase=async function(){
       wallet: selWallet, bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
       status: 'Pending Fee Payment', submittedAt:new Date().toISOString()
     }).then(ref => { window._latestAppId = ref.id; return ref; });
-  }catch(e){ console.error('saveApp:',e); }
+    return true;
+  }catch(e){ console.error('saveApp:',e); return false; }
 };
 
 window._uploadNidImage = async function(phone, side, file){
