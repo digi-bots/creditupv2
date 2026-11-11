@@ -3828,7 +3828,7 @@ function updateUIForUser() {
   if (u) {
     if(balanceContainer) balanceContainer.style.display = 'inline-flex';
     if(notifBtnContainer) notifBtnContainer.style.display = 'flex';
-    if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
+    // button text for a logged-in user is decided by loadUserDashboardData (Borrow Now / Apply for Another)
     if(loginLink) loginLink.style.display = 'none';
     if(bonusBanner) bonusBanner.style.display = 'none';
     const greet = document.getElementById('userGreeting');
@@ -4893,12 +4893,10 @@ window.loadUserDashboardData = async function() {
         if(iconEl) iconEl.className = `fa-solid ${info.icon}`;
         if(iconBox){ iconBox.style.color = info.color; iconBox.style.background = info.bg; }
         card.style.display = 'flex';
-        if(['Pending Fee Payment', 'TrxID Submitted'].includes(latestApp.status)) {
-          mainBtn.style.display = 'none';
-        } else if (['Approved', 'Disbursed', 'Rejected'].includes(latestApp.status)) {
-          document.getElementById('mainBorrowBtnText').innerText = 'Apply for Another';
-        }
       }
+      // anyone who already has an application (pending, approved, rejected …) is offered another one;
+      // only users with no application see "Borrow Now"
+      document.getElementById('mainBorrowBtnText').innerText = 'Apply for Another';
     }
   } catch(e) {}
   if(typeof updateUIForUser === 'function') updateUIForUser();
