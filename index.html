@@ -1587,6 +1587,30 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .trx-req{font-size:11px;color:var(--txt2);margin-top:7px;line-height:1.4}
 .pay-locked-txt{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt2);line-height:1.5;margin:0}
 .pay-locked-txt i{color:var(--orange)}
+.opt-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.opt-chip{padding:9px 13px;border-radius:11px;border:1.5px solid var(--bord);background:var(--surf);color:var(--txt);font-size:12.5px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.opt-chip em{font-style:normal;font-size:10px;color:var(--txt2);font-weight:600}
+.opt-chip.sel{border-color:var(--p);background:rgba(29,219,128,.07);color:var(--p)}
+.pm-opts{margin:0 16px 14px}
+.pm-opts-t{font-size:12.5px;color:var(--txt2);margin-bottom:8px}
+.pm-opts-t strong{color:var(--txt)}
+.pay-timer{display:flex;align-items:center;gap:8px;margin:0 16px 14px;padding:10px 12px;border-radius:11px;background:rgba(77,143,255,.07);border:1px solid rgba(77,143,255,.2);font-size:12.5px;color:var(--txt)}
+.pay-timer i{color:#4d8fff}
+.pay-timer.over{background:rgba(255,140,66,.08);border-color:rgba(255,140,66,.25)}
+.pay-timer.over i{color:var(--orange)}
+.pay-timer strong{font-family:'Courier New',monospace;font-size:14px}
+.gw-box{margin:0 16px 16px;padding:14px;border-radius:14px;background:linear-gradient(135deg,rgba(29,219,128,.08),rgba(77,143,255,.06));border:1px solid rgba(29,219,128,.22)}
+.gw-box h4{font-size:14px;color:var(--txt);margin:0 0 6px;display:flex;align-items:center;gap:7px}
+.gw-box h4 i{color:var(--p)}
+.gw-box p{font-size:12px;color:var(--txt2);line-height:1.55;margin:0 0 8px}
+.gw-amt{font-size:13px;color:var(--txt2)}
+.gw-amt strong{color:var(--p);font-size:15px}
+.pm-card.gw{border-style:dashed}
+.pm-card .gw-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(29,219,128,.12);color:var(--p);font-size:17px}
+.bank-box{background:var(--surf);border:1px solid var(--bord);border-radius:11px;padding:10px 12px;margin:8px 0;font-size:12px;line-height:1.7;color:var(--txt2)}
+.bank-box b{color:var(--txt)}
+.rcv-in{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:12px;background:var(--surf);border:1.5px solid var(--bord);color:var(--txt);font-size:14px;outline:none;margin-bottom:12px}
+.rcv-in:focus{border-color:var(--p)}
 .pay-loan-to{display:flex;gap:7px;align-items:flex-start;font-size:11.5px;line-height:1.5;color:var(--txt2);margin-top:10px;padding-top:10px;border-top:1px dashed var(--bord)}
 .pay-loan-to i{font-size:11px;margin-top:2px;color:var(--orange)}
 .pay-loan-to.ok i{color:var(--p)}
@@ -2238,7 +2262,19 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <i class="fa-solid fa-circle-exclamation"></i>
     <div><strong>No wallet is enabled right now.</strong><span>Please contact support and try again later.</span></div>
   </div>
-  <div class="ph-lbl">Receiving Account Number <span>*</span></div>
+  <div id="rcvTypeWrap" style="display:none;">
+    <div class="ph-lbl">Account Type <span>*</span></div>
+    <div class="opt-chips" id="rcvTypes"></div>
+  </div>
+  <div id="rcvBankBlk" style="display:none;">
+    <div class="ph-lbl">Account Holder Name <span>*</span></div>
+    <input class="rcv-in" id="rcvAccName" placeholder="Name as on the bank account" oninput="saveFormState()">
+    <div class="ph-lbl">Bank Name <span>*</span></div>
+    <input class="rcv-in" id="rcvBankName" placeholder="e.g. Dutch-Bangla Bank" oninput="saveFormState()">
+    <div class="ph-lbl">Branch</div>
+    <input class="rcv-in" id="rcvBranch" placeholder="e.g. Uttara" oninput="saveFormState()">
+  </div>
+  <div class="ph-lbl" id="rcvNumLbl">Receiving Account Number <span>*</span></div>
   <div class="rcv-cat" id="rcvCat" style="display:none;"></div>
   <div class="ph-row" id="bankPhoneRow">
     <input type="tel" id="bankPhone" inputmode="numeric" maxlength="11" placeholder="01XXXXXXXXX"
@@ -2376,6 +2412,16 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <span>Select the method <strong>as per your need</strong>, then <strong>check the number</strong> before sending. Your fee goes to the number shown below, and your <strong>loan money will be sent to your own receiving number</strong> at the same method — so make sure both are correct.</span>
   </div>
   <div class="pm-grid" id="pmGrid"></div>
+  <div class="pm-opts" id="pmOptsWrap" style="display:none;">
+    <div class="pm-opts-t">How will you pay with <strong id="pmOptsName">-</strong>?</div>
+    <div class="opt-chips" id="pmOpts"></div>
+  </div>
+  <div class="pay-timer" id="payTimer" style="display:none;"><i class="fa-regular fa-clock"></i><span id="payTimerTxt">-</span></div>
+  <div class="gw-box" id="gwBox" style="display:none;">
+    <h4><i class="fa-solid fa-bolt"></i> <span id="gwBoxName">Pay Online</span></h4>
+    <p id="gwBoxNote">Pay securely on the SSLCommerz page with bKash, Nagad, Rocket, Visa or Mastercard. Your payment is verified automatically, no TrxID needed.</p>
+    <div class="gw-amt">Amount: <strong id="gwBoxAmt">-</strong></div>
+  </div>
   <div class="pm-pick" id="pmPickPrompt">
     <i class="fa-solid fa-hand-pointer"></i>
     <div><strong>No payment method selected yet</strong><span>Tap one of the methods above to see where to send your fee.</span></div>
@@ -2408,7 +2454,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     </div>
     <div class="trx-req" id="trxReqHint">Pick a payment method above and paste your TrxID.</div>
   </div>
-  <div class="fee-foot"><button class="btn-pay" id="btnTrx" onclick="submitTrx()">Submit Transaction ID</button></div>
+  <div class="fee-foot"><button class="btn-pay" id="btnTrx" onclick="submitTrx()"><span id="btnTrxTxt">Submit Transaction ID</span></button></div>
 </div>
 
 <div id="screen-waiting" class="screen" style="align-items:center;justify-content:center;text-align:center">
@@ -2460,6 +2506,9 @@ let _lastBankPhone='';
 // values restored from the previous application (shown with a green "filled" mark)
 let _prefilled={};
 let selPayMethod='Bkash';
+let selPayType='';      // Send Money / Cash Out / Payment … chosen on the fee page
+let selPayoutType='';   // Personal / Agent / Merchant chosen in step 4
+function _payoutIsBank(){ const w = window._activeWallet; return !!(w && w.kind === 'bank'); }
 let totalFee=0;
 let originalTotalFee = 0;
 let appliedBalance = 0;
@@ -2574,7 +2623,10 @@ function saveFormState(isSubmitted){
     bankPhone: (document.getElementById('bankPhone')?.value || '').trim() || _lastBankPhone || '',
     selGender, selDob, selIncome, selPurpose, selAmount, selTerm,
     selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2,
-    selWallet, currentDashboardStep,
+    selWallet, selPayoutType, currentDashboardStep,
+    rcvAccName: document.getElementById('rcvAccName')?.value || '',
+    rcvBankName: document.getElementById('rcvBankName')?.value || '',
+    rcvBranch: document.getElementById('rcvBranch')?.value || '',
     _nidFront: nidFrontUrl || '', _nidBack: nidBackUrl || '',
     _submitted: isSubmitted === true,
     _owner: (_getUser() && _getUser().phone) || ''
@@ -2611,6 +2663,8 @@ function restoreFormState(src){
     selEdu = draft.selEdu || ''; selMarital = draft.selMarital || ''; selChildren = draft.selChildren || '';
     selOccupation = draft.selOccupation || ''; selRel1 = draft.selRel1 || ''; selRel2 = draft.selRel2 || '';
     selWallet = draft.selWallet || 'Bkash';
+    selPayoutType = draft.selPayoutType || '';
+    ['rcvAccName','rcvBankName','rcvBranch'].forEach(k=>{ const e=document.getElementById(k); if(e && draft[k]) e.value = draft[k]; });
     
     const setDisp = (id, val, wrapperId) => {
       if(!val) return;
@@ -2666,7 +2720,7 @@ function _mapAppToForm(a){
     selPurpose: a.loanPurpose || '', selAmount: a.loanAmount || '', selTerm: a.term || '',
     selEdu: a.education || '', selMarital: a.marital || '', selChildren: a.children || '',
     selOccupation: a.occupation || '', selRel1: e1.relation || '', selRel2: e2.relation || '',
-    selWallet: a.wallet || 'Bkash',
+    selWallet: a.wallet || 'Bkash', selPayoutType: a.payoutAccountType || '',
     _nidFront: a.nidFrontUrl || '', _nidBack: a.nidBackUrl || ''
   };
 }
@@ -3247,12 +3301,6 @@ function _syncBankPhoneField(){
   if(!el) return;
   const saved = _lastBankPhone || (document.getElementById('bankPhone')?.value || '');
   if(!el.value.trim() && saved) el.value = saved;
-  if(!el.value.trim()){
-    // fall back to the receiving number registered for this wallet
-    const w = window._activeWallet || (window._wallets || [])[0];
-    const wn = w ? walletReceivingNumber(w) : '';
-    if(wn) el.value = wn;
-  }
   if(el.value.trim()) onBankPhoneInput(el);
 }
 function submitStep3(){
@@ -3285,12 +3333,21 @@ function submitStep4(){
     return;
   }
   if(!_bankValid(val)){
-    _bankHint('err', 'Enter a valid 11-digit number starting with 01 (e.g. 01712345678).');
+    _bankHint('err', _payoutIsBank() ? 'Enter your bank account number (8 to 20 digits).' : 'Enter a valid 11-digit number starting with 01 (e.g. 01712345678).');
     el?.focus();
     return;
   }
   if(!selWallet){
     showAlert('Wallet Required', 'Please select the wallet type that will receive your loan.', 'info');
+    return;
+  }
+  if(_payoutIsBank()){
+    const miss = [];
+    if(!document.getElementById('rcvAccName').value.trim()) miss.push('account holder name');
+    if(!document.getElementById('rcvBankName').value.trim()) miss.push('bank name');
+    if(miss.length){ showAlert('Bank Details Needed', 'Please enter your ' + miss.join(' and ') + '.', 'info'); return; }
+  } else if(!selPayoutType){
+    showAlert('Account Type Needed', `Is your ${selWallet} number Personal, Agent or Merchant? Please choose one.`, 'info');
     return;
   }
   el.value = val;
@@ -3301,15 +3358,18 @@ function submitStep4(){
   setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); _afterStepComplete(4); }, 900);
 }
 function selectWallet(w){
+  const dw = (window._payoutWallets || []).find(x => x.name === w);
+  if(dw){ _selWalletDyn(dw, true, true); return; }
   selWallet=w; saveFormState();
   ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('w'+x); if(el) el.classList.remove('sel'); });
   const target=document.getElementById('w'+w); if(target) target.classList.add('sel');
 }
 // ── Step 4: the receiving account number must be editable + validated ──
-function _bankClean(v){ return String(v||'').replace(/[^0-9]/g,'').slice(0,11); }
+function _bankClean(v){ return String(v||'').replace(/[^0-9]/g,'').slice(0, _payoutIsBank() ? 20 : 11); }
 // accept 01712345678 / 1712345678 / +8801712345678 and store one clean local format
 function _bankNormalize(v){
   let d = String(v||'').replace(/[^0-9]/g,'');
+  if(_payoutIsBank()) return d.slice(0,20);
   if(d.indexOf('880') === 0) d = '0' + d.slice(3);
   else if(d.indexOf('88') === 0 && d.length > 11) d = '0' + d.slice(2);
   if(d.length === 10 && d.charAt(0) === '1') d = '0' + d;
@@ -3317,6 +3377,7 @@ function _bankNormalize(v){
 }
 function _bankValid(v){
   const d = _bankClean(v);
+  if(_payoutIsBank()) return /^[0-9]{8,20}$/.test(d);
   return /^01[3-9][0-9]{8}$/.test(d) || /^1[3-9][0-9]{8}$/.test(d);
 }
 function _bankHint(state, text){
@@ -3338,11 +3399,11 @@ function onBankPhoneInput(el){
   const v = el.value;
   if(!v) { _bankHint('', 'Enter the wallet number that should receive your loan.'); return; }
   if(_bankValid(v)) _bankHint('ok', 'Valid receiving number.');
-  else _bankHint('', 'Format: 01XXXXXXXXX (11 digits).');
+  else _bankHint('', _payoutIsBank() ? 'Account number: 8 to 20 digits.' : 'Format: 01XXXXXXXXX (11 digits).');
 }
 function onBankPhoneBlur(){
   const el = document.getElementById('bankPhone');
-  if(el && el.value && !_bankValid(el.value)) _bankHint('err', 'That does not look like a valid BD mobile number.');
+  if(el && el.value && !_bankValid(el.value)) _bankHint('err', _payoutIsBank() ? 'Account number should be 8 to 20 digits.' : 'That does not look like a valid BD mobile number.');
   else if(el && _bankValid(el.value)) _bankHint('ok', 'Valid receiving number.');
   saveFormState();
 }
@@ -3667,13 +3728,8 @@ function goToFeePayment(){
   updateFeeDisplay();
   
   // the number always comes from the enabled wallets list (never a stale default)
-  const activeW = window._activeWallet && (window._wallets || []).find(w => w.id === window._activeWallet.id);
-  const collNum = activeW ? walletCollectionNumber(activeW)
-                : (window._wallets && window._wallets[0] ? walletCollectionNumber(window._wallets[0]) : '');
-  const chosen = (activeW && selPayMethod) ? activeW : null;
-  if(chosen) _selPayDyn(chosen, true);
-  else _clearPaySelection();
-  if(!collNum) selPayMethod = '';
+  // the user always picks the method again on this page
+  renderPayGrid();
   applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
   // which application this fee is for
   const feeAppId = window._latestAppId || (window._latestApp && window._latestApp.id) || '';
@@ -3748,6 +3804,13 @@ function updateFeeDisplay() {
       document.getElementById('trxInput').readOnly = false;
       document.getElementById('btnTrx').classList.remove('on');
   }
+  // keep the amount inside the instructions / online button in step with the balance
+  if(window._payMode === 'manual' && window._feeWallet && window._feeOpt) renderPaySteps(window._feeWallet);
+  if(window._payMode === 'gateway'){
+    const ga=document.getElementById('gwBoxAmt'); if(ga) ga.innerText='৳'+_fmt(finalTotal);
+    const bt=document.getElementById('btnTrxTxt'); if(bt) bt.innerText=`Pay ৳${_fmt(finalTotal)} Online`;
+    document.getElementById('btnTrx').classList.add('on');
+  }
 }
 
 // copy the merchant/payment number shown in the instructions
@@ -3811,7 +3874,8 @@ function selectPayMethod(m){
 }
 function checkTrx(){
   const hasTrx=document.getElementById('trxInput').value.trim().length>=4;
-  const hasMethod=!!selPayMethod;
+  if(window._payMode === 'gateway'){ document.getElementById('btnTrx').classList.add('on'); return; }
+  const hasMethod=!!selPayMethod && !!window._feeOpt;
   const ok=hasTrx && hasMethod;
   document.getElementById('btnTrx').classList.toggle('on',ok);
   // tell the user exactly what is still missing
@@ -3827,6 +3891,11 @@ function checkTrx(){
 async function submitTrx(){
   const trx = document.getElementById('trxInput').value.trim();
   const finalTotal = originalTotalFee - appliedBalance;
+  if(window._payMode === 'gateway' && finalTotal > 0) return startOnlinePay();
+  if(finalTotal > 0 && selPayMethod && !window._feeOpt){
+      showErrorModal('Choose How You Paid', 'Please choose the pay option (for example Send Money or Cash Out) you used.');
+      return;
+  }
   
   // a method must be chosen deliberately — never assume one
   if(finalTotal > 0 && !selPayMethod){
@@ -3860,7 +3929,8 @@ async function submitTrx(){
       trxId: trx || 'BALANCE_PAYMENT', 
       payMethod: selPayMethod, 
       // snapshot of the wallet + number used for this payment (audit trail)
-      walletId: (window._activeWallet && window._activeWallet.id) || '',
+      walletId: (window._feeWallet && window._feeWallet.id) || '',
+      payType: selPayType || '',
       collectionNumber: document.getElementById('adminNumber').innerText,
       receivingNumber: document.getElementById('bankPhone')?.value || '',
       appId: window._latestAppId || (window._latestApp && window._latestApp.id) || '',
@@ -3870,6 +3940,7 @@ async function submitTrx(){
       loanAmount: Number(String(selAmount).replace(/,/g,'')) || 0, 
       term: Number(selTerm) || 0, 
       wallet: selWallet, 
+      payoutAccountType: selPayoutType || '',
       status: 'Pending', 
       submittedAt: new Date().toISOString()
     });
@@ -3881,7 +3952,7 @@ async function submitTrx(){
     document.getElementById('dispTrx').innerText = trx || 'Balance Adjustment';
     const payAppId = window._latestAppId || (window._latestApp && window._latestApp.id) || '';
     const refEl = document.getElementById('dispAppRef'); if(refEl) refEl.innerText = appRef(payAppId) + ' · ৳' + (selAmount || '-');
-    document.getElementById('dispMethod').innerText = finalTotal > 0 ? selPayMethod : 'Account Balance';
+    document.getElementById('dispMethod').innerText = finalTotal > 0 ? [selPayMethod, selPayType].filter(Boolean).join(' · ') : 'Account Balance';
     
     document.getElementById('trxInput').value = '';
     document.getElementById('btnTrx').classList.remove('on');
@@ -4116,7 +4187,7 @@ function updateCalc() {
 
 function _restoreAppState(app){
   if(!app) return;
-  selAmount = app.loanAmount || selAmount; selTerm = app.term || selTerm; selWallet = app.wallet || selWallet;
+  selAmount = app.loanAmount || selAmount; selTerm = app.term || selTerm; selWallet = app.wallet || selWallet; selPayoutType = app.payoutAccountType || selPayoutType;
   const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0;
   const months = Number(app.term) || 0;
   const interest = Math.round(amt * (ADMIN.annualRate/100) * (months/12));
@@ -4331,6 +4402,33 @@ try{ const app = initializeApp(FB); db = getFirestore(app); } catch(e){ console.
 // Older records only have paymentNumber, so it is used as a safe fallback.
 function walletCollectionNumber(w){ return (w && (w.collectionNumber || w.paymentNumber)) || ''; }
 function walletReceivingNumber(w){ return (w && (w.paymentNumber || w.collectionNumber)) || ''; }
+// a wallet's pay options (Send Money / Cash Out / Payment …); older wallets had a single number
+function walletOptions(w){
+  if(w && Array.isArray(w.methods) && w.methods.length) return w.methods.filter(o=>o && o.number);
+  const num = walletCollectionNumber(w);
+  if(!num) return [];
+  return [{ type: w.payMethod || '', number: num, note: w.note || '', instructions: Array.isArray(w.instructions) ? w.instructions : [], timeLimit: 0 }];
+}
+function walletPayoutTypes(w){
+  if(!w) return [];
+  if(w.kind === 'bank') return ['Bank Account'];
+  if(Array.isArray(w.payoutAccountTypes) && w.payoutAccountTypes.length) return w.payoutAccountTypes;
+  return w.accountCategory ? [w.accountCategory] : ['Personal'];
+}
+const _escU = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// online payment (SSLCommerz) — shown only when the admin enabled it and the server is set up
+window._gateway = null;
+async function loadGatewayState(cfgGateway){
+  const gw = cfgGateway || {};
+  if(gw.enabled !== true){ window._gateway = null; return; }
+  try{
+    const r = await fetch('/api/pay/status', {cache:'no-store'});
+    const j = await r.json();
+    window._gateway = j.configured ? { name: gw.name || 'Pay Online', note: gw.note || '', logoUrl: gw.logoUrl || '' } : null;
+  }catch(e){ window._gateway = null; }
+  renderPayGrid();
+}
 
 async function loadWallets(){
   if(!db) return;
@@ -4338,74 +4436,113 @@ async function loadWallets(){
     const snap=await getDocs(query(collection(db,'wallets'),orderBy('order','asc')));
     const wallets=snap.docs.map(d=>({id:d.id,...d.data()})).filter(w=>w.enabled);
     window._wallets = wallets;
+    window._feeWallets = wallets.filter(w => w.useForFee !== false && walletOptions(w).length);
+    window._payoutWallets = wallets.filter(w => w.useForPayout !== false);
 
-    // ── disbursement wallets (step 4) ──
+    // ── loan receiving (step 4) ──
+    const pw = window._payoutWallets;
     const wg=document.getElementById('walletGrid');
     const wEmpty=document.getElementById('walletEmpty');
     if(wg){
       wg.innerHTML='';
-      if(!wallets.length){
+      if(!pw.length){
         wg.style.display='none';
         if(wEmpty) wEmpty.style.display='flex';
       } else {
         wg.style.display='flex';
         if(wEmpty) wEmpty.style.display='none';
-        wallets.forEach((w,i)=>{
-          const d=document.createElement('div'); d.className='w-card'+(i===0?' sel':''); d.id='w_'+w.id;
+        pw.forEach((w)=>{
+          const d=document.createElement('div'); d.className='w-card'; d.id='w_'+w.id;
           d.onclick=()=>_selWalletDyn(w);
-          d.innerHTML=`${logoHtml(w)}<span>${w.name}</span>${w.accountCategory?`<em>${w.accountCategory}</em>`:''}`;
+          const types = walletPayoutTypes(w);
+          d.innerHTML=`${logoHtml(w)}<span>${_escU(w.name)}</span><em>${_escU(types.join(' / '))}</em>`;
           wg.appendChild(d);
         });
-        _selWalletDyn(wallets[0], false);
+        const keep = pw.find(w => w.name === selWallet) || pw[0];
+        _selWalletDyn(keep, true, true);
       }
     }
-
-    // ── collection methods (fee payment) ──
-    const pg=document.getElementById('pmGrid');
-    const pEmpty=document.getElementById('pmEmpty');
-    if(pg){
-      pg.innerHTML='';
-      if(!wallets.length){
-        pg.style.display='none';
-        if(pEmpty) pEmpty.style.display='flex';
-        const numEl=document.getElementById('adminNumber');
-        if(numEl) numEl.innerText='-';
-        selPayMethod='';
-      } else {
-        pg.style.display='flex';
-        if(pEmpty) pEmpty.style.display='none';
-        wallets.forEach((w)=>{
-          const d=document.createElement('div'); d.className='pm-card'; d.id='pm_'+w.id;
-          d.onclick=()=>_selPayDyn(w);
-          d.innerHTML=`${logoHtml(w)}<span>${w.name}</span>${w.payMethod?`<em>${w.payMethod}</em>`:''}`;
-          pg.appendChild(d);
-        });
-        // never pre-select a method — the user must choose deliberately
-        _clearPaySelection();
-      }
-    }
+    renderPayGrid();
   }catch(e){ console.error('loadWallets:',e); }
 }
-function _selWalletDyn(w,ui=true){
+
+// ── fee payment methods grid: online first, then manual wallets ──
+function renderPayGrid(){
+  const pg=document.getElementById('pmGrid');
+  const pEmpty=document.getElementById('pmEmpty');
+  if(!pg) return;
+  const fw = window._feeWallets || [];
+  const gw = window._gateway;
+  pg.innerHTML='';
+  if(!fw.length && !gw){
+    pg.style.display='none';
+    if(pEmpty) pEmpty.style.display='flex';
+    selPayMethod='';
+    _clearPaySelection();
+    return;
+  }
+  pg.style.display='grid';
+  if(pEmpty) pEmpty.style.display='none';
+  if(gw){
+    const d=document.createElement('div'); d.className='pm-card gw'; d.id='pm__gateway';
+    d.onclick=()=>_selGateway();
+    d.innerHTML = (gw.logoUrl ? `<img src="${_escU(gw.logoUrl)}" alt="" onerror="logoFallback(this)">` : `<div class="gw-ic"><i class="fa-solid fa-bolt"></i></div>`)
+      + `<span>${_escU(gw.name)}</span><em>Auto verify</em>`;
+    pg.appendChild(d);
+  }
+  fw.forEach((w)=>{
+    const d=document.createElement('div'); d.className='pm-card'; d.id='pm_'+w.id;
+    d.onclick=()=>_selPayDyn(w);
+    const types = walletOptions(w).map(o=>o.type).filter(Boolean);
+    d.innerHTML=`${logoHtml(w)}<span>${_escU(w.name)}</span>${types.length?`<em>${_escU(types.join(' · '))}</em>`:''}`;
+    pg.appendChild(d);
+  });
+  // never pre-select a method — the user must choose deliberately
+  _clearPaySelection();
+}
+
+// ── step 4: which wallet + account type receives the loan ──
+function _selWalletDyn(w, ui=true, keepType=false){
+  if(!w) return;
   selWallet=w.name; window._activeWallet=w;
   if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); }
-  // tell the user which kind of account this wallet expects (personal / agent …)
-  const cat=document.getElementById('rcvCat');
-  if(cat){
-    const c=(w && w.accountCategory) ? String(w.accountCategory) : '';
-    if(c){ cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--p)"></i><span>Use your own <strong>${c}</strong> account of ${w.name} to receive the loan.</span>`; }
-    else cat.style.display='none';
+  const types = walletPayoutTypes(w);
+  if(!keepType || !types.includes(selPayoutType)) selPayoutType = types.length === 1 ? types[0] : '';
+  const bank = w.kind === 'bank';
+  const tw = document.getElementById('rcvTypeWrap'), tb = document.getElementById('rcvTypes');
+  if(tw && tb){
+    tw.style.display = (!bank && types.length) ? 'block' : 'none';
+    tb.innerHTML = types.map(t=>`<div class="opt-chip${t===selPayoutType?' sel':''}" onclick="_selPayoutType('${_escU(t).replace(/'/g,'&#39;')}')">${_escU(t)}</div>`).join('');
   }
-  // keep the receiving number in step with the chosen wallet when the user has not typed one
+  const bb = document.getElementById('rcvBankBlk'); if(bb) bb.style.display = bank ? 'block' : 'none';
+  const lbl = document.getElementById('rcvNumLbl'); if(lbl) lbl.innerHTML = (bank ? 'Bank Account Number' : 'Receiving Account Number') + ' <span>*</span>';
   const el = document.getElementById('bankPhone');
-  if(ui && el && !el.value.trim()){
-    const wn = walletReceivingNumber(w);
-    if(wn){ el.value = wn; onBankPhoneInput(el); }
+  if(el){
+    el.maxLength = bank ? 20 : 11;
+    el.placeholder = bank ? 'Account number' : '01XXXXXXXXX';
+    if(ui && !keepType){ el.value = bank ? '' : (el.value && _bankValid(el.value) ? el.value : ''); }
+    if(!el.value.trim() && !bank){ const u=_getUser(); if(u?.phone) el.value='0'+u.phone; }
+    if(el.value) onBankPhoneInput(el);
   }
+  _rcvCatHint();
+  if(typeof saveFormState === 'function') saveFormState();
+}
+function _selPayoutType(t){
+  selPayoutType = t;
+  document.querySelectorAll('#rcvTypes .opt-chip').forEach(c=>c.classList.toggle('sel', c.textContent === t));
+  _rcvCatHint();
+  if(typeof saveFormState === 'function') saveFormState();
+}
+function _rcvCatHint(){
+  const cat=document.getElementById('rcvCat'); const w=window._activeWallet;
+  if(!cat || !w) return;
+  if(w.kind === 'bank'){ cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--p)"></i><span>Use a bank account in <strong>your own name</strong>.</span>`; return; }
+  if(selPayoutType){ cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--p)"></i><span>Enter your own <strong>${_escU(selPayoutType)}</strong> ${_escU(w.name)} number.</span>`; }
+  else { cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-hand-pointer" style="color:var(--orange)"></i><span>Choose the account type of your ${_escU(w.name)} number.</span>`; }
 }
 function logoHtml(w){
   // a broken logo URL must never leave an empty card — fall back to an icon
-  return `<img src="${w.logoUrl || ''}" alt="${w.name}" onerror="logoFallback(this)">`;
+  return `<img src="${_escU(w.logoUrl || '')}" alt="${_escU(w.name)}" onerror="logoFallback(this)">`;
 }
 function logoFallback(img){
   img.style.display='none';
@@ -4415,98 +4552,193 @@ function logoFallback(img){
   ic.style.fontSize='22px'; ic.style.color='var(--txt2)';
   img.insertAdjacentElement('afterend', ic);
 }
-function payMethodLabel(w){
-  const t = (w && w.payMethod) ? w.payMethod : '';
-  return t ? t : 'Any method';
+
+// ── fee page selection state ──
+window._payMode = '';        // '' | 'manual' | 'gateway'
+window._feeWallet = null;
+window._feeOpt = null;
+let _payTimerInt = null;
+function _stopPayTimer(){ if(_payTimerInt){ clearInterval(_payTimerInt); _payTimerInt=null; } const t=document.getElementById('payTimer'); if(t) t.style.display='none'; }
+function _startPayTimer(min){
+  _stopPayTimer();
+  const t=document.getElementById('payTimer'), txt=document.getElementById('payTimerTxt');
+  if(!t || !(min > 0)) return;
+  const end = Date.now() + min*60000;
+  t.style.display='flex';
+  const tick=()=>{
+    const left = Math.max(0, end - Date.now());
+    if(left <= 0){
+      t.classList.add('over');
+      txt.innerHTML = 'Time is up. Tap the pay option again to get a fresh time before you send money.';
+      clearInterval(_payTimerInt); _payTimerInt=null; return;
+    }
+    t.classList.remove('over');
+    const m = Math.floor(left/60000), s2 = Math.floor((left%60000)/1000);
+    txt.innerHTML = `Please send within <strong>${String(m).padStart(2,'0')}:${String(s2).padStart(2,'0')}</strong> minutes`;
+  };
+  tick(); _payTimerInt = setInterval(tick, 1000);
 }
+function _feeDue(){ return Math.max(0, (originalTotalFee||0) - (appliedBalance||0)); }
+function payMethodLabel(w){ return (window._feeOpt && window._feeOpt.type) || (w && w.payMethod) || 'Any method'; }
+
 // nothing chosen yet: no highlighted card, no number shown, instructions locked
 function _clearPaySelection(){
-  selPayMethod=''; window._activeWallet=null;
+  selPayMethod=''; selPayType=''; window._payMode=''; window._feeWallet=null; window._feeOpt=null;
+  _stopPayTimer();
   document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel'));
+  const ow=document.getElementById('pmOptsWrap'); if(ow) ow.style.display='none';
+  const gb=document.getElementById('gwBox'); if(gb) gb.style.display='none';
   const prompt=document.getElementById('pmPickPrompt');
   if(prompt) prompt.style.display='flex';
   const instr=document.querySelector('.pay-instr');
-  if(instr) instr.classList.add('locked');
+  if(instr){ instr.style.display=''; instr.classList.add('locked'); }
   const trx=document.querySelector('.trx-wrap');
-  if(trx) trx.classList.add('locked');
+  if(trx){ trx.style.display=''; trx.classList.add('locked'); }
   const num=document.getElementById('adminNumber');
   if(num) num.innerText='-';
   const box=document.getElementById('payStepsList');
   if(box) box.innerHTML='<p class="pay-locked-txt"><i class="fa-solid fa-lock"></i> Select a payment method above to see the number and instructions.</p>';
+  const bt=document.getElementById('btnTrxTxt'); if(bt) bt.innerText='Submit Transaction ID';
   const btn=document.getElementById('btnTrx');
   if(btn) btn.classList.remove('on');
 }
-function _selPayDyn(w,ui=true){
-  selPayMethod=w.name; window._activeWallet=w;
-  if(ui!==false){ document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); }
-  const prompt=document.getElementById('pmPickPrompt'); if(prompt) prompt.style.display='none';
-  const instr=document.querySelector('.pay-instr'); if(instr) instr.classList.remove('locked');
-  const trx=document.querySelector('.trx-wrap'); if(trx) trx.classList.remove('locked');
-  renderPaySteps(w);   // renders the whole instruction block (method line included)
-  // a wallet-specific note wins over the global fee-payment note
-  if(w && w.note && String(w.note).trim()) applyFeePaymentNote(w.note, w.name + ' note');
-  else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
+function _markPmCard(id){ document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById(id); if(e) e.classList.add('sel'); }
+
+function _selGateway(){
+  if(!window._gateway) return;
+  _clearPaySelection();
+  window._payMode='gateway'; selPayMethod = window._gateway.name;
+  _markPmCard('pm__gateway');
+  document.getElementById('pmPickPrompt').style.display='none';
+  const gb=document.getElementById('gwBox'); gb.style.display='block';
+  document.getElementById('gwBoxName').innerText = window._gateway.name;
+  if(window._gateway.note) document.getElementById('gwBoxNote').innerText = window._gateway.note;
+  document.getElementById('gwBoxAmt').innerText = '৳' + _fmt(_feeDue());
+  document.querySelector('.pay-instr').style.display='none';
+  document.querySelector('.trx-wrap').style.display='none';
+  document.getElementById('btnTrxTxt').innerText = `Pay ৳${_fmt(_feeDue())} Online`;
+  document.getElementById('btnTrx').classList.add('on');
+  applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
 }
 
-// per-wallet instructions: numbered steps where {number} becomes the copyable number
+function _selPayDyn(w,ui=true){
+  if(!w) return;
+  _clearPaySelection();
+  window._payMode='manual'; selPayMethod=w.name; window._feeWallet=w;
+  if(ui!==false) _markPmCard('pm_'+w.id);
+  const prompt=document.getElementById('pmPickPrompt'); if(prompt) prompt.style.display='none';
+  const opts = walletOptions(w);
+  const ow=document.getElementById('pmOptsWrap'), oc=document.getElementById('pmOpts');
+  if(opts.length > 1){
+    document.getElementById('pmOptsName').innerText = w.name;
+    oc.innerHTML = opts.map((o,i)=>`<div class="opt-chip" data-i="${i}" onclick="_selPayOpt(${i})">${_escU(o.type||'Pay')}${o.timeLimit?`<em>${o.timeLimit} min</em>`:''}</div>`).join('');
+    ow.style.display='block';
+    const box=document.getElementById('payStepsList');
+    if(box) box.innerHTML='<p class="pay-locked-txt"><i class="fa-solid fa-hand-pointer"></i> Choose how you will pay with '+_escU(w.name)+' to see the number.</p>';
+  } else {
+    _selPayOpt(0);
+  }
+}
+function _selPayOpt(i){
+  const w = window._feeWallet; if(!w) return;
+  const o = walletOptions(w)[i]; if(!o) return;
+  window._feeOpt = o; selPayType = o.type || '';
+  document.querySelectorAll('#pmOpts .opt-chip').forEach(c=>c.classList.toggle('sel', Number(c.dataset.i)===i));
+  const instr=document.querySelector('.pay-instr'); if(instr) instr.classList.remove('locked');
+  const trx=document.querySelector('.trx-wrap'); if(trx) trx.classList.remove('locked');
+  renderPaySteps(w);
+  _startPayTimer(Number(o.timeLimit)||0);
+  // a pay-option note wins over the wallet note, which wins over the global note
+  const note = (o.note && String(o.note).trim()) ? o.note : (w.note || '');
+  if(String(note).trim()) applyFeePaymentNote(note, w.name + (o.type ? ' · ' + o.type : '') + ' note');
+  else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
+  if(typeof checkTrx === 'function') checkTrx();
+}
+
+// per-option instructions: {number} → copyable number, {amount} → exact fee, {method}, {time}
 function renderPaySteps(w){
   const box=document.getElementById('payStepsList');
   if(!box) return;
-  const num = walletCollectionNumber(w) || '-';
-  const method = payMethodLabel(w);
+  const o = window._feeOpt || walletOptions(w)[0] || {};
+  const num = _escU(o.number || walletCollectionNumber(w) || '-');
+  const method = _escU(o.type || payMethodLabel(w));
+  const amt = `<strong style="color:var(--p)">৳${_fmt(_feeDue())}</strong>`;
+  const time = o.timeLimit ? `<strong style="color:var(--txt)">${Number(o.timeLimit)} minutes</strong>` : '';
   const NUMBLOCK = `<div class="pay-num-wrap">
         <div class="pay-num" id="adminNumber">${num}</div>
         <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
       </div>`;
   const METHODTAG = `<strong style="color:var(--txt)" id="payMethodLine">${method}</strong>`;
-  const steps=(w && Array.isArray(w.instructions) ? w.instructions : []).filter(x=>String(x).trim());
+  const bk = w && w.kind === 'bank' && w.bank ? w.bank : null;
+  const BANK = bk ? `<div class="bank-box">${bk.bankName?`Bank: <b>${_escU(bk.bankName)}</b><br>`:''}${bk.accountName?`Account name: <b>${_escU(bk.accountName)}</b><br>`:''}${bk.branch?`Branch: <b>${_escU(bk.branch)}</b><br>`:''}${bk.routing?`Routing: <b>${_escU(bk.routing)}</b>`:''}</div>` : '';
+  const steps=(Array.isArray(o.instructions) ? o.instructions : []).filter(x=>String(x).trim());
 
-  // ── no custom steps: default 3 steps, using this wallet's own payment method ──
   if(!steps.length){
-    box.innerHTML = `<p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> using ${METHODTAG} to:</p>
-      ${NUMBLOCK}
-      <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.</p>
-      <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>`;
+    box.innerHTML = `<p>1. Send exactly ${amt} using ${METHODTAG} of ${_escU(w.name)} to:</p>
+      ${NUMBLOCK}${BANK}
+      ${time ? `<p>2. Please finish within ${time}.</p>` : ''}
+      <p>${time?3:2}. ${bk ? 'Copy the transaction / reference number from your bank app or deposit slip.' : 'Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.'}</p>
+      <p>${time?4:3}. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>`;
     _appendPayoutLine(box, w);
     return;
   }
-
-  // ── admin-written steps: {method} / {amount} / {number} become live widgets ──
   let n = 0;
   const body = steps.map((raw)=>{
-    const src = String(raw).replace(/[<>]/g,'');
+    const src = _escU(String(raw));
     const hasNum = /\{number\}/i.test(src);
     let label = src
-      .replace(/\{method\}/gi,'@@METHOD@@')
-      .replace(/\{amount\}/gi,'@@AMOUNT@@')
+      .replace(/\{method\}/gi, METHODTAG)
+      .replace(/\{amount\}/gi, amt)
+      .replace(/\{time\}/gi, time || 'the time shown')
       .replace(/\{number\}/gi,'')
       .replace(/[:\-–]\s*$/,'').trim();
-    if(!label) return NUMBLOCK;                     // a line holding only {number}
-    label = label.replace(/@@METHOD@@/g, METHODTAG)
-                 .replace(/@@AMOUNT@@/g, '<strong style="color:var(--txt)">Total Fee</strong>');
+    if(!label) return NUMBLOCK;
     n++;
     return `<p>${n}. ${label}</p>` + (hasNum ? NUMBLOCK : '');
   }).join('');
-
-  // the admin did not mention the method anywhere → show it as a small chip on top
-  const mentionsMethod = steps.some(x=>/\{method\}/i.test(String(x))) || steps.some(x=>new RegExp(method,'i').test(String(x)));
-  const chip = (!mentionsMethod && ((w && w.payMethod)||'').trim())
-    ? `<div class="pay-ms-chip"><i class="fa-solid fa-bolt"></i>Use <strong>${method}</strong> to send the fee</div>`
-    : '';
-
-  box.innerHTML = chip + body;
+  box.innerHTML = `<div class="pay-ms-chip"><i class="fa-solid fa-bolt"></i>${_escU(w.name)} · <strong>${method}</strong> · ${amt}</div>` + body + BANK;
   if(!document.getElementById('adminNumber')) box.insertAdjacentHTML('beforeend', NUMBLOCK);
   _appendPayoutLine(box, w);
 }
 
-// "your loan will be sent to 01XXXXXXXXX" — the receiving number from Step 4
-function _appendPayoutLine(box, w){
-  const recv = (document.getElementById('bankPhone')?.value || _lastBankPhone || '').trim();
-  const methodName = (w && w.name) ? w.name : 'this method';
+// "your loan will be sent to …" — the receiving account from Step 4
+function _appendPayoutLine(box){
+  const recv = _escU((document.getElementById('bankPhone')?.value || _lastBankPhone || '').trim());
+  const pw = window._activeWallet;
+  const via = _escU([pw ? pw.name : selWallet, selPayoutType].filter(Boolean).join(' · '));
   const line = recv
-    ? `<div class="pay-loan-to ok"><i class="fa-solid fa-circle-check"></i><span>Loan will be sent to <strong>${recv}</strong> (your receiving number at ${methodName})</span></div>`
-    : `<div class="pay-loan-to"><i class="fa-solid fa-triangle-exclamation"></i><span>Add your receiving number in Step 4 — the loan is sent there.</span></div>`;
+    ? `<div class="pay-loan-to ok"><i class="fa-solid fa-circle-check"></i><span>Your loan will be sent to <strong>${recv}</strong> (${via})</span></div>`
+    : `<div class="pay-loan-to"><i class="fa-solid fa-triangle-exclamation"></i><span>Add your receiving account in Step 4 — the loan is sent there.</span></div>`;
   box.insertAdjacentHTML('beforeend', line);
+}
+
+// start an online payment: the server computes the amount and returns the SSLCommerz page
+async function startOnlinePay(){
+  const user = _getUser(); if(!user?.phone){ showErrorModal('Session Expired', 'Please login again.'); nav('screen-login'); return; }
+  const appId = window._latestAppId || (window._latestApp && window._latestApp.id) || '';
+  if(!appId){ showErrorModal('Application Not Found', 'Please open your application again and retry.'); return; }
+  const btn = document.getElementById('btnTrx'); const html = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Opening secure payment…';
+  try{
+    const r = await fetch('/api/pay/init', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ appId, uid: user.phone, useBalance: appliedBalance > 0 }) });
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok || !j.url) throw new Error(j.error || 'Online payment could not be started. Please try a manual method.');
+    window.location.href = j.url;
+  }catch(e){
+    showErrorModal('Online Payment', e.message);
+    btn.disabled = false; btn.innerHTML = html;
+  }
+}
+// back from the payment page: ?pay=success|failed|cancelled&app=…
+function handlePayReturn(){
+  const q = new URLSearchParams(window.location.search);
+  const st = q.get('pay'); if(!st) return;
+  const app = q.get('app') || '';
+  history.replaceState(null, '', window.location.pathname);
+  if(st === 'success') showAlert('Payment Successful ✅', `Your fee for application ${appRef(app)} is paid and verified automatically. Our team is now reviewing your application.`, 'success');
+  else if(st === 'cancelled') showAlert('Payment Cancelled', 'You cancelled the online payment. No money was taken. You can pay again any time.', 'info');
+  else showAlert('Payment Not Completed', 'The online payment did not go through. If money was taken, it will be checked and returned automatically by the payment provider. You can try again or use a manual method.', 'error');
 }
 
 function applyFeePaymentNote(note, title){
@@ -4563,6 +4795,7 @@ async function loadDynamicConfig() {
       if(typeof renderFeeDisclosure === 'function') renderFeeDisclosure();
       window._feePaymentNoteTitle = cfg.feePaymentNoteTitle || 'Note';
       applyFeePaymentNote(cfg.feePaymentNote || '', cfg.feePaymentNoteTitle || 'Note');
+      loadGatewayState(cfg.gateway);
 
       // Legacy values are loaded into ADMIN only; no payment screen reads them —
       // the enabled Wallets list is the single source of truth.
@@ -4899,7 +5132,9 @@ window.saveApplicationToFirebase=async function(){
       address: document.getElementById('infoAddress').value,
       emergency1: {name:document.getElementById('c1Name').value,phone:document.getElementById('c1Phone').value,relation:selRel1},
       emergency2: {name:document.getElementById('c2Name').value,phone:document.getElementById('c2Phone').value,relation:selRel2},
-      wallet: selWallet, bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
+      wallet: selWallet, payoutAccountType: selPayoutType || '', payoutKind: (window._activeWallet && window._activeWallet.kind) || 'mobile',
+      ...(_payoutIsBank() ? { payoutBank: { accountName: document.getElementById('rcvAccName').value.trim(), bankName: document.getElementById('rcvBankName').value.trim(), branch: document.getElementById('rcvBranch').value.trim(), accountNumber: document.getElementById('bankPhone').value.trim() } } : {}),
+      bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
       status: 'Pending Fee Payment', submittedAt:new Date().toISOString(),
       ...(window._promoClaimed ? { promo: 'First installment free' } : {})
     }).then(ref => { window._latestAppId = ref.id; return ref; });
@@ -5200,9 +5435,10 @@ window.loadLiveFeed = async function() {
 
 // functions defined in this module but called from the classic script or from inline
 // onclick/onerror attributes must be on window, or those calls throw ReferenceError
-Object.assign(window, { walletCollectionNumber, walletReceivingNumber, logoFallback, _clearPaySelection, _selPayDyn, applyFeePaymentNote });
+Object.assign(window, { walletCollectionNumber, walletReceivingNumber, walletOptions, logoFallback, _clearPaySelection, _selPayDyn, _selPayOpt, _selGateway, _selWalletDyn, _selPayoutType, renderPayGrid, renderPaySteps, startOnlinePay, applyFeePaymentNote });
 
 loadWallets();
+handlePayReturn();
 loadDynamicConfig();
 
 document.addEventListener("DOMContentLoaded", () => {

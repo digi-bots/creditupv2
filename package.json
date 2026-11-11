@@ -1,0 +1,9 @@
+{
+  "name": "creditupv2",
+  "private": true,
+  "description": "Credit Up static site plus the online fee payment functions in /api",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  }
+}

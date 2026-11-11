@@ -269,6 +269,15 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .wbadge{font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--txt2);margin-left:5px;letter-spacing:.2px}
 .wbadge.or{background:rgba(255,140,66,.12);color:var(--orange)}
 
+.wuse{display:flex;flex-wrap:wrap;gap:8px}
+.wuse label{display:flex;align-items:center;gap:7px;padding:8px 11px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.025);font-size:12.5px;color:var(--txt);font-weight:600;cursor:pointer;letter-spacing:0}
+.wuse label em{font-style:normal;font-weight:500;color:var(--txt2);font-size:11px}
+.wuse input{accent-color:var(--p);width:15px;height:15px}
+.wopt{border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:9px;background:rgba(255,255,255,.02)}
+.wopt-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;font-size:12px;font-weight:800;color:var(--txt)}
+.wopt-h button{background:none;border:none;color:var(--red);cursor:pointer;font-size:13px}
+.gw-logos{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.gw-logos span{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.05);color:var(--txt2)}
 /* LOGO PREVIEW */
 .lp-wrap{display:flex;align-items:center;gap:8px;margin-top:7px}
 .lp-wrap img{width:36px;height:36px;border-radius:8px;background:#fff;padding:4px;object-fit:contain;border:1px solid var(--border)}
@@ -518,13 +527,29 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
 <!-- WALLETS -->
 <div class="sec" id="sec-wallets">
-  <div class="sec-head"><h2>Wallets & Payment Methods</h2><button class="btn btn-sm btn-p" onclick="openWM()"><i class="fa-solid fa-plus"></i>Add Wallet</button></div>
+  <div class="sec-head"><h2>Payment Methods</h2><button class="btn btn-sm btn-p" onclick="openWM()"><i class="fa-solid fa-plus"></i>Add Method</button></div>
 
   <div class="wleg">
     <div class="wleg-i"><i class="fa-solid fa-arrow-down-to-bracket" style="color:var(--orange)"></i><div><strong>Fee collection</strong><span>Users send the service fee to this number.</span></div></div>
     <div class="wleg-i"><i class="fa-solid fa-arrow-up-from-bracket" style="color:var(--p)"></i><div><strong>Loan disbursement</strong><span>Where you send the loan money. Each customer enters their own number in the application form.</span></div></div>
   </div>
 
+  <div class="cfg-blk" id="gwBlk" style="margin-bottom:14px">
+    <div class="cfg-t"><i class="fa-solid fa-bolt"></i>1 · Online payment (automatic)</div>
+    <div style="font-size:12px;color:var(--txt2);line-height:1.7;margin-bottom:10px">
+      Users pay the fee on the SSLCommerz page (bKash, Nagad, Rocket, Visa, Mastercard, net banking). The payment is checked with SSLCommerz and the application moves to <strong style="color:var(--p)">Fee Verified</strong> on its own, so no TrxID is needed.
+      The store ID and password are kept on the server (Vercel settings), never here.
+    </div>
+    <div id="gwStatus" class="fnote" style="margin-bottom:10px"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking the server…</div>
+    <div class="fgrid">
+      <div class="fg"><label style="display:flex;align-items:center;gap:9px"><label class="tog"><input type="checkbox" id="gwEn"><span class="tog-sl"></span></label>Show online payment to users</label></div>
+      <div class="fg"><label>Name shown to users</label><input id="gwName" placeholder="Pay Online"></div>
+      <div class="fg full"><label>Short note</label><input id="gwNote" maxlength="160" placeholder="e.g. Instant verification. bKash, Nagad, Rocket, Visa and Mastercard accepted."></div>
+      <div class="fg full"><label>Logo shown to users <span style="color:var(--txt2);font-weight:500">(optional URL)</span></label><input id="gwLogo" placeholder="https://..."></div>
+    </div>
+    <button class="btn btn-sm btn-p" style="margin-top:10px" onclick="saveGateway()"><i class="fa-solid fa-floppy-disk"></i>Save online payment</button>
+  </div>
+  <div class="cfg-t" style="margin:6px 0 10px"><i class="fa-solid fa-hand-holding-dollar"></i>2 · Manual methods <span style="font-weight:500;color:var(--txt2);font-size:11px">· users send money and submit the TrxID, you verify it</span></div>
   <div id="walletRows"><div style="text-align:center;color:var(--txt2);padding:24px;font-size:12px">Loading...</div></div>
 
   <div class="cfg-blk" id="walletMigrateBlock" style="margin-top:12px;display:none;">
@@ -797,7 +822,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
 <div class="mov" id="moWallet">
 <div class="mo mo-md">
-  <div class="mo-h"><h3 id="wmoT">Add Wallet</h3><button class="mo-x" onclick="closeMo('moWallet')">✕</button></div>
+  <div class="mo-h"><h3 id="wmoT">Add Payment Method</h3><button class="mo-x" onclick="closeMo('moWallet')">✕</button></div>
   <div class="mo-b">
     <input type="hidden" id="wDId">
     <div class="wprev" id="wPrev">
@@ -805,7 +830,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <img id="wPrevImg" src="" alt="" style="display:none" onerror="this.style.display='none';document.getElementById('wPrevPh').style.display='flex'">
       <div class="wprev-t"><strong id="wPrevName">New wallet</strong><span>This is how users will see it</span></div>
     </div>
-    <div class="wsec-h"><i class="fa-solid fa-arrow-down-to-bracket"></i>Fee collection <em>where the customer sends the fee</em></div>
+    <div class="wsec-h"><i class="fa-solid fa-id-card"></i>Method <em>name, logo and type</em></div>
     <div class="fgrid">
       <div class="fg full">
         <label><span class="req">*</span> Logo <span style="color:var(--txt2);font-weight:500">(upload a file or paste a URL)</span></label>
@@ -818,39 +843,50 @@ tr:hover td{background:rgba(255,255,255,.015)}
         </div>
         <div class="hint" id="wLgHint">Upload straight from your phone/PC (saved to Cloudinary) or paste any direct image link. Max 400 KB.</div>
       </div>
-      <div class="fg"><label><span class="req">*</span> Method name</label><input id="wNm" placeholder="e.g. Bkash" oninput="prevWL()"></div>
-      <div class="fg"><label><span class="req">*</span> Fee collection number</label><input id="wCol" placeholder="01XXXXXXXXX" type="tel" inputmode="numeric"></div>
-      <div class="fg full"><label>Pay method <span style="color:var(--txt2);font-weight:500">(what the user must choose)</span></label>
-        <select id="wType">
-          <option value="">Show nothing — general</option>
-          <option value="Send Money">Send Money</option>
-          <option value="Cash Out">Cash Out</option>
-          <option value="Payment">Payment</option>
-          <option value="Bank Transfer">Bank Transfer</option>
+      <div class="fg"><label><span class="req">*</span> Method name</label><input id="wNm" placeholder="e.g. bKash" oninput="prevWL()"></div>
+      <div class="fg"><label>Type</label>
+        <select id="wKind" onchange="onWKind()">
+          <option value="mobile">Mobile banking (bKash, Nagad, Rocket, Upay…)</option>
+          <option value="bank">Bank account</option>
         </select>
       </div>
-      <div class="fg full"><label>Short note shown to the user <span style="color:var(--txt2);font-weight:500">(optional)</span></label>
-        <input id="wNote" maxlength="140" placeholder="e.g. Send Money only — add your phone number in reference">
-      </div>
-      <div class="fg full">
-        <label>Payment steps for this wallet <span style="color:var(--txt2);font-weight:500">(optional · one step per line, shown on the fee page)</span></label>
-        <textarea id="wInstr" rows="4" maxlength="600" placeholder="Open Bkash and choose Send Money&#10;Enter the number shown above&#10;Send the exact Total Fee amount&#10;Copy the TrxID from the SMS"></textarea>
-        <div class="hint">Placeholders: <strong style="color:var(--p)">{method}</strong> → the pay method you selected above, <strong style="color:var(--p)">{number}</strong> → the fee collection number (with a copy button), <strong style="color:var(--p)">{amount}</strong> → the Total Fee. Leave empty to use the default 3 steps — they already show the selected method.</div>
+      <div class="fg full"><label>Use this method for</label>
+        <div class="wuse">
+          <label><input type="checkbox" id="wUseFee" checked onchange="onWKind()"> Fee collection <em>users pay the fee here</em></label>
+          <label><input type="checkbox" id="wUsePayout" checked onchange="onWKind()"> Loan receiving <em>users can get the loan here</em></label>
+        </div>
       </div>
     </div>
-    <div class="wsec-h"><i class="fa-solid fa-arrow-up-from-bracket"></i>Loan disbursement <em>where you send the loan money</em></div>
-    <div class="fnote">
-      The customer's own receiving number is <strong>collected in the loan application (Step 4)</strong>, so you do not need to enter per-customer numbers here.
-    </div>
-    <div class="fgrid">
-      <div class="fg full"><label>Account category</label>
-        <select id="wCat">
-          <option value="Personal">Personal</option>
-          <option value="Agent">Agent</option>
-          <option value="Merchant">Merchant</option>
-          <option value="Bank Account">Bank Account</option>
-        </select>
+
+    <div id="wBankBlk" style="display:none">
+      <div class="wsec-h"><i class="fa-solid fa-building-columns"></i>Your bank account <em>shown to users who pay by bank</em></div>
+      <div class="fgrid">
+        <div class="fg"><label>Bank name</label><input id="wBankName" placeholder="e.g. Dutch-Bangla Bank"></div>
+        <div class="fg"><label>Account name</label><input id="wAccName" placeholder="e.g. Credit Up Ltd."></div>
+        <div class="fg"><label>Branch</label><input id="wBranch" placeholder="e.g. Uttara"></div>
+        <div class="fg"><label>Routing number</label><input id="wRouting" placeholder="optional" inputmode="numeric"></div>
       </div>
+    </div>
+
+    <div id="wFeeBlk">
+      <div class="wsec-h"><i class="fa-solid fa-arrow-down-to-bracket"></i>Pay options <em>each one has its own number, note, steps and time</em></div>
+      <div class="fnote">Add one row per way of paying, e.g. <strong>Send Money</strong> to a personal number, <strong>Cash Out</strong> to an agent number, <strong>Payment</strong> to a merchant number. In steps you can write <strong style="color:var(--p)">{amount}</strong> (the exact fee), <strong style="color:var(--p)">{number}</strong> (number with copy button), <strong style="color:var(--p)">{method}</strong> and <strong style="color:var(--p)">{time}</strong>.</div>
+      <div id="wOpts"></div>
+      <button class="btn btn-s btn-sm" type="button" onclick="addWOpt()" style="margin-top:4px"><i class="fa-solid fa-plus"></i>Add pay option</button>
+    </div>
+
+    <div id="wPayoutBlk">
+      <div class="wsec-h"><i class="fa-solid fa-arrow-up-from-bracket"></i>Loan receiving <em>what the user can choose</em></div>
+      <div id="wPayoutMobile">
+        <div class="fg full"><label>Account types users can pick</label>
+          <div class="wuse">
+            <label><input type="checkbox" class="wAcc" value="Personal" checked> Personal</label>
+            <label><input type="checkbox" class="wAcc" value="Agent"> Agent</label>
+            <label><input type="checkbox" class="wAcc" value="Merchant"> Merchant</label>
+          </div>
+        </div>
+      </div>
+      <div class="fnote" id="wPayoutBankNote" style="display:none;margin-top:8px">Users will enter their account name, account number, bank name and branch.</div>
     </div>
     <div class="wsec-h"><i class="fa-solid fa-sliders"></i>Visibility</div>
     <div class="fgrid">
@@ -862,7 +898,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
   </div>
-  <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moWallet')">Cancel</button><button class="btn btn-p" onclick="saveWallet()" id="wSB"><i class="fa-solid fa-floppy-disk"></i>Save Wallet</button></div>
+  <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moWallet')">Cancel</button><button class="btn btn-p" onclick="saveWallet()" id="wSB"><i class="fa-solid fa-floppy-disk"></i>Save</button></div>
 </div>
 </div>
 
@@ -889,6 +925,34 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div id="loader"><div class="lr"></div><div class="lt">Loading...</div></div>
 
 <script>
+// ══ ONLINE GATEWAY (SSLCommerz) ══
+async function loadGateway(){
+  const cfg = (await window._getDoc('siteConfig','main')) || {};
+  const gw = cfg.gateway || {};
+  const g=id=>document.getElementById(id);
+  g('gwEn').checked = gw.enabled === true;
+  g('gwName').value = gw.name || 'Pay Online';
+  g('gwNote').value = gw.note || '';
+  g('gwLogo').value = gw.logoUrl || '';
+  const st = g('gwStatus');
+  try{
+    const r = await fetch('/api/pay/status', {cache:'no-store'});
+    const j = await r.json();
+    st.innerHTML = j.configured
+      ? `<i class="fa-solid fa-circle-check" style="color:var(--p)"></i> Server is ready · <strong>${j.sandbox ? 'Sandbox (test) mode' : 'Live mode'}</strong>`
+      : `<i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i> Not set up yet. Missing on Vercel: <strong>${(j.missing||[]).join(', ')}</strong>. Users will not see online payment until this is done.`;
+  }catch(e){
+    st.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i> The payment server is not reachable from this page (it only runs on the Vercel deployment).';
+  }
+}
+async function saveGateway(){
+  const g=id=>document.getElementById(id);
+  const gw = { enabled:g('gwEn').checked, name:g('gwName').value.trim()||'Pay Online', note:g('gwNote').value.trim(), logoUrl:g('gwLogo').value.trim(), updatedAt:new Date().toISOString() };
+  showL(true); await window._setDoc('siteConfig','main',{gateway:gw}); showL(false);
+  await logAct(`Online payment ${gw.enabled?'enabled':'disabled'}`,'config','gateway');
+  toast('Online payment saved ✓');
+}
+
 // ══ CONFIG ══════════════════════════════════════════
 const PG = 20;
 const TITLES = {dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',emi:'EMI Calculator',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Admin Settings'};
@@ -1274,7 +1338,9 @@ function viewApp(id){
     {l:'Bank Phone',v:a.bankPhone},{l:'Status',v:sb(a.status)},{l:'Risk Score',v:riskBadge(riskScore(a))},{l:'Promo',v:a.promo?'🔥 '+a.promo:'-'},
     {l:'Contact 1',v:`${a.emergency1?.name||'-'} (${a.emergency1?.phone||''}) — ${a.emergency1?.relation||''}`,full:true},
     {l:'Contact 2',v:`${a.emergency2?.name||'-'} (${a.emergency2?.phone||''}) — ${a.emergency2?.relation||''}`,full:true},
+    {l:'Receive via',v:[a.wallet,a.payoutAccountType].filter(Boolean).join(' · ')||'-'},
     {l:'Payout number',v:a.payout?.number||a.bankPhone||'-',c:'mono'},
+    ...(a.payoutBank ? [{l:'Bank account',v:[a.payoutBank.accountName,a.payoutBank.bankName,a.payoutBank.branch].filter(Boolean).join(' · ')||'-',full:true}] : []),
     {l:'Payout status',v:a.payout?.number ? `Sent ${a.payout.date?fd(a.payout.date):''} ${a.payout.ref?'· '+a.payout.ref:''}` : 'Not recorded',c:a.payout?.number?'':'muted'},
     {l:'Submitted',v:fd(a.submittedAt)},{l:'Remarks',v:a.adminRemark||'-'},
   ];
@@ -1423,7 +1489,7 @@ function renderTP(){
       const times=(k && k!=='BALANCE_PAYMENT') ? (dup[k]||0) : 0;
       const dupBadge = times>1 ? `<span class="wbadge or" title="This TrxID was submitted ${times} times">DUP ×${times}</span>` : '';
       const appRef = r.appId ? `<span class="wbadge" title="Linked application">CU-${String(r.appId).slice(-6).toUpperCase()}</span>` : '';
-      return `<tr><td class="mono">${r.trxId||'-'} ${dupBadge}</td><td class="mono">${r.uid||'-'}</td><td>${r.payMethod||'-'}${appRef}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`;
+      return `<tr><td class="mono">${r.trxId||'-'} ${dupBadge}</td><td class="mono">${r.uid||'-'}</td><td>${r.payMethod||'-'}${r.payType?` <span style="font-size:10px;color:var(--txt2)">(${r.payType})</span>`:''}${r.gateway?' <span class="wbadge">AUTO</span>':''}${appRef}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`;
     }).join(''):'<tr class="empty"><td colspan="7">No transactions found</td></tr>';
   });
 }
@@ -1467,7 +1533,7 @@ function viewTrx(id){
   const t=findById('transactions',id); if(!t){toast('Not found','e');return;} _docId=t._id;
   document.getElementById('tGrid').innerHTML=[
     {l:'Transaction ID',v:t.trxId,c:'mono'},{l:'Phone / UID',v:t.uid,c:'mono'},
-    {l:'Payment Method',v:t.payMethod},{l:'Status',v:sb(t.status||'Pending')},
+    {l:'Payment Method',v:[t.payMethod,t.payType].filter(Boolean).join(' · ')},{l:'Status',v:sb(t.status||'Pending')},
     {l:'Fee sent to (number)',v:t.collectionNumber||'-',c:'mono'},
     {l:'Payout number entered in app',v:t.receivingNumber||'-',c:'mono'},
     {l:'Total Fee Required',v:'৳'+fa(t.totalFee || t.amount || 0)},
@@ -1629,6 +1695,7 @@ const LEGACY_LOGOS = {
 async function loadWallets(){
   _D.wallets = await _get('wallets','order','asc');
   renderWallets();
+  loadGateway();
   renderLegacyMigration();
 }
 
@@ -1700,14 +1767,15 @@ function renderWallets(){
     return;
   }
   document.getElementById('walletRows').innerHTML=w.map((wl,i)=>{
-    const col = wl.collectionNumber || wl.paymentNumber || '-';
-    const cat = wl.accountCategory ? `<span class="wbadge">${wl.accountCategory}</span>` : '';
-    const typ = wl.payMethod ? `<span class="wbadge or">${wl.payMethod}</span>` : '';
+    const opts = walletOptions(wl);
+    const typ = opts.map(o=>`<span class="wbadge or">${_escA(o.type)}${o.timeLimit?' · '+o.timeLimit+'m':''}</span>`).join('');
+    const cat = wl.useForPayout!==false ? `<span class="wbadge">Receive: ${_escA((wl.payoutAccountTypes&&wl.payoutAccountTypes.length?wl.payoutAccountTypes:[wl.accountCategory||'Personal']).join(' / '))}</span>` : '';
+    const col = wl.useForFee===false ? '<span style="opacity:.6">loan receiving only</span>' : (opts.map(o=>_escA(o.number)).join(' · ') || '-') + ' <span style="opacity:.55;font-size:9.5px">(fee)</span>';
     return `<div class="wrow">
       ${wl.logoUrl?`<img class="wimg" src="${wl.logoUrl}" alt="${wl.name}" onerror="this.style.display='none'">`:`<div class="wph"><i class="fa-solid fa-wallet"></i></div>`}
       <div class="wi">
         <div class="wn">${wl.name}${!wl.enabled?'<span class="wbadge or">OFF</span>':''}${typ}${cat}</div>
-        <div class="wnum">${col} <span style="opacity:.55;font-size:9.5px">(fee)</span></div>
+        <div class="wnum">${col}</div>
       </div>
       <label class="tog" style="margin-left:auto"><input type="checkbox" ${wl.enabled?'checked':''} onchange="togW('${wl._id}',this.checked)"><span class="tog-sl"></span></label>
       <div class="wa">
@@ -1719,34 +1787,81 @@ function renderWallets(){
     </div>`;
   }).join('');
 }
-function openWM(){
-  document.getElementById('wmoT').innerText='Add Wallet';
-  document.getElementById('wDId').value='';
-  ['wNm','wLg','wCol','wNote','wInstr'].forEach(id=>document.getElementById(id).value='');
-  _wLogoPath=''; _wLogoUploading=false;
-  document.getElementById('wType').value='';
-  document.getElementById('wCat').value='Personal';
-  document.getElementById('wOrd').value=_D.wallets.length+1;
-  document.getElementById('wEn').checked=true;
-  prevWL();
-  openMo('moWallet');
+const PAY_TYPES = ['Send Money','Cash Out','Payment','Bank Transfer'];
+const _escA = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// one wallet → its list of pay options (older wallets only had one number)
+function walletOptions(w){
+  if(w && Array.isArray(w.methods) && w.methods.length) return w.methods;
+  const num = w ? (w.collectionNumber || w.paymentNumber || '') : '';
+  if(!num) return [];
+  return [{ type: w.payMethod || 'Send Money', number: num, note: w.note || '', instructions: Array.isArray(w.instructions) ? w.instructions : [], timeLimit: 0 }];
 }
+function _wOptRow(o, i){
+  const opts = PAY_TYPES.map(t=>`<option ${o.type===t?'selected':''}>${t}</option>`).join('');
+  return `<div class="wopt" data-i="${i}">
+    <div class="wopt-h"><span><i class="fa-solid fa-hashtag" style="color:var(--p)"></i> Pay option ${i+1}</span><button type="button" onclick="this.closest('.wopt').remove();_renumWOpts()" title="Remove"><i class="fa-solid fa-trash"></i></button></div>
+    <div class="fgrid">
+      <div class="fg"><label>Pay type</label><select class="o-type">${opts}</select></div>
+      <div class="fg"><label><span class="req">*</span> Number / account no.</label><input class="o-num" value="${_escA(o.number)}" placeholder="01XXXXXXXXX"></div>
+      <div class="fg"><label>Time to pay (minutes)</label><input class="o-time" type="number" min="0" max="180" value="${Number(o.timeLimit)||''}" placeholder="e.g. 15 (0 = no timer)"></div>
+      <div class="fg"><label>Short note</label><input class="o-note" maxlength="140" value="${_escA(o.note)}" placeholder="e.g. Send Money only"></div>
+      <div class="fg full"><label>Steps <span style="color:var(--txt2);font-weight:500">(one per line, optional)</span></label>
+        <textarea class="o-steps" rows="3" maxlength="600" placeholder="Open the app and choose {method}&#10;Send exactly {amount} to {number}&#10;Finish within {time}&#10;Copy the TrxID from the SMS">${_escA((o.instructions||[]).join('\n'))}</textarea></div>
+    </div>
+  </div>`;
+}
+function _renumWOpts(){ document.querySelectorAll('#wOpts .wopt').forEach((r,i)=>{ r.dataset.i=i; const h=r.querySelector('.wopt-h span'); if(h) h.innerHTML=`<i class="fa-solid fa-hashtag" style="color:var(--p)"></i> Pay option ${i+1}`; }); }
+function addWOpt(o){
+  const box=document.getElementById('wOpts');
+  const kind=document.getElementById('wKind').value;
+  box.insertAdjacentHTML('beforeend', _wOptRow(o || {type: kind==='bank'?'Bank Transfer':'Send Money', number:'', note:'', instructions:[], timeLimit:''}, box.children.length));
+}
+function _readWOpts(){
+  return [...document.querySelectorAll('#wOpts .wopt')].map(r=>({
+    type: r.querySelector('.o-type').value,
+    number: r.querySelector('.o-num').value.trim(),
+    timeLimit: Math.max(0, Math.min(180, parseInt(r.querySelector('.o-time').value)||0)),
+    note: r.querySelector('.o-note').value.trim(),
+    instructions: r.querySelector('.o-steps').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,8)
+  })).filter(o=>o.number);
+}
+function onWKind(){
+  const bank = document.getElementById('wKind').value === 'bank';
+  const fee = document.getElementById('wUseFee').checked;
+  const pay = document.getElementById('wUsePayout').checked;
+  document.getElementById('wBankBlk').style.display = (bank && fee) ? 'block' : 'none';
+  document.getElementById('wFeeBlk').style.display = fee ? 'block' : 'none';
+  document.getElementById('wPayoutBlk').style.display = pay ? 'block' : 'none';
+  document.getElementById('wPayoutMobile').style.display = bank ? 'none' : 'block';
+  document.getElementById('wPayoutBankNote').style.display = bank ? 'block' : 'none';
+}
+function _fillWForm(wl){
+  const g=id=>document.getElementById(id);
+  g('wDId').value = wl?._id || '';
+  g('wNm').value = wl?.name || '';
+  g('wLg').value = wl?.logoUrl || '';
+  g('wKind').value = wl?.kind === 'bank' ? 'bank' : 'mobile';
+  g('wUseFee').checked = wl ? wl.useForFee !== false : true;
+  g('wUsePayout').checked = wl ? wl.useForPayout !== false : true;
+  g('wBankName').value = wl?.bank?.bankName || '';
+  g('wAccName').value = wl?.bank?.accountName || '';
+  g('wBranch').value = wl?.bank?.branch || '';
+  g('wRouting').value = wl?.bank?.routing || '';
+  const acc = wl ? (Array.isArray(wl.payoutAccountTypes) && wl.payoutAccountTypes.length ? wl.payoutAccountTypes : [wl.accountCategory || 'Personal']) : ['Personal'];
+  document.querySelectorAll('.wAcc').forEach(c=>c.checked = acc.includes(c.value));
+  g('wOpts').innerHTML='';
+  const opts = wl ? walletOptions(wl) : [];
+  if(opts.length) opts.forEach(o=>addWOpt(o)); else addWOpt();
+  _wLogoPath = wl?.logoStoragePath || ''; _wLogoUploading=false;
+  g('wOrd').value = wl ? (wl.order||1) : _D.wallets.length+1;
+  g('wEn').checked = wl ? !!wl.enabled : true;
+  onWKind(); prevWL();
+}
+function openWM(){ document.getElementById('wmoT').innerText='Add Payment Method'; _fillWForm(null); openMo('moWallet'); }
 function editW(id){
   const wl=findById('wallets',id); if(!wl){toast('Not found','e');return;}
-  document.getElementById('wmoT').innerText='Edit Wallet';
-  document.getElementById('wDId').value=wl._id;
-  document.getElementById('wNm').value=wl.name||'';
-  document.getElementById('wLg').value=wl.logoUrl||'';
-  document.getElementById('wCol').value=wl.collectionNumber||wl.paymentNumber||'';
-  document.getElementById('wType').value=wl.payMethod||'';
-  document.getElementById('wCat').value=wl.accountCategory||'Personal';
-  document.getElementById('wNote').value=wl.note||'';
-  document.getElementById('wInstr').value=Array.isArray(wl.instructions)?wl.instructions.join('\n'):(wl.instructions||'');
-  _wLogoPath=wl.logoStoragePath||'';
-  document.getElementById('wOrd').value=wl.order||1;
-  document.getElementById('wEn').checked=!!wl.enabled;
-  prevWL();
-  openMo('moWallet');
+  document.getElementById('wmoT').innerText='Edit Payment Method';
+  _fillWForm(wl); openMo('moWallet');
 }
 // wallet logo: either a pasted URL or an uploaded file (uploaded to Cloudinary)
 let _wLogoPath = '';   // Cloudinary public_id of an uploaded logo (empty for a pasted URL)
@@ -1802,37 +1917,41 @@ function prevWL(){
   document.getElementById('wPrevName').innerText = n || 'New wallet';
 }
 async function saveWallet(){
-  const n   = document.getElementById('wNm').value.trim();
-  const l   = document.getElementById('wLg').value.trim();
-  const col = document.getElementById('wCol').value.trim();
-  const typ = document.getElementById('wType').value;
-  const cat = document.getElementById('wCat').value;
-  const note= document.getElementById('wNote').value.trim();
-  const o   = parseInt(document.getElementById('wOrd').value)||_D.wallets.length+1;
-  const e   = document.getElementById('wEn').checked;
-  const id  = document.getElementById('wDId').value;
+  const g=id=>document.getElementById(id);
+  const n=g('wNm').value.trim(), l=g('wLg').value.trim();
+  const kind=g('wKind').value, useFee=g('wUseFee').checked, usePay=g('wUsePayout').checked;
+  const o=parseInt(g('wOrd').value)||_D.wallets.length+1, e=g('wEn').checked, id=g('wDId').value;
+  const methods = useFee ? _readWOpts() : [];
+  const acc = [...document.querySelectorAll('.wAcc')].filter(c=>c.checked).map(c=>c.value);
   if(_wLogoUploading){ toast('Please wait — the logo is still uploading','w'); return; }
-  if(!n || !l || !col){ toast('Name, logo and fee collection number are required','w'); return; }
-  const instr = document.getElementById('wInstr').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,8);
-  const b=document.getElementById('wSB');
+  if(!n || !l){ toast('Name and logo are required','w'); return; }
+  if(!useFee && !usePay){ toast('Tick fee collection, loan receiving or both','w'); return; }
+  if(useFee && !methods.length){ toast('Add at least one pay option with a number','w'); return; }
+  if(usePay && kind==='mobile' && !acc.length){ toast('Pick at least one account type for loan receiving','w'); return; }
+  const first = methods[0] || {};
+  const b=g('wSB');
   b.innerHTML='<div class="lr" style="width:13px;height:13px;border-width:2px"></div>'; b.disabled=true;
   const d={
     name:n, logoUrl:l, enabled:e, order:o, updatedAt:new Date().toISOString(),
-    collectionNumber:col,
-    paymentNumber:col,          // legacy field kept in sync
-    payMethod:typ, accountCategory:cat, note:note,
-    instructions: instr,
+    kind, useForFee:useFee, useForPayout:usePay,
+    methods,
+    payoutAccountTypes: kind==='bank' ? ['Bank Account'] : acc,
+    bank: kind==='bank' ? { bankName:g('wBankName').value.trim(), accountName:g('wAccName').value.trim(), branch:g('wBranch').value.trim(), routing:g('wRouting').value.trim() } : null,
+    // legacy fields kept in sync with the first pay option
+    collectionNumber:first.number||'', paymentNumber:first.number||'',
+    payMethod:first.type||'', accountCategory:(kind==='bank'?'Bank Account':(acc[0]||'Personal')),
+    note:first.note||'', instructions:first.instructions||[],
     logoStoragePath: _wLogoPath || ''
   };
   try{
     if(id) await window._updateDoc(id,'wallets',d);
     else   await window._addDoc('wallets',{...d,createdAt:new Date().toISOString()});
     closeMo('moWallet');
-    await logAct(`Wallet ${id?'updated':'added'}: ${n}`,'wallet',id||'new');
-    toast(id?'Wallet updated':'Wallet added');
+    await logAct(`Payment method ${id?'updated':'added'}: ${n}`,'wallet',id||'new');
+    toast(id?'Payment method updated':'Payment method added');
     loadWallets();
   }catch(err){ toast(err.message,'e'); }
-  b.innerHTML='<i class="fa-solid fa-floppy-disk"></i>Save Wallet'; b.disabled=false;
+  b.innerHTML='<i class="fa-solid fa-floppy-disk"></i>Save'; b.disabled=false;
 }
 async function togW(id,en){ await window._updateDoc(id,'wallets',{enabled:en}); toast(en?'Enabled':'Disabled'); loadWallets(); }
 async function mvW(i,dir){ const ni=i+dir; if(ni<0||ni>=_D.wallets.length)return; const w=[..._D.wallets];[w[i],w[ni]]=[w[ni],w[i]]; await Promise.all(w.map((x,j)=>window._updateDoc(x._id,'wallets',{order:j+1}))); loadWallets(); toast('Order updated'); }
