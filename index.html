@@ -3960,7 +3960,7 @@ function _clearUserSession(){
   _lastBankPhone = ''; _savedApp = null; _savedNid = '';
   nidFrontUrl = ''; nidBackUrl = ''; nidFrontOk = false; nidBackOk = false;
   pendingLoginUser = null;
-  window._latestApp = null; window._latestAppId = null; window._userDocId = null;
+  window._latestApp = null; window._latestAppId = null; window._pendingFeeApp = null; window._userDocId = null;
   window._userRealBalance = 0; window._promoClaimed = false; window._balanceAdjustUsed = false;
   const hb = document.getElementById('headerBalance'); if(hb) hb.innerText = '৳ ••••';
   const nl = document.getElementById('notifListContainer'); if(nl) nl.innerHTML = '';
@@ -3986,18 +3986,15 @@ function startNewApplication(){
   }
   const u = _getUser();
   if(!u) { nav('screen-login'); return; }
-  if(window._latestApp && window._latestApp.status === 'Pending Fee Payment') {
+  // the only thing that blocks a new application: an earlier application whose fee is still unpaid
+  const pending = window._pendingFeeApp || (window._latestApp && window._latestApp.status === 'Pending Fee Payment' ? window._latestApp : null);
+  if(pending) {
     // OK takes the user straight to the fee page of that unpaid application
-    const pending = window._latestApp;
     showAlert('Action Required', 'Please pay the fee for your previous application first. Tap OK to go to its payment page.', 'error', () => {
       window._latestAppId = pending.id || window._latestAppId;
       _restoreAppState(pending);
       goToFeePayment();
     }, true);
-    return;
-  }
-  if(window._latestApp && window._latestApp.status === 'TrxID Submitted') {
-    showAlert('Verification Pending', 'Please wait for your current payment to be verified.', 'info');
     return;
   }
   // returning users keep their previous details — policy must still be accepted
@@ -5029,10 +5026,12 @@ window.loadUserDashboardData = async function() {
     const card = document.getElementById('userStatusCard'), mainBtn = document.getElementById('mainBorrowBtn');
     const title = document.getElementById('statusCardTitle'), desc = document.getElementById('statusCardDesc');
     const iconEl = document.getElementById('statusCardIcon'), iconBox = card.querySelector('.status-icon-box');
-    card.style.display = 'none'; mainBtn.style.display = 'flex'; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
+    card.style.display = 'none'; mainBtn.style.display = 'flex'; window._pendingFeeApp = null; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
     if(!appSnap.empty) {
       const apps = appSnap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
       const latestApp = apps[0]; window._latestApp = latestApp;
+      // newest application (any, not only the latest) whose fee is still unpaid
+      window._pendingFeeApp = apps.find(x => x.status === 'Pending Fee Payment') || null;
       const statusMap = {
         'Pending Fee Payment': { icon: 'fa-hourglass-half', title: 'Fee Payment Pending', desc: 'Tap to pay processing fee', color: 'var(--orange)', bg: 'rgba(255,140,66,.15)' },
         'TrxID Submitted':     { icon: 'fa-circle-check',   title: 'Verification Pending', desc: 'Tap to view verification status', color: 'var(--blue)',   bg: 'rgba(77,143,255,.15)' },
