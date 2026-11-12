@@ -1,0 +1,76 @@
+rules_version = '2';
+// Credit Up — Firestore security rules.
+// Paste this whole file into Firebase Console → Firestore Database → Rules, then press Publish.
+//
+// Who is who:
+//   • a user signs in with phone + password; their Firebase Auth UID is their phone number (e.g. 1711110013)
+//   • an admin is a Firebase Auth e-mail account whose UID has a document in the "admins" collection
+//   • the server functions in /api use the Admin SDK and are not limited by these rules
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function me() { return request.auth.uid; }
+    function onlyChanges(keys) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys); }
+
+    // admins may read and change everything
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // public settings the app needs before login
+    match /siteConfig/{id}  { allow read: if true; }
+    match /wallets/{id}     { allow read: if true; }
+    match /broadcasts/{id}  { allow read: if true; }
+
+    // an admin can check that they are an admin; the list itself is edited only in the Firebase console
+    match /admins/{uid}     { allow get: if signedIn() && uid == me(); }
+
+    // profiles: created by the server; a user reads their own and may change only harmless fields
+    match /users/{id} {
+      allow read: if signedIn() && resource.data.phone == me();
+      allow update: if signedIn() && resource.data.phone == me()
+        && onlyChanges(['notifSeenAt', 'balanceAdjustUsed', 'balanceAdjustAt'])
+        && (!('balanceAdjustUsed' in request.resource.data) || request.resource.data.balanceAdjustUsed == true);
+    }
+
+    // loan applications: a user creates and reads their own; only "fee sent" may be set by them
+    match /applications/{id} {
+      allow read: if signedIn() && resource.data.uid == me();
+      allow create: if signedIn() && request.resource.data.uid == me()
+        && request.resource.data.status == 'Pending Fee Payment';
+      allow update: if signedIn() && resource.data.uid == me()
+        && onlyChanges(['status', 'statusUpdatedAt'])
+        && resource.data.status == 'Pending Fee Payment'
+        && request.resource.data.status == 'TrxID Submitted';
+    }
+
+    // fee payments: a user submits and reads their own; verification is admin-only.
+    // A TrxID is stored as "trx_<TRXID>", so the same TrxID can never be submitted twice.
+    match /transactions/{id} {
+      allow get: if signedIn() && (resource == null || resource.data.uid == me());
+      allow list: if signedIn() && resource.data.uid == me();
+      allow create: if signedIn() && request.resource.data.uid == me()
+        && request.resource.data.status == 'Pending';
+    }
+
+    // notifications: a user sees their own and may add notes to their own list
+    match /user_notifications/{id} {
+      allow read: if signedIn() && resource.data.uid == me();
+      allow create: if signedIn() && request.resource.data.uid == me();
+    }
+
+    // support chat: one conversation per user
+    match /support_chats/{id} {
+      allow read: if signedIn() && resource.data.uid == me();
+      allow create: if signedIn() && request.resource.data.uid == me();
+      allow update: if signedIn() && resource.data.uid == me() && request.resource.data.uid == me();
+    }
+    match /support_tickets/{id} {
+      allow create: if signedIn() && request.resource.data.uid == me();
+    }
+
+    // everything else (admin, gatewayPayments, activity log, …) is admin / server only
+  }
+}

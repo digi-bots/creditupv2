@@ -373,11 +373,13 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div class="lbox">
   <div class="lbox-logo">Credit <span>Up</span></div>
   <div class="lbox-sub">Advanced Hybrid Admin Panel</div>
-  <label class="l-lbl">Admin Password</label>
-  <input class="l-inp" type="password" id="lPass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
-  <button class="btn-login" onclick="doLogin()"><i class="fa-solid fa-right-to-bracket"></i>&nbsp;Login Securely</button>
+  <label class="l-lbl">Admin Email</label>
+  <input class="l-inp" type="email" id="lEmail" placeholder="admin@example.com" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('lPass').focus()">
+  <label class="l-lbl">Password</label>
+  <input class="l-inp" type="password" id="lPass" placeholder="Enter admin password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+  <button class="btn-login" id="lBtn" onclick="doLogin()"><i class="fa-solid fa-right-to-bracket"></i>&nbsp;Login Securely</button>
   <div class="l-err" id="lErr"></div>
-  <div class="l-hint">Default: <strong>admin@creditup</strong></div>
+  <div class="l-hint">Only accounts listed as admins in Firebase can sign in.</div>
 </div>
 </div>
 
@@ -787,6 +789,14 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
     <div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:9px;letter-spacing:.5px;text-transform:uppercase">Reset Login Password</div>
+      <div class="bal-row">
+        <input class="bal-inp" type="text" id="uNewPw" placeholder="New password (min 8, letters + numbers)" autocomplete="off">
+        <button class="btn btn-o btn-sm" onclick="resetUserPw()"><i class="fa-solid fa-key"></i>Set Password</button>
+      </div>
+      <div style="font-size:11px;color:var(--txt2);margin-top:6px">Passwords are never shown or stored here. Tell the user the new password privately.</div>
+    </div>
+    <div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border)">
       <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:7px;letter-spacing:.5px;text-transform:uppercase">Activity Timeline</div>
       <div class="timeline" id="uTimeline"></div>
     </div>
@@ -1004,9 +1014,11 @@ let _pg={users:0,applications:0,transactions:0,portfolio:0};
 let _charts={}, _selApps=new Set();
 
 // ══ LOGIN ════════════════════════════════════════════
-function doLogin(){ const p=document.getElementById('lPass').value.trim(); if(!p){lErr('Enter password');return;} window._login&&window._login(p); }
-function lErr(m){ const e=document.getElementById('lErr'); e.innerText=m; e.style.display='block'; setTimeout(()=>e.innerText='',3000); }
+function doLogin(){ const em=document.getElementById('lEmail').value.trim(), p=document.getElementById('lPass').value; if(!em||!p){lErr('Enter email and password');return;} window._login&&window._login(em,p); }
+function lErr(m,keep){ const e=document.getElementById('lErr'); e.innerText=m; e.style.display='block'; if(!keep) setTimeout(()=>e.innerText='',6000); }
+let _loggedIn=false;
 function loginOK(){ 
+  if(_loggedIn) return; _loggedIn=true;
   document.getElementById('loginScreen').style.display='none'; 
   document.getElementById('AP').style.display='flex'; 
   gS('dashboard',document.getElementById('n-dashboard')); 
@@ -1014,7 +1026,7 @@ function loginOK(){
     if (typeof window._startAdminSupportBadgeListener === 'function') window._startAdminSupportBadgeListener();
   }, 600);
 }
-function doLogout(){ localStorage.removeItem('aOK'); location.reload(); }
+async function doLogout(){ try{ await window._adminSignOut(); }catch(e){} location.reload(); }
 
 // ══ SIDEBAR ══════════════════════════════════════════
 function openSB(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sbOver').classList.add('on'); }
@@ -1156,6 +1168,7 @@ function viewUser(id){
   document.getElementById('uNote').value=u.adminNote||'';
   document.getElementById('uReason').value='';
   document.getElementById('uAmt').value='';
+  const npw=document.getElementById('uNewPw'); if(npw) npw.value='';
   const logs=u.statusLog||[];
   document.getElementById('uTimeline').innerHTML=logs.length?logs.slice(-5).reverse().map(l=>`<div class="tl-i"><div class="tl-a">${l.action||''} → <span style="color:var(--orange)">${l.status||''}</span>${l.reason?` (${l.reason})`:''}</div><div class="tl-t">${fd(l.at)}</div></div>`).join(''):'<div style="font-size:12px;color:var(--txt2)">No activity yet.</div>';
   openMo('moUser');
@@ -1198,7 +1211,18 @@ async function setUserStat(status){
 async function qSusp(id){ const u=findById('users',id)||{}; const log=[...(u.statusLog||[]),{status:'suspended',action:'Quick suspend',at:new Date().toISOString()}]; await window._updateDoc(id,'users',{status:'suspended',statusLog:log}); toast('User suspended','w'); await logAct('User suspended','user',id); loadUsers(); }
 async function qBan(id){ const u=findById('users',id)||{}; const log=[...(u.statusLog||[]),{status:'banned',action:'Quick ban',at:new Date().toISOString()}]; await window._updateDoc(id,'users',{status:'banned',statusLog:log}); toast('User banned','e'); await logAct('User banned','user',id); loadUsers(); }
 function cDelUser(){ closeMo('moUser'); confirm2('Permanently delete this user?',()=>delUser(_userId)); }
-async function delUser(id){ showL(true); await window._deleteDoc(id,'users'); showL(false); await logAct('User deleted','user',id); toast('User deleted','e'); loadUsers(); }
+async function resetUserPw(){
+  const u=findById('users',_userId); const pw=document.getElementById('uNewPw').value.trim();
+  if(!u||!u.phone){toast('User not found','e');return;}
+  if(pw.length<8||!/[A-Za-z]/.test(pw)||!/[0-9]/.test(pw)){toast('Min 8 characters with letters and numbers','w');return;}
+  showL(true);
+  const r=await window._accountApi('adminResetPassword',{phone:String(u.phone),password:pw});
+  showL(false);
+  if(!r.ok){toast(r.data.error||'Could not reset password','e');return;}
+  document.getElementById('uNewPw').value='';
+  toast('Password updated ✓'); await logAct('User password reset','user',_userId);
+}
+async function delUser(id){ showL(true); const du=findById('users',id); if(du&&du.phone){ const r=await window._accountApi('adminDeleteLogin',{phone:String(du.phone)}); if(!r.ok) console.warn('delete login:',r.data.error); } await window._deleteDoc(id,'users'); showL(false); await logAct('User deleted','user',id); toast('User deleted','e'); loadUsers(); }
 
 // ══ APPLICATIONS ═════════════════════════════════════
 async function loadApps(){
@@ -2359,6 +2383,7 @@ async function _get(col,orderF='createdAt',dir='desc'){
 <script type="module">
 import{initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import{getFirestore,collection,doc,getDocs,getDoc,addDoc,updateDoc,deleteDoc,setDoc,query,where,orderBy,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,EmailAuthProvider,reauthenticateWithCredential,updatePassword} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 const FB={
   apiKey: "AIzaSyA6FTCSfXhNxPkpq2WCnz_EiaJFJWYYc8Q",
@@ -2368,7 +2393,7 @@ const FB={
   messagingSenderId: "360643553761",
   appId: "1:360643553761:web:330a92a39e15e281e6caa0"
 };
-const app=initializeApp(FB); const db=getFirestore(app); window._db=db;
+const app=initializeApp(FB); const db=getFirestore(app); window._db=db; const fbAuth=getAuth(app);
 
 // ══ CLOUDINARY (wallet logos) ══
 // All images go to Cloudinary (same account and unsigned preset as the NID uploads in index.html).
@@ -2538,17 +2563,50 @@ window._startAdminSupportBadgeListener = function() {
   }, (err) => { console.warn('Support listener:', err); });
 };
 
-const DEF='admin@creditup';
-window._login=async function(pass){
-  try{const cfg=await getDoc(doc(db,'admin','credentials'));const stored=cfg.exists()?cfg.data().password:DEF;if(pass===stored){localStorage.setItem('aOK','1');loginOK();}else lErr('Incorrect password.');}
-  catch{if(pass===DEF){await setDoc(doc(db,'admin','credentials'),{password:DEF,createdAt:new Date().toISOString()});localStorage.setItem('aOK','1');loginOK();}else lErr('Incorrect password.');}
+// ══ ADMIN LOGIN (Firebase Authentication) ══
+// An admin is a Firebase Auth e-mail account whose UID has a document in the "admins" collection.
+// No password is kept in this file, in Firestore or in the browser.
+async function _isAdmin(user){
+  if(!user) return false;
+  try{ const s=await getDoc(doc(db,'admins',user.uid)); return s.exists(); }catch(e){ return false; }
+}
+window._accountApi=async function(action,data){
+  const headers={'Content-Type':'application/json'};
+  if(fbAuth.currentUser) headers.Authorization='Bearer '+await fbAuth.currentUser.getIdToken();
+  try{
+    const r=await fetch('/api/account',{method:'POST',headers,body:JSON.stringify({action,...(data||{})})});
+    return {ok:r.ok,data:await r.json().catch(()=>({}))};
+  }catch(e){ return {ok:false,data:{error:'No connection'}}; }
 };
+window._login=async function(email,pass){
+  const btn=document.getElementById('lBtn'); if(btn) btn.disabled=true;
+  try{
+    const cred=await signInWithEmailAndPassword(fbAuth,email,pass);
+    if(!(await _isAdmin(cred.user))){
+      const uid=cred.user.uid; await signOut(fbAuth);
+      lErr('This account is not an admin. In Firebase → Firestore, create a document in the "admins" collection with this ID: '+uid,true);
+      return;
+    }
+    loginOK();
+  }catch(e){
+    const c=e&&e.code||'';
+    lErr(c==='auth/too-many-requests'?'Too many attempts. Please wait a few minutes.':c==='auth/network-request-failed'?'No internet connection.':'Incorrect email or password.');
+  }finally{ if(btn) btn.disabled=false; }
+};
+window._adminSignOut=function(){ return signOut(fbAuth); };
 window._changePass=async function(cur,nw){
-  try{const cfg=await getDoc(doc(db,'admin','credentials'));const s=cfg.exists()?cfg.data().password:DEF;if(cur!==s)return false;await setDoc(doc(db,'admin','credentials'),{password:nw,updatedAt:new Date().toISOString()},{merge:true});return true;}catch{return false;}
+  try{
+    const u=fbAuth.currentUser; if(!u||!u.email) return false;
+    await reauthenticateWithCredential(u,EmailAuthProvider.credential(u.email,cur));
+    await updatePassword(u,nw);
+    return true;
+  }catch(e){ console.warn('change password:',e); return false; }
 };
-
-if(localStorage.getItem('aOK')==='1') loginOK();
-else document.getElementById('loginScreen').style.display='flex';
+localStorage.removeItem('aOK');   // the old "logged in" flag is no longer used
+onAuthStateChanged(fbAuth, async user=>{
+  if(user && await _isAdmin(user)) loginOK();
+  else if(!_loggedIn) document.getElementById('loginScreen').style.display='flex';
+});
 </script>
 </body>
 </html>
