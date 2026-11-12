@@ -1,6 +1,7 @@
 // Starts an SSLCommerz payment for one application's fee.
 // The amount is always computed here from Firestore, never taken from the browser.
 const { missingEnv, sslHost, db, computeFee, baseUrl, readBody } = require('../_lib/pay');
+const { caller } = require('../_lib/auth');
 
 const BALANCE_MAX_ADJUST = 100;
 
@@ -14,6 +15,9 @@ module.exports = async (req, res) => {
   if (!/^[A-Za-z0-9_-]{6,64}$/.test(appId) || !/^[0-9]{10,13}$/.test(uid)) return res.status(400).json({ error: 'Invalid request.' });
 
   try {
+    // only the signed-in owner of the application can start its payment
+    const me = await caller(req);
+    if (!me || me.uid !== uid) return res.status(401).json({ error: 'Please login again.' });
     const store = db();
     const [appSnap, cfgSnap] = await Promise.all([
       store.collection('applications').doc(appId).get(),

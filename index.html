@@ -4249,6 +4249,7 @@ function openProfileModal() {
 // forget everything that belongs to the signed-out user, so the next person on this device sees none of it
 function _clearUserSession(){
   localStorage.removeItem('creditUpUser');
+  if(typeof window._fbSignOut === 'function') window._fbSignOut();
   try { clearFormState(); } catch(e) { localStorage.removeItem('creditUpFormDraft'); }
   const bp = document.getElementById('bankPhone'); if(bp) bp.value = '';
   ['loginPhone','loginPassInput','regPhone','regPassword','regConfirmPassword'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
@@ -4667,7 +4668,8 @@ async function startNewSupportChat() {
 
 <script type="module">
 import{initializeApp} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,doc,orderBy,onSnapshot,runTransaction} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,setDoc,doc,orderBy,onSnapshot} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
 const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
@@ -4681,8 +4683,44 @@ const FB={
   appId: "1:360643553761:web:330a92a39e15e281e6caa0"
 };
 
-let db;
-try{ const app = initializeApp(FB); db = getFirestore(app); } catch(e){ console.error('Firebase:',e); }
+let db, fbAuth;
+try{ const app = initializeApp(FB); db = getFirestore(app); fbAuth = getAuth(app); } catch(e){ console.error('Firebase:',e); }
+
+// ═══ SECURE LOGIN (Firebase Authentication) ═══
+// The user types phone + password; Firebase Auth checks it with an internal e-mail made from the phone.
+// Passwords are never stored in Firestore or in the browser.
+const USER_EMAIL_DOMAIN = 'users.creditup.online';
+const _phoneEmail = ph => `${ph}@${USER_EMAIL_DOMAIN}`;
+async function _signIn(ph, pw){ return signInWithEmailAndPassword(fbAuth, _phoneEmail(ph), pw); }
+window._fbSignOut = function(){ try{ if(fbAuth && fbAuth.currentUser) return signOut(fbAuth); }catch(e){} };
+// server side account actions (register, older-account move, offer, referrals, live feed)
+async function _api(action, data, withToken){
+  const headers = { 'Content-Type': 'application/json' };
+  if(withToken && fbAuth && fbAuth.currentUser) headers.Authorization = 'Bearer ' + await fbAuth.currentUser.getIdToken();
+  let r, j = {};
+  try{
+    r = await fetch('/api/account', { method: 'POST', headers, body: JSON.stringify({ action, ...(data || {}) }) });
+    j = await r.json().catch(() => ({}));
+  }catch(e){ return { ok: false, status: 0, data: { error: 'No internet connection. Please try again.' } }; }
+  return { ok: r.ok, status: r.status, data: j };
+}
+window._api = _api;
+window._authHeader = async function(){
+  return (fbAuth && fbAuth.currentUser) ? { Authorization: 'Bearer ' + await fbAuth.currentUser.getIdToken() } : {};
+};
+// resolves once Firebase knows whether this device is signed in; a stored session without a
+// Firebase login (older version of the site, or signed out elsewhere) is cleared
+window._authReady = new Promise(resolve => {
+  if(!fbAuth){ resolve(null); return; }
+  let first = true;
+  onAuthStateChanged(fbAuth, user => {
+    const stored = _getUser();
+    if(first){ first = false; resolve(user); }
+    if(!user && stored){
+      if(typeof logoutUser === 'function') logoutUser(true); else localStorage.removeItem('creditUpUser');
+    }
+  });
+});
 
 // A wallet can carry two different numbers:
 //   collectionNumber → where the user SENDS the fee
@@ -5008,7 +5046,7 @@ async function startOnlinePay(){
   const btn = document.getElementById('btnTrx'); const html = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Opening secure payment…';
   try{
-    const r = await fetch('/api/pay/init', { method:'POST', headers:{'Content-Type':'application/json'},
+    const r = await fetch('/api/pay/init', { method:'POST', headers:{'Content-Type':'application/json', ...(await window._authHeader())},
       body: JSON.stringify({ appId, uid: user.phone, useBalance: appliedBalance > 0 }) });
     const j = await r.json().catch(()=>({}));
     if(!r.ok || !j.url) throw new Error(j.error || 'Online payment could not be started. Please try a manual method.');
@@ -5312,8 +5350,10 @@ window._supportStartNewChat = async function(uid) {
 window._supportUnsubscribe = null;
 window._supportListenerStarted = false;
 
-window._startSupportListener = function(uid) {
+window._startSupportListener = async function(uid) {
   if (!db) return;
+  await window._authReady;   // the database only answers a signed-in user
+  if (!fbAuth || !fbAuth.currentUser) { window._supportListenerStarted = false; return; }
   if (window._supportUnsubscribe) window._supportUnsubscribe();
   const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
   window._supportUnsubscribe = onSnapshot(q, (snap) => {
@@ -5431,6 +5471,8 @@ window._stopNotifListener = function(){
   const b = document.getElementById('notifBadge'); if(b) b.style.display = 'none';
 };
 window._startNotifListener = async function(phone){
+  await window._authReady;
+  if(!fbAuth || !fbAuth.currentUser) return;
   if(!db || !phone) return;
   if(_notifPhone === phone && _notifUnsubs.length) return;
   window._stopNotifListener();
@@ -5467,22 +5509,53 @@ window.checkPhoneAndProceed=async function(){
   if(!isValidBDPhone(ph)){ showAlert('Invalid Number','Please enter a valid 10-digit BD mobile number.','error'); return; }
   showLoader(true);
   try{
-    const snap=await getDocs(query(collection(db,'users'),where('phone','==',ph)));
+    const r = await _api('exists', { phone: ph });
     showLoader(false);
-    if(!snap.empty){ pendingLoginUser=snap.docs[0].data(); openPasswordModal(); }
+    if(!r.ok){ showAlert('Error', r.data.error || 'Could not check this number. Please try again.', 'error'); return; }
+    if(r.data.exists){ pendingLoginUser = { phone: ph }; openPasswordModal(); }
     else{ document.getElementById('regPhone').value=ph; checkRegisterInputs(); nav('screen-register'); }
   }catch(e){ showLoader(false); showAlert('Error',e.message,'error'); }
 };
 
-window.submitLoginPassword=function(){
+let _loggingIn = false;
+window.submitLoginPassword=async function(){
+  if(_loggingIn) return;
   const pw=document.getElementById('loginPassInput').value;
   if(!pw){ showAlert('Required','Please enter your password.','error'); return; }
-  if(pendingLoginUser&&pw===pendingLoginUser.password){
-    if(pendingLoginUser.status === 'banned') { showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.'); return; }
-    localStorage.setItem('creditUpUser',JSON.stringify(pendingLoginUser));
+  const ph = (pendingLoginUser && pendingLoginUser.phone) || document.getElementById('loginPhone').value;
+  if(!isValidBDPhone(ph) || !fbAuth){ showAlert('Error','Please enter your phone number again.','error'); return; }
+  _loggingIn = true; showLoader(true);
+  try{
+    try{ await _signIn(ph, pw); }
+    catch(e){
+      const c = e && e.code || '';
+      if(c === 'auth/too-many-requests'){ showLoader(false); showAlert('Too Many Attempts','Too many wrong attempts. Please wait a few minutes and try again.','error'); return; }
+      if(c === 'auth/network-request-failed'){ showLoader(false); showAlert('No Connection','Please check your internet connection and try again.','error'); return; }
+      if(!/invalid-credential|invalid-login-credentials|user-not-found|wrong-password|invalid-email/.test(c)) throw e;
+      // an account from before the secure login: the server checks the old password once and moves it
+      const r = await _api('migrate', { phone: ph, password: pw });
+      if(!r.ok){
+        showLoader(false);
+        if(r.data.code === 'banned') showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.');
+        else if(r.data.code === 'wrong_password') showAlert('Incorrect Password','The password you entered is incorrect.','error');
+        else showAlert('Login Failed', r.data.error || 'Could not log in. Please try again.', 'error');
+        return;
+      }
+      await _signIn(ph, pw);
+    }
+    const snap = await getDocs(query(collection(db,'users'), where('phone','==',ph)));
+    const prof = snap.empty ? { phone: ph } : { ...snap.docs[0].data(), id: snap.docs[0].id };
+    if(prof.status === 'banned'){ await signOut(fbAuth); showLoader(false); showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.'); return; }
+    delete prof.password;
+    localStorage.setItem('creditUpUser', JSON.stringify(prof));
+    showLoader(false);
     closeGlobalModal();
     nav('screen-home');
-  } else { showAlert('Incorrect Password','The password you entered is incorrect.','error'); }
+  }catch(e){
+    showLoader(false);
+    console.error('login:', e);
+    showAlert('Login Failed', 'Could not log in. Please try again.', 'error');
+  }finally{ _loggingIn = false; }
 };
 
 let _registering=false;
@@ -5500,46 +5573,24 @@ window.registerUser=async function(){
   _registering=true;
   showLoader(true);
   try{
-    const ex=await getDocs(query(collection(db,'users'),where('phone','==',ph)));
-    if(!ex.empty){ showLoader(false); showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
-    // read the switch fresh: the page may not have loaded the config yet
-    const cfgSnap = await getDoc(doc(db, 'siteConfig', 'main'));
-    if(cfgSnap.exists() && cfgSnap.data().flags?.registrationOpen === false){
+    // the account, the sign-up bonus and the referral are created on the server
+    const referrer = localStorage.getItem('referrerPhone') || '';
+    const r = await _api('register', { phone: ph, password: pw, referrer });
+    if(!r.ok){
       showLoader(false);
-      showAlert('Registration Closed', 'New user registration is currently disabled.', 'error');
-      return;
+      if(r.data.code === 'exists'){ showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
+      if(r.data.code === 'closed'){ showAlert('Registration Closed', 'New user registration is currently disabled.', 'error'); return; }
+      showAlert('Error', r.data.error || 'Could not create your account. Please try again.', 'error'); return;
     }
-    // 0 is a valid admin choice (no bonus); only a missing value falls back to 100
-    const rawBonus = cfgSnap.exists() ? cfgSnap.data().newUserBonus : undefined;
-    const bonusAmt = (rawBonus === undefined || rawBonus === null || rawBonus === '' || isNaN(Number(rawBonus))) ? 100 : Math.max(0, Number(rawBonus));
-    const referrer = localStorage.getItem('referrerPhone');
-    const u = { phone: ph, password: pw, createdAt: new Date().toISOString(), appStatus: 0, balance: bonusAmt, status: 'active' };
-    // credit the referral only to a number that is really registered
-    if(referrer && referrer !== ph && isValidBDPhone(referrer)){
-      try{
-        const refSnap = await getDocs(query(collection(db,'users'),where('phone','==',referrer)));
-        if(!refSnap.empty) u.referredBy = referrer;
-      }catch(e){ console.warn('referrer check:', e); }
-    }
-    // new accounts use the phone number as the document id, created in a transaction,
-    // so two registrations of the same number can never both succeed
-    const userRef = doc(db,'users',ph);
-    const created = await runTransaction(db, async (tx)=>{
-      const cur = await tx.get(userRef);
-      if(cur.exists()) return false;
-      tx.set(userRef, u);
-      return true;
-    });
-    if(!created){ showLoader(false); showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
-    localStorage.setItem('creditUpUser', JSON.stringify({...u, id: userRef.id}));
-    await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Welcome to Credit Up! 🎉', message: 'Your account is created successfully.', type: 'welcome', createdAt: new Date(Date.now() - 2000).toISOString() });
-    if(bonusAmt > 0) await addDoc(collection(db, 'user_notifications'), { uid: ph, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonusAmt} sign-up bonus.`, type: 'bonus', createdAt: new Date().toISOString() });
+    const bonusAmt = Number(r.data.bonus) || 0;
+    await _signIn(ph, pw);
+    localStorage.setItem('creditUpUser', JSON.stringify({ phone: ph, id: ph, balance: bonusAmt, status: 'active', appStatus: 0, createdAt: new Date().toISOString() }));
     localStorage.removeItem('referrerPhone');
     showLoader(false);
     showAlert('Account Created! 🎉', bonusAmt > 0 ? `Welcome! You received ৳${bonusAmt} bonus.` : 'Welcome to Credit Up!', 'success', () => {
       nav('screen-home');
     });
-  }catch(e){ showLoader(false); showAlert('Error', e.message, 'error'); }
+  }catch(e){ showLoader(false); console.error('register:', e); showAlert('Error', 'Could not create your account. Please try again.', 'error'); }
   finally{ _registering=false; }
 };
 
@@ -5595,29 +5646,30 @@ window.markBalanceAdjustUsed = async function(phone, used){
 };
 // "first 50 users" offer: counted from real claims on user profiles
 window.getOfferClaimCount = async function(){
-  if(!db) return null;
-  try{ const snap = await getDocs(query(collection(db,'users'), where('promoClaimed','==',true))); return snap.size; }
-  catch(e){ console.warn('offer count:', e); return null; }
+  const r = await _api('offerCount');
+  return r.ok ? Number(r.data.count) || 0 : null;
 };
 window.claimOffer = async function(phone){
-  if(!db) return 'error';
-  try{
-    const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
-    if(u.empty) return 'error';
-    if(u.docs[0].data().promoClaimed === true) return 'already';
-    const n = await window.getOfferClaimCount();
-    if(n !== null && n >= 50) return 'full';
-    await updateDoc(u.docs[0].ref, { promoClaimed: true, promoClaimedAt: new Date().toISOString(), promo: 'First installment free' });
-    return 'ok';
-  }catch(e){ console.warn('claim offer:', e); return 'error'; }
+  if(!fbAuth || !fbAuth.currentUser) return 'error';
+  const r = await _api('claimOffer', {}, true);
+  return r.ok ? (r.data.result || 'error') : 'error';
 };
+// each TrxID gets its own record id, so the same TrxID can never be saved twice (by anyone)
+const _trxKey = t => 'trx_' + String(t || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 60);
 window.checkTrxExists = async function(trxId){
-  if(!db) return null;
-  try{ const snap = await getDocs(query(collection(db,'transactions'), where('trxId','==',trxId))); return snap.empty ? null : snap.docs[0].data(); }catch(e){ return null; }
+  if(!db || !_trxKey(trxId).slice(4)) return null;
+  try{ const one = await getDoc(doc(db,'transactions',_trxKey(trxId))); return one.exists() ? one.data() : null; }
+  catch(e){ return e && e.code === 'permission-denied' ? { trxId } : null; }   // another user's record
 };
 window.saveTransactionToFirebase = async function(data){
   if(!db) throw new Error('Database unavailable.');
-  const refDoc = await addDoc(collection(db,'transactions'), data);
+  let refDoc;
+  const key = _trxKey(data.trxId);
+  if(data.trxId && data.trxId !== 'BALANCE_PAYMENT' && key.length > 4){
+    refDoc = doc(db,'transactions',key);
+    try{ await setDoc(refDoc, data); }
+    catch(e){ if(e && e.code === 'permission-denied') throw new Error('This Transaction ID has already been used.'); throw e; }
+  } else refDoc = await addDoc(collection(db,'transactions'), data);
   const ref = data.appId ? ' for CU-' + String(data.appId).slice(-6).toUpperCase() : '';
   _pushMyNotif(data.uid, 'Payment Submitted ⏳', data.trxId && data.trxId !== 'BALANCE_PAYMENT'
     ? `We received your TrxID ${data.trxId} (৳${Number(data.amount||0).toLocaleString('en-US')} via ${data.payMethod||'wallet'})${ref}. Our team will verify it shortly.`
@@ -5643,6 +5695,7 @@ window.updateApplicationStatusByPhone = async function(phone, status, appId){
 
 window.loadTicker = async function() {
   if(!db) return;
+  await window._authReady;
   try {
     const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
     let notices = gSnap.docs.map(d => d.data());
@@ -5665,7 +5718,9 @@ window.loadTicker = async function() {
 };
 
 window.loadUserDashboardData = async function() {
+  await window._authReady;
   const user = _getUser(); if(!user || !user.phone || !db) return;
+  if(!fbAuth || !fbAuth.currentUser){ if(typeof logoutUser === 'function') logoutUser(true); return; }
   document.getElementById('userGreeting').innerText = `Hello, ${_fullPhone(user.phone)}`;
   
   try {
@@ -5753,9 +5808,10 @@ window.loadUserDashboardData = async function() {
 window.loadReferralStats = async function(phone) {
   if(!db) return;
   try {
-    const snap = await getDocs(query(collection(db, 'users'), where('referredBy', '==', phone)));
-    const activeCount = snap.docs.filter(d => d.data().status === 'active').length;
-    document.getElementById('refTotalCount').innerText = snap.size;
+    const r = await _api('referrals', {}, true);
+    if(!r.ok) return;
+    const activeCount = Number(r.data.active) || 0;
+    document.getElementById('refTotalCount').innerText = Number(r.data.total) || 0;
     document.getElementById('refSuccessCount').innerText = activeCount;
     let tierName = 'Starter', pct = 0, txt = '';
     if (activeCount >= 100) {
@@ -5822,8 +5878,10 @@ window.loadLiveFeed = async function() {
   const container = document.getElementById('liveFeedContainer');
   if(!container) return;
   try {
-    const snap = await getDocs(query(collection(db, 'applications'), orderBy('submittedAt', 'desc')));
-    const approvedApps = snap.docs.map(d => d.data()).filter(a => ['Approved', 'Disbursed'].includes(a.status)).slice(0, 5);
+    // names come back already shortened from the server; other users' applications are never read here
+    const r = await _api('feed');
+    if(!r.ok) throw new Error(r.data.error || 'feed');
+    const approvedApps = (r.data.items || []).map(a => ({ name: a.name, loanAmount: a.amount, submittedAt: a.at }));
     // only real, approved applications are shown; with none, the section is hidden
     if(approvedApps.length === 0) {
       container.innerHTML = '';
@@ -5867,11 +5925,12 @@ if(document.readyState !== 'loading'){
   if(typeof initHotOffer === 'function') initHotOffer();
 }
 
-setTimeout(() => {
+setTimeout(async () => {
+  await window._authReady;
   restoreFormState();
   if(typeof updateUIForUser === 'function') updateUIForUser();
   if(_getUser() && typeof window.loadUserDashboardData === 'function'){ window.loadUserDashboardData(); }
-}, 1500);
+}, 300);
 </script>
 </body>
 </html>
