@@ -64,6 +64,17 @@ input,select,textarea{font-family:'Inter',sans-serif;-webkit-user-select:auto;us
 .hmbg{display:none;background:none;border:none;color:var(--txt2);font-size:20px;cursor:pointer;padding:4px}
 .tb-title{font-size:17px;font-weight:800;letter-spacing:-.3px}
 .tb-r{margin-left:auto;display:flex;align-items:center;gap:9px}
+/* signed-in admin's role, top right */
+.role-chip{display:flex;align-items:center;gap:6px;padding:5px 11px 5px 9px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.3px;white-space:nowrap;
+  color:var(--p);background:rgba(29,219,128,.1);border:1px solid rgba(29,219,128,.35);cursor:default}
+.role-chip i{font-size:11px}
+.role-chip.super{color:#1a1200;background:linear-gradient(135deg,#ffe08a,#f5b83d 55%,#e8962a);border-color:rgba(255,214,102,.8);
+  box-shadow:0 0 0 1px rgba(255,214,102,.25),0 4px 16px rgba(245,184,61,.35);position:relative;overflow:hidden}
+.role-chip.super::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);animation:roleShine 3.2s ease-in-out infinite}
+@keyframes roleShine{0%,55%{left:-60%}100%{left:130%}}
+.sb-av.super{background:linear-gradient(135deg,#ffe08a,#e8962a);color:#1a1200}
+.sb-av-n{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:640px){.role-chip span{display:none}.role-chip{padding:7px}}
 .tb-srch{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:6px 11px}
 .tb-srch i{color:var(--txt2);font-size:12px}
 .tb-srch input{background:none;border:none;color:var(--txt);font-size:12px;outline:none;width:160px}
@@ -410,8 +421,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="nav" id="n-actlog" onclick="gS('actlog',this)"><i class="fa-solid fa-scroll"></i>Activity Log</div>
   <div class="nav" id="n-settings" onclick="gS('settings',this)"><i class="fa-solid fa-shield-halved"></i>Admin Settings</div>
   <div class="sb-foot">
-    <div class="sb-av">A</div>
-    <div><div class="sb-av-n">Admin</div><div class="sb-av-r">Super Admin</div></div>
+    <div class="sb-av" id="sbAv">A</div>
+    <div style="min-width:0"><div class="sb-av-n" id="sbName">Admin</div><div class="sb-av-r" id="sbRole">Admin</div></div>
     <button class="btn-lo" onclick="doLogout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
   </div>
 </aside>
@@ -421,6 +432,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <button class="hmbg" onclick="openSB()"><i class="fa-solid fa-bars"></i></button>
   <div class="tb-title" id="tbTitle">Dashboard</div>
   <div class="tb-r">
+    <div class="role-chip" id="roleChip" style="display:none"><i class="fa-solid fa-shield-halved"></i><span id="roleChipT">Admin</span></div>
     <div class="tb-srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search..." id="gSrch" oninput="globalSearch(this.value)"></div>
     <button class="tb-btn" onclick="refreshCur()"><i class="fa-solid fa-rotate-right"></i>Refresh</button>
     <button class="tb-btn p" onclick="exportCur()"><i class="fa-solid fa-download"></i>Export</button>
@@ -2566,9 +2578,23 @@ window._startAdminSupportBadgeListener = function() {
 // ══ ADMIN LOGIN (Firebase Authentication) ══
 // An admin is a Firebase Auth e-mail account whose UID has a document in the "admins" collection.
 // No password is kept in this file, in Firestore or in the browser.
+// the admins/<UID> document; its "role" field ("superadmin" or anything else) sets the badge
 async function _isAdmin(user){
   if(!user) return false;
-  try{ const s=await getDoc(doc(db,'admins',user.uid)); return s.exists(); }catch(e){ return false; }
+  try{ const s=await getDoc(doc(db,'admins',user.uid)); if(!s.exists()) return false; _showRole(user, s.data()||{}); return true; }catch(e){ return false; }
+}
+function _showRole(user, data){
+  const r=String(data.role||'').toLowerCase().replace(/[\s_-]/g,'');
+  const sup=r==='superadmin';
+  window._adminRole=sup?'superadmin':'admin';
+  const label=sup?'Super Admin':'Admin';
+  const name=String(data.name||(user.email||'').split('@')[0]||'Admin');
+  const chip=document.getElementById('roleChip');
+  if(chip){ chip.className='role-chip'+(sup?' super':''); chip.style.display='flex'; chip.title=(user.email||'')+' · '+label;
+    chip.querySelector('i').className='fa-solid '+(sup?'fa-crown':'fa-shield-halved'); document.getElementById('roleChipT').textContent=label; }
+  const av=document.getElementById('sbAv'); if(av){ av.textContent=name.charAt(0).toUpperCase(); av.classList.toggle('super',sup); }
+  const n=document.getElementById('sbName'); if(n){ n.textContent=name; n.title=user.email||''; }
+  const rl=document.getElementById('sbRole'); if(rl) rl.textContent=label;
 }
 window._accountApi=async function(action,data){
   const headers={'Content-Type':'application/json'};
