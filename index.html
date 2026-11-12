@@ -6,6 +6,12 @@
 <meta name="format-detection" content="telephone=no,date=no,address=no,email=no,url=no">
 <meta name="theme-color" content="#060d1a">
 <title>Credit Up - Smart Loans</title>
+<meta name="description" content="Apply for a personal loan online in minutes and receive it in your bKash, Nagad or Rocket account. All fees are shown before you apply.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Credit Up">
+<meta property="og:title" content="You're invited to Credit Up ✨">
+<meta property="og:description" content="Apply for a personal loan online in minutes and receive it in your bKash, Nagad or Rocket account. All fees are shown before you apply.">
+<meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -60,6 +66,23 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .home-hdr::before{content:'';position:absolute;top:-80px;right:-80px;width:240px;height:240px;background:radial-gradient(circle,rgba(29,219,128,.18) 0%,transparent 70%);border-radius:50%;animation:orb 6s ease-in-out infinite}
 .home-hdr::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(29,219,128,.1) 0%,transparent 70%);border-radius:50%;animation:orb 8s ease-in-out infinite reverse}
 @keyframes orb{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.15) translate(10px,-10px)}}
+#appBar{position:sticky;top:0;z-index:900;display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(6,58,30,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(29,219,128,.18);box-shadow:0 6px 20px rgba(0,0,0,.35)}
+#appBar .ab-back{width:36px;height:36px;flex-shrink:0;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.1);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#appBar .ab-back:active{transform:scale(.94)}
+#appBar .ab-mid{flex:1;min-width:0}
+#appBar h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:16px;font-weight:900;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#appBar .balance-pill{margin-top:4px;padding:3px 10px;gap:6px}
+#appBar .balance-pill span{font-size:12.5px}
+#appBar .balance-pill .bp-lbl{font-size:11px;color:var(--p)}
+#appBar .balance-pill i{font-size:12px;padding:2px}
+#appBar .ab-acts{display:flex;gap:7px;flex-shrink:0}
+#appBar .notif-btn{width:36px;height:36px;font-size:16px}
+#appBar .notif-badge{width:auto;min-width:17px;height:17px;border-radius:10px;top:-5px;right:-5px;font-size:9.5px;font-weight:800;color:#fff;align-items:center;justify-content:center;padding:0 4px;line-height:1}
+#appBar .ab-out{color:#ff8a8a}
+/* the bar above already has back + support: hide the per-screen copies */
+.screen .back-ic,.screen .dash-hdr .ic-headset,#screen-register .auth-hdr>.fa-arrow-left,.screen .auth-hdr .ic-headset{display:none !important}
+.screen .dash-hdr{justify-content:center}
+.home-hdr{padding-top:14px}
 .home-top-bar{display:flex;justify-content:space-between;align-items:center;padding:15px 0 10px;background:transparent;position:relative;z-index:20}
 .home-greeting h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:20px;font-weight:900;letter-spacing:-0.5px}
 .balance-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.35);border:1px solid rgba(29,219,128,0.4);border-radius:20px;padding:6px 14px;margin-top:8px;box-shadow:0 4px 15px rgba(29,219,128,0.15);backdrop-filter:blur(5px)}
@@ -440,6 +463,42 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .calc-row:last-child{border:none}
 .calc-row span:last-child{color:var(--txt);font-weight:700}
 .notif-list{display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:5px}
+#notifModal .nc-card{max-width:400px;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;max-height:86vh}
+.nc-head{display:flex;align-items:center;gap:11px;padding:16px 16px 12px;background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(77,143,255,.06));border-bottom:1px solid rgba(255,255,255,.07);position:relative}
+.nc-head-ic{width:40px;height:40px;border-radius:12px;background:rgba(29,219,128,.16);border:1px solid rgba(29,219,128,.35);color:var(--p);display:flex;align-items:center;justify-content:center;font-size:17px}
+.nc-head-t{flex:1;min-width:0}
+.nc-head-t strong{display:block;font-size:16px;font-weight:800;color:var(--txt)}
+.nc-head-t span{font-size:11.5px;color:var(--txt2)}
+#notifModal .nc-head{padding-right:56px}
+#notifModal .nc-head .popup-close{position:absolute !important;top:50% !important;right:14px !important;transform:translateY(-50%) !important;margin:0 !important}
+.nc-tabs{display:flex;gap:6px;padding:10px 14px 4px}
+.nc-tabs button{flex:1;padding:7px 6px;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--txt2);font-size:11.5px;font-weight:700;cursor:pointer}
+.nc-tabs button.on{background:rgba(29,219,128,.12);border-color:rgba(29,219,128,.35);color:var(--p)}
+#notifModal .nc-list{padding:8px 14px 16px !important;margin:0 !important;max-height:none;flex:1;gap:9px}
+.nc-item{display:flex;gap:11px;padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);position:relative}
+.nc-item.new{background:linear-gradient(135deg,rgba(29,219,128,.07),rgba(255,255,255,.02));border-color:rgba(29,219,128,.28)}
+.nc-item.new::before{content:'';position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:3px;background:var(--nc)}
+.nc-ic{width:38px;height:38px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--nc);background:color-mix(in srgb,var(--nc) 14%,transparent);border:1px solid color-mix(in srgb,var(--nc) 30%,transparent)}
+.nc-body{flex:1;min-width:0}
+.nc-meta{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.nc-tag{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--nc)}
+.nc-time{font-size:10px;color:var(--txt3,#5b6f90)}
+.nc-new{margin-left:auto;font-size:9px;font-weight:800;color:#04150d;background:var(--p);padding:2px 6px;border-radius:6px}
+.nc-body h4{font-size:13.5px;font-weight:800;color:var(--txt);margin:0 0 2px;line-height:1.35}
+.nc-subj{font-size:12px;font-weight:700;color:var(--txt);opacity:.85;margin-bottom:3px}
+.nc-body p{font-size:12px;color:var(--txt2);line-height:1.55;margin:0;white-space:pre-line;word-break:break-word}
+.nc-img{display:block;width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-top:8px;border:1px solid rgba(255,255,255,.08)}
+.nc-att{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 10px;border-radius:9px;background:rgba(255,77,106,.1);color:#ff8a8a;font-size:11.5px;font-weight:700;text-decoration:none}
+.nc-btn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;margin-left:6px;padding:6px 12px;border-radius:9px;background:var(--p);color:#04150d;font-size:11.5px;font-weight:800;text-decoration:none}
+.nc-empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:34px 10px;color:var(--txt2);font-size:12.5px}
+.nc-empty i{font-size:28px;opacity:.5}
+.nc-toast{position:fixed;top:12px;left:50%;transform:translate(-50%,-140%);width:calc(min(100vw,400px) - 24px);z-index:100000;display:flex;gap:10px;align-items:center;padding:11px 13px;border-radius:14px;background:rgba(15,29,53,.96);border:1px solid rgba(29,219,128,.35);box-shadow:0 12px 34px rgba(0,0,0,.5);backdrop-filter:blur(14px);cursor:pointer;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.nc-toast.on{transform:translate(-50%,0)}
+.nc-toast-ic{width:34px;height:34px;flex-shrink:0;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:15px}
+.nc-toast-t{min-width:0}
+.nc-toast-t strong{display:block;font-size:13px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-toast-t span{display:block;font-size:11.5px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 .notif-item{background:var(--bg2);border-radius:14px;padding:16px;border:1px solid var(--bord);display:flex;gap:12px}
 .notif-item.unread{border-left:3px solid var(--p)}
 .notif-icon{width:36px;height:36px;border-radius:50%;background:rgba(29,219,128,.1);color:var(--p);display:flex;justify-content:center;align-items:center;font-size:14px;flex-shrink:0}
@@ -742,6 +801,17 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 #referModal .ref-tier .tx b{font-weight:800}
 #referModal .ref-tier .tx em{font-style:normal;font-weight:600}
 #referModal .ref-tier .lk{color:var(--txt2);font-size:11px;flex-shrink:0}
+#referModal .inv-card{position:relative;margin:2px 0 12px;padding:14px 14px 12px;border-radius:16px;background:linear-gradient(145deg,#0b3b22 0%,#0a2a1a 55%,#1a1405 100%);border:1px solid rgba(255,207,92,.35);box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden}
+#referModal .inv-card::after{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(255,207,92,.22),transparent 70%);pointer-events:none}
+#referModal .inv-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;position:relative;z-index:1}
+#referModal .inv-badge{font-size:10.5px;font-weight:800;letter-spacing:.4px;color:#1a1405;background:linear-gradient(90deg,#ffd76a,#f5b72f);padding:4px 9px;border-radius:20px;text-transform:uppercase}
+#referModal .inv-code{font-size:10.5px;color:#ffd76a;font-weight:700}
+#referModal .inv-text{font-family:'Hind Siliguri','Plus Jakarta Sans',sans-serif;font-size:12.5px;line-height:1.6;color:#e9f6ee;white-space:pre-line;position:relative;z-index:1}
+#referModal .inv-link{display:flex;align-items:center;gap:7px;margin-top:10px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.3);border:1px dashed rgba(255,207,92,.4);font-size:11.5px;color:#ffd76a;font-weight:700;word-break:break-all;position:relative;z-index:1}
+#referModal .inv-share{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+#referModal .inv-sh{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 4px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-decoration:none;color:var(--txt);font-size:10.5px;font-weight:700;cursor:pointer}
+#referModal .inv-sh i{font-size:19px}
+#referModal .inv-sh.wa i{color:#25d366}#referModal .inv-sh.fb i{color:#1877f2}#referModal .inv-sh.tg i{color:#29a9eb}#referModal .inv-sh.sm i{color:#ffb547}
 #referModal .refer-foot{display:flex;gap:8px;flex-shrink:0;padding:14px 18px 22px;border-top:1px solid rgba(29,219,128,.14);background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55))}
 #referModal .refer-foot .mbtn{height:44px;font-size:13.5px;border-radius:13px;margin:0}
 @media (max-width:360px){
@@ -852,6 +922,25 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .cs-closed-banner strong{color:var(--txt);font-size:13px}
 .cs-new-chat-btn{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:8px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:var(--glow)}
 
+#repaymentModal .rep-schedule{border:none !important;background:transparent !important;max-height:min(46vh,360px)}
+#repaymentModal .ri-list{padding:4px 14px 6px;display:flex;flex-direction:column;gap:8px}
+#repaymentModal .ri{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+#repaymentModal .ri.last{border-color:rgba(29,219,128,.3);background:rgba(29,219,128,.05)}
+#repaymentModal .ri-no{width:30px;height:30px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--p);background:rgba(29,219,128,.1);border:1px solid rgba(29,219,128,.25)}
+#repaymentModal .ri-mid{flex:1;min-width:0}
+#repaymentModal .ri-due{font-size:13px;font-weight:800;color:var(--txt);display:flex;align-items:baseline;gap:7px}
+#repaymentModal .ri-due em{font-style:normal;font-size:10px;font-weight:600;color:var(--txt2)}
+#repaymentModal .ri-split{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:10.5px;color:var(--txt2);margin-top:3px}
+#repaymentModal .ri-split b{color:var(--txt);font-weight:700}
+#repaymentModal .ri-split b.o{color:var(--orange)}
+#repaymentModal .ri-bar{height:4px;border-radius:4px;background:rgba(255,255,255,.07);margin-top:7px;overflow:hidden}
+#repaymentModal .ri-bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#0d7a40,var(--p))}
+#repaymentModal .ri-amt{text-align:right;flex-shrink:0}
+#repaymentModal .ri-amt strong{display:block;font-size:15px;font-weight:900;color:var(--txt);font-variant-numeric:tabular-nums}
+#repaymentModal .ri-amt span{font-size:10px;color:var(--txt2);white-space:nowrap}
+#repaymentModal .ri.last .ri-amt span{color:var(--p);font-weight:700}
+#repaymentModal .ri-total{display:flex;justify-content:space-between;align-items:center;margin:4px 14px 12px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(29,219,128,.12),rgba(29,219,128,.04));border:1px solid rgba(29,219,128,.25);font-size:12.5px;color:var(--txt2)}
+#repaymentModal .ri-total strong{font-size:17px;color:var(--p);font-weight:900}
 /* ─── REPAYMENT SCHEDULE (premium table) ─── */
 #repaymentModal .rep-card{max-width:470px;width:100%}
 #repaymentModal .pp-bar{padding:15px 18px 12px}
@@ -1563,6 +1652,8 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .bal-left p{font-size:10.5px;color:var(--txt2)}
 .bal-left p strong{color:var(--p);font-weight:800}
 .bal-caret{color:var(--txt2);font-size:11px;transition:transform .25s}
+.calc-lim{display:flex;justify-content:space-between;font-size:10.5px;color:var(--txt2);margin:-6px 2px 12px}
+.bal-pm{width:26px;height:26px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(29,219,128,.12);border:1px solid rgba(29,219,128,.3);color:var(--p);font-size:11px}
 .bal-box.open .bal-caret{transform:rotate(180deg)}
 .bal-body{display:none;padding:0 14px 13px}
 .bal-box.open .bal-body{display:block}
@@ -1587,6 +1678,30 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .trx-req{font-size:11px;color:var(--txt2);margin-top:7px;line-height:1.4}
 .pay-locked-txt{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt2);line-height:1.5;margin:0}
 .pay-locked-txt i{color:var(--orange)}
+.opt-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.opt-chip{padding:9px 13px;border-radius:11px;border:1.5px solid var(--bord);background:var(--surf);color:var(--txt);font-size:12.5px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.opt-chip em{font-style:normal;font-size:10px;color:var(--txt2);font-weight:600}
+.opt-chip.sel{border-color:var(--p);background:rgba(29,219,128,.07);color:var(--p)}
+.pm-opts{margin:0 16px 14px}
+.pm-opts-t{font-size:12.5px;color:var(--txt2);margin-bottom:8px}
+.pm-opts-t strong{color:var(--txt)}
+.pay-timer{display:flex;align-items:center;gap:8px;margin:0 16px 14px;padding:10px 12px;border-radius:11px;background:rgba(77,143,255,.07);border:1px solid rgba(77,143,255,.2);font-size:12.5px;color:var(--txt)}
+.pay-timer i{color:#4d8fff}
+.pay-timer.over{background:rgba(255,140,66,.08);border-color:rgba(255,140,66,.25)}
+.pay-timer.over i{color:var(--orange)}
+.pay-timer strong{font-family:'Courier New',monospace;font-size:14px}
+.gw-box{margin:0 16px 16px;padding:14px;border-radius:14px;background:linear-gradient(135deg,rgba(29,219,128,.08),rgba(77,143,255,.06));border:1px solid rgba(29,219,128,.22)}
+.gw-box h4{font-size:14px;color:var(--txt);margin:0 0 6px;display:flex;align-items:center;gap:7px}
+.gw-box h4 i{color:var(--p)}
+.gw-box p{font-size:12px;color:var(--txt2);line-height:1.55;margin:0 0 8px}
+.gw-amt{font-size:13px;color:var(--txt2)}
+.gw-amt strong{color:var(--p);font-size:15px}
+.pm-card.gw{border-style:dashed}
+.pm-card .gw-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(29,219,128,.12);color:var(--p);font-size:17px}
+.bank-box{background:var(--surf);border:1px solid var(--bord);border-radius:11px;padding:10px 12px;margin:8px 0;font-size:12px;line-height:1.7;color:var(--txt2)}
+.bank-box b{color:var(--txt)}
+.rcv-in{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:12px;background:var(--surf);border:1.5px solid var(--bord);color:var(--txt);font-size:14px;outline:none;margin-bottom:12px}
+.rcv-in:focus{border-color:var(--p)}
 .pay-loan-to{display:flex;gap:7px;align-items:flex-start;font-size:11.5px;line-height:1.5;color:var(--txt2);margin-top:10px;padding-top:10px;border-top:1px dashed var(--bord)}
 .pay-loan-to i{font-size:11px;margin-top:2px;color:var(--orange)}
 .pay-loan-to.ok i{color:var(--p)}
@@ -1647,6 +1762,64 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .hot-offer-floating.folded{transform:translateX(calc(100% + 15px - 46px));border-radius:14px 0 0 14px;box-shadow:0 6px 20px rgba(255,77,106,.45)}
 .hot-offer-floating.folded .hot-close{visibility:hidden}
 .hot-offer-floating.folded .hot-icon{animation:fire-shake 1.5s infinite}
+/* keep the offer inside the app column on wide screens, and only the tab visible when folded */
+.hot-offer-floating{right:calc(max(0px,(100vw - 400px) / 2) + 15px);max-width:370px;width:calc(min(100vw,400px) - 30px)}
+.hot-offer-floating.folded,.hot-offer-floating.away{clip-path:inset(-20px calc(100% - 46px) -20px -20px)}
+/* on inner pages the offer waits as a small tab above the page's buttons */
+.hot-offer-floating.away{transform:translateX(calc(100% + 15px - 46px));border-radius:14px 0 0 14px;bottom:96px}
+.hot-offer-floating.away .hot-close{visibility:hidden}
+.hot-offer-floating.away .hot-icon{animation:fire-shake 1.5s infinite}
+
+/* ═══ UNIFIED POPUPS: same width as the app column, smooth scroll, centered text, one close position ═══ */
+:root{--app-gut:max(0px,calc((100vw - 400px) / 2));--pop-gap:14px;--pop-x:14px}
+/* overlays never leave the 400px app column */
+.modal-overlay,.premium-cs-overlay,.sheet-back{left:var(--app-gut) !important;right:var(--app-gut) !important;width:auto !important}
+.modal-overlay,.premium-cs-overlay{padding:var(--pop-gap) !important;overscroll-behavior:contain}
+/* every card fills the column (minus the gutter) and never grows past the screen */
+.modal-overlay .mc,.modal-overlay .conf-card,.modal-overlay .ld-card,#repaymentModal .rep-card,#notifModal .nc-card,#referModal .refer-card,.premium-cs-box,#globalModal > .mc{
+  width:100% !important;max-width:100% !important;box-sizing:border-box;
+  max-height:calc(100dvh - (var(--pop-gap) * 2)) !important;margin:auto !important}
+#fomoModal .mc{max-width:100% !important}
+/* smooth, contained scrolling (no page scrolling behind the popup) */
+.modal-overlay .mc,.modal-overlay .conf-card,.modal-overlay .ld-card,.premium-cs-box,.modal-overlay .notif-list,.modal-overlay .rep-schedule,
+#referModal .refer-body,.pick-list,.dob-col,.chat-messages,.modal-overlay .pp-body{
+  scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+/* centered text */
+.modal-overlay .m-title,.modal-overlay .m-msg,.modal-overlay .m-err-msg,.modal-overlay .m-icon,.picker-hdr,.sheet-title,.sheet-sub{text-align:center !important}
+.modal-overlay .m-icon{margin-left:auto !important;margin-right:auto !important}
+.modal-overlay .m-title,.picker-hdr,.sheet-title{padding-left:42px !important;padding-right:42px !important}
+.modal-overlay .mc.pp > .m-title{padding-top:0 !important}
+
+/* ── one close button: 32px circle, 14px from the top and right edge of every popup ── */
+.popup-close,.cs-close-btn{width:32px !important;height:32px !important;flex:0 0 32px !important;border-radius:50% !important;
+  transform:none;z-index:30 !important;background:rgba(255,255,255,.07) !important;border:1px solid rgba(255,255,255,.13) !important;
+  color:var(--txt2) !important;display:flex !important;align-items:center !important;justify-content:center !important;font-size:13px !important;padding:0 !important}
+.popup-close:hover,.cs-close-btn:hover{background:rgba(255,77,106,.22) !important;color:var(--red) !important;border-color:rgba(255,77,106,.4) !important}
+/* cards whose whole body scrolls: close sticks in the corner while scrolling (takes no space) */
+.modal-overlay .mc:not(:has(.pp-bar)):not(.refer-card):not(.nc-card){padding:22px 20px 22px !important}
+.modal-overlay .mc:not(.refer-card):not(.nc-card) > .popup-close{
+  position:sticky !important;top:-8px !important;right:auto !important;float:none !important;align-self:flex-end !important;
+  margin:-8px -6px -24px 0 !important}
+.premium-cs-box > .cs-close-btn{position:sticky !important;top:var(--pop-x) !important;right:auto !important;align-self:flex-end !important;
+  margin:var(--pop-x) var(--pop-x) -46px 0 !important;flex-shrink:0}
+/* cards with a header bar: close sits in the bar at the same spot, title centered */
+.modal-overlay .pp-bar,#confirmModal .pp-bar,#loanDetailsModal .pp-bar,#repaymentModal .pp-bar,#historyModal .pp-bar,#appStatusModal .pp-bar{
+  padding:var(--pop-x) var(--pop-x) 12px var(--pop-x) !important;min-height:58px;align-items:center !important;gap:8px}
+.modal-overlay .pp-bar > .pp-bar-title{text-align:center !important;padding-left:40px !important}
+.modal-overlay .pp-bar .popup-close{position:static !important;margin:0 !important}
+/* fixed headers (no card scroll): absolute corner */
+#referModal .refer-card > .popup-close,#referModal .refer-head > .popup-close,
+.picker-card > .popup-close,.bottom-sheet > .popup-close{position:absolute !important;top:var(--pop-x) !important;right:var(--pop-x) !important;margin:0 !important;float:none !important}
+#notifModal .nc-head{padding:10px 56px 10px 16px !important}
+#notifModal .nc-head .popup-close{position:absolute !important;top:var(--pop-x) !important;right:var(--pop-x) !important;transform:none !important;margin:0 !important}
+/* bottom sheets: same column, title clear of the close button */
+.picker-card,.bottom-sheet{max-width:400px !important}
+.bottom-sheet{max-height:calc(100dvh - 40px);overflow-y:auto;overscroll-behavior:contain}
+/* support chat headers leave room for the close button */
+.premium-cs-box .chat-header{padding-right:56px !important}
+/* while any popup is open: page behind does not scroll, floating offer steps aside */
+body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) #app{overflow:hidden !important}
+body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-floating{opacity:0 !important;pointer-events:none !important}
 </style>
 </head>
 <body>
@@ -1690,7 +1863,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <div class="m-acts"><button class="mbtn mbtn-cancel" onclick="closeGlobalModal(true)">Cancel</button><button class="mbtn mbtn-ok" onclick="submitLoginPassword()">Login</button></div>
   </div>
   <div class="mc pp" id="modal-alert" style="display:none;">
-    <button class="popup-close" id="alertCloseBtn" aria-label="Close" onclick="closeGlobalModal()"><i class="fa-solid fa-xmark"></i></button>
+    <button class="popup-close" id="alertCloseBtn" aria-label="Close" onclick="closeGlobalModal(false,true)"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-icon" id="m-icon-wrap"><i id="m-icon" class="fa-solid fa-circle-info"></i></div>
     <div class="m-title" id="m-title"></div>
     <div class="m-msg" id="m-msg"></div>
@@ -1802,7 +1975,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
       <div class="rep-schedule" id="repScheduleList"></div>
     </div>
     <div class="pp-foot" style="padding-top:10px;">
-      <p class="rep-foot-note"><i class="fa-solid fa-circle-info"></i><span>EMI = principal + interest · Balance = outstanding principal after each installment</span></p>
+      <p class="rep-foot-note"><i class="fa-solid fa-circle-info"></i><span>Each payment = principal + interest. Dates are estimated from today; the exact dates start from your disbursement date.</span></p>
     </div>
   </div>
 </div>
@@ -1823,11 +1996,21 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 <input type="file" accept="image/*" id="nidBackInput" style="display:none" onchange="handleFileUpload('nidBackInput','boxNidBack')">
 
 <div class="modal-overlay premium-popup" id="notifModal">
-  <div class="mc pp" style="max-width: 380px;">
-    <div class="pp-bar"><span class="pp-bar-title">Notifications</span><button class="popup-close" aria-label="Close" onclick="closeModal('notifModal')"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="notif-list" id="notifListContainer"></div>
+  <div class="mc pp nc-card">
+    <div class="nc-head">
+      <div class="nc-head-ic"><i class="fa-solid fa-bell"></i></div>
+      <div class="nc-head-t"><strong>Notifications</strong><span id="ncSub">You're all caught up</span></div>
+      <button class="popup-close" aria-label="Close" onclick="closeNotificationModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="nc-tabs" id="ncTabs">
+      <button class="on" data-f="all" onclick="setNotifFilter('all')">All</button>
+      <button data-f="personal" onclick="setNotifFilter('personal')">My updates</button>
+      <button data-f="broadcast" onclick="setNotifFilter('broadcast')">Announcements</button>
+    </div>
+    <div class="notif-list nc-list" id="notifListContainer"></div>
   </div>
 </div>
+<div class="nc-toast" id="ncToast" onclick="openNotificationModal()"><div class="nc-toast-ic" id="ncToastIc"><i class="fa-solid fa-bell"></i></div><div class="nc-toast-t"><strong id="ncToastTitle">New notification</strong><span id="ncToastMsg"></span></div></div>
 
 <div class="modal-overlay premium-popup" id="calcModal">
   <div class="mc pp">
@@ -1836,10 +2019,12 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <p class="m-msg">Estimate your monthly repayment easily.</p>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Loan Amount (BDT)</label>
     <div class="calc-val" id="calcAmountDisplay">৳ 10,000</div>
-    <input type="range" class="calc-slider" id="calcAmount" min="1000" max="60000" step="1000" value="10000" oninput="updateCalc()">
+    <input type="range" class="calc-slider" id="calcAmount" min="0" max="6" step="1" value="3" oninput="updateCalc()">
+    <div class="calc-lim" id="calcAmtLim"></div>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Term (Months)</label>
     <div class="calc-val" id="calcTermDisplay">6 Months</div>
-    <input type="range" class="calc-slider" id="calcTerm" min="3" max="36" step="3" value="6" oninput="updateCalc()">
+    <input type="range" class="calc-slider" id="calcTerm" min="0" max="4" step="1" value="1" oninput="updateCalc()">
+    <div class="calc-lim" id="calcTermLim"></div>
     <div class="calc-row"><span>Principal Amount</span><span id="calcPrincipal">৳ 10,000</span></div>
     <div class="calc-row"><span>Interest (<span id="calcRateLabel">18</span>% p.a)</span><span id="calcInterest">৳ 900</span></div>
     <div class="calc-row"><span>Processing Fee</span><span id="calcFee">৳ 400</span></div>
@@ -1860,6 +2045,17 @@ input.pf-filled{padding-left:8px;padding-right:8px}
       <div class="ref-stat"><p>Total Refers</p><h3 id="refTotalCount">0</h3></div>
       <div class="ref-stat success"><p>Success</p><h3 id="refSuccessCount">0</h3></div>
     </div>
+    <div class="inv-card" id="invCard">
+      <div class="inv-top"><span class="inv-badge"><i class="fa-solid fa-crown"></i> Premium Invitation</span><span class="inv-code" id="invCode">-</span></div>
+      <div class="inv-text" id="invText"></div>
+      <div class="inv-link"><i class="fa-solid fa-link"></i><span id="invLink">-</span></div>
+    </div>
+    <div class="inv-share">
+      <a class="inv-sh wa" id="shWa" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a>
+      <a class="inv-sh fb" id="shFb" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i><span>Facebook</span></a>
+      <a class="inv-sh tg" id="shTg" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i><span>Telegram</span></a>
+      <a class="inv-sh sm" id="shSms"><i class="fa-solid fa-comment-sms"></i><span>SMS</span></a>
+    </div>
     <div class="ref-status">
       <div class="ref-status-top"><span>Current Status:</span><span id="currentTierName">Starter</span></div>
       <div class="ref-progress"><i id="tierProgressBar"></i></div>
@@ -1872,7 +2068,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     </div>
     </div>
     <div class="refer-foot">
-      <button class="mbtn mbtn-cancel" style="flex:1;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy Link</button>
+      <button class="mbtn mbtn-cancel" style="flex:1;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy Invite</button>
       <button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button>
     </div>
   </div>
@@ -1917,15 +2113,15 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           <i class="fa-solid fa-headset" style="font-size: 30px; color: var(--p);"></i>
         </div>
         <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 5px;">How can we help?</h2>
-        <p style="font-size: 13px; color: var(--txt2);">Our support team is available 24/7.</p>
+        <p style="font-size: 13px; color: var(--txt2);">Chat with our team or get quick answers below.</p>
       </div>
 
       <div style="padding: 0 20px 25px; display: flex; flex-direction: column; gap: 12px;">
         <div class="premium-cs-item" onclick="startAIChat()" style="border-color: rgba(29,219,128,0.4); background: rgba(29,219,128,0.05);">
           <div class="premium-cs-icon" style="background: rgba(29,219,128,0.15); color: var(--p);"><i class="fa-solid fa-robot"></i></div>
           <div style="flex:1;">
-            <h4 style="font-size:15px; font-weight:700; color:var(--txt);">AI Customer Chat</h4>
-            <p style="font-size:12px; color:var(--p);">Instant answers about loans & fees</p>
+            <h4 style="font-size:15px; font-weight:700; color:var(--txt);">Quick Help</h4>
+            <p style="font-size:12px; color:var(--p);">Instant answers about loans &amp; fees</p>
           </div>
           <i class="fa-solid fa-chevron-right" style="color:var(--p);"></i>
         </div>
@@ -1940,7 +2136,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           <i class="fa-solid fa-chevron-right" style="color:var(--txt2); margin-left:6px;"></i>
         </div>
 
-        <div class="premium-cs-item" id="csWhatsAppBtn" onclick="window.open('https://wa.me/8801700000000','_blank')">
+        <div class="premium-cs-item" id="csWhatsAppBtn" style="display:none">
           <div class="premium-cs-icon" style="background:rgba(37,211,102,.15); color:#25D366;"><i class="fa-brands fa-whatsapp"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:14px; color:var(--txt); font-weight:600;">WhatsApp Support</h4>
@@ -1948,7 +2144,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           </div>
         </div>
 
-        <div class="premium-cs-item" id="csTelegramBtn" onclick="window.open('https://t.me/yourusername','_blank')">
+        <div class="premium-cs-item" id="csTelegramBtn" style="display:none">
           <div class="premium-cs-icon" style="background:rgba(0,136,204,.15); color:#0088cc;"><i class="fa-brands fa-telegram"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:14px; color:var(--txt); font-weight:600;">Telegram Support</h4>
@@ -1956,7 +2152,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           </div>
         </div>
 
-        <div class="premium-cs-item" id="csEmailBtn" onclick="window.location.href='mailto:hello@synapsetech.cloud'">
+        <div class="premium-cs-item" id="csEmailBtn" style="display:none">
           <div class="premium-cs-icon" style="background:rgba(77,143,255,.15); color:var(--blue);"><i class="fa-solid fa-envelope"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:14px; color:var(--txt); font-weight:600;">Email Support</h4>
@@ -1971,10 +2167,10 @@ input.pf-filled{padding-left:8px;padding-right:8px}
       <div class="chat-header">
         <button onclick="backToCsMenu()" style="background:none; border:none; color:#fff; margin-right:5px; cursor:pointer;"><i class="fa-solid fa-arrow-left"></i></button>
         <i class="fa-solid fa-robot"></i>
-        <h4>Credit Up AI Assistant</h4>
+        <h4>Credit Up Quick Help</h4>
       </div>
       <div class="chat-messages" id="chatMessages">
-        <div class="msg ai">Hello! I am your AI assistant. How can I help you today? (You can ask about loan limits, fees, or apply for a loan).</div>
+        <div class="msg ai">Hello! I can answer common questions about loan limits and fees. For anything else, type "complaint" and your message goes to our support team.</div>
         <div class="quick-replies" id="quickReplies">
           <div class="quick-reply-btn" onclick="sendQuickReply('What is the maximum loan limit?')">Max Loan Limit</div>
           <div class="quick-reply-btn" onclick="sendQuickReply('What are the processing fees?')">Processing Fees</div>
@@ -2029,22 +2225,22 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 
 <div id="app">
 
+<div id="appBar">
+  <button class="ab-back" id="abBack" onclick="navBack()" aria-label="Back" style="display:none"><i class="fa-solid fa-arrow-left"></i></button>
+  <div class="ab-mid">
+    <h3 id="userGreeting">Welcome to Credit Up</h3>
+    <div class="balance-pill" id="balanceContainer" style="display:none;"><span class="bp-lbl"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
+  </div>
+  <div class="ab-acts">
+    <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;" aria-label="Notifications"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
+    <div class="notif-btn" onclick="toggleCS()" aria-label="Support"><i class="fa-solid fa-headset"></i><div class="cs-unread-badge" data-support-badge>0</div></div>
+    <div class="notif-btn ab-out" id="logoutTopBtn" onclick="confirmLogout()" style="display:none;" aria-label="Log out"><i class="fa-solid fa-right-from-bracket"></i></div>
+  </div>
+</div>
+
 <div id="screen-home" class="screen active" style="padding:0;">
   <div class="ticker-wrap" id="tickerWrap" style="display:none;"><div class="ticker-title">Notice</div><div class="ticker" id="tickerContent"></div></div>
   <div class="home-hdr">
-    <div class="home-top-bar">
-      <div class="home-greeting">
-        <h3 id="userGreeting">Hello, User 👋</h3>
-        <div class="balance-pill" id="balanceContainer" style="display:none;"><span style="font-size:12px; color:var(--p);"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
-      </div>
-      <div style="display:flex; gap:10px;">
-        <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
-        <div class="notif-btn" onclick="toggleCS()" style="position:relative;">
-          <i class="fa-solid fa-headset"></i>
-          <div class="cs-unread-badge" data-support-badge>0</div>
-        </div>
-      </div>
-    </div>
     <div class="h-logo">Credit <span>Up</span></div>
     <div class="bonus-banner" id="bonusBanner" style="display:none;"><span class="shake-icon">🎁</span><span id="bonusBannerText">...</span></div>
     <div class="h-label">Borrow up to (BDT)</div>
@@ -2238,7 +2434,19 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <i class="fa-solid fa-circle-exclamation"></i>
     <div><strong>No wallet is enabled right now.</strong><span>Please contact support and try again later.</span></div>
   </div>
-  <div class="ph-lbl">Receiving Account Number <span>*</span></div>
+  <div id="rcvTypeWrap" style="display:none;">
+    <div class="ph-lbl">Account Type <span>*</span></div>
+    <div class="opt-chips" id="rcvTypes"></div>
+  </div>
+  <div id="rcvBankBlk" style="display:none;">
+    <div class="ph-lbl">Account Holder Name <span>*</span></div>
+    <input class="rcv-in" id="rcvAccName" placeholder="Name as on the bank account" oninput="saveFormState()">
+    <div class="ph-lbl">Bank Name <span>*</span></div>
+    <input class="rcv-in" id="rcvBankName" placeholder="e.g. Dutch-Bangla Bank" oninput="saveFormState()">
+    <div class="ph-lbl">Branch</div>
+    <input class="rcv-in" id="rcvBranch" placeholder="e.g. Uttara" oninput="saveFormState()">
+  </div>
+  <div class="ph-lbl" id="rcvNumLbl">Receiving Account Number <span>*</span></div>
   <div class="rcv-cat" id="rcvCat" style="display:none;"></div>
   <div class="ph-row" id="bankPhoneRow">
     <input type="tel" id="bankPhone" inputmode="numeric" maxlength="11" placeholder="01XXXXXXXXX"
@@ -2339,7 +2547,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 <div id="screen-fee-payment" class="screen">
   <div class="fee-hdr">
     <i class="fa-solid fa-arrow-left back-ic" onclick="nav('screen-approved')"></i>
-    <div class="title">Fee Payment</div>
+    <div class="title" id="feePageTitle">Fee Payment</div>
   </div>
   <div class="fee-sum">
     <div class="fee-row"><span>Loan Amount (You Receive)</span><span id="payAmount">-</span></div>
@@ -2359,7 +2567,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
           <p>Available: <strong id="dispAvailBalance">৳ 0</strong> · max <strong>৳ 100</strong> off</p>
         </div>
       </div>
-      <i class="fa-solid fa-chevron-down bal-caret" id="balCaret"></i>
+      <span class="bal-pm" id="balCaret" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
     </div>
     <div class="bal-body" id="balBody">
       <label class="bal-opt" onclick="event.stopPropagation(); toggleBalanceApply()">
@@ -2376,6 +2584,16 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     <span>Select the method <strong>as per your need</strong>, then <strong>check the number</strong> before sending. Your fee goes to the number shown below, and your <strong>loan money will be sent to your own receiving number</strong> at the same method — so make sure both are correct.</span>
   </div>
   <div class="pm-grid" id="pmGrid"></div>
+  <div class="pm-opts" id="pmOptsWrap" style="display:none;">
+    <div class="pm-opts-t">How will you pay with <strong id="pmOptsName">-</strong>?</div>
+    <div class="opt-chips" id="pmOpts"></div>
+  </div>
+  <div class="pay-timer" id="payTimer" style="display:none;"><i class="fa-regular fa-clock"></i><span id="payTimerTxt">-</span></div>
+  <div class="gw-box" id="gwBox" style="display:none;">
+    <h4><i class="fa-solid fa-bolt"></i> <span id="gwBoxName">Pay Online</span></h4>
+    <p id="gwBoxNote">Pay securely on the SSLCommerz page with bKash, Nagad, Rocket, Visa or Mastercard. Your payment is verified automatically, no TrxID needed.</p>
+    <div class="gw-amt">Amount: <strong id="gwBoxAmt">-</strong></div>
+  </div>
   <div class="pm-pick" id="pmPickPrompt">
     <i class="fa-solid fa-hand-pointer"></i>
     <div><strong>No payment method selected yet</strong><span>Tap one of the methods above to see where to send your fee.</span></div>
@@ -2408,7 +2626,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
     </div>
     <div class="trx-req" id="trxReqHint">Pick a payment method above and paste your TrxID.</div>
   </div>
-  <div class="fee-foot"><button class="btn-pay" id="btnTrx" onclick="submitTrx()">Submit Transaction ID</button></div>
+  <div class="fee-foot"><button class="btn-pay" id="btnTrx" onclick="submitTrx()"><span id="btnTrxTxt">Submit Transaction ID</span></button></div>
 </div>
 
 <div id="screen-waiting" class="screen" style="align-items:center;justify-content:center;text-align:center">
@@ -2416,6 +2634,7 @@ input.pf-filled{padding-left:8px;padding-right:8px}
   <h2 class="wait-title">Verification Pending</h2>
   <p class="wait-desc">Your Transaction ID has been submitted. Our team is verifying your payment. This usually takes 5–15 minutes.</p>
   <div class="wait-card">
+    <div class="st-row"><span class="st-lbl">Application</span><span class="st-val" id="dispAppRef">-</span></div>
     <div class="st-row"><span class="st-lbl">Transaction ID</span><span class="st-val" id="dispTrx">-</span></div>
     <div class="st-row"><span class="st-lbl">Payment Method</span><span class="st-val" id="dispMethod">-</span></div>
     <div class="st-row"><span class="st-lbl">Status</span><span class="st-val pend">⏳ Pending Verification</span></div>
@@ -2459,6 +2678,9 @@ let _lastBankPhone='';
 // values restored from the previous application (shown with a green "filled" mark)
 let _prefilled={};
 let selPayMethod='Bkash';
+let selPayType='';      // Send Money / Cash Out / Payment … chosen on the fee page
+let selPayoutType='';   // Personal / Agent / Merchant chosen in step 4
+function _payoutIsBank(){ const w = window._activeWallet; return !!(w && w.kind === 'bank'); }
 let totalFee=0;
 let originalTotalFee = 0;
 let appliedBalance = 0;
@@ -2502,7 +2724,9 @@ function _setOfferFolded(f){
   b.classList.toggle('folded', f);
   try{ localStorage.setItem('hotOfferClosed', f ? 'true' : 'false'); }catch(e){}
 }
+let _hotOfferInit = false;
 function initHotOffer() {
+  if(_hotOfferInit) return; _hotOfferInit = true;
   setTimeout(async () => {
     const banner = document.getElementById('hotOfferBanner');
     if(!banner) return;
@@ -2511,6 +2735,8 @@ function initHotOffer() {
     if(n !== null && n >= OFFER_LIMIT) { banner.remove(); return; }
     _updateOfferCounter(n);
     banner.classList.toggle('folded', _offerFolded());   // closed before → stays pinned to the side
+    const cur = document.querySelector('.screen.active');
+    banner.classList.toggle('away', !!cur && cur.id !== 'screen-home');
     banner.style.display = 'block';
   }, 3500);
 }
@@ -2525,6 +2751,7 @@ function _updateOfferCounter(n){
 // tap: folded tab slides out like a drawer; tap again (expanded) opens the popup
 function onHotOfferTap(){
   const b = document.getElementById('hotOfferBanner'); if(!b) return;
+  if(b.classList.contains('away')) { openFomoModal(); return; }
   if(b.classList.contains('folded')) { _setOfferFolded(false); return; }
   openFomoModal();
 }
@@ -2573,7 +2800,10 @@ function saveFormState(isSubmitted){
     bankPhone: (document.getElementById('bankPhone')?.value || '').trim() || _lastBankPhone || '',
     selGender, selDob, selIncome, selPurpose, selAmount, selTerm,
     selEdu, selMarital, selChildren, selOccupation, selRel1, selRel2,
-    selWallet, currentDashboardStep,
+    selWallet, selPayoutType, currentDashboardStep,
+    rcvAccName: document.getElementById('rcvAccName')?.value || '',
+    rcvBankName: document.getElementById('rcvBankName')?.value || '',
+    rcvBranch: document.getElementById('rcvBranch')?.value || '',
     _nidFront: nidFrontUrl || '', _nidBack: nidBackUrl || '',
     _submitted: isSubmitted === true,
     _owner: (_getUser() && _getUser().phone) || ''
@@ -2610,6 +2840,8 @@ function restoreFormState(src){
     selEdu = draft.selEdu || ''; selMarital = draft.selMarital || ''; selChildren = draft.selChildren || '';
     selOccupation = draft.selOccupation || ''; selRel1 = draft.selRel1 || ''; selRel2 = draft.selRel2 || '';
     selWallet = draft.selWallet || 'Bkash';
+    selPayoutType = draft.selPayoutType || '';
+    ['rcvAccName','rcvBankName','rcvBranch'].forEach(k=>{ const e=document.getElementById(k); if(e && draft[k]) e.value = draft[k]; });
     
     const setDisp = (id, val, wrapperId) => {
       if(!val) return;
@@ -2665,7 +2897,7 @@ function _mapAppToForm(a){
     selPurpose: a.loanPurpose || '', selAmount: a.loanAmount || '', selTerm: a.term || '',
     selEdu: a.education || '', selMarital: a.marital || '', selChildren: a.children || '',
     selOccupation: a.occupation || '', selRel1: e1.relation || '', selRel2: e2.relation || '',
-    selWallet: a.wallet || 'Bkash',
+    selWallet: a.wallet || 'Bkash', selPayoutType: a.payoutAccountType || '',
     _nidFront: a.nidFrontUrl || '', _nidBack: a.nidBackUrl || ''
   };
 }
@@ -2838,12 +3070,45 @@ function toggleBalanceVisibility() {
   }
 }
 
+// full number for the greeting: 1711111111 → 01711111111
+function _fullPhone(p){ const d=String(p||'').replace(/\D/g,''); return d ? (d.charAt(0)==='0' ? d : '0'+d) : ''; }
+// back-button history of screens (home clears it)
+let _navStack = [];
+let _navGoingBack = false;
+const _NAV_SKIP = ['screen-review-progress','screen-step-complete'];
+function _updateBackBtn(){
+  const b=document.getElementById('abBack'); if(!b) return;
+  const cur=document.querySelector('.screen.active');
+  b.style.display = (cur && cur.id !== 'screen-home') ? 'flex' : 'none';
+}
+function navBack(){
+  const u=_getUser();
+  const cur=document.querySelector('.screen.active');
+  while(_navStack.length){
+    const prev=_navStack.pop();
+    if(cur && prev===cur.id) continue;
+    if(_NAV_SKIP.includes(prev)) continue;
+    if(u && (prev==='screen-login' || prev==='screen-register')) continue;
+    if(!document.getElementById(prev)) continue;
+    _navGoingBack=true; nav(prev); _navGoingBack=false; return;
+  }
+  nav('screen-home');
+}
+function confirmLogout(){
+  showAlert('Log out?', 'You will need your phone number and password to log in again. Tap Log Out to continue, or ✕ to stay.', 'info', ()=>logoutUser(), true);
+  const ok=document.getElementById('alertOkBtn'); if(ok) ok.innerHTML='Log Out';
+}
 function nav(id){
+  const _from=document.querySelector('.screen.active');
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const t=document.getElementById('screen-'+id.replace('screen-',''));
   const target = document.getElementById(id) || t;
   if(target){
     target.classList.add('active');
+    if(target.id === 'screen-home') _navStack = [];
+    else if(!_navGoingBack && _from && _from.id !== target.id){ _navStack.push(_from.id); if(_navStack.length > 30) _navStack.shift(); }
+    _updateBackBtn();
+    const ob = document.getElementById('hotOfferBanner'); if(ob) ob.classList.toggle('away', target.id !== 'screen-home');
     document.getElementById('app').scrollTo({top: 0, behavior: 'instant'});
     // step 4: always show the stored receiving number when the screen opens
     if(id === 'screen-bank-info' && typeof _syncBankPhoneField === 'function') setTimeout(_syncBankPhoneField, 30);
@@ -2931,8 +3196,12 @@ async function sendChatMessage() {
       reply = `Our standard fees include an Origination Fee (৳${ADMIN.orgFee}), Service Charge (৳${ADMIN.serviceCharge}), and Processing Fee (৳${ADMIN.processingFee}). The total upfront fee is ৳${totalFeeAmt}, plus advance interest based on your term.`;
     }
     else if (lowerText.includes('complain') || lowerText.includes('problem') || lowerText.includes('admin') || lowerText.includes('help')) {
-      reply = "I understand you need human assistance. I have escalated this chat to our Admin team. They will review your message and contact you shortly via your registered number.";
-      await escalateToAdmin(text);
+      const sent = await escalateToAdmin(text);
+      reply = sent === 'ok'
+        ? "Your message has been sent to our support team. You will see their reply in Admin Support Chat (you will also get a red badge on the support icon)."
+        : sent === 'login'
+          ? "Please log in first so our support team can reply to you. You can also use the WhatsApp or Telegram buttons in the support menu."
+          : "Sorry, your message could not be sent right now. Please try Admin Support Chat again in a moment.";
     }
     else {
       reply = "I am a smart assistant and still learning. For detailed queries, you can contact our WhatsApp or Telegram support, or type 'complaint' to reach an admin.";
@@ -2944,15 +3213,22 @@ async function sendChatMessage() {
 
 async function escalateToAdmin(userMessage) {
   const user = _getUser();
-  if(!user || !user.phone) return;
+  if(!user || !user.phone) return 'login';
+  let ok = false;
   // Save legacy ticket
   if(typeof window._saveSupportTicket === 'function') {
     try { await window._saveSupportTicket(user.phone, userMessage); } catch(e) { console.error(e); }
   }
   // Save into support_chats (two-way chat)
   if(typeof window._supportSendMessage === 'function') {
-    try { await window._supportSendMessage(user.phone, userMessage); } catch(e) { console.error(e); }
+    try { await window._supportSendMessage(user.phone, userMessage); ok = true; }
+    catch(e) {
+      // a closed conversation is reopened so the complaint still reaches the team
+      try { await window._supportStartNewChat(user.phone); await window._supportSendMessage(user.phone, userMessage); ok = true; }
+      catch(e2) { console.error(e2); }
+    }
   }
+  return ok ? 'ok' : 'error';
 }
 
 function closeModal(id){ document.getElementById(id).classList.remove('on'); }
@@ -2985,7 +3261,9 @@ function openPasswordModal() {
   }
 }
 
-function showAlert(title,msg,type='info',cb=null){
+let _modalCbOkOnly=false;
+// okOnly: the callback runs only when OK is pressed, not when the alert is dismissed with ✕
+function showAlert(title,msg,type='info',cb=null,okOnly=false){
   _showModal(false,true,false);
   document.getElementById('m-title').innerText=title;
   document.getElementById('m-msg').innerText=msg;
@@ -2996,18 +3274,19 @@ function showAlert(title,msg,type='info',cb=null){
   const types={ success:['m-ic-suc','fa-solid fa-check'], error:['m-ic-err','fa-solid fa-xmark'], info:['m-ic-lock','fa-solid fa-circle-info'] };
   const[cls,icn]=types[type]||types.info;
   w.className='m-icon '+cls; i.className=icn;
-  modalCloseCb=cb;
+  modalCloseCb=cb; _modalCbOkOnly=okOnly;
 }
 function showErrorModal(title,msg){
   _showModal(false,false,true);
   document.getElementById('err-title').innerText=title;
   document.getElementById('err-msg').innerText=msg;
 }
-function closeGlobalModal(clearLogin=false){
+function closeGlobalModal(clearLogin=false, viaX=false){
   document.getElementById('globalModal').classList.remove('on');
   if(clearLogin) pendingLoginUser=null;
   const cb=modalCloseCb; modalCloseCb=null;
-  if(cb) cb();
+  const skip = viaX && _modalCbOkOnly; _modalCbOkOnly=false;
+  if(cb && !skip) cb();
 }
 // keep the NID on the user's profile so the next application has it already filled
 async function saveUserNid(nid){
@@ -3243,12 +3522,6 @@ function _syncBankPhoneField(){
   if(!el) return;
   const saved = _lastBankPhone || (document.getElementById('bankPhone')?.value || '');
   if(!el.value.trim() && saved) el.value = saved;
-  if(!el.value.trim()){
-    // fall back to the receiving number registered for this wallet
-    const w = window._activeWallet || (window._wallets || [])[0];
-    const wn = w ? walletReceivingNumber(w) : '';
-    if(wn) el.value = wn;
-  }
   if(el.value.trim()) onBankPhoneInput(el);
 }
 function submitStep3(){
@@ -3281,12 +3554,21 @@ function submitStep4(){
     return;
   }
   if(!_bankValid(val)){
-    _bankHint('err', 'Enter a valid 11-digit number starting with 01 (e.g. 01712345678).');
+    _bankHint('err', _payoutIsBank() ? 'Enter your bank account number (8 to 20 digits).' : 'Enter a valid 11-digit number starting with 01 (e.g. 01712345678).');
     el?.focus();
     return;
   }
   if(!selWallet){
     showAlert('Wallet Required', 'Please select the wallet type that will receive your loan.', 'info');
+    return;
+  }
+  if(_payoutIsBank()){
+    const miss = [];
+    if(!document.getElementById('rcvAccName').value.trim()) miss.push('account holder name');
+    if(!document.getElementById('rcvBankName').value.trim()) miss.push('bank name');
+    if(miss.length){ showAlert('Bank Details Needed', 'Please enter your ' + miss.join(' and ') + '.', 'info'); return; }
+  } else if(!selPayoutType){
+    showAlert('Account Type Needed', `Is your ${selWallet} number Personal, Agent or Merchant? Please choose one.`, 'info');
     return;
   }
   el.value = val;
@@ -3297,15 +3579,18 @@ function submitStep4(){
   setTimeout(()=>{ showLoader(false); currentDashboardStep=4; updateProgressUI(); _afterStepComplete(4); }, 900);
 }
 function selectWallet(w){
+  const dw = (window._payoutWallets || []).find(x => x.name === w);
+  if(dw){ _selWalletDyn(dw, true, true); return; }
   selWallet=w; saveFormState();
   ['Bkash','Nagad','Rocket'].forEach(x=>{ const el=document.getElementById('w'+x); if(el) el.classList.remove('sel'); });
   const target=document.getElementById('w'+w); if(target) target.classList.add('sel');
 }
 // ── Step 4: the receiving account number must be editable + validated ──
-function _bankClean(v){ return String(v||'').replace(/[^0-9]/g,'').slice(0,11); }
+function _bankClean(v){ return String(v||'').replace(/[^0-9]/g,'').slice(0, _payoutIsBank() ? 20 : 11); }
 // accept 01712345678 / 1712345678 / +8801712345678 and store one clean local format
 function _bankNormalize(v){
   let d = String(v||'').replace(/[^0-9]/g,'');
+  if(_payoutIsBank()) return d.slice(0,20);
   if(d.indexOf('880') === 0) d = '0' + d.slice(3);
   else if(d.indexOf('88') === 0 && d.length > 11) d = '0' + d.slice(2);
   if(d.length === 10 && d.charAt(0) === '1') d = '0' + d;
@@ -3313,6 +3598,7 @@ function _bankNormalize(v){
 }
 function _bankValid(v){
   const d = _bankClean(v);
+  if(_payoutIsBank()) return /^[0-9]{8,20}$/.test(d);
   return /^01[3-9][0-9]{8}$/.test(d) || /^1[3-9][0-9]{8}$/.test(d);
 }
 function _bankHint(state, text){
@@ -3334,11 +3620,11 @@ function onBankPhoneInput(el){
   const v = el.value;
   if(!v) { _bankHint('', 'Enter the wallet number that should receive your loan.'); return; }
   if(_bankValid(v)) _bankHint('ok', 'Valid receiving number.');
-  else _bankHint('', 'Format: 01XXXXXXXXX (11 digits).');
+  else _bankHint('', _payoutIsBank() ? 'Account number: 8 to 20 digits.' : 'Format: 01XXXXXXXXX (11 digits).');
 }
 function onBankPhoneBlur(){
   const el = document.getElementById('bankPhone');
-  if(el && el.value && !_bankValid(el.value)) _bankHint('err', 'That does not look like a valid BD mobile number.');
+  if(el && el.value && !_bankValid(el.value)) _bankHint('err', _payoutIsBank() ? 'Account number should be 8 to 20 digits.' : 'That does not look like a valid BD mobile number.');
   else if(el && _bankValid(el.value)) _bankHint('ok', 'Valid receiving number.');
   saveFormState();
 }
@@ -3503,7 +3789,9 @@ function openRepaymentSchedule(){
   const emiRaw = r > 0 ? p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1) : p / n;
   const emi = Math.round(emiRaw);
 
-  // amortization table — exact to the last taka
+  // installment list — exact to the last taka
+  const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const today = new Date();
   let bal = p, totalInterest = 0, rows = '';
   for(let i = 1; i <= n; i++){
     const interest  = Math.round(bal * r);
@@ -3511,14 +3799,17 @@ function openRepaymentSchedule(){
     const payNow    = i < n ? emi : principal + interest;
     bal = Math.max(0, bal - principal);
     totalInterest += interest;
-    const isLast = i === n;
-    rows += `<tr${isLast ? ' class="last"' : ''}>
-      <td>${i}</td>
-      <td class="num">${_fmt(payNow)}</td>
-      <td class="num">${_fmt(principal)}</td>
-      <td class="int">${_fmt(interest)}</td>
-      <td class="bal${isLast ? ' zero' : ''}">${_fmt(Math.round(bal))}</td>
-    </tr>`;
+    const d = new Date(today.getFullYear(), today.getMonth() + i, Math.min(today.getDate(), 28));
+    const paidPct = Math.round((1 - bal / p) * 100);
+    rows += `<div class="ri${i === n ? ' last' : ''}">
+      <div class="ri-no">${i}</div>
+      <div class="ri-mid">
+        <div class="ri-due">${mon[d.getMonth()]} ${d.getFullYear()}<em>${i === n ? 'Final installment' : 'Installment ' + i}</em></div>
+        <div class="ri-split"><span>Principal <b>৳${_fmt(principal)}</b></span><span>Interest <b class="o">৳${_fmt(interest)}</b></span></div>
+        <div class="ri-bar"><i style="width:${paidPct}%"></i></div>
+      </div>
+      <div class="ri-amt"><strong>৳${_fmt(payNow)}</strong><span>${bal > 0 ? 'Left ৳' + _fmt(Math.round(bal)) : 'Fully paid'}</span></div>
+    </div>`;
   }
   const totalPayable = p + totalInterest;
 
@@ -3531,26 +3822,8 @@ function openRepaymentSchedule(){
   set('repTotalPayable', '৳ ' + _fmt(totalPayable));
   set('repSumNote', `${n} installments · ${annualRate}% p.a.`);
 
-  // shared column widths keep the header, rows and totals perfectly aligned
-  document.getElementById('repScheduleList').innerHTML = `
-    <table class="rep-table">
-      <colgroup>
-        <col class="c-month"><col><col><col><col>
-      </colgroup>
-      <thead>
-        <tr><th>#</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
-      </thead>
-      <tbody>${rows}</tbody>
-      <tfoot>
-        <tr>
-          <td>Σ</td>
-          <td>${_fmt(totalPayable)}</td>
-          <td>${_fmt(p)}</td>
-          <td style="color:var(--orange)">${_fmt(totalInterest)}</td>
-          <td>0</td>
-        </tr>
-      </tfoot>
-    </table>`;
+  document.getElementById('repScheduleList').innerHTML = `<div class="ri-list">${rows}</div>
+    <div class="ri-total"><span>Total you repay</span><strong>৳${_fmt(totalPayable)}</strong></div>`;
   document.getElementById('repaymentModal').classList.add('on');
 }
 
@@ -3657,20 +3930,19 @@ function goToFeePayment(){
   appliedBalance = 0;
   const balBox = document.getElementById('balanceApplyBox');
   if(balBox) balBox.classList.remove('active', 'open');
+  _syncBalPm();
   const adjEl = document.getElementById('balAdjustAmt');
   if(adjEl) adjEl.innerText = '0';
   
   updateFeeDisplay();
   
   // the number always comes from the enabled wallets list (never a stale default)
-  const activeW = window._activeWallet && (window._wallets || []).find(w => w.id === window._activeWallet.id);
-  const collNum = activeW ? walletCollectionNumber(activeW)
-                : (window._wallets && window._wallets[0] ? walletCollectionNumber(window._wallets[0]) : '');
-  const chosen = (activeW && selPayMethod) ? activeW : null;
-  if(chosen) _selPayDyn(chosen, true);
-  else _clearPaySelection();
-  if(!collNum) selPayMethod = '';
+  // the user always picks the method again on this page
+  renderPayGrid();
   applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
+  // which application this fee is for
+  const feeAppId = window._latestAppId || (window._latestApp && window._latestApp.id) || '';
+  const ft = document.getElementById('feePageTitle'); if(ft) ft.innerText = feeAppId ? `Fee Payment · ${appRef(feeAppId)}` : 'Fee Payment';
   nav('screen-fee-payment');
 }
 
@@ -3681,6 +3953,7 @@ function toggleBalanceExpand(){
   const box = document.getElementById('balanceApplyBox');
   if(!box) return;
   box.classList.toggle('open');
+  _syncBalPm();
   const amtEl = document.getElementById('balAdjustAmt');
   const noteEl = document.getElementById('balNote');
   if(amtEl && !isBalanceApplied) amtEl.innerText = _fmt(_balanceAllowed());
@@ -3692,6 +3965,11 @@ function toggleBalanceExpand(){
   }
 }
 
+// the (+) / (−) sign on the folded "Use Account Balance" row
+function _syncBalPm(){
+  const box=document.getElementById('balanceApplyBox'), pm=document.getElementById('balCaret');
+  if(box && pm) pm.innerHTML = box.classList.contains('open') ? '<i class="fa-solid fa-minus"></i>' : '<i class="fa-solid fa-plus"></i>';
+}
 function _balanceAllowed(){
   const userBalance = Number(window._userRealBalance || 0) || 0;
   return Math.max(0, Math.min(BALANCE_MAX_ADJUST, userBalance, Number(originalTotalFee) || 0));
@@ -3711,7 +3989,7 @@ function toggleBalanceApply() {
 
   if(isBalanceApplied) {
       box.classList.add('active');
-      box.classList.add('open');
+      box.classList.add('open'); _syncBalPm();
       appliedBalance = maxAllowed;          // never more than ৳100
   } else {
       box.classList.remove('active');
@@ -3737,9 +4015,16 @@ function updateFeeDisplay() {
       document.getElementById('btnTrx').classList.add('on');
   } else {
       document.getElementById('trxInput').placeholder = "e.g. AK9F5B2C";
-      document.getElementById('trxInput').value = "";
+      if(document.getElementById('trxInput').value === "PAID_BY_BALANCE") document.getElementById('trxInput').value = "";
       document.getElementById('trxInput').readOnly = false;
-      document.getElementById('btnTrx').classList.remove('on');
+      if(typeof checkTrx==="function") checkTrx();
+  }
+  // keep the amount inside the instructions / online button in step with the balance
+  if(window._payMode === 'manual' && window._feeWallet && window._feeOpt) renderPaySteps(window._feeWallet);
+  if(window._payMode === 'gateway'){
+    const ga=document.getElementById('gwBoxAmt'); if(ga) ga.innerText='৳'+_fmt(finalTotal);
+    const bt=document.getElementById('btnTrxTxt'); if(bt) bt.innerText=`Pay ৳${_fmt(finalTotal)} Online`;
+    document.getElementById('btnTrx').classList.add('on');
   }
 }
 
@@ -3804,7 +4089,8 @@ function selectPayMethod(m){
 }
 function checkTrx(){
   const hasTrx=document.getElementById('trxInput').value.trim().length>=4;
-  const hasMethod=!!selPayMethod;
+  if(window._payMode === 'gateway'){ document.getElementById('btnTrx').classList.add('on'); return; }
+  const hasMethod=!!selPayMethod && !!window._feeOpt;
   const ok=hasTrx && hasMethod;
   document.getElementById('btnTrx').classList.toggle('on',ok);
   // tell the user exactly what is still missing
@@ -3820,6 +4106,11 @@ function checkTrx(){
 async function submitTrx(){
   const trx = document.getElementById('trxInput').value.trim();
   const finalTotal = originalTotalFee - appliedBalance;
+  if(window._payMode === 'gateway' && finalTotal > 0) return startOnlinePay();
+  if(finalTotal > 0 && selPayMethod && !window._feeOpt){
+      showErrorModal('Choose How You Paid', 'Please choose the pay option (for example Send Money or Cash Out) you used.');
+      return;
+  }
   
   // a method must be chosen deliberately — never assume one
   if(finalTotal > 0 && !selPayMethod){
@@ -3853,7 +4144,8 @@ async function submitTrx(){
       trxId: trx || 'BALANCE_PAYMENT', 
       payMethod: selPayMethod, 
       // snapshot of the wallet + number used for this payment (audit trail)
-      walletId: (window._activeWallet && window._activeWallet.id) || '',
+      walletId: (window._feeWallet && window._feeWallet.id) || '',
+      payType: selPayType || '',
       collectionNumber: document.getElementById('adminNumber').innerText,
       receivingNumber: document.getElementById('bankPhone')?.value || '',
       appId: window._latestAppId || (window._latestApp && window._latestApp.id) || '',
@@ -3863,6 +4155,7 @@ async function submitTrx(){
       loanAmount: Number(String(selAmount).replace(/,/g,'')) || 0, 
       term: Number(selTerm) || 0, 
       wallet: selWallet, 
+      payoutAccountType: selPayoutType || '',
       status: 'Pending', 
       submittedAt: new Date().toISOString()
     });
@@ -3872,7 +4165,9 @@ async function submitTrx(){
     const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted', window._latestAppId || (window._latestApp && window._latestApp.id) || '');
     
     document.getElementById('dispTrx').innerText = trx || 'Balance Adjustment';
-    document.getElementById('dispMethod').innerText = finalTotal > 0 ? selPayMethod : 'Account Balance';
+    const payAppId = window._latestAppId || (window._latestApp && window._latestApp.id) || '';
+    const refEl = document.getElementById('dispAppRef'); if(refEl) refEl.innerText = appRef(payAppId) + ' · ৳' + (selAmount || '-');
+    document.getElementById('dispMethod').innerText = finalTotal > 0 ? [selPayMethod, selPayType].filter(Boolean).join(' · ') : 'Account Balance';
     
     document.getElementById('trxInput').value = '';
     document.getElementById('btnTrx').classList.remove('on');
@@ -3904,7 +4199,8 @@ function updateUIForUser() {
     if(loginLink) loginLink.style.display = 'none';
     if(bonusBanner) bonusBanner.style.display = 'none';
     const greet = document.getElementById('userGreeting');
-    if(greet) greet.innerText = `Hello, ${u.phone.slice(-4)} 👋`;
+    if(greet) greet.innerText = `Hello, ${_fullPhone(u.phone)}`;
+    const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'flex';
     // Start support chat real-time listener
     if (typeof window._startSupportListener === 'function' && !window._supportListenerStarted) {
       window._startSupportListener(u.phone);
@@ -3918,11 +4214,13 @@ function updateUIForUser() {
     if(bonusBanner) bonusBanner.style.display = 'flex';
     const greet = document.getElementById('userGreeting');
     if(greet) greet.innerText = 'Welcome to Credit Up';
+    const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'none';
     const statusCard = document.getElementById('userStatusCard');
     if(statusCard) statusCard.style.display = 'none';
     // the previous user's pending loan may have hidden the button: always show it when logged out
     const mainBtn = document.getElementById('mainBorrowBtn');
     if(mainBtn) mainBtn.style.display = 'flex';
+    if(typeof window._stopNotifListener === 'function') window._stopNotifListener();
     // Stop support listener on logout
     if (window._supportUnsubscribe) { window._supportUnsubscribe(); window._supportUnsubscribe = null; }
     window._supportListenerStarted = false;
@@ -3957,7 +4255,7 @@ function _clearUserSession(){
   _lastBankPhone = ''; _savedApp = null; _savedNid = '';
   nidFrontUrl = ''; nidBackUrl = ''; nidFrontOk = false; nidBackOk = false;
   pendingLoginUser = null;
-  window._latestApp = null; window._latestAppId = null; window._userDocId = null;
+  window._latestApp = null; window._latestAppId = null; window._pendingFeeApp = null; window._allApps = []; window._trxByApp = {}; window._userDocId = null;
   window._userRealBalance = 0; window._promoClaimed = false; window._balanceAdjustUsed = false;
   const hb = document.getElementById('headerBalance'); if(hb) hb.innerText = '৳ ••••';
   const nl = document.getElementById('notifListContainer'); if(nl) nl.innerHTML = '';
@@ -3983,12 +4281,15 @@ function startNewApplication(){
   }
   const u = _getUser();
   if(!u) { nav('screen-login'); return; }
-  if(window._latestApp && window._latestApp.status === 'Pending Fee Payment') {
-    showAlert('Action Required', 'Please pay the fee for your previous application first.', 'error');
-    return;
-  }
-  if(window._latestApp && window._latestApp.status === 'TrxID Submitted') {
-    showAlert('Verification Pending', 'Please wait for your current payment to be verified.', 'info');
+  // the only thing that blocks a new application: an earlier application whose fee is still unpaid
+  const pending = window._pendingFeeApp || (window._latestApp && window._latestApp.status === 'Pending Fee Payment' ? window._latestApp : null);
+  if(pending) {
+    // OK takes the user straight to the fee page of that unpaid application
+    showAlert('Action Required', 'Please pay the fee for your previous application first. Tap OK to go to its payment page.', 'error', () => {
+      window._latestAppId = pending.id || window._latestAppId;
+      _restoreAppState(pending);
+      goToFeePayment();
+    }, true);
     return;
   }
   // returning users keep their previous details — policy must still be accepted
@@ -3997,70 +4298,165 @@ function startNewApplication(){
   resetPolicyCheck();   // every new application needs a fresh consent
   nav('screen-policy');
 }
-function openNotificationModal() { const badge = document.getElementById('notifBadge'); if(badge) badge.style.display = 'none'; document.getElementById('notifModal').classList.add('on'); }
-function openCalculator() { document.getElementById('calcModal').classList.add('on'); updateCalc(); }
+function openNotificationModal() {
+  document.getElementById('notifModal').classList.add('on');
+  const t=document.getElementById('ncToast'); if(t) t.classList.remove('on');
+  if(typeof window._renderNotifs === 'function') window._renderNotifs();
+  // opening the list marks everything as read (badge clears)
+  if(typeof window._markNotifsSeen === 'function') window._markNotifsSeen();
+}
+function closeNotificationModal(){ closeModal('notifModal'); if(typeof window._renderNotifs === 'function') window._renderNotifs(); }
+function setNotifFilter(f){ window._notifFilter = f; document.querySelectorAll('#ncTabs button').forEach(b=>b.classList.toggle('on', b.dataset.f===f)); if(typeof window._renderNotifs === 'function') window._renderNotifs(); }
+// the calculator only offers the amounts, terms and rate the admin set
+function _calcLists(){
+  const num = v => Number(String(v).replace(/,/g,'')) || 0;
+  // the highest loan the admin allows (Site Config → Max Borrow Amount)
+  const max = Number(window._maxBorrow) || num(document.getElementById('homeMaxBorrow')?.innerText || '');
+  let amts = [...new Set((OPTS.loanAmount || []).map(num).filter(v => v > 0))].sort((a,b)=>a-b);
+  if(max > 0){
+    amts = amts.filter(v => v <= max);
+    if(!amts.length || amts[amts.length-1] < max) amts.push(max);   // the limit itself is always the top of the slider
+  }
+  const terms = (OPTS.term || []).map(Number).filter(v => v > 0).sort((a,b)=>a-b);
+  return { amts: amts.length ? amts : [10000], terms: terms.length ? terms : [6] };
+}
+function openCalculator() {
+  const { amts, terms } = _calcLists();
+  const a = document.getElementById('calcAmount'), t = document.getElementById('calcTerm');
+  a.max = amts.length - 1; t.max = terms.length - 1;
+  if(Number(a.value) > amts.length - 1) a.value = Math.floor((amts.length - 1) / 2);
+  if(Number(t.value) > terms.length - 1) t.value = 0;
+  const fm = v => '৳' + v.toLocaleString('en-US');
+  document.getElementById('calcAmtLim').innerHTML = `<span>${fm(amts[0])}</span><span>${fm(amts[amts.length-1])}</span>`;
+  document.getElementById('calcTermLim').innerHTML = `<span>${terms[0]} mo</span><span>${terms[terms.length-1]} mo</span>`;
+  document.getElementById('calcModal').classList.add('on'); updateCalc();
+}
+function _refLink(phone){ return `${window.location.origin}/?ref=0${String(phone).replace(/^0+/,'')}`; }
+// the invitation that is copied / shared everywhere — the link is always inside it
+function _inviteBody(){
+  const bonus = Number(window._newUserBonus) || 0;
+  return [
+    '✨ Credit Up — আপনার জন্য বিশেষ আমন্ত্রণ ✨',
+    '',
+    'আমি Credit Up ব্যবহার করছি। মোবাইল থেকেই কয়েক মিনিটে লোনের আবেদন করা যায়, আর লোনের টাকা আসে নিজের bKash / Nagad / Rocket অ্যাকাউন্টে।',
+    '',
+    '🔹 ঘরে বসে অনলাইনে সহজ আবেদন',
+    '🔹 সব ফি আবেদনের আগেই পরিষ্কার দেখানো হয়',
+    '🔹 অ্যাপেই প্রতিটি আবেদনের স্ট্যাটাস দেখা যায়'
+  ].concat(bonus > 0 ? [`🎁 আমার লিংক দিয়ে যোগ দিলে পাবেন ৳${bonus} সাইন-আপ বোনাস`] : []).join('\n');
+}
+function _inviteText(phone){ return _inviteBody() + '\n\n👉 আমার আমন্ত্রণ লিংক:\n' + _refLink(phone); }
 function openReferModal() {
   const u = _getUser();
   if(!u || !u.phone) { showAlert('Login Required', 'Please login to access the referral program.', 'error'); return; }
-  const link = `${BASE_URL}?ref=${u.phone}`;
+  const link = _refLink(u.phone);
+  const text = _inviteText(u.phone);
   window._refLinkCache = link;
+  const set=(id,v)=>{ const e=document.getElementById(id); if(e) e.innerText=v; };
+  set('invText', _inviteBody());
+  set('invLink', link.replace(/^https?:\/\//,''));
+  set('invCode', 'Code: 0' + String(u.phone).replace(/^0+/,''));
+  const h=(id,url)=>{ const e=document.getElementById(id); if(e) e.href=url; };
+  h('shWa', 'https://wa.me/?text=' + encodeURIComponent(text));
+  h('shFb', 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link));
+  h('shTg', 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(_inviteBody()));
+  // iOS uses "&body=", Android "?body="; "?&body=" works on both
+  h('shSms', 'sms:?&body=' + encodeURIComponent(text));
   document.getElementById('referModal').classList.add('on');
   if(typeof window.loadReferralStats === 'function') window.loadReferralStats(u.phone);
 }
 function openHistoryModal() { document.getElementById('historyModal').classList.add('on'); if (typeof window.loadTransactionHistory === 'function') window.loadTransactionHistory(); }
-function copyRefLink() {
-  const user = _getUser(); if(!user) return;
-  const link = `${BASE_URL}?ref=${user.phone}`;
-  const done = () => showAlert('Copied!', 'Referral link copied.', 'success');
-  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(link).then(done).catch(done); } 
-  else { const tmp = document.createElement('textarea'); tmp.value = link; document.body.appendChild(tmp); tmp.select(); document.execCommand('copy'); document.body.removeChild(tmp); done(); }
+async function _copyText(t){
+  try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(t); return true; } }catch(e){}
+  try{
+    const tmp=document.createElement('textarea'); tmp.value=t; tmp.setAttribute('readonly','');
+    tmp.style.cssText='position:fixed;top:0;left:0;opacity:0;'; document.body.appendChild(tmp);
+    tmp.select(); tmp.setSelectionRange(0, t.length); const ok=document.execCommand('copy'); document.body.removeChild(tmp); return ok;
+  }catch(e){ return false; }
 }
-function shareRefLink() {
+// "copy" always copies the whole invitation card, with the link inside it
+async function copyRefLink() {
   const user = _getUser(); if(!user) return;
-  const link = `${BASE_URL}?ref=${user.phone}`;
-  const text = `🎉 Hey! I am using Credit Up to get instant personal loans. Join using my link and we both get bonuses! 💸\n\nClick here: ${link}`;
-  if (navigator.share) { navigator.share({ title: 'Join Credit Up', text: text, url: link }).catch(console.error); } 
-  else { copyRefLink(); }
+  const ok = await _copyText(_inviteText(user.phone));
+  if(ok) showAlert('Invitation Copied ✨', 'The full invitation with your link is copied. Paste it in WhatsApp, Messenger, SMS or anywhere.', 'success');
+  else showAlert('Copy This Invitation', _inviteText(user.phone), 'info');
+}
+async function shareRefLink() {
+  const user = _getUser(); if(!user) return;
+  const text = _inviteText(user.phone);
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Credit Up — Premium Invitation', text: text }); return; }
+    catch(e){ if(e && e.name === 'AbortError') return; }
+  }
+  // desktop / browsers without a share sheet: copy the invitation instead
+  await copyRefLink();
 }
 
+// short, human-readable application id shown everywhere (app, fee page, history, admin)
+function appRef(id){ return id ? 'CU-' + String(id).slice(-6).toUpperCase() : '—'; }
+const _escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const APP_STATUS_UI = {
+  'Pending Fee Payment':  ['Fee Payment Pending', 'var(--orange)'],
+  'TrxID Submitted':      ['Verification Pending ⏳', 'var(--blue)'],
+  'Fee Verified':         ['Fee Verified — Under Review 🔎', 'var(--blue)'],
+  'Approved':             ['Approved 💸', 'var(--p)'],
+  'Disbursed':            ['Disbursed ✅', 'var(--p)'],
+  'Disbursement Rejected':['Sending failed — amount back in balance', 'var(--orange)'],
+  'Rejected':             ['Rejected ❌', 'var(--red)']
+};
+// every application of the user, newest first, each with its own id, fee status and TrxID
 function openAppStatusModal() {
-  const a = window._latestApp; if(!a) return;
+  const apps = (window._allApps && window._allApps.length) ? window._allApps : (window._latestApp ? [window._latestApp] : []);
+  if(!apps.length) return;
   const content = document.getElementById('statusModalContent');
-  let statusHtml = '', btnHtml = '';
-  if(a.status === 'Pending Fee Payment') {
-    statusHtml = '<span style="color:var(--orange); font-weight:700;">Fee Payment Pending</span>';
-    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); goToFeePayment()">Pay Fee Now</button>`;
-  } else if(a.status === 'TrxID Submitted') {
-    statusHtml = '<span style="color:var(--blue); font-weight:700;">Verification Pending ⏳</span>';
-    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); nav('screen-waiting')">View Verification Status</button>`;
-  } else if(a.status === 'Fee Verified') {
-    statusHtml = '<span style="color:var(--blue); font-weight:700;">Fee Verified — Under Review 🔎</span>';
-  } else if(a.status === 'Disbursement Rejected') {
-    statusHtml = '<span style="color:var(--orange); font-weight:700;">Sending failed — amount is back in your balance</span>';
-  } else if(a.status === 'Approved' || a.status === 'Disbursed') {
-    statusHtml = '<span style="color:var(--p); font-weight:700;">Approved &amp; Active 💸</span>';
-    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); _restoreAppState(window._latestApp); _populateApprovedScreen(window._latestApp); nav('screen-approved')">View Loan Details</button>`;
-  } else if(a.status === 'Rejected') {
-    statusHtml = '<span style="color:var(--red); font-weight:700;">Rejected ❌</span>';
-    btnHtml = `<button class="mbtn-full" onclick="closeModal('appStatusModal'); startNewApplication()">Apply Again</button>`;
-  }
-  content.innerHTML = `
-    <div class="pp-body">
-      <div class="detail-row"><div class="detail-lbl">Loan Amount</div><div class="detail-val color-p fw8">৳ ${a.loanAmount || '-'}</div></div>
-      <div class="detail-row"><div class="detail-lbl">Term</div><div class="detail-val">${a.term || '-'} Months</div></div>
-      <div class="detail-row"><div class="detail-lbl">Status</div><div class="detail-val">${statusHtml}</div></div>
+  const rows = apps.map((a, i) => {
+    const [label, color] = APP_STATUS_UI[a.status] || [a.status || '-', 'var(--txt2)'];
+    const trx = (window._trxByApp || {})[a.id];
+    let btn = '';
+    if(a.status === 'Pending Fee Payment') btn = `<button class="mbtn-full" style="margin-top:10px" onclick="_appAction(${i},'pay')">Pay Fee for ${appRef(a.id)}</button>`;
+    else if(a.status === 'TrxID Submitted') btn = `<button class="mbtn-full" style="margin-top:10px" onclick="_appAction(${i},'wait')">View Verification Status</button>`;
+    else if(['Approved','Disbursed'].includes(a.status)) btn = `<button class="mbtn-full" style="margin-top:10px" onclick="_appAction(${i},'loan')">View Loan Details</button>`;
+    return `<div style="border:1px solid var(--border,rgba(255,255,255,.08));border-radius:12px;padding:10px 12px;margin-bottom:10px;${a.status==='Pending Fee Payment'?'border-color:rgba(255,140,66,.5);':''}">
+      <div class="detail-row"><div class="detail-lbl">Application</div><div class="detail-val fw8" style="font-family:monospace">${appRef(a.id)}</div></div>
+      <div class="detail-row"><div class="detail-lbl">Loan Amount</div><div class="detail-val color-p fw8">৳ ${_escH(a.loanAmount || '-')} · ${_escH(a.term || '-')} mo</div></div>
+      <div class="detail-row"><div class="detail-lbl">Status</div><div class="detail-val"><span style="color:${color};font-weight:700">${_escH(label)}</span></div></div>
+      <div class="detail-row"><div class="detail-lbl">Fee TrxID</div><div class="detail-val" style="font-family:monospace">${trx ? _escH(trx.trxId) + ' <span style="color:var(--txt2);font-size:11px">(' + _escH(trx.status || 'Pending') + ')</span>' : '—'}</div></div>
       <div class="detail-row"><div class="detail-lbl">Applied On</div><div class="detail-val">${a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '-'}</div></div>
-    </div>
-    ${btnHtml ? `<div class="pp-foot">${btnHtml}</div>` : ''}
-  `;
+      ${btn}
+    </div>`;
+  }).join('');
+  const unpaid = apps.filter(a => a.status === 'Pending Fee Payment').length;
+  content.innerHTML = `<div class="pp-body" style="max-height:60vh;overflow-y:auto">
+      ${apps.length > 1 ? `<p style="font-size:12px;color:var(--txt2);margin-bottom:10px">You have ${apps.length} applications${unpaid ? ` · <strong style="color:var(--orange)">${unpaid} fee unpaid</strong>` : ''}.</p>` : ''}
+      ${rows}
+    </div>`;
   document.getElementById('appStatusModal').classList.add('on');
+}
+function _appAction(i, kind){
+  const apps = (window._allApps && window._allApps.length) ? window._allApps : [window._latestApp];
+  const a = apps[i]; if(!a) return;
+  closeModal('appStatusModal');
+  if(kind === 'pay'){ window._latestAppId = a.id; _restoreAppState(a); goToFeePayment(); }
+  else if(kind === 'wait'){ _showWaitingFor(a); }
+  else if(kind === 'loan'){ _restoreAppState(a); _populateApprovedScreen(a); nav('screen-approved'); }
+}
+// the verification screen shows which application and which TrxID it is about
+function _showWaitingFor(a){
+  const t = (window._trxByApp || {})[a.id];
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+  set('dispAppRef', appRef(a.id) + ' · ৳' + (a.loanAmount || '-'));
+  set('dispTrx', t ? (t.trxId === 'PAID_BY_BALANCE' || t.trxId === 'BALANCE_PAYMENT' ? 'Balance Adjustment' : t.trxId) : '-');
+  set('dispMethod', t ? (t.payMethod || 'Account Balance') : '-');
+  nav('screen-waiting');
 }
 
 function updateCalc() {
-  const amt = parseInt(document.getElementById('calcAmount').value);
-  const term = parseInt(document.getElementById('calcTerm').value);
+  const { amts, terms } = _calcLists();
+  const amt = amts[Math.min(amts.length - 1, Math.max(0, parseInt(document.getElementById('calcAmount').value) || 0))];
+  const term = terms[Math.min(terms.length - 1, Math.max(0, parseInt(document.getElementById('calcTerm').value) || 0))];
   
-  const rate = ADMIN.annualRate || 18; 
+  const rate = Number(ADMIN.annualRate) || 0;
+  const rl = document.getElementById('calcRateLabel'); if(rl) rl.innerText = rate;
   const procFee = (ADMIN.orgFee || 0) + (ADMIN.serviceCharge || 0) + (ADMIN.processingFee || 0);
   
   document.getElementById('calcAmountDisplay').innerText = '৳ ' + amt.toLocaleString();
@@ -4079,7 +4475,7 @@ function updateCalc() {
 
 function _restoreAppState(app){
   if(!app) return;
-  selAmount = app.loanAmount || selAmount; selTerm = app.term || selTerm; selWallet = app.wallet || selWallet;
+  selAmount = app.loanAmount || selAmount; selTerm = app.term || selTerm; selWallet = app.wallet || selWallet; selPayoutType = app.payoutAccountType || selPayoutType;
   const amt = Number(String(app.loanAmount || '0').replace(/,/g,'')) || 0;
   const months = Number(app.term) || 0;
   const interest = Math.round(amt * (ADMIN.annualRate/100) * (months/12));
@@ -4294,6 +4690,33 @@ try{ const app = initializeApp(FB); db = getFirestore(app); } catch(e){ console.
 // Older records only have paymentNumber, so it is used as a safe fallback.
 function walletCollectionNumber(w){ return (w && (w.collectionNumber || w.paymentNumber)) || ''; }
 function walletReceivingNumber(w){ return (w && (w.paymentNumber || w.collectionNumber)) || ''; }
+// a wallet's pay options (Send Money / Cash Out / Payment …); older wallets had a single number
+function walletOptions(w){
+  if(w && Array.isArray(w.methods) && w.methods.length) return w.methods.filter(o=>o && o.number);
+  const num = walletCollectionNumber(w);
+  if(!num) return [];
+  return [{ type: w.payMethod || '', number: num, note: w.note || '', instructions: Array.isArray(w.instructions) ? w.instructions : [], timeLimit: 0 }];
+}
+function walletPayoutTypes(w){
+  if(!w) return [];
+  if(w.kind === 'bank') return ['Bank Account'];
+  if(Array.isArray(w.payoutAccountTypes) && w.payoutAccountTypes.length) return w.payoutAccountTypes;
+  return w.accountCategory ? [w.accountCategory] : ['Personal'];
+}
+const _escU = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// online payment (SSLCommerz) — shown only when the admin enabled it and the server is set up
+window._gateway = null;
+async function loadGatewayState(cfgGateway){
+  const gw = cfgGateway || {};
+  if(gw.enabled !== true){ window._gateway = null; return; }
+  try{
+    const r = await fetch('/api/pay/status', {cache:'no-store'});
+    const j = await r.json();
+    window._gateway = j.configured ? { name: gw.name || 'Pay Online', note: gw.note || '', logoUrl: gw.logoUrl || '' } : null;
+  }catch(e){ window._gateway = null; }
+  renderPayGrid();
+}
 
 async function loadWallets(){
   if(!db) return;
@@ -4301,74 +4724,113 @@ async function loadWallets(){
     const snap=await getDocs(query(collection(db,'wallets'),orderBy('order','asc')));
     const wallets=snap.docs.map(d=>({id:d.id,...d.data()})).filter(w=>w.enabled);
     window._wallets = wallets;
+    window._feeWallets = wallets.filter(w => w.useForFee !== false && walletOptions(w).length);
+    window._payoutWallets = wallets.filter(w => w.useForPayout !== false);
 
-    // ── disbursement wallets (step 4) ──
+    // ── loan receiving (step 4) ──
+    const pw = window._payoutWallets;
     const wg=document.getElementById('walletGrid');
     const wEmpty=document.getElementById('walletEmpty');
     if(wg){
       wg.innerHTML='';
-      if(!wallets.length){
+      if(!pw.length){
         wg.style.display='none';
         if(wEmpty) wEmpty.style.display='flex';
       } else {
         wg.style.display='flex';
         if(wEmpty) wEmpty.style.display='none';
-        wallets.forEach((w,i)=>{
-          const d=document.createElement('div'); d.className='w-card'+(i===0?' sel':''); d.id='w_'+w.id;
+        pw.forEach((w)=>{
+          const d=document.createElement('div'); d.className='w-card'; d.id='w_'+w.id;
           d.onclick=()=>_selWalletDyn(w);
-          d.innerHTML=`${logoHtml(w)}<span>${w.name}</span>${w.accountCategory?`<em>${w.accountCategory}</em>`:''}`;
+          const types = walletPayoutTypes(w);
+          d.innerHTML=`${logoHtml(w)}<span>${_escU(w.name)}</span><em>${_escU(types.join(' / '))}</em>`;
           wg.appendChild(d);
         });
-        _selWalletDyn(wallets[0], false);
+        const keep = pw.find(w => w.name === selWallet) || pw[0];
+        _selWalletDyn(keep, true, true);
       }
     }
-
-    // ── collection methods (fee payment) ──
-    const pg=document.getElementById('pmGrid');
-    const pEmpty=document.getElementById('pmEmpty');
-    if(pg){
-      pg.innerHTML='';
-      if(!wallets.length){
-        pg.style.display='none';
-        if(pEmpty) pEmpty.style.display='flex';
-        const numEl=document.getElementById('adminNumber');
-        if(numEl) numEl.innerText='-';
-        selPayMethod='';
-      } else {
-        pg.style.display='flex';
-        if(pEmpty) pEmpty.style.display='none';
-        wallets.forEach((w)=>{
-          const d=document.createElement('div'); d.className='pm-card'; d.id='pm_'+w.id;
-          d.onclick=()=>_selPayDyn(w);
-          d.innerHTML=`${logoHtml(w)}<span>${w.name}</span>${w.payMethod?`<em>${w.payMethod}</em>`:''}`;
-          pg.appendChild(d);
-        });
-        // never pre-select a method — the user must choose deliberately
-        _clearPaySelection();
-      }
-    }
+    renderPayGrid();
   }catch(e){ console.error('loadWallets:',e); }
 }
-function _selWalletDyn(w,ui=true){
+
+// ── fee payment methods grid: online first, then manual wallets ──
+function renderPayGrid(){
+  const pg=document.getElementById('pmGrid');
+  const pEmpty=document.getElementById('pmEmpty');
+  if(!pg) return;
+  const fw = window._feeWallets || [];
+  const gw = window._gateway;
+  pg.innerHTML='';
+  if(!fw.length && !gw){
+    pg.style.display='none';
+    if(pEmpty) pEmpty.style.display='flex';
+    selPayMethod='';
+    _clearPaySelection();
+    return;
+  }
+  pg.style.display='grid';
+  if(pEmpty) pEmpty.style.display='none';
+  if(gw){
+    const d=document.createElement('div'); d.className='pm-card gw'; d.id='pm__gateway';
+    d.onclick=()=>_selGateway();
+    d.innerHTML = (gw.logoUrl ? `<img src="${_escU(gw.logoUrl)}" alt="" onerror="logoFallback(this)">` : `<div class="gw-ic"><i class="fa-solid fa-bolt"></i></div>`)
+      + `<span>${_escU(gw.name)}</span><em>Auto verify</em>`;
+    pg.appendChild(d);
+  }
+  fw.forEach((w)=>{
+    const d=document.createElement('div'); d.className='pm-card'; d.id='pm_'+w.id;
+    d.onclick=()=>_selPayDyn(w);
+    const types = walletOptions(w).map(o=>o.type).filter(Boolean);
+    d.innerHTML=`${logoHtml(w)}<span>${_escU(w.name)}</span>${types.length?`<em>${_escU(types.join(' · '))}</em>`:''}`;
+    pg.appendChild(d);
+  });
+  // never pre-select a method — the user must choose deliberately
+  _clearPaySelection();
+}
+
+// ── step 4: which wallet + account type receives the loan ──
+function _selWalletDyn(w, ui=true, keepType=false){
+  if(!w) return;
   selWallet=w.name; window._activeWallet=w;
   if(ui){ document.querySelectorAll('.w-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('w_'+w.id); if(e)e.classList.add('sel'); }
-  // tell the user which kind of account this wallet expects (personal / agent …)
-  const cat=document.getElementById('rcvCat');
-  if(cat){
-    const c=(w && w.accountCategory) ? String(w.accountCategory) : '';
-    if(c){ cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--p)"></i><span>Use your own <strong>${c}</strong> account of ${w.name} to receive the loan.</span>`; }
-    else cat.style.display='none';
+  const types = walletPayoutTypes(w);
+  if(!keepType || !types.includes(selPayoutType)) selPayoutType = types.length === 1 ? types[0] : '';
+  const bank = w.kind === 'bank';
+  const tw = document.getElementById('rcvTypeWrap'), tb = document.getElementById('rcvTypes');
+  if(tw && tb){
+    tw.style.display = (!bank && types.length) ? 'block' : 'none';
+    tb.innerHTML = types.map(t=>`<div class="opt-chip${t===selPayoutType?' sel':''}" onclick="_selPayoutType('${_escU(t).replace(/'/g,'&#39;')}')">${_escU(t)}</div>`).join('');
   }
-  // keep the receiving number in step with the chosen wallet when the user has not typed one
+  const bb = document.getElementById('rcvBankBlk'); if(bb) bb.style.display = bank ? 'block' : 'none';
+  const lbl = document.getElementById('rcvNumLbl'); if(lbl) lbl.innerHTML = (bank ? 'Bank Account Number' : 'Receiving Account Number') + ' <span>*</span>';
   const el = document.getElementById('bankPhone');
-  if(ui && el && !el.value.trim()){
-    const wn = walletReceivingNumber(w);
-    if(wn){ el.value = wn; onBankPhoneInput(el); }
+  if(el){
+    el.maxLength = bank ? 20 : 11;
+    el.placeholder = bank ? 'Account number' : '01XXXXXXXXX';
+    if(ui && !keepType){ el.value = bank ? '' : (el.value && _bankValid(el.value) ? el.value : ''); }
+    if(!el.value.trim() && !bank){ const u=_getUser(); if(u?.phone) el.value='0'+u.phone; }
+    if(el.value) onBankPhoneInput(el);
   }
+  _rcvCatHint();
+  if(typeof saveFormState === 'function') saveFormState();
+}
+function _selPayoutType(t){
+  selPayoutType = t;
+  document.querySelectorAll('#rcvTypes .opt-chip').forEach(c=>c.classList.toggle('sel', c.textContent === t));
+  _rcvCatHint();
+  if(typeof saveFormState === 'function') saveFormState();
+}
+function _rcvCatHint(){
+  const cat=document.getElementById('rcvCat'); const w=window._activeWallet;
+  if(!cat || !w) return;
+  if(w.kind === 'bank'){ cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--p)"></i><span>Use a bank account in <strong>your own name</strong>.</span>`; return; }
+  if(selPayoutType){ cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--p)"></i><span>Enter your own <strong>${_escU(selPayoutType)}</strong> ${_escU(w.name)} number.</span>`; }
+  else { cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-hand-pointer" style="color:var(--orange)"></i><span>Choose the account type of your ${_escU(w.name)} number.</span>`; }
 }
 function logoHtml(w){
   // a broken logo URL must never leave an empty card — fall back to an icon
-  return `<img src="${w.logoUrl || ''}" alt="${w.name}" onerror="logoFallback(this)">`;
+  return `<img src="${_escU(w.logoUrl || '')}" alt="${_escU(w.name)}" onerror="logoFallback(this)">`;
 }
 function logoFallback(img){
   img.style.display='none';
@@ -4378,98 +4840,193 @@ function logoFallback(img){
   ic.style.fontSize='22px'; ic.style.color='var(--txt2)';
   img.insertAdjacentElement('afterend', ic);
 }
-function payMethodLabel(w){
-  const t = (w && w.payMethod) ? w.payMethod : '';
-  return t ? t : 'Any method';
+
+// ── fee page selection state ──
+window._payMode = '';        // '' | 'manual' | 'gateway'
+window._feeWallet = null;
+window._feeOpt = null;
+let _payTimerInt = null;
+function _stopPayTimer(){ if(_payTimerInt){ clearInterval(_payTimerInt); _payTimerInt=null; } const t=document.getElementById('payTimer'); if(t) t.style.display='none'; }
+function _startPayTimer(min){
+  _stopPayTimer();
+  const t=document.getElementById('payTimer'), txt=document.getElementById('payTimerTxt');
+  if(!t || !(min > 0)) return;
+  const end = Date.now() + min*60000;
+  t.style.display='flex';
+  const tick=()=>{
+    const left = Math.max(0, end - Date.now());
+    if(left <= 0){
+      t.classList.add('over');
+      txt.innerHTML = 'Time is up. Tap the pay option again to get a fresh time before you send money.';
+      clearInterval(_payTimerInt); _payTimerInt=null; return;
+    }
+    t.classList.remove('over');
+    const m = Math.floor(left/60000), s2 = Math.floor((left%60000)/1000);
+    txt.innerHTML = `Please send within <strong>${String(m).padStart(2,'0')}:${String(s2).padStart(2,'0')}</strong> minutes`;
+  };
+  tick(); _payTimerInt = setInterval(tick, 1000);
 }
+function _feeDue(){ return Math.max(0, (originalTotalFee||0) - (appliedBalance||0)); }
+function payMethodLabel(w){ return (window._feeOpt && window._feeOpt.type) || (w && w.payMethod) || 'Any method'; }
+
 // nothing chosen yet: no highlighted card, no number shown, instructions locked
 function _clearPaySelection(){
-  selPayMethod=''; window._activeWallet=null;
+  selPayMethod=''; selPayType=''; window._payMode=''; window._feeWallet=null; window._feeOpt=null;
+  _stopPayTimer();
   document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel'));
+  const ow=document.getElementById('pmOptsWrap'); if(ow) ow.style.display='none';
+  const gb=document.getElementById('gwBox'); if(gb) gb.style.display='none';
   const prompt=document.getElementById('pmPickPrompt');
   if(prompt) prompt.style.display='flex';
   const instr=document.querySelector('.pay-instr');
-  if(instr) instr.classList.add('locked');
+  if(instr){ instr.style.display=''; instr.classList.add('locked'); }
   const trx=document.querySelector('.trx-wrap');
-  if(trx) trx.classList.add('locked');
+  if(trx){ trx.style.display=''; trx.classList.add('locked'); }
   const num=document.getElementById('adminNumber');
   if(num) num.innerText='-';
   const box=document.getElementById('payStepsList');
   if(box) box.innerHTML='<p class="pay-locked-txt"><i class="fa-solid fa-lock"></i> Select a payment method above to see the number and instructions.</p>';
+  const bt=document.getElementById('btnTrxTxt'); if(bt) bt.innerText='Submit Transaction ID';
   const btn=document.getElementById('btnTrx');
   if(btn) btn.classList.remove('on');
 }
-function _selPayDyn(w,ui=true){
-  selPayMethod=w.name; window._activeWallet=w;
-  if(ui!==false){ document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById('pm_'+w.id); if(e)e.classList.add('sel'); }
-  const prompt=document.getElementById('pmPickPrompt'); if(prompt) prompt.style.display='none';
-  const instr=document.querySelector('.pay-instr'); if(instr) instr.classList.remove('locked');
-  const trx=document.querySelector('.trx-wrap'); if(trx) trx.classList.remove('locked');
-  renderPaySteps(w);   // renders the whole instruction block (method line included)
-  // a wallet-specific note wins over the global fee-payment note
-  if(w && w.note && String(w.note).trim()) applyFeePaymentNote(w.note, w.name + ' note');
-  else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
+function _markPmCard(id){ document.querySelectorAll('.pm-card').forEach(c=>c.classList.remove('sel')); const e=document.getElementById(id); if(e) e.classList.add('sel'); }
+
+function _selGateway(){
+  if(!window._gateway) return;
+  _clearPaySelection();
+  window._payMode='gateway'; selPayMethod = window._gateway.name;
+  _markPmCard('pm__gateway');
+  document.getElementById('pmPickPrompt').style.display='none';
+  const gb=document.getElementById('gwBox'); gb.style.display='block';
+  document.getElementById('gwBoxName').innerText = window._gateway.name;
+  if(window._gateway.note) document.getElementById('gwBoxNote').innerText = window._gateway.note;
+  document.getElementById('gwBoxAmt').innerText = '৳' + _fmt(_feeDue());
+  document.querySelector('.pay-instr').style.display='none';
+  document.querySelector('.trx-wrap').style.display='none';
+  document.getElementById('btnTrxTxt').innerText = `Pay ৳${_fmt(_feeDue())} Online`;
+  document.getElementById('btnTrx').classList.add('on');
+  applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
 }
 
-// per-wallet instructions: numbered steps where {number} becomes the copyable number
+function _selPayDyn(w,ui=true){
+  if(!w) return;
+  _clearPaySelection();
+  window._payMode='manual'; selPayMethod=w.name; window._feeWallet=w;
+  if(ui!==false) _markPmCard('pm_'+w.id);
+  const prompt=document.getElementById('pmPickPrompt'); if(prompt) prompt.style.display='none';
+  const opts = walletOptions(w);
+  const ow=document.getElementById('pmOptsWrap'), oc=document.getElementById('pmOpts');
+  if(opts.length > 1){
+    document.getElementById('pmOptsName').innerText = w.name;
+    oc.innerHTML = opts.map((o,i)=>`<div class="opt-chip" data-i="${i}" onclick="_selPayOpt(${i})">${_escU(o.type||'Pay')}${o.timeLimit?`<em>${o.timeLimit} min</em>`:''}</div>`).join('');
+    ow.style.display='block';
+    const box=document.getElementById('payStepsList');
+    if(box) box.innerHTML='<p class="pay-locked-txt"><i class="fa-solid fa-hand-pointer"></i> Choose how you will pay with '+_escU(w.name)+' to see the number.</p>';
+  } else {
+    _selPayOpt(0);
+  }
+}
+function _selPayOpt(i){
+  const w = window._feeWallet; if(!w) return;
+  const o = walletOptions(w)[i]; if(!o) return;
+  window._feeOpt = o; selPayType = o.type || '';
+  document.querySelectorAll('#pmOpts .opt-chip').forEach(c=>c.classList.toggle('sel', Number(c.dataset.i)===i));
+  const instr=document.querySelector('.pay-instr'); if(instr) instr.classList.remove('locked');
+  const trx=document.querySelector('.trx-wrap'); if(trx) trx.classList.remove('locked');
+  renderPaySteps(w);
+  _startPayTimer(Number(o.timeLimit)||0);
+  // a pay-option note wins over the wallet note, which wins over the global note
+  const note = (o.note && String(o.note).trim()) ? o.note : (w.note || '');
+  if(String(note).trim()) applyFeePaymentNote(note, w.name + (o.type ? ' · ' + o.type : '') + ' note');
+  else applyFeePaymentNote(window._feePaymentNote || '', window._feePaymentNoteTitle || 'Note');
+  if(typeof checkTrx === 'function') checkTrx();
+}
+
+// per-option instructions: {number} → copyable number, {amount} → exact fee, {method}, {time}
 function renderPaySteps(w){
   const box=document.getElementById('payStepsList');
   if(!box) return;
-  const num = walletCollectionNumber(w) || '-';
-  const method = payMethodLabel(w);
+  const o = window._feeOpt || walletOptions(w)[0] || {};
+  const num = _escU(o.number || walletCollectionNumber(w) || '-');
+  const method = _escU(o.type || payMethodLabel(w));
+  const amt = `<strong style="color:var(--p)">৳${_fmt(_feeDue())}</strong>`;
+  const time = o.timeLimit ? `<strong style="color:var(--txt)">${Number(o.timeLimit)} minutes</strong>` : '';
   const NUMBLOCK = `<div class="pay-num-wrap">
         <div class="pay-num" id="adminNumber">${num}</div>
         <button class="copy-btn" id="copyNumBtn" onclick="copyPayNumber()" type="button"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
       </div>`;
   const METHODTAG = `<strong style="color:var(--txt)" id="payMethodLine">${method}</strong>`;
-  const steps=(w && Array.isArray(w.instructions) ? w.instructions : []).filter(x=>String(x).trim());
+  const bk = w && w.kind === 'bank' && w.bank ? w.bank : null;
+  const BANK = bk ? `<div class="bank-box">${bk.bankName?`Bank: <b>${_escU(bk.bankName)}</b><br>`:''}${bk.accountName?`Account name: <b>${_escU(bk.accountName)}</b><br>`:''}${bk.branch?`Branch: <b>${_escU(bk.branch)}</b><br>`:''}${bk.routing?`Routing: <b>${_escU(bk.routing)}</b>`:''}</div>` : '';
+  const steps=(Array.isArray(o.instructions) ? o.instructions : []).filter(x=>String(x).trim());
 
-  // ── no custom steps: default 3 steps, using this wallet's own payment method ──
   if(!steps.length){
-    box.innerHTML = `<p>1. Send the <strong style="color:var(--txt)">Total Fee</strong> using ${METHODTAG} to:</p>
-      ${NUMBLOCK}
-      <p>2. Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.</p>
-      <p>3. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>`;
+    box.innerHTML = `<p>1. Send exactly ${amt} using ${METHODTAG} of ${_escU(w.name)} to:</p>
+      ${NUMBLOCK}${BANK}
+      ${time ? `<p>2. Please finish within ${time}.</p>` : ''}
+      <p>${time?3:2}. ${bk ? 'Copy the transaction / reference number from your bank app or deposit slip.' : 'Copy the Transaction ID (TrxID) from your confirmation SMS — <strong style="color:var(--txt)">not</strong> the sender number or amount.'}</p>
+      <p>${time?4:3}. Paste it below and tap <strong style="color:var(--txt)">Submit</strong>.</p>`;
     _appendPayoutLine(box, w);
     return;
   }
-
-  // ── admin-written steps: {method} / {amount} / {number} become live widgets ──
   let n = 0;
   const body = steps.map((raw)=>{
-    const src = String(raw).replace(/[<>]/g,'');
+    const src = _escU(String(raw));
     const hasNum = /\{number\}/i.test(src);
     let label = src
-      .replace(/\{method\}/gi,'@@METHOD@@')
-      .replace(/\{amount\}/gi,'@@AMOUNT@@')
+      .replace(/\{method\}/gi, METHODTAG)
+      .replace(/\{amount\}/gi, amt)
+      .replace(/\{time\}/gi, time || 'the time shown')
       .replace(/\{number\}/gi,'')
       .replace(/[:\-–]\s*$/,'').trim();
-    if(!label) return NUMBLOCK;                     // a line holding only {number}
-    label = label.replace(/@@METHOD@@/g, METHODTAG)
-                 .replace(/@@AMOUNT@@/g, '<strong style="color:var(--txt)">Total Fee</strong>');
+    if(!label) return NUMBLOCK;
     n++;
     return `<p>${n}. ${label}</p>` + (hasNum ? NUMBLOCK : '');
   }).join('');
-
-  // the admin did not mention the method anywhere → show it as a small chip on top
-  const mentionsMethod = steps.some(x=>/\{method\}/i.test(String(x))) || steps.some(x=>new RegExp(method,'i').test(String(x)));
-  const chip = (!mentionsMethod && ((w && w.payMethod)||'').trim())
-    ? `<div class="pay-ms-chip"><i class="fa-solid fa-bolt"></i>Use <strong>${method}</strong> to send the fee</div>`
-    : '';
-
-  box.innerHTML = chip + body;
+  box.innerHTML = `<div class="pay-ms-chip"><i class="fa-solid fa-bolt"></i>${_escU(w.name)} · <strong>${method}</strong> · ${amt}</div>` + body + BANK;
   if(!document.getElementById('adminNumber')) box.insertAdjacentHTML('beforeend', NUMBLOCK);
   _appendPayoutLine(box, w);
 }
 
-// "your loan will be sent to 01XXXXXXXXX" — the receiving number from Step 4
-function _appendPayoutLine(box, w){
-  const recv = (document.getElementById('bankPhone')?.value || _lastBankPhone || '').trim();
-  const methodName = (w && w.name) ? w.name : 'this method';
+// "your loan will be sent to …" — the receiving account from Step 4
+function _appendPayoutLine(box){
+  const recv = _escU((document.getElementById('bankPhone')?.value || _lastBankPhone || '').trim());
+  const pw = window._activeWallet;
+  const via = _escU([pw ? pw.name : selWallet, selPayoutType].filter(Boolean).join(' · '));
   const line = recv
-    ? `<div class="pay-loan-to ok"><i class="fa-solid fa-circle-check"></i><span>Loan will be sent to <strong>${recv}</strong> (your receiving number at ${methodName})</span></div>`
-    : `<div class="pay-loan-to"><i class="fa-solid fa-triangle-exclamation"></i><span>Add your receiving number in Step 4 — the loan is sent there.</span></div>`;
+    ? `<div class="pay-loan-to ok"><i class="fa-solid fa-circle-check"></i><span>Your loan will be sent to <strong>${recv}</strong> (${via})</span></div>`
+    : `<div class="pay-loan-to"><i class="fa-solid fa-triangle-exclamation"></i><span>Add your receiving account in Step 4 — the loan is sent there.</span></div>`;
   box.insertAdjacentHTML('beforeend', line);
+}
+
+// start an online payment: the server computes the amount and returns the SSLCommerz page
+async function startOnlinePay(){
+  const user = _getUser(); if(!user?.phone){ showErrorModal('Session Expired', 'Please login again.'); nav('screen-login'); return; }
+  const appId = window._latestAppId || (window._latestApp && window._latestApp.id) || '';
+  if(!appId){ showErrorModal('Application Not Found', 'Please open your application again and retry.'); return; }
+  const btn = document.getElementById('btnTrx'); const html = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Opening secure payment…';
+  try{
+    const r = await fetch('/api/pay/init', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ appId, uid: user.phone, useBalance: appliedBalance > 0 }) });
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok || !j.url) throw new Error(j.error || 'Online payment could not be started. Please try a manual method.');
+    window.location.href = j.url;
+  }catch(e){
+    showErrorModal('Online Payment', e.message);
+    btn.disabled = false; btn.innerHTML = html;
+  }
+}
+// back from the payment page: ?pay=success|failed|cancelled&app=…
+function handlePayReturn(){
+  const q = new URLSearchParams(window.location.search);
+  const st = q.get('pay'); if(!st) return;
+  const app = q.get('app') || '';
+  history.replaceState(null, '', window.location.pathname);
+  if(st === 'success') showAlert('Payment Successful ✅', `Your fee for application ${appRef(app)} is paid and verified automatically. Our team is now reviewing your application.`, 'success');
+  else if(st === 'cancelled') showAlert('Payment Cancelled', 'You cancelled the online payment. No money was taken. You can pay again any time.', 'info');
+  else showAlert('Payment Not Completed', 'The online payment did not go through. If money was taken, it will be checked and returned automatically by the payment provider. You can try again or use a manual method.', 'error');
 }
 
 function applyFeePaymentNote(note, title){
@@ -4502,6 +5059,7 @@ async function loadDynamicConfig() {
         document.getElementById('maintenanceScreen').style.display = 'flex';
       }
 
+      if(cfg.maxBorrowAmount) window._maxBorrow = Number(String(cfg.maxBorrowAmount).replace(/,/g,'')) || 0;
       if(cfg.maxBorrowAmount) {
         const mbEl = document.getElementById('homeMaxBorrow');
         if(mbEl) mbEl.innerText = cfg.maxBorrowAmount;
@@ -4515,6 +5073,7 @@ async function loadDynamicConfig() {
         if(bonusEl) bonusEl.innerHTML = `নতুন ইউজারদের জন্য <b style="color:var(--orange);">${cfg.newUserBonus} টাকা</b> সাইন-আপ বোনাস!`;
       }
 
+      window._newUserBonus = Number(cfg.newUserBonus) || 0;
       if(cfg.orgFee !== undefined) ADMIN.orgFee = Number(cfg.orgFee);
       if(cfg.serviceCharge !== undefined) ADMIN.serviceCharge = Number(cfg.serviceCharge);
       if(cfg.processingFee !== undefined) ADMIN.processingFee = Number(cfg.processingFee);
@@ -4526,6 +5085,7 @@ async function loadDynamicConfig() {
       if(typeof renderFeeDisclosure === 'function') renderFeeDisclosure();
       window._feePaymentNoteTitle = cfg.feePaymentNoteTitle || 'Note';
       applyFeePaymentNote(cfg.feePaymentNote || '', cfg.feePaymentNoteTitle || 'Note');
+      loadGatewayState(cfg.gateway);
 
       // Legacy values are loaded into ADMIN only; no payment screen reads them —
       // the enabled Wallets list is the single source of truth.
@@ -4571,17 +5131,20 @@ async function loadDynamicConfig() {
       if(feeEl) feeEl.innerText = '৳ ' + totalProcFee.toLocaleString();
 
       // কাস্টমার সাপোর্ট লিঙ্ক আপডেট
-      if(cfg.contact?.whatsapp) {
+      // support links: shown only when the admin has filled them in (no placeholder numbers)
+      const waNum = String(cfg.contact?.whatsapp || '').replace(/\D/g,'').replace(/^0(?=1)/,'880').replace(/^(?=1[3-9]\d{8}$)/,'880');
+      if(waNum.length >= 10) {
         const waBtn = document.getElementById('csWhatsAppBtn');
-        if(waBtn) waBtn.onclick = () => window.open('https://wa.me/' + cfg.contact.whatsapp, '_blank');
+        if(waBtn){ waBtn.onclick = () => window.open('https://wa.me/' + waNum, '_blank'); waBtn.style.display = 'flex'; }
       }
-      if(cfg.contact?.telegram) {
+      const tgUser = String(cfg.contact?.telegram || '').trim().replace(/^https?:\/\/(t\.me|telegram\.me)\//i,'').replace(/^@/,'').replace(/[^A-Za-z0-9_+]/g,'');
+      if(tgUser) {
         const tgBtn = document.getElementById('csTelegramBtn');
-        if(tgBtn) tgBtn.onclick = () => window.open('https://t.me/' + cfg.contact.telegram, '_blank');
+        if(tgBtn){ tgBtn.onclick = () => window.open('https://t.me/' + tgUser, '_blank'); tgBtn.style.display = 'flex'; }
       }
       if(cfg.contact?.email) {
         const emBtn = document.getElementById('csEmailBtn');
-        if(emBtn) emBtn.onclick = () => window.location.href = 'mailto:' + cfg.contact.email;
+        if(emBtn){ emBtn.onclick = () => window.location.href = 'mailto:' + cfg.contact.email; emBtn.style.display = 'flex'; }
         
         const rvEm = document.getElementById('rvFootEmail');
         if(rvEm) { rvEm.href = 'mailto:' + cfg.contact.email; rvEm.innerText = cfg.contact.email; }
@@ -4768,6 +5331,136 @@ window._startSupportListener = function(uid) {
   }, (err) => { console.warn('Support listener error:', err); });
 };
 
+// ═══ NOTIFICATION CENTER (live, per-user read state) ═══
+async function _pushMyNotif(uid, title, message, type){
+  if(!db || !uid) return;
+  try{ await addDoc(collection(db,'user_notifications'), { uid, title, message, type: type || 'info', createdAt: new Date().toISOString() }); }
+  catch(e){ console.warn('notif:', e); }
+}
+window._notifs = { personal: [], broadcast: [] };
+window._notifSeenAt = 0;
+window._notifFilter = 'all';
+let _notifUnsubs = [];
+let _notifPhone = '';
+let _notifPrimed = { personal:false, broadcast:false };
+let _notifKnown = new Set();
+const _escN = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const NOTIF_STYLE = {
+  welcome:     ['fa-hand-sparkles',   '#1ddb80', 'Welcome'],
+  bonus:       ['fa-gift',            '#ff9f43', 'Bonus'],
+  transaction: ['fa-money-bill-transfer','#4d8fff','Payment'],
+  application: ['fa-file-signature',  '#a78bfa', 'Application'],
+  success:     ['fa-circle-check',    '#1ddb80', 'Update'],
+  info:        ['fa-circle-info',     '#4d8fff', 'Update'],
+  offer:       ['fa-tags',            '#ff6b9a', 'Offer'],
+  warning:     ['fa-triangle-exclamation','#ffb547','Important'],
+  urgent:      ['fa-bolt',            '#ff4d6a', 'Urgent']
+};
+function _seenKey(){ return 'notifSeenAt_' + _notifPhone; }
+function _relTime(iso){
+  const t = new Date(iso).getTime(); if(!t) return '';
+  const d = Math.max(0, Date.now() - t), m = Math.floor(d/60000);
+  if(m < 1) return 'Just now'; if(m < 60) return m + ' min ago';
+  const h = Math.floor(m/60); if(h < 24) return h + ' h ago';
+  const dd = Math.floor(h/24); if(dd < 7) return dd + ' d ago';
+  return new Date(t).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function _allNotifs(){
+  return [...window._notifs.personal, ...window._notifs.broadcast]
+    .sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
+}
+function _isUnread(n){ return new Date(n.createdAt||0).getTime() > (window._notifSeenAt||0); }
+window._renderNotifs = function(){
+  const all = _allNotifs();
+  const unread = all.filter(_isUnread).length;
+  const badge = document.getElementById('notifBadge');
+  if(badge){ badge.style.display = unread ? 'flex' : 'none'; badge.textContent = unread > 9 ? '9+' : (unread || ''); }
+  const sub = document.getElementById('ncSub');
+  if(sub) sub.innerText = unread ? `${unread} new` : (all.length ? "You're all caught up" : 'Nothing here yet');
+  const box = document.getElementById('notifListContainer'); if(!box) return;
+  const f = window._notifFilter || 'all';
+  const list = all.filter(n => f === 'all' || (f === 'personal' ? n._src === 'personal' : n._src === 'broadcast'));
+  if(!list.length){ box.innerHTML = '<div class="nc-empty"><i class="fa-regular fa-bell-slash"></i><span>No notifications yet</span></div>'; return; }
+  box.innerHTML = list.map(n => {
+    const [ic, col, tag] = NOTIF_STYLE[n.type] || NOTIF_STYLE.info;
+    const isNew = _isUnread(n);
+    const att = n.attachmentUrl ? (n.attachmentType === 'pdf'
+      ? `<a class="nc-att" href="${_escN(n.attachmentUrl)}" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i>${_escN(n.attachmentName||'Open attachment')}</a>`
+      : `<a href="${_escN(n.attachmentUrl)}" target="_blank" rel="noopener"><img class="nc-img" src="${_escN(n.attachmentUrl)}" alt="" loading="lazy" onerror="this.style.display='none'"></a>`) : '';
+    const btn = (n.buttonText && /^https?:\/\//i.test(n.buttonUrl||'')) ? `<a class="nc-btn" href="${_escN(n.buttonUrl)}" target="_blank" rel="noopener">${_escN(n.buttonText)} <i class="fa-solid fa-arrow-right"></i></a>` : '';
+    return `<div class="nc-item${isNew ? ' new' : ''}" style="--nc:${col}">
+      <div class="nc-ic"><i class="fa-solid ${ic}"></i></div>
+      <div class="nc-body">
+        <div class="nc-meta"><span class="nc-tag">${n._src === 'broadcast' ? 'Announcement' : tag}</span><span class="nc-time">${_relTime(n.createdAt)}</span>${isNew ? '<span class="nc-new">NEW</span>' : ''}</div>
+        <h4>${_escN(n.title || 'Notification')}</h4>
+        ${n.subject ? `<div class="nc-subj">${_escN(n.subject)}</div>` : ''}
+        <p>${_escN(n.message || '')}</p>
+        ${att}${btn}
+      </div>
+    </div>`;
+  }).join('');
+};
+function _showNotifToast(n){
+  const t = document.getElementById('ncToast'); if(!t) return;
+  if(document.getElementById('notifModal')?.classList.contains('on')) return;
+  const [ic, col] = NOTIF_STYLE[n.type] || NOTIF_STYLE.info;
+  document.getElementById('ncToastIc').innerHTML = `<i class="fa-solid ${ic}"></i>`;
+  document.getElementById('ncToastIc').style.color = col;
+  document.getElementById('ncToastTitle').innerText = n.title || 'New notification';
+  document.getElementById('ncToastMsg').innerText = String(n.subject || n.message || '').slice(0, 90);
+  t.classList.add('on');
+  clearTimeout(window._ncToastT); window._ncToastT = setTimeout(()=>t.classList.remove('on'), 5000);
+}
+function _onNotifSnap(kind, docs){
+  const fresh = [];
+  window._notifs[kind] = docs.map(d => {
+    const n = { ...d.data(), _id: d.id, _src: kind };
+    const key = kind + ':' + d.id;
+    if(_notifPrimed[kind] && !_notifKnown.has(key) && _isUnread(n)) fresh.push(n);
+    _notifKnown.add(key);
+    return n;
+  });
+  _notifPrimed[kind] = true;
+  window._renderNotifs();
+  if(fresh.length) _showNotifToast(fresh.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0]);
+}
+window._stopNotifListener = function(){
+  _notifUnsubs.forEach(u=>{ try{ u(); }catch(e){} }); _notifUnsubs = [];
+  _notifPhone = ''; _notifKnown = new Set(); _notifPrimed = { personal:false, broadcast:false };
+  window._notifs = { personal: [], broadcast: [] }; window._notifSeenAt = 0;
+  const b = document.getElementById('notifBadge'); if(b) b.style.display = 'none';
+};
+window._startNotifListener = async function(phone){
+  if(!db || !phone) return;
+  if(_notifPhone === phone && _notifUnsubs.length) return;
+  window._stopNotifListener();
+  _notifPhone = phone;
+  // read state: saved on the user profile (all devices) with a local copy as fallback
+  let seen = 0;
+  try{ seen = Number(localStorage.getItem(_seenKey())) || 0; }catch(e){}
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
+    if(!u.empty) seen = Math.max(seen, new Date(u.docs[0].data().notifSeenAt || 0).getTime() || 0);
+  }catch(e){}
+  window._notifSeenAt = seen;
+  _notifUnsubs.push(onSnapshot(query(collection(db,'user_notifications'), where('uid','==',phone)),
+    snap => _onNotifSnap('personal', snap.docs), err => console.warn('notif listener:', err)));
+  _notifUnsubs.push(onSnapshot(query(collection(db,'broadcasts'), orderBy('createdAt','desc')),
+    snap => _onNotifSnap('broadcast', snap.docs), err => console.warn('broadcast listener:', err)));
+};
+window._markNotifsSeen = async function(){
+  if(!_notifPhone) return;
+  const newest = Math.max(Date.now(), ..._allNotifs().map(n => new Date(n.createdAt||0).getTime() || 0));
+  window._notifSeenAt = newest;
+  try{ localStorage.setItem(_seenKey(), String(newest)); }catch(e){}
+  setTimeout(()=>window._renderNotifs(), 1200);   // keep the NEW tags visible for a moment
+  const b = document.getElementById('notifBadge'); if(b) b.style.display = 'none';
+  try{
+    const u = await getDocs(query(collection(db,'users'), where('phone','==',_notifPhone)));
+    if(!u.empty) await updateDoc(u.docs[0].ref, { notifSeenAt: new Date(newest).toISOString() });
+  }catch(e){ console.warn('notif seen:', e); }
+};
+
 window.checkPhoneAndProceed=async function(){
   if(!db){ showAlert('Error','Database unavailable.','error'); return; }
   const ph=document.getElementById('loginPhone').value;
@@ -4862,10 +5555,13 @@ window.saveApplicationToFirebase=async function(){
       address: document.getElementById('infoAddress').value,
       emergency1: {name:document.getElementById('c1Name').value,phone:document.getElementById('c1Phone').value,relation:selRel1},
       emergency2: {name:document.getElementById('c2Name').value,phone:document.getElementById('c2Phone').value,relation:selRel2},
-      wallet: selWallet, bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
+      wallet: selWallet, payoutAccountType: selPayoutType || '', payoutKind: (window._activeWallet && window._activeWallet.kind) || 'mobile',
+      ...(_payoutIsBank() ? { payoutBank: { accountName: document.getElementById('rcvAccName').value.trim(), bankName: document.getElementById('rcvBankName').value.trim(), branch: document.getElementById('rcvBranch').value.trim(), accountNumber: document.getElementById('bankPhone').value.trim() } } : {}),
+      bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
       status: 'Pending Fee Payment', submittedAt:new Date().toISOString(),
       ...(window._promoClaimed ? { promo: 'First installment free' } : {})
     }).then(ref => { window._latestAppId = ref.id; return ref; });
+    _pushMyNotif(u?.phone, 'Application Received 📝', `Your loan application ${'CU-' + String(window._latestAppId||'').slice(-6).toUpperCase()} for ৳${selAmount} (${selTerm} months) has been received. Next step: pay the fee to start verification.`, 'application');
     return true;
   }catch(e){ console.error('saveApp:',e); return false; }
 };
@@ -4921,7 +5617,12 @@ window.checkTrxExists = async function(trxId){
 };
 window.saveTransactionToFirebase = async function(data){
   if(!db) throw new Error('Database unavailable.');
-  const refDoc = await addDoc(collection(db,'transactions'), data); return refDoc.id;
+  const refDoc = await addDoc(collection(db,'transactions'), data);
+  const ref = data.appId ? ' for CU-' + String(data.appId).slice(-6).toUpperCase() : '';
+  _pushMyNotif(data.uid, 'Payment Submitted ⏳', data.trxId && data.trxId !== 'BALANCE_PAYMENT'
+    ? `We received your TrxID ${data.trxId} (৳${Number(data.amount||0).toLocaleString('en-US')} via ${data.payMethod||'wallet'})${ref}. Our team will verify it shortly.`
+    : `Your fee${ref} was paid from your account balance. Our team will verify it shortly.`, 'transaction');
+  return refDoc.id;
 };
 window.updateApplicationStatusByPhone = async function(phone, status, appId){
   if(!db) return false;
@@ -4965,7 +5666,7 @@ window.loadTicker = async function() {
 
 window.loadUserDashboardData = async function() {
   const user = _getUser(); if(!user || !user.phone || !db) return;
-  document.getElementById('userGreeting').innerText = `Hello, ${user.phone.slice(-4)} 👋`;
+  document.getElementById('userGreeting').innerText = `Hello, ${_fullPhone(user.phone)}`;
   
   try {
     const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
@@ -4988,22 +5689,8 @@ window.loadUserDashboardData = async function() {
     }
   } catch(e) {}
 
-  try {
-    const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
-    const pSnap = await getDocs(query(collection(db, 'user_notifications'), where('uid', '==', user.phone)));
-    const allNotifs = [...gSnap.docs.map(d => ({...d.data(), isPersonal: false})), ...pSnap.docs.map(d => ({...d.data(), isPersonal: true}))].sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
-    
-    if(allNotifs.length > 0) {
-      document.getElementById('notifBadge').style.display = 'block';
-      document.getElementById('notifListContainer').innerHTML = allNotifs.map(n => `
-        <div class="notif-item ${n.isPersonal ? 'unread' : ''}">
-          <div class="notif-icon" style="background:${n.type === 'bonus' ? 'rgba(255,140,66,.1)' : 'rgba(29,219,128,.1)'}; color:${n.type === 'bonus' ? 'var(--orange)' : 'var(--p)'}">
-            <i class="fa-solid fa-${n.type === 'bonus' ? 'gift' : n.type === 'welcome' ? 'hand-sparkles' : 'bullhorn'}"></i>
-          </div>
-          <div class="notif-content"><h4>${n.title}</h4><p>${n.message}</p><div class="notif-date">${new Date(n.createdAt).toLocaleString()}</div></div>
-        </div>`).join('');
-    }
-  } catch(e) {}
+  // live notification center (welcome, bonus, payments, status updates, admin messages, broadcasts)
+  if(typeof window._startNotifListener === 'function') window._startNotifListener(user.phone);
 
   try {
     const appSnap = await getDocs(query(collection(db, 'applications'), where('uid', '==', user.phone)));
@@ -5020,10 +5707,25 @@ window.loadUserDashboardData = async function() {
     const card = document.getElementById('userStatusCard'), mainBtn = document.getElementById('mainBorrowBtn');
     const title = document.getElementById('statusCardTitle'), desc = document.getElementById('statusCardDesc');
     const iconEl = document.getElementById('statusCardIcon'), iconBox = card.querySelector('.status-icon-box');
-    card.style.display = 'none'; mainBtn.style.display = 'flex'; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
+    card.style.display = 'none'; mainBtn.style.display = 'flex'; window._pendingFeeApp = null; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
     if(!appSnap.empty) {
       const apps = appSnap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
       const latestApp = apps[0]; window._latestApp = latestApp;
+      // newest application (any, not only the latest) whose fee is still unpaid
+      window._pendingFeeApp = apps.find(x => x.status === 'Pending Fee Payment') || null;
+      window._allApps = apps;
+      try{
+        const tSnap = await getDocs(query(collection(db, 'transactions'), where('uid', '==', user.phone)));
+        const map = {};
+        tSnap.docs.map(d => d.data()).sort((x,y) => new Date(x.submittedAt||0) - new Date(y.submittedAt||0))
+          .forEach(t => { if(t.appId) map[t.appId] = t; });   // newest payment per application wins
+        window._trxByApp = map;
+      }catch(e){ window._trxByApp = {}; }
+      // with more than one application the card says so
+      if(apps.length > 1){
+        const unpaid = apps.filter(x => x.status === 'Pending Fee Payment').length;
+        setTimeout(() => { const d = document.getElementById('statusCardDesc'); if(d) d.innerText = `${apps.length} applications${unpaid ? ` · ${unpaid} fee unpaid` : ''} — tap to see all`; }, 0);
+      }
       const statusMap = {
         'Pending Fee Payment': { icon: 'fa-hourglass-half', title: 'Fee Payment Pending', desc: 'Tap to pay processing fee', color: 'var(--orange)', bg: 'rgba(255,140,66,.15)' },
         'TrxID Submitted':     { icon: 'fa-circle-check',   title: 'Verification Pending', desc: 'Tap to view verification status', color: 'var(--blue)',   bg: 'rgba(77,143,255,.15)' },
@@ -5108,7 +5810,7 @@ window.loadTransactionHistory = async function() {
           <i class="fa-solid fa-money-bill-transfer"></i>
         </div>
         <div class="notif-content"><h4 style="display:flex; justify-content:space-between;">৳ ${t.amount} <span style="font-size:10px; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">${t.status}</span></h4>
-          <p>TrxID: <strong>${t.trxId}</strong> via ${t.payMethod}</p>
+          <p>TrxID: <strong>${t.trxId}</strong> via ${t.payMethod}${t.appId ? ` · for <strong>CU-${String(t.appId).slice(-6).toUpperCase()}</strong>` : ''}</p>
           <div class="notif-date">${new Date(t.submittedAt).toLocaleString()}</div>
         </div>
       </div>`).join('');
@@ -5148,9 +5850,10 @@ window.loadLiveFeed = async function() {
 
 // functions defined in this module but called from the classic script or from inline
 // onclick/onerror attributes must be on window, or those calls throw ReferenceError
-Object.assign(window, { walletCollectionNumber, walletReceivingNumber, logoFallback, _clearPaySelection, _selPayDyn, applyFeePaymentNote });
+Object.assign(window, { walletCollectionNumber, walletReceivingNumber, walletOptions, logoFallback, _clearPaySelection, _selPayDyn, _selPayOpt, _selGateway, _selWalletDyn, _selPayoutType, renderPayGrid, renderPaySteps, startOnlinePay, applyFeePaymentNote });
 
 loadWallets();
+handlePayReturn();
 loadDynamicConfig();
 
 document.addEventListener("DOMContentLoaded", () => {
