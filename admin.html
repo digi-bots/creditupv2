@@ -373,6 +373,77 @@ tr:hover td{background:rgba(255,255,255,.015)}
   .content{padding:14px}
 }
 @media(max-width:500px){.stats{grid-template-columns:1fr}}
+
+/* ── Payment methods: simple cards + 3-step form ── */
+.wintro{font-size:12.5px;color:var(--txt2);line-height:1.6;margin:-4px 0 14px}
+.wintro span{display:block;color:var(--txt);opacity:.8;margin-top:2px}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px}
+.wempty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:30px 16px;border:1px dashed var(--border);border-radius:14px;color:var(--txt2);font-size:12px}
+.wempty i{font-size:22px;color:var(--p)}.wempty strong{color:var(--txt);font-size:14px}.wempty .btn{margin-top:6px}
+.wcard{display:flex;flex-direction:column;gap:11px;padding:14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--border);transition:.2s}
+.wcard:hover{border-color:rgba(29,219,128,.3)}
+.wcard.off{opacity:.62}
+.wc-top{display:flex;align-items:center;gap:11px}
+.wc-logo{width:42px;height:42px;border-radius:11px;background:#fff;padding:4px;object-fit:contain;flex-shrink:0}
+.wc-logo.ph{background:var(--card2,rgba(255,255,255,.06));display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:16px}
+.wc-name{flex:1;min-width:0}.wc-name strong{display:block;font-size:15px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc-name span{font-size:11px;color:var(--txt2)}
+.wc-sec{padding-top:9px;border-top:1px solid var(--border)}
+.wc-h{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.wc-num{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt);padding:3px 0}
+.wc-num b{font-family:'Courier New',monospace;letter-spacing:.3px}
+.wc-num em{font-style:normal;font-size:10.5px;color:var(--txt2);margin-left:auto}
+.wc-type{font-size:10.5px;font-weight:700;color:var(--orange);background:rgba(255,140,66,.1);border:1px solid rgba(255,140,66,.25);border-radius:6px;padding:2px 7px;white-space:nowrap}
+.wc-tags{display:flex;flex-wrap:wrap;gap:6px}
+.wc-tags span{font-size:11px;font-weight:700;color:var(--p);background:rgba(29,219,128,.08);border:1px solid rgba(29,219,128,.25);border-radius:6px;padding:3px 8px}
+.wc-off{font-size:12px;color:var(--txt2)}
+.wc-act{display:flex;align-items:center;gap:6px;padding-top:10px;border-top:1px solid var(--border)}
+.wc-act .ab[disabled]{opacity:.3;cursor:default}
+.gwcard{border:1px solid var(--border);border-radius:14px;padding:14px;background:rgba(255,255,255,.02)}
+.gwcard-h{display:flex;align-items:center;gap:11px}
+.gwcard-ic{width:40px;height:40px;border-radius:11px;background:rgba(255,190,60,.12);color:#ffbe3c;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.gwcard-t{flex:1;min-width:0}.gwcard-t strong{display:block;font-size:14px;color:var(--txt)}.gwcard-t span{font-size:11.5px;color:var(--txt2);line-height:1.5}
+.gw-st{font-size:12px;color:var(--txt2);line-height:1.6;margin:10px 0 4px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.03)}
+.wdet{margin-top:8px}
+.wdet>summary{cursor:pointer;list-style:none;font-size:12px;font-weight:700;color:var(--txt2);display:flex;align-items:center;gap:7px;padding:6px 0;user-select:none}
+.wdet>summary::-webkit-details-marker{display:none}
+.wdet>summary::after{content:'\25BE';margin-left:2px;font-size:11px;transition:.2s}
+.wdet[open]>summary::after{transform:rotate(180deg)}
+.wdet>summary:hover{color:var(--txt)}
+.wform .fgrid>.fg,.mo-b .fgrid>.fg{min-width:0}
+.mo-b .fg input,.mo-b .fg select,.mo-b .fg textarea{width:100%;min-width:0;box-sizing:border-box}
+.wstep{display:flex;align-items:center;gap:10px;margin:18px 0 10px;padding-top:14px;border-top:1px solid var(--border)}
+.wstep:first-of-type{margin-top:0;padding-top:0;border-top:none}
+.wstep>div{flex:1;min-width:0}.wstep strong{display:block;font-size:13.5px;color:var(--txt)}.wstep em{font-style:normal;font-size:11px;color:var(--txt2)}
+.wstep-n{width:24px;height:24px;border-radius:50%;background:rgba(29,219,128,.14);color:var(--p);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wbasic{display:flex;gap:12px;align-items:stretch}
+.wlogo{width:86px;flex-shrink:0;border:1.5px dashed var(--border);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;padding:8px;transition:.2s}
+.wlogo:hover{border-color:var(--p)}
+.wlogo img,.wlogo .wprev-ph{width:46px;height:46px;border-radius:11px;object-fit:contain;background:#fff;padding:4px}
+.wlogo .wprev-ph{background:rgba(255,255,255,.05);padding:0;display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:16px}
+.wlogo span{font-size:11px;font-weight:700;color:var(--txt2)}
+.wbasic-f{flex:1;min-width:0;display:flex;flex-direction:column;gap:9px}
+.wform .hint{font-size:11px;color:var(--txt2);line-height:1.5}
+.wlg-hint{margin-top:6px}
+.wseg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.wseg button{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 6px;border-radius:9px;border:1.5px solid var(--border);background:rgba(255,255,255,.03);color:var(--txt2);font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+.wseg button.on{border-color:var(--p);color:var(--p);background:rgba(29,219,128,.08)}
+.wopt{border:1px solid var(--border);border-radius:11px;padding:9px;margin-bottom:8px;background:rgba(255,255,255,.02)}
+.wopt-r{display:grid;grid-template-columns:130px 1fr 34px;gap:7px}
+.wopt-r select,.wopt-r input{padding:9px 10px;border-radius:9px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:13px;outline:none;min-width:0;width:100%;box-sizing:border-box}
+.wopt-r select option{background:#0c1525}
+.wopt-r input:focus,.wopt-r select:focus{border-color:var(--p)}
+.wopt-x{border:none;border-radius:9px;background:rgba(255,77,106,.1);color:var(--red);cursor:pointer}
+.wopt .wdet{margin-top:4px}
+.wchips{display:flex;flex-wrap:wrap;gap:7px}
+.wchips label{cursor:pointer}
+.wchips input{display:none}
+.wchips span{display:inline-block;padding:8px 14px;border-radius:999px;border:1.5px solid var(--border);font-size:12.5px;font-weight:700;color:var(--txt2);transition:.15s}
+.wchips input:checked+span{border-color:var(--p);color:var(--p);background:rgba(29,219,128,.08)}
+.wchips input:checked+span::before{content:'\2713  '}
+.wvis{display:flex;align-items:center;gap:11px;margin-top:18px;padding:12px;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid var(--border)}
+.wvis strong{display:block;font-size:13px;color:var(--txt)}.wvis em{font-style:normal;font-size:11px;color:var(--txt2)}
+@media(max-width:520px){.wopt-r{grid-template-columns:1fr 34px}.wopt-r select{grid-column:1/-1}.wbasic{flex-direction:column}.wlogo{width:100%;flex-direction:row}}
 </style>
 </head>
 <body>
@@ -548,55 +619,47 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <!-- WALLETS -->
 <div class="sec" id="sec-wallets">
   <div class="sec-head"><h2>Payment Methods</h2><button class="btn btn-sm btn-p" onclick="openWM()"><i class="fa-solid fa-plus"></i>Add Method</button></div>
+  <div class="wintro">Each card is one method users see on the fee page and in the loan form. <span>প্রতিটি কার্ড = একটি পেমেন্ট মেথড (যেমন bKash)। ফি কোথায় পাঠাবে আর লোন কোথায় নেবে, দুটোই এখানে।</span></div>
 
-  <div class="wleg">
-    <div class="wleg-i"><i class="fa-solid fa-arrow-down-to-bracket" style="color:var(--orange)"></i><div><strong>Fee collection</strong><span>Users send the service fee to this number.</span></div></div>
-    <div class="wleg-i"><i class="fa-solid fa-arrow-up-from-bracket" style="color:var(--p)"></i><div><strong>Loan disbursement</strong><span>Where you send the loan money. Each customer enters their own number in the application form.</span></div></div>
-  </div>
-
-  <div class="cfg-blk" id="gwBlk" style="margin-bottom:14px">
-    <div class="cfg-t"><i class="fa-solid fa-bolt"></i>1 · Online payment (automatic)</div>
-    <div style="font-size:12px;color:var(--txt2);line-height:1.7;margin-bottom:10px">
-      Users pay the fee on the SSLCommerz page (bKash, Nagad, Rocket, Visa, Mastercard, net banking). The payment is checked with SSLCommerz and the application moves to <strong style="color:var(--p)">Fee Verified</strong> on its own, so no TrxID is needed.
-      The store ID and password are kept on the server (Vercel settings), never here.
-    </div>
-    <div class="gw-guide">
-      <div class="gw-guide-h"><i class="fa-solid fa-triangle-exclamation"></i> একবার সেটআপ করতে হবে (Setup once)</div>
-      <p>অনলাইন পেমেন্ট চালু করতে <strong>Vercel → Project → Settings → Environment Variables</strong>-এ নিচের ভ্যালুগুলো বসান, তারপর <strong>Redeploy</strong> করুন। এগুলো গোপন, তাই এই প্যানেলে বা Firestore-এ রাখা হয় না।</p>
-      <ol>
-        <li><code>SSLCZ_STORE_ID</code> — SSLCommerz merchant panel থেকে পাওয়া <b>Store ID</b></li>
-        <li><code>SSLCZ_STORE_PASSWD</code> — SSLCommerz-এর <b>Store Password</b> (API password)</li>
-        <li><code>SSLCZ_SANDBOX</code> — টেস্টের জন্য <b>true</b>, আসল পেমেন্টের জন্য <b>false</b></li>
-        <li><code>FIREBASE_SERVICE_ACCOUNT</code> — Firebase Console → Project settings → Service accounts → <b>Generate new private key</b> চাপলে যে JSON ফাইল নামে, তার পুরো লেখা কপি করে বসান</li>
-        <li><code>PUBLIC_BASE_URL</code> (ঐচ্ছিক) — যেমন <b>https://creditup.online</b></li>
-      </ol>
-      <p>সব ঠিক থাকলে নিচের বক্সে সবুজ টিক আর <b>"Server is ready"</b> দেখাবে। তারপর <b>"Show online payment to users"</b> চালু করে Save করুন। প্রথমে Sandbox-এ টেস্ট করে নিন।</p>
-    </div>
-    <div id="gwStatus" class="fnote" style="margin-bottom:10px"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking the server…</div>
-    <div class="fgrid">
-      <div class="fg"><label style="display:flex;align-items:center;gap:9px"><label class="tog"><input type="checkbox" id="gwEn"><span class="tog-sl"></span></label>Show online payment to users</label></div>
-      <div class="fg"><label>Name shown to users</label><input id="gwName" placeholder="Pay Online"></div>
-      <div class="fg full"><label>Short note</label><input id="gwNote" maxlength="160" placeholder="e.g. Instant verification. bKash, Nagad, Rocket, Visa and Mastercard accepted."></div>
-      <div class="fg full"><label>Logo shown to users <span style="color:var(--txt2);font-weight:500">(optional URL)</span></label><input id="gwLogo" placeholder="https://..."></div>
-    </div>
-    <button class="btn btn-sm btn-p" style="margin-top:10px" onclick="saveGateway()"><i class="fa-solid fa-floppy-disk"></i>Save online payment</button>
-  </div>
-  <div class="cfg-t" style="margin:6px 0 10px"><i class="fa-solid fa-hand-holding-dollar"></i>2 · Manual methods <span style="font-weight:500;color:var(--txt2);font-size:11px">· users send money and submit the TrxID, you verify it</span></div>
-  <div id="walletRows"><div style="text-align:center;color:var(--txt2);padding:24px;font-size:12px">Loading...</div></div>
+  <div id="walletRows" class="wgrid"><div style="text-align:center;color:var(--txt2);padding:24px;font-size:12px">Loading...</div></div>
 
   <div class="cfg-blk" id="walletMigrateBlock" style="margin-top:12px;display:none;">
-    <div class="cfg-t"><i class="fa-solid fa-arrows-rotate"></i>Legacy Payment Numbers Found</div>
-    <div style="font-size:12px;color:var(--txt2);line-height:1.7;margin-bottom:10px">
-      The old <strong style="color:var(--txt)">Site Config → Default Payment Numbers</strong> are still stored but no longer used.
-      Migrate them into wallets so the fee page picks them up.
-    </div>
+    <div class="cfg-t"><i class="fa-solid fa-arrows-rotate"></i>Old payment numbers found</div>
+    <div style="font-size:12px;color:var(--txt2);line-height:1.7;margin-bottom:10px">These numbers from the old Site Config are not used any more. Turn them into payment methods with one click.</div>
     <div id="migratePreview" style="font-size:12px;color:var(--txt);line-height:1.8;margin-bottom:12px"></div>
-    <button class="btn btn-sm btn-p" onclick="migrateLegacyNumbers()"><i class="fa-solid fa-wand-magic-sparkles"></i>Migrate to wallets</button>
+    <button class="btn btn-sm btn-p" onclick="migrateLegacyNumbers()"><i class="fa-solid fa-wand-magic-sparkles"></i>Create methods</button>
   </div>
 
-  <div class="cfg-blk" style="margin-top:12px">
-    <div class="cfg-t"><i class="fa-solid fa-circle-info"></i>Logo URL Tips</div>
-    <div style="font-size:12px;color:var(--txt2);line-height:1.8">• Upload logos to <strong style="color:var(--txt)">imgbb.com</strong> or <strong style="color:var(--txt)">postimages.org</strong> → direct link<br>• Or use the <strong style="color:var(--txt)">Upload</strong> button — the logo is stored on Cloudinary (most reliable)<br>• <span style="color:var(--red)">Avoid Wikipedia / Wikimedia</span> — blocked on mobile</div>
+  <div class="gwcard" id="gwBlk">
+    <div class="gwcard-h">
+      <div class="gwcard-ic"><i class="fa-solid fa-bolt"></i></div>
+      <div class="gwcard-t"><strong>Online payment (automatic)</strong><span>SSLCommerz: bKash, Nagad, Rocket, cards. No TrxID needed, fee is verified by itself.</span></div>
+      <label class="tog" title="Show online payment to users"><input type="checkbox" id="gwEn" onchange="saveGateway()"><span class="tog-sl"></span></label>
+    </div>
+    <div id="gwStatus" class="gw-st"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking the server…</div>
+    <details class="wdet">
+      <summary><i class="fa-solid fa-pen"></i>Name, note and logo users see</summary>
+      <div class="fgrid" style="margin-top:10px">
+        <div class="fg"><label>Name shown to users</label><input id="gwName" placeholder="Pay Online"></div>
+        <div class="fg"><label>Logo URL (optional)</label><input id="gwLogo" placeholder="https://..."></div>
+        <div class="fg full"><label>Short note</label><input id="gwNote" maxlength="160" placeholder="e.g. Instant verification. bKash, Nagad, Rocket, Visa and Mastercard accepted."></div>
+      </div>
+      <button class="btn btn-sm btn-p" style="margin-top:10px" onclick="saveGateway()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
+    </details>
+    <details class="wdet">
+      <summary><i class="fa-solid fa-screwdriver-wrench"></i>একবার সেটআপ করতে হবে (Setup guide)</summary>
+      <div class="gw-guide" style="margin:10px 0 0">
+        <p>অনলাইন পেমেন্ট চালু করতে <strong>Vercel → Project → Settings → Environment Variables</strong>-এ নিচের ভ্যালুগুলো বসান, তারপর <strong>Redeploy</strong> করুন। এগুলো গোপন, তাই এই প্যানেলে বা Firestore-এ রাখা হয় না।</p>
+        <ol>
+          <li><code>SSLCZ_STORE_ID</code> — SSLCommerz merchant panel থেকে পাওয়া <b>Store ID</b></li>
+          <li><code>SSLCZ_STORE_PASSWD</code> — SSLCommerz-এর <b>Store Password</b> (API password)</li>
+          <li><code>SSLCZ_SANDBOX</code> — টেস্টের জন্য <b>true</b>, আসল পেমেন্টের জন্য <b>false</b></li>
+          <li><code>FIREBASE_SERVICE_ACCOUNT</code> — Firebase Console → Project settings → Service accounts → <b>Generate new private key</b> চাপলে যে JSON ফাইল নামে, তার পুরো লেখা কপি করে বসান</li>
+          <li><code>PUBLIC_BASE_URL</code> (ঐচ্ছিক) — যেমন <b>https://creditup.online</b></li>
+        </ol>
+        <p>সব ঠিক থাকলে উপরে সবুজ টিক আর <b>"Server is ready"</b> দেখাবে। তারপর ডান পাশের সুইচ চালু করুন। প্রথমে Sandbox-এ টেস্ট করে নিন।</p>
+      </div>
+    </details>
   </div>
 </div>
 
@@ -883,79 +946,64 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div class="mov" id="moWallet">
 <div class="mo mo-md">
   <div class="mo-h"><h3 id="wmoT">Add Payment Method</h3><button class="mo-x" onclick="closeMo('moWallet')">✕</button></div>
-  <div class="mo-b">
-    <input type="hidden" id="wDId">
-    <div class="wprev" id="wPrev">
-      <div class="wprev-ph" id="wPrevPh"><i class="fa-solid fa-wallet"></i></div>
-      <img id="wPrevImg" src="" alt="" style="display:none" onerror="this.style.display='none';document.getElementById('wPrevPh').style.display='flex'">
-      <div class="wprev-t"><strong id="wPrevName">New wallet</strong><span>This is how users will see it</span></div>
-    </div>
-    <div class="wsec-h"><i class="fa-solid fa-id-card"></i>Method <em>name, logo and type</em></div>
-    <div class="fgrid">
-      <div class="fg full">
-        <label><span class="req">*</span> Logo <span style="color:var(--txt2);font-weight:500">(upload a file or paste a URL)</span></label>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input id="wLg" placeholder="https://... (direct png / svg link)" oninput="onLogoUrlInput(this)" style="flex:1">
-          <label class="btn btn-s btn-sm" style="white-space:nowrap;cursor:pointer;margin:0">
-            <i class="fa-solid fa-upload"></i> Upload
-            <input type="file" id="wLgFile" accept="image/*" onchange="uploadWalletLogo(this)" style="display:none">
-          </label>
-        </div>
-        <div class="hint" id="wLgHint">Upload straight from your phone/PC (saved to Cloudinary) or paste any direct image link. Max 400 KB.</div>
-      </div>
-      <div class="fg"><label><span class="req">*</span> Method name</label><input id="wNm" placeholder="e.g. bKash" oninput="prevWL()"></div>
-      <div class="fg"><label>Type</label>
-        <select id="wKind" onchange="onWKind()">
-          <option value="mobile">Mobile banking (bKash, Nagad, Rocket, Upay…)</option>
-          <option value="bank">Bank account</option>
-        </select>
-      </div>
-      <div class="fg full"><label>Use this method for</label>
-        <div class="wuse">
-          <label><input type="checkbox" id="wUseFee" checked onchange="onWKind()"> Fee collection <em>users pay the fee here</em></label>
-          <label><input type="checkbox" id="wUsePayout" checked onchange="onWKind()"> Loan receiving <em>users can get the loan here</em></label>
+  <div class="mo-b wform">
+    <input type="hidden" id="wDId"><input type="hidden" id="wOrd"><input type="hidden" id="wKind" value="mobile">
+
+    <div class="wstep"><span class="wstep-n">1</span><div><strong>Method</strong><em>name, logo and type</em></div></div>
+    <div class="wbasic">
+      <label class="wlogo" title="Upload logo">
+        <div class="wprev-ph" id="wPrevPh"><i class="fa-solid fa-camera"></i></div>
+        <img id="wPrevImg" src="" alt="" style="display:none" onerror="this.style.display='none';document.getElementById('wPrevPh').style.display='flex'">
+        <span>Logo</span>
+        <input type="file" id="wLgFile" accept="image/*" onchange="uploadWalletLogo(this)" style="display:none">
+      </label>
+      <div class="wbasic-f">
+        <div class="fg"><label><span class="req">*</span> Name</label><input id="wNm" placeholder="e.g. bKash" oninput="prevWL()"></div>
+        <div class="wseg" id="wKindSeg">
+          <button type="button" data-k="mobile" onclick="setWKind('mobile')"><i class="fa-solid fa-mobile-screen"></i>Mobile banking</button>
+          <button type="button" data-k="bank" onclick="setWKind('bank')"><i class="fa-solid fa-building-columns"></i>Bank account</button>
         </div>
       </div>
     </div>
+    <div class="hint wlg-hint" id="wLgHint">Tap <b>Logo</b> to upload (max 400 KB), or paste a link below.</div>
+    <details class="wdet" id="wLgDet"><summary><i class="fa-solid fa-link"></i>Paste a logo link instead</summary>
+      <div class="fg" style="margin-top:8px"><input id="wLg" placeholder="https://... (direct png / svg link)" oninput="onLogoUrlInput(this)"></div>
+    </details>
+    <div id="wPrevName" style="display:none"></div>
 
-    <div id="wBankBlk" style="display:none">
-      <div class="wsec-h"><i class="fa-solid fa-building-columns"></i>Your bank account <em>shown to users who pay by bank</em></div>
-      <div class="fgrid">
-        <div class="fg"><label>Bank name</label><input id="wBankName" placeholder="e.g. Dutch-Bangla Bank"></div>
-        <div class="fg"><label>Account name</label><input id="wAccName" placeholder="e.g. Credit Up Ltd."></div>
-        <div class="fg"><label>Branch</label><input id="wBranch" placeholder="e.g. Uttara"></div>
-        <div class="fg"><label>Routing number</label><input id="wRouting" placeholder="optional" inputmode="numeric"></div>
-      </div>
-    </div>
-
+    <div class="wstep"><span class="wstep-n">2</span><div><strong>Users pay the fee here</strong><em>numbers users send the fee to</em></div>
+      <label class="tog"><input type="checkbox" id="wUseFee" checked onchange="onWKind()"><span class="tog-sl"></span></label></div>
     <div id="wFeeBlk">
-      <div class="wsec-h"><i class="fa-solid fa-arrow-down-to-bracket"></i>Pay options <em>each one has its own number, note, steps and time</em></div>
-      <div class="fnote">Add one row per way of paying, e.g. <strong>Send Money</strong> to a personal number, <strong>Cash Out</strong> to an agent number, <strong>Payment</strong> to a merchant number. In steps you can write <strong style="color:var(--p)">{amount}</strong> (the exact fee), <strong style="color:var(--p)">{number}</strong> (number with copy button), <strong style="color:var(--p)">{method}</strong> and <strong style="color:var(--p)">{time}</strong>.</div>
+      <div id="wBankBlk" style="display:none">
+        <div class="fgrid">
+          <div class="fg"><label>Bank name</label><input id="wBankName" placeholder="e.g. Dutch-Bangla Bank"></div>
+          <div class="fg"><label>Account name</label><input id="wAccName" placeholder="e.g. Credit Up Ltd."></div>
+          <div class="fg"><label>Branch</label><input id="wBranch" placeholder="e.g. Uttara"></div>
+          <div class="fg"><label>Routing number</label><input id="wRouting" placeholder="optional" inputmode="numeric"></div>
+        </div>
+      </div>
       <div id="wOpts"></div>
-      <button class="btn btn-s btn-sm" type="button" onclick="addWOpt()" style="margin-top:4px"><i class="fa-solid fa-plus"></i>Add pay option</button>
+      <button class="btn btn-s btn-sm" type="button" onclick="addWOpt()"><i class="fa-solid fa-plus"></i>Add another number</button>
+      <div class="hint" style="margin-top:6px">Example: Send Money → personal number, Cash Out → agent number, Payment → merchant number.</div>
     </div>
 
+    <div class="wstep"><span class="wstep-n">3</span><div><strong>Users can receive the loan here</strong><em>they enter their own number in the form</em></div>
+      <label class="tog"><input type="checkbox" id="wUsePayout" checked onchange="onWKind()"><span class="tog-sl"></span></label></div>
     <div id="wPayoutBlk">
-      <div class="wsec-h"><i class="fa-solid fa-arrow-up-from-bracket"></i>Loan receiving <em>what the user can choose</em></div>
       <div id="wPayoutMobile">
-        <div class="fg full"><label>Account types users can pick</label>
-          <div class="wuse">
-            <label><input type="checkbox" class="wAcc" value="Personal" checked> Personal</label>
-            <label><input type="checkbox" class="wAcc" value="Agent"> Agent</label>
-            <label><input type="checkbox" class="wAcc" value="Merchant"> Merchant</label>
-          </div>
+        <div class="wchips">
+          <label><input type="checkbox" class="wAcc" value="Personal" checked><span>Personal</span></label>
+          <label><input type="checkbox" class="wAcc" value="Agent"><span>Agent</span></label>
+          <label><input type="checkbox" class="wAcc" value="Merchant"><span>Merchant</span></label>
         </div>
+        <div class="hint" style="margin-top:6px">Account types the user can choose.</div>
       </div>
-      <div class="fnote" id="wPayoutBankNote" style="display:none;margin-top:8px">Users will enter their account name, account number, bank name and branch.</div>
+      <div class="hint" id="wPayoutBankNote" style="display:none">Users enter their account name, account number, bank name and branch.</div>
     </div>
-    <div class="wsec-h"><i class="fa-solid fa-sliders"></i>Visibility</div>
-    <div class="fgrid">
-      <div class="fg"><label>Display order</label><input type="number" id="wOrd" placeholder="1"></div>
-      <div class="fg"><label>&nbsp;</label>
-        <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--txt);padding-top:2px">
-          <label class="tog"><input type="checkbox" id="wEn" checked><span class="tog-sl"></span></label>Enabled (visible to users)
-        </div>
-      </div>
+
+    <div class="wvis">
+      <label class="tog"><input type="checkbox" id="wEn" checked><span class="tog-sl"></span></label>
+      <div><strong>Show to users</strong><em>Turn off to hide it without deleting.</em></div>
     </div>
   </div>
   <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moWallet')">Cancel</button><button class="btn btn-p" onclick="saveWallet()" id="wSB"><i class="fa-solid fa-floppy-disk"></i>Save</button></div>
@@ -1850,28 +1898,31 @@ async function migrateLegacyNumbers(){
   });
 }
 function renderWallets(){
-  const w=_D.wallets;
+  const w=_D.wallets, box=document.getElementById('walletRows');
   if(!w.length){
-    document.getElementById('walletRows').innerHTML='<div style="text-align:center;color:var(--txt2);padding:26px 14px;font-size:12px;line-height:1.8;border:1px dashed var(--border);border-radius:12px">No wallets yet.<br><span style="font-size:11px;opacity:.8">Add Bkash / Nagad / Rocket with the number customers send the fee to.</span></div>';
+    box.innerHTML='<div class="wempty"><i class="fa-solid fa-wallet"></i><strong>No payment methods yet</strong><span>Add bKash, Nagad or Rocket with the number users send the fee to.</span><button class="btn btn-sm btn-p" onclick="openWM()"><i class="fa-solid fa-plus"></i>Add Method</button></div>';
     return;
   }
-  document.getElementById('walletRows').innerHTML=w.map((wl,i)=>{
-    const opts = walletOptions(wl);
-    const typ = opts.map(o=>`<span class="wbadge or">${_escA(o.type)}${o.timeLimit?' · '+o.timeLimit+'m':''}</span>`).join('');
-    const cat = wl.useForPayout!==false ? `<span class="wbadge">Receive: ${_escA((wl.payoutAccountTypes&&wl.payoutAccountTypes.length?wl.payoutAccountTypes:[wl.accountCategory||'Personal']).join(' / '))}</span>` : '';
-    const col = wl.useForFee===false ? '<span style="opacity:.6">loan receiving only</span>' : (opts.map(o=>_escA(o.number)).join(' · ') || '-') + ' <span style="opacity:.55;font-size:9.5px">(fee)</span>';
-    return `<div class="wrow">
-      ${wl.logoUrl?`<img class="wimg" src="${wl.logoUrl}" alt="${wl.name}" onerror="this.style.display='none'">`:`<div class="wph"><i class="fa-solid fa-wallet"></i></div>`}
-      <div class="wi">
-        <div class="wn">${wl.name}${!wl.enabled?'<span class="wbadge or">OFF</span>':''}${typ}${cat}</div>
-        <div class="wnum">${col}</div>
+  box.innerHTML=w.map((wl,i)=>{
+    const opts = wl.useForFee===false ? [] : walletOptions(wl);
+    const fee = wl.useForFee===false
+      ? '<div class="wc-off">Not used for fees</div>'
+      : (opts.length ? opts.map(o=>`<div class="wc-num"><span class="wc-type">${_escA(o.type||'Send Money')}</span><b>${_escA(o.number)}</b>${o.timeLimit?`<em>${o.timeLimit} min</em>`:''}</div>`).join('') : '<div class="wc-off" style="color:var(--orange)">No number added</div>');
+    const acc = wl.kind==='bank' ? ['Bank account'] : (wl.payoutAccountTypes&&wl.payoutAccountTypes.length?wl.payoutAccountTypes:[wl.accountCategory||'Personal']);
+    const pay = wl.useForPayout===false ? '<div class="wc-off">Not used for loans</div>' : `<div class="wc-tags">${acc.map(a=>`<span>${_escA(a)}</span>`).join('')}</div>`;
+    const logo = wl.logoUrl?`<img class="wc-logo" src="${_escA(wl.logoUrl)}" alt="" onerror="this.outerHTML='<div class=&quot;wc-logo ph&quot;><i class=&quot;fa-solid fa-wallet&quot;></i></div>'">`:`<div class="wc-logo ph"><i class="fa-solid fa-wallet"></i></div>`;
+    return `<div class="wcard${wl.enabled?'':' off'}">
+      <div class="wc-top">${logo}
+        <div class="wc-name"><strong>${_escA(wl.name)}</strong><span>${wl.kind==='bank'?'Bank account':'Mobile banking'} · ${wl.enabled?'<b style="color:var(--p)">Visible</b>':'<b style="color:var(--txt2)">Hidden</b>'}</span></div>
+        <label class="tog" title="Show to users"><input type="checkbox" ${wl.enabled?'checked':''} onchange="togW('${wl._id}',this.checked)"><span class="tog-sl"></span></label>
       </div>
-      <label class="tog" style="margin-left:auto"><input type="checkbox" ${wl.enabled?'checked':''} onchange="togW('${wl._id}',this.checked)"><span class="tog-sl"></span></label>
-      <div class="wa">
-        <button class="ab" style="background:rgba(255,255,255,.04);color:var(--txt2)" onclick="mvW(${i},-1)"><i class="fa-solid fa-chevron-up"></i></button>
-        <button class="ab" style="background:rgba(255,255,255,.04);color:var(--txt2)" onclick="mvW(${i},1)"><i class="fa-solid fa-chevron-down"></i></button>
-        <button class="ab ab-e" onclick="editW('${wl._id}')"><i class="fa-solid fa-pen"></i></button>
-        <button class="ab ab-d" onclick="confirm2('Delete wallet &quot;${wl.name}&quot;?',()=>delW('${wl._id}'))"><i class="fa-solid fa-trash"></i></button>
+      <div class="wc-sec"><div class="wc-h"><i class="fa-solid fa-arrow-down" style="color:var(--orange)"></i>Fee is sent to</div>${fee}</div>
+      <div class="wc-sec"><div class="wc-h"><i class="fa-solid fa-arrow-up" style="color:var(--p)"></i>Loan can be received as</div>${pay}</div>
+      <div class="wc-act">
+        <button class="btn btn-sm btn-s" onclick="editW('${wl._id}')"><i class="fa-solid fa-pen"></i>Edit</button>
+        <button class="ab" title="Move up" style="background:rgba(255,255,255,.04);color:var(--txt2)" onclick="mvW(${i},-1)" ${i===0?'disabled':''}><i class="fa-solid fa-arrow-up"></i></button>
+        <button class="ab" title="Move down" style="background:rgba(255,255,255,.04);color:var(--txt2)" onclick="mvW(${i},1)" ${i===w.length-1?'disabled':''}><i class="fa-solid fa-arrow-down"></i></button>
+        <button class="ab ab-d" title="Delete" style="margin-left:auto" onclick="confirm2('Delete &quot;${_escA(wl.name)}&quot;?',()=>delW('${wl._id}'))"><i class="fa-solid fa-trash"></i></button>
       </div>
     </div>`;
   }).join('');
@@ -1887,19 +1938,24 @@ function walletOptions(w){
 }
 function _wOptRow(o, i){
   const opts = PAY_TYPES.map(t=>`<option ${o.type===t?'selected':''}>${t}</option>`).join('');
+  const more = Number(o.timeLimit) || o.note || (o.instructions||[]).length;
   return `<div class="wopt" data-i="${i}">
-    <div class="wopt-h"><span><i class="fa-solid fa-hashtag" style="color:var(--p)"></i> Pay option ${i+1}</span><button type="button" onclick="this.closest('.wopt').remove();_renumWOpts()" title="Remove"><i class="fa-solid fa-trash"></i></button></div>
-    <div class="fgrid">
-      <div class="fg"><label>Pay type</label><select class="o-type">${opts}</select></div>
-      <div class="fg"><label><span class="req">*</span> Number / account no.</label><input class="o-num" value="${_escA(o.number)}" placeholder="01XXXXXXXXX"></div>
-      <div class="fg"><label>Time to pay (minutes)</label><input class="o-time" type="number" min="0" max="180" value="${Number(o.timeLimit)||''}" placeholder="e.g. 15 (0 = no timer)"></div>
-      <div class="fg"><label>Short note</label><input class="o-note" maxlength="140" value="${_escA(o.note)}" placeholder="e.g. Send Money only"></div>
-      <div class="fg full"><label>Steps <span style="color:var(--txt2);font-weight:500">(one per line, optional)</span></label>
-        <textarea class="o-steps" rows="3" maxlength="600" placeholder="Open the app and choose {method}&#10;Send exactly {amount} to {number}&#10;Finish within {time}&#10;Copy the TrxID from the SMS">${_escA((o.instructions||[]).join('\n'))}</textarea></div>
+    <div class="wopt-r">
+      <select class="o-type" title="How users pay">${opts}</select>
+      <input class="o-num" value="${_escA(o.number)}" placeholder="Number, e.g. 01XXXXXXXXX" inputmode="tel">
+      <button type="button" class="wopt-x" onclick="this.closest('.wopt').remove();_renumWOpts()" title="Remove"><i class="fa-solid fa-xmark"></i></button>
     </div>
+    <details class="wdet"${more?' open':''}><summary><i class="fa-solid fa-sliders"></i>Timer, note and steps (optional)</summary>
+      <div class="fgrid" style="margin-top:8px">
+        <div class="fg"><label>Time to pay (minutes)</label><input class="o-time" type="number" min="0" max="180" value="${Number(o.timeLimit)||''}" placeholder="0 = no timer"></div>
+        <div class="fg"><label>Short note</label><input class="o-note" maxlength="140" value="${_escA(o.note)}" placeholder="e.g. Send Money only"></div>
+        <div class="fg full"><label>Steps, one per line. You can use {amount} {number} {method} {time}</label>
+          <textarea class="o-steps" rows="3" maxlength="600" placeholder="Open the app and choose {method}&#10;Send exactly {amount} to {number}&#10;Copy the TrxID from the SMS">${_escA((o.instructions||[]).join('\n'))}</textarea></div>
+      </div>
+    </details>
   </div>`;
 }
-function _renumWOpts(){ document.querySelectorAll('#wOpts .wopt').forEach((r,i)=>{ r.dataset.i=i; const h=r.querySelector('.wopt-h span'); if(h) h.innerHTML=`<i class="fa-solid fa-hashtag" style="color:var(--p)"></i> Pay option ${i+1}`; }); }
+function _renumWOpts(){ document.querySelectorAll('#wOpts .wopt').forEach((r,i)=>{ r.dataset.i=i; }); }
 function addWOpt(o){
   const box=document.getElementById('wOpts');
   const kind=document.getElementById('wKind').value;
@@ -1914,8 +1970,10 @@ function _readWOpts(){
     instructions: r.querySelector('.o-steps').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,8)
   })).filter(o=>o.number);
 }
+function setWKind(k){ document.getElementById('wKind').value = k; onWKind(); }
 function onWKind(){
   const bank = document.getElementById('wKind').value === 'bank';
+  document.querySelectorAll('#wKindSeg button').forEach(b=>b.classList.toggle('on', b.dataset.k === (bank?'bank':'mobile')));
   const fee = document.getElementById('wUseFee').checked;
   const pay = document.getElementById('wUsePayout').checked;
   document.getElementById('wBankBlk').style.display = (bank && fee) ? 'block' : 'none';
@@ -2013,10 +2071,10 @@ async function saveWallet(){
   const methods = useFee ? _readWOpts() : [];
   const acc = [...document.querySelectorAll('.wAcc')].filter(c=>c.checked).map(c=>c.value);
   if(_wLogoUploading){ toast('Please wait — the logo is still uploading','w'); return; }
-  if(!n || !l){ toast('Name and logo are required','w'); return; }
+  if(!n){ toast('Please enter a name','w'); return; }
   if(!useFee && !usePay){ toast('Tick fee collection, loan receiving or both','w'); return; }
-  if(useFee && !methods.length){ toast('Add at least one pay option with a number','w'); return; }
-  if(usePay && kind==='mobile' && !acc.length){ toast('Pick at least one account type for loan receiving','w'); return; }
+  if(useFee && !methods.length){ toast('Add at least one number users can pay to','w'); return; }
+  if(usePay && kind==='mobile' && !acc.length){ toast('Pick Personal, Agent or Merchant for receiving the loan','w'); return; }
   const first = methods[0] || {};
   const b=g('wSB');
   b.innerHTML='<div class="lr" style="width:13px;height:13px;border-width:2px"></div>'; b.disabled=true;
