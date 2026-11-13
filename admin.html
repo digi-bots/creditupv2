@@ -222,8 +222,19 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .hp-acts{display:flex;gap:5px;flex-shrink:0}
 .hp-badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
 .hp-badge.live{background:rgba(29,219,128,.15);color:var(--p)}.hp-badge.scheduled{background:rgba(77,143,255,.15);color:#7aa8ff}.hp-badge.expired{background:rgba(255,255,255,.08);color:var(--txt2)}.hp-badge.off{background:rgba(255,77,106,.12);color:#ff8a9c}.hp-badge.pin{background:rgba(255,215,106,.15);color:#ffd76a}
-.hp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;min-width:0}
-@media(max-width:700px){.hp-row{flex-wrap:wrap}.hp-grid2{grid-template-columns:1fr}}
+.sl-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+.sl-prev{position:sticky;top:12px}
+.sl-phone{width:280px;height:560px;margin:0 auto;border-radius:30px;border:8px solid #1b2430;background:#000;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.sl-phone iframe{width:375px;height:750px;border:0;transform:scale(.7253);transform-origin:0 0;background:#fff}
+@media(max-width:900px){.sl-wrap{grid-template-columns:1fr}.sl-prev{position:static}}
+.hp-step{display:flex;align-items:center;gap:6px}
+.hp-step button{width:36px;height:38px;border-radius:9px;border:1.5px solid var(--border);background:rgba(255,255,255,.05);color:var(--txt);font-size:18px;font-weight:800;cursor:pointer}
+.hp-step button:hover{border-color:var(--p);color:var(--p)}
+.hp-step input{text-align:center;flex:1;min-width:0}
+.hp-mini{padding:2px 6px!important;font-size:11px!important;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--txt)}
+.hp-grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;flex:1;min-width:0}
+#slPays .hp-grid2{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+@media(max-width:700px){.hp-row{flex-wrap:wrap}.hp-grid2,#slPays .hp-grid2{grid-template-columns:1fr}}
 .cfg-blk{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:13px}
 .cfg-t{font-size:13px;font-weight:800;margin-bottom:13px;padding-bottom:9px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
 .cfg-t i{color:var(--p);font-size:13px}
@@ -783,6 +794,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <button data-p="partners" onclick="hpTab('partners')"><i class="fa-solid fa-handshake"></i>Partners</button>
     <button data-p="trust" onclick="hpTab('trust')"><i class="fa-solid fa-shield-halved"></i>Trust Badges</button>
     <button data-p="ref" onclick="hpTab('ref')"><i class="fa-solid fa-user-plus"></i>Invite Code</button>
+    <button data-p="splash" onclick="hpTab('splash')"><i class="fa-solid fa-mobile-screen"></i>Loading Screen</button>
   </div>
 
   <!-- LIVE -->
@@ -813,14 +825,22 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-on" checked><span class="tog-sl"></span></label>Show notice bar</label></div>
         <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-bc" checked><span class="tog-sl"></span></label>Also show latest broadcasts</label></div>
         <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-own"><span class="tog-sl"></span></label>Also show the user's own notifications</label></div>
+        <div class="fg"><label>Who sees the bar</label><select id="nt-aud"><option value="all">Everyone</option><option value="visitors">Visitors only (not logged in)</option><option value="users">Logged-in users only</option></select></div>
+        <div class="fg"><label>Speed (1 = slowest, 10 = fastest)</label><div class="hp-step"><button type="button" onclick="hpStep('nt-speed',-1)">−</button><input id="nt-speed" type="number" min="1" max="10" value="5"><button type="button" onclick="hpStep('nt-speed',1)">+</button></div></div>
+        <div class="fg"><label>Max items in the bar</label><div class="hp-step"><button type="button" onclick="hpStep('nt-max',-1)">−</button><input id="nt-max" type="number" min="1" max="20" value="6"><button type="button" onclick="hpStep('nt-max',1)">+</button></div></div>
+        <div class="fg"><label>Direction</label><select id="nt-dir"><option value="left">Right to left</option><option value="right">Left to right</option></select></div>
+        <div class="fg"><label>Colour</label><select id="nt-theme"><option value="green">Green</option><option value="gold">Gold</option><option value="blue">Blue</option><option value="red">Red</option><option value="dark">Dark</option></select></div>
+        <div class="fg"><label>Text size</label><select id="nt-size"><option value="sm">Small</option><option value="md" selected>Normal</option><option value="lg">Large</option></select></div>
         <div class="fg"><label>Label</label><input id="nt-label" placeholder="Notice"></div>
-        <div class="fg"><label>Speed</label><select id="nt-speed"><option value="slow">Slow</option><option value="normal" selected>Normal</option><option value="fast">Fast</option></select></div>
-        <div class="fg"><label>Max items in the bar</label><input id="nt-max" type="number" min="1" max="20" placeholder="6"></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-showlabel" checked><span class="tog-sl"></span></label>Show the label</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-pause" checked><span class="tog-sl"></span></label>Pause when touched</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-close"><span class="tog-sl"></span></label>Users can close the bar</label></div>
       </div>
     </div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-plus"></i>New Notice</div>
       <div class="fgrid">
         <div class="fg" style="grid-column:1/-1"><label><span class="req">*</span> Text</label><input id="ntn-text" maxlength="160" placeholder="e.g. Eid holiday: office closed 15–18 June, online service open"></div>
+        <div class="fg"><label>Show to</label><select id="ntn-aud"><option value="all">Everyone</option><option value="visitors">Visitors only</option><option value="users">Logged-in users only</option></select></div>
         <div class="fg"><label>Style</label><select id="ntn-type"><option value="info">ℹ️ Info</option><option value="offer">🎁 Offer</option><option value="success">✅ Good news</option><option value="warning">⚠️ Warning</option><option value="urgent">🚨 Urgent</option></select></div>
         <div class="fg"><label>Link (optional)</label><input id="ntn-link" placeholder="https://..."></div>
         <div class="fg"><label>Start (optional)</label><input id="ntn-start" type="datetime-local"></div>
@@ -872,6 +892,48 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <div class="fg"><label>Allowed within (days after joining, 0 = any time)</label><input id="rf-days" type="number" min="0" placeholder="7"></div>
       </div>
       <div class="hint" style="margin-top:10px">For users whose invite link did not work when they signed up. A code can be added only once, never the user's own code, and never the code of someone they invited. The inviter gets a notification.</div>
+    </div>
+  </div>
+  <!-- LOADING SCREEN -->
+  <div class="hp-pane" id="hp-splash">
+    <div class="sl-wrap">
+      <div class="sl-form">
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Loading Screen</div>
+          <div class="fgrid">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-on" checked><span class="tog-sl"></span></label>Show loading screen</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-once"><span class="tog-sl"></span></label>Show only once per visit</label></div>
+            <div class="fg"><label>Shortest time on screen (seconds)</label><div class="hp-step"><button type="button" onclick="hpStep('sl-min',-0.5)">−</button><input id="sl-min" type="number" min="0" max="10" step="0.5" value="1.5"><button type="button" onclick="hpStep('sl-min',0.5)">+</button></div></div>
+            <div class="fg"><label>Longest time on screen (seconds)</label><div class="hp-step"><button type="button" onclick="hpStep('sl-max',-0.5)">−</button><input id="sl-max" type="number" min="1" max="15" step="0.5" value="5"><button type="button" onclick="hpStep('sl-max',0.5)">+</button></div></div>
+            <div class="fg"><label>Colour style</label><select id="sl-theme"><option value="light">Light (white)</option><option value="dark">Dark</option><option value="brand">Brand green</option></select></div>
+            <div class="fg"><label>Loading animation</label><select id="sl-loader"><option value="bar">Sliding bar</option><option value="dots">Bouncing dots</option><option value="spin">Spinner</option><option value="none">None</option></select></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-glow" checked><span class="tog-sl"></span></label>Glow rings around the logo</label></div>
+          </div>
+          <div class="hint" style="margin-top:10px">The screen closes when the app is ready, but never before the shortest time and never after the longest time. The logo itself is not changed.</div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-font"></i>What to show</div>
+          <div class="fgrid">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showtitle" checked><span class="tog-sl"></span></label>Title</label><input id="sl-title" maxlength="50" placeholder="CreditUp – Smart Credit &amp; Loans"></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showsub" checked><span class="tog-sl"></span></label>Subtitle</label><input id="sl-sub" maxlength="80" placeholder="Empty = the subtitle from Site Config"></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showbadge" checked><span class="tog-sl"></span></label>Badge</label><input id="sl-badge" maxlength="40" placeholder="100% Authentic &amp; Verified"></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showfoot" checked><span class="tog-sl"></span></label>Bottom line</label><input id="sl-foot" maxlength="60" placeholder="256-bit SSL Encrypted | Safe &amp; Secure"></div>
+          </div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-wallet"></i>Payment logos <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="hpAddPay()"><i class="fa-solid fa-plus"></i>Add logo</button></div>
+          <div class="fgrid" style="margin-bottom:10px">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showpay" checked><span class="tog-sl"></span></label>Show payment logos</label></div>
+            <div class="fg"><label>Heading</label><input id="sl-paytitle" maxlength="30" placeholder="Supported Payments"></div>
+          </div>
+          <div id="slPays" class="hp-list"></div>
+          <div class="hint" style="margin-top:8px">Use small logo files (under 100 KB) so the screen opens fast. Uploads go to Cloudinary.</div>
+        </div>
+      </div>
+      <div class="sl-prev">
+        <div class="sl-phone"><iframe id="slFrame" title="Loading screen preview" src="about:blank"></iframe></div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px">
+          <button class="btn btn-sm btn-p" onclick="hpSplashPreview()"><i class="fa-solid fa-play"></i>Preview / replay</button>
+        </div>
+        <div class="hint" style="text-align:center;margin-top:6px">Shows your changes before you save. Users see them only after you press Save.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -2099,8 +2161,8 @@ function calcEMI(){
 
 // ══ WALLETS ══════════════════════════════════════════
 const LEGACY_LOGOS = {
-  Bkash:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png',
-  Nagad:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png',
+  Bkash:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png',
+  Nagad:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png',
   Rocket:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png'
 };
 
@@ -2525,8 +2587,8 @@ async function saveConfig(quiet){
 // ══ HOME PAGE (live feed, notice bar, partners, trust badges, invite code) ═══
 // everything is kept in siteConfig/home and written only when Save is pressed
 const HP_PARTNERS = [
-  ['bKash','https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png'],
-  ['Nagad','https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png'],
+  ['bKash','https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png'],
+  ['Nagad','https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png'],
   ['Rocket','https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png'],
   ['City Bank','https://logo.clearbit.com/citybankbd.com'],['Brac Bank','https://logo.clearbit.com/bracbank.com'],
   ['DBBL','https://logo.clearbit.com/dbbl.com'],['Islami Bank','https://logo.clearbit.com/islamibankbd.com'],['Upay','https://logo.clearbit.com/upaybd.com']
@@ -2545,6 +2607,7 @@ function hpTab(p){
   document.querySelectorAll('#hpTabs button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
   document.querySelectorAll('.hp-pane').forEach(x => x.classList.toggle('on', x.id === 'hp-' + p));
   if(p === 'live') hpLoadFeed();
+  if(p === 'splash') hpSplashPreview();
 }
 async function loadHome(){
   showL(true);
@@ -2552,31 +2615,46 @@ async function loadHome(){
   showL(false);
   _H = {
     live: { on:true, loans:true, fees:true, title:'Live Transactions', count:8, days:30, refresh:60, scroll:true, hidden:[], ...(d.live||{}) },
-    notice: { on:true, broadcasts:true, own:false, label:'Notice', speed:'normal', max:6, items:[], ...(d.notice||{}) },
+    notice: { on:true, broadcasts:true, own:false, label:'Notice', speed:5, max:6, audience:'all', dir:'left', theme:'green', size:'md', showLabel:true, pause:true, closable:false, items:[], ...(d.notice||{}) },
     partners: { on:true, title:'Our Partners', size:'lg', items: null, ...(d.partners||{}) },
     trust: { on:true, note:'', items: null, ...(d.trust||{}) },
-    referralEntry: { on:true, days:7, ...(d.referralEntry||{}) }
+    referralEntry: { on:true, days:7, ...(d.referralEntry||{}) },
+    splash: { ...SL_DEF, ...(d.splash||{}) }
   };
+  if(!Array.isArray(_H.splash.pays)) _H.splash.pays = SL_DEF.pays;
+  _H.splash.pays = _H.splash.pays.map(x => ({ id:_hid(), on:true, ...x }));
   if(!Array.isArray(_H.partners.items)) _H.partners.items = HP_PARTNERS.map(([name,logo]) => ({ id:_hid(), name, logo, on:true }));
   if(!Array.isArray(_H.trust.items)) _H.trust.items = HP_TRUST.map(([icon,title,text]) => ({ id:_hid(), icon, title, text, on:true }));
   const L=_H.live, N=_H.notice, P=_H.partners, T=_H.trust, R=_H.referralEntry;
   const set=(id,v)=>{ const e=document.getElementById(id); if(!e) return; if(e.type==='checkbox') e.checked=!!v; else e.value=v ?? ''; };
   set('lv-on',L.on); set('lv-loans',L.loans); set('lv-fees',L.fees); set('lv-title',L.title); set('lv-count',L.count); set('lv-days',L.days); set('lv-refresh',L.refresh); set('lv-scroll',L.scroll);
+  if(typeof N.speed !== 'number') N.speed = ({slow:3,normal:5,fast:8})[N.speed] || 5;
   set('nt-on',N.on); set('nt-bc',N.broadcasts); set('nt-own',N.own); set('nt-label',N.label); set('nt-speed',N.speed); set('nt-max',N.max);
+  set('nt-aud',N.audience); set('nt-dir',N.dir); set('nt-theme',N.theme); set('nt-size',N.size); set('nt-showlabel',N.showLabel); set('nt-pause',N.pause); set('nt-close',N.closable);
   set('pt-on',P.on); set('pt-title',P.title); set('pt-size',P.size);
   set('tr-on',T.on); set('tr-note',T.note);
   set('rf-on',R.on); set('rf-days',R.days);
-  hpRenderNotices(); hpRenderPartners(); hpRenderTrust();
+  const S=_H.splash;
+  set('sl-on',S.on); set('sl-once',S.once); set('sl-min',S.minSec); set('sl-max',S.maxSec); set('sl-theme',S.theme); set('sl-loader',S.loader); set('sl-glow',S.glow);
+  set('sl-showtitle',S.showTitle); set('sl-title',S.title); set('sl-showsub',S.showSub); set('sl-sub',S.sub); set('sl-showbadge',S.showBadge); set('sl-badge',S.badge);
+  set('sl-showfoot',S.showFoot); set('sl-foot',S.foot); set('sl-showpay',S.showPay); set('sl-paytitle',S.payTitle);
+  hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays();
   _dirty.home = new Set(); _paintSave();
   if(document.getElementById('hp-live').classList.contains('on')) hpLoadFeed();
 }
 function _hpRead(){
   const v=id=>document.getElementById(id), c=id=>!!v(id)?.checked, t=id=>(v(id)?.value||'').trim(), n=(id,d)=>{ const x=parseInt(t(id)); return isNaN(x)?d:x; };
   Object.assign(_H.live, { on:c('lv-on'), loans:c('lv-loans'), fees:c('lv-fees'), title:t('lv-title')||'Live Transactions', count:Math.min(30,Math.max(1,n('lv-count',8))), days:Math.max(0,n('lv-days',30)), refresh:Math.max(0,n('lv-refresh',60)), scroll:c('lv-scroll') });
-  Object.assign(_H.notice, { on:c('nt-on'), broadcasts:c('nt-bc'), own:c('nt-own'), label:t('nt-label')||'Notice', speed:t('nt-speed')||'normal', max:Math.min(20,Math.max(1,n('nt-max',6))) });
+  Object.assign(_H.notice, { on:c('nt-on'), broadcasts:c('nt-bc'), own:c('nt-own'), label:t('nt-label')||'Notice', speed:Math.min(10,Math.max(1,n('nt-speed',5))), max:Math.min(20,Math.max(1,n('nt-max',6))),
+    audience:t('nt-aud')||'all', dir:t('nt-dir')||'left', theme:t('nt-theme')||'green', size:t('nt-size')||'md', showLabel:c('nt-showlabel'), pause:c('nt-pause'), closable:c('nt-close') });
   Object.assign(_H.partners, { on:c('pt-on'), title:t('pt-title')||'Our Partners', size:t('pt-size')||'lg' });
   Object.assign(_H.trust, { on:c('tr-on'), note:t('tr-note') });
   Object.assign(_H.referralEntry, { on:c('rf-on'), days:Math.max(0,n('rf-days',7)) });
+  const f=(id,d)=>{ const x=parseFloat(t(id)); return isNaN(x)?d:x; };
+  const mn=Math.min(10,Math.max(0,f('sl-min',1.5)));
+  Object.assign(_H.splash, { on:c('sl-on'), once:c('sl-once'), minSec:mn, maxSec:Math.min(15,Math.max(mn,1,f('sl-max',5))), theme:t('sl-theme')||'light', loader:t('sl-loader')||'bar', glow:c('sl-glow'),
+    showTitle:c('sl-showtitle'), title:t('sl-title'), showSub:c('sl-showsub'), sub:t('sl-sub'), showBadge:c('sl-showbadge'), badge:t('sl-badge'),
+    showFoot:c('sl-showfoot'), foot:t('sl-foot'), showPay:c('sl-showpay'), payTitle:t('sl-paytitle') });
 }
 async function saveHome(){
   if(!_H) return;
@@ -2585,28 +2663,33 @@ async function saveHome(){
   if(bad) throw new Error('Every partner needs a name and a logo');
   const badT = _H.trust.items.find(x => !x.title);
   if(badT) throw new Error('Every badge needs a title');
+  if(_H.splash.pays.find(x => !x.name)) throw new Error('Every payment logo needs a name');
   await window._setDoc('siteConfig','home',{ ..._H, updatedAt:new Date().toISOString() });
   await logAct('Home page settings saved','config','home');
 }
 // list helpers
+const _hpList = kind => kind==='p' ? _H.partners.items : kind==='t' ? _H.trust.items : kind==='s' ? _H.splash.pays : _H.notice.items;
+const _hpRender = kind => kind==='p' ? hpRenderPartners() : kind==='t' ? hpRenderTrust() : kind==='s' ? hpRenderPays() : hpRenderNotices();
 function _hpMove(list, id, dir){ const i=list.findIndex(x=>x.id===id), j=i+dir; if(i<0||j<0||j>=list.length) return; [list[i],list[j]]=[list[j],list[i]]; }
 function _hpEdit(kind, id, key, el){
-  const list = kind==='p' ? _H.partners.items : kind==='t' ? _H.trust.items : _H.notice.items;
+  const list = _hpList(kind);
   const it = list.find(x=>x.id===id); if(!it) return;
   it[key] = el.type==='checkbox' ? el.checked : el.value;
   markDirty('home', kind);
   if(kind==='t' && key==='icon'){ const ic=el.closest('.hp-row')?.querySelector('.hp-ic i'); if(ic) ic.className='fa-solid fa-'+el.value; }
-  if(kind==='p' && key==='logo'){ const im=el.closest('.hp-row')?.querySelector('.hp-logo img'); if(im) im.src=el.value; }
+  if((kind==='p'||kind==='s') && key==='logo'){ const im=el.closest('.hp-row')?.querySelector('.hp-logo img'); if(im) im.src=el.value; }
+  if(kind==='s') hpSplashAuto();
   if(key==='on'){ el.closest('.hp-row')?.classList.toggle('off', !el.checked); if(kind==='n') hpRenderNotices(); }
 }
 function _hpAct(kind, id, act){
-  const list = kind==='p' ? _H.partners.items : kind==='t' ? _H.trust.items : _H.notice.items;
+  const list = _hpList(kind);
   if(act==='up') _hpMove(list,id,-1);
   if(act==='down') _hpMove(list,id,1);
   if(act==='del'){ const i=list.findIndex(x=>x.id===id); if(i>=0) list.splice(i,1); }
   if(act==='dup'){ const it=list.find(x=>x.id===id); if(it) list.unshift({ ...it, id:_hid(), start:'', end:'', on:true, createdAt:new Date().toISOString() }); }
   markDirty('home', kind);
-  kind==='p' ? hpRenderPartners() : kind==='t' ? hpRenderTrust() : hpRenderNotices();
+  _hpRender(kind);
+  if(kind==='s') hpSplashAuto();
 }
 const _tog = (kind,id,on) => `<label class="tog" title="On / off"><input type="checkbox" ${on?'checked':''} onchange="_hpEdit('${kind}','${id}','on',this)"><span class="tog-sl"></span></label>`;
 const _arrows = (kind,id) => `<button class="ab ab-v" title="Move up" onclick="_hpAct('${kind}','${id}','up')"><i class="fa-solid fa-arrow-up"></i></button><button class="ab ab-v" title="Move down" onclick="_hpAct('${kind}','${id}','down')"><i class="fa-solid fa-arrow-down"></i></button>`;
@@ -2625,12 +2708,42 @@ function hpRenderPartners(){
     <div class="hp-acts">${_tog('p',x.id,x.on)}${_arrows('p',x.id)}<button class="ab ab-no" title="Remove" onclick="_hpAct('p','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
   </div>`).join('') : '<div class="hint">No partners yet. Add one above.</div>';
 }
+// loading screen
+const _WM = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
+const SL_DEF = { on:true, theme:'light', glow:true, showTitle:true, title:'CreditUp – Smart Credit & Loans', showSub:true, sub:'', showPay:true, payTitle:'Supported Payments',
+  pays:[ {name:'bKash', logo:_WM+'4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png'}, {name:'Nagad', logo:_WM+'c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png'}, {name:'Rocket', logo:_WM+'2/28/Rocket_Logo.svg/250px-Rocket_Logo.svg.png'} ],
+  showBadge:true, badge:'100% Authentic & Verified', loader:'bar', showFoot:true, foot:'256-bit SSL Encrypted | Safe & Secure', minSec:1.5, maxSec:5, once:false };
+function hpRenderPays(){
+  const el=document.getElementById('slPays'); if(!el||!_H) return;
+  const L=_H.splash.pays;
+  el.innerHTML = L.length ? L.map((x,i)=>`<div class="hp-row ${x.on?'':'off'}">
+    <span class="hp-s" style="width:18px;text-align:center;font-weight:800">${i+1}</span>
+    <div class="hp-logo"><img src="${_he(x.logo)}" alt="" onerror="this.style.opacity=.2"></div>
+    <div class="hp-grid2">
+      <input value="${_he(x.name)}" placeholder="Name (shown if the logo fails)" oninput="_hpEdit('s','${x.id}','name',this)">
+      <div style="display:flex;gap:6px"><input value="${_he(x.logo)}" placeholder="Logo URL (https://...)" style="flex:1;min-width:0" oninput="_hpEdit('s','${x.id}','logo',this)">
+      <label class="btn btn-s btn-sm" style="margin:0;cursor:pointer" title="Upload logo"><i class="fa-solid fa-upload"></i><input type="file" accept="image/*" style="display:none" onchange="hpUploadLogo('${x.id}',this,'s')"></label></div>
+    </div>
+    <div class="hp-acts">${_tog('s',x.id,x.on)}${_arrows('s',x.id)}<button class="ab ab-no" title="Remove" onclick="_hpAct('s','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`).join('') : '<div class="hint">No payment logos. Add one above.</div>';
+}
+function hpAddPay(){ _H.splash.pays.push({ id:_hid(), name:'', logo:'', on:true }); markDirty('home','s'); hpRenderPays(); }
+function hpSplashPreview(){
+  if(!_H) return;
+  _hpRead();
+  const S = { ..._H.splash, pays:_H.splash.pays.map(({id,...x}) => x) };
+  try{ localStorage.setItem('cu_splash_preview', JSON.stringify(S)); }catch(e){ toast('Preview needs browser storage','w'); return; }
+  const fr=document.getElementById('slFrame'); if(fr) fr.src='index.html?splashPreview=1&t='+Date.now();
+}
+let _slT=null;
+function hpSplashAuto(){ clearTimeout(_slT); _slT=setTimeout(()=>{ if(document.getElementById('hp-splash')?.classList.contains('on')) hpSplashPreview(); }, 700); }
 function hpAddPartner(){ _H.partners.items.push({ id:_hid(), name:'', logo:'', on:true }); markDirty('home','p'); hpRenderPartners(); }
-async function hpUploadLogo(id, input){
+async function hpUploadLogo(id, input, kind){
+  kind = kind || 'p';
   const f=input.files&&input.files[0]; if(!f) return;
   if(f.size>2*1024*1024){ toast('Logo must be under 2 MB','w'); return; }
   showL(true);
-  try{ const r=await window._cloudinaryUploadFile(f,'partners'); const it=_H.partners.items.find(x=>x.id===id); if(it){ it.logo=r.url; markDirty('home','p'); hpRenderPartners(); } toast('Logo uploaded ✓'); }
+  try{ const r=await window._cloudinaryUploadFile(f, kind==='s' ? 'payments' : 'partners'); const it=_hpList(kind).find(x=>x.id===id); if(it){ it.logo=r.url; markDirty('home',kind); _hpRender(kind); if(kind==='s') hpSplashAuto(); } toast('Logo uploaded ✓'); }
   catch(e){ toast('Upload failed: '+(e.message||e),'e'); }
   showL(false);
 }
@@ -2662,7 +2775,7 @@ function hpRenderNotices(){
   el.innerHTML = L.length ? L.map(x=>{ const st=_ntState(x); return `<div class="hp-row ${st==='live'?'':'off'}">
     <div class="hp-main">
       <div class="hp-t">${_he(x.text)}<span class="hp-badge ${st}">${lbl[st]}</span>${x.pin?'<span class="hp-badge pin">Pinned</span>':''}</div>
-      <div class="hp-s">${_he(x.type||'info')} · added ${fd(x.createdAt)}${x.start?' · from '+fd(x.start):''}${x.end?' · until '+fd(x.end):''}${x.link?' · link':''}</div>
+      <div class="hp-s"><select class="hp-mini" onchange="_hpEdit('n','${x.id}','audience',this)">${[['all','Everyone'],['visitors','Visitors'],['users','Users']].map(([v,l])=>`<option value="${v}" ${(x.audience||'all')===v?'selected':''}>${l}</option>`).join('')}</select> ${_he(x.type||'info')} · added ${fd(x.createdAt)}${x.start?' · from '+fd(x.start):''}${x.end?' · until '+fd(x.end):''}${x.link?' · link':''}</div>
     </div>
     <div class="hp-acts">${_tog('n',x.id,x.on)}${_arrows('n',x.id)}
       <button class="ab ab-v" title="Pin / unpin" onclick="hpPin('${x.id}')"><i class="fa-solid fa-thumbtack"></i></button>
@@ -2670,13 +2783,14 @@ function hpRenderNotices(){
       <button class="ab ab-no" title="Delete" onclick="_hpAct('n','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
   </div>`; }).join('') : '<div class="hint">No notices here.</div>';
 }
+function hpStep(id,d){ const e=document.getElementById(id); if(!e) return; const v=Math.min(Number(e.max)||99,Math.max(Number(e.min)||0,(parseFloat(e.value)||0)+d)); e.value=Math.round(v*10)/10; markDirty('home','s'); if(/^sl-/.test(id)) hpSplashAuto(); }
 function hpPin(id){ const it=_H.notice.items.find(x=>x.id===id); if(it){ it.pin=!it.pin; markDirty('home','n'); hpRenderNotices(); } }
 function hpAddNotice(){
   const g=id=>(document.getElementById(id)?.value||'').trim();
   const text=g('ntn-text'); if(!text){ toast('Write the notice text','w'); return; }
   const start=g('ntn-start'), end=g('ntn-end');
   if(start && end && new Date(end) <= new Date(start)){ toast('End must be after start','w'); return; }
-  _H.notice.items.unshift({ id:_hid(), text, type:g('ntn-type')||'info', link:g('ntn-link'), start:start?new Date(start).toISOString():'', end:end?new Date(end).toISOString():'', pin:!!document.getElementById('ntn-pin')?.checked, on:true, createdAt:new Date().toISOString() });
+  _H.notice.items.unshift({ id:_hid(), text, audience:g('ntn-aud')||'all', type:g('ntn-type')||'info', link:g('ntn-link'), start:start?new Date(start).toISOString():'', end:end?new Date(end).toISOString():'', pin:!!document.getElementById('ntn-pin')?.checked, on:true, createdAt:new Date().toISOString() });
   ['ntn-text','ntn-link','ntn-start','ntn-end'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
   const pn=document.getElementById('ntn-pin'); if(pn) pn.checked=false;
   markDirty('home','n'); hpRenderNotices(); toast('Notice added. Press Save to publish it.','i');
@@ -2703,7 +2817,7 @@ function hpHide(id){
 document.addEventListener('DOMContentLoaded',()=>{
   const sec=document.getElementById('sec-home');
   // the static setting fields (not the list rows, which mark themselves)
-  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf)-/.test(e.target.id)) markDirty('home','s'); }));
+  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); } }));
 });
 
 // ══ BROADCAST ════════════════════════════════════════
