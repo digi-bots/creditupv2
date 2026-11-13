@@ -218,6 +218,23 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .ticker-item a{color:inherit;text-decoration:underline}
 .ticker-item.t-offer i{color:#ffd76a}.ticker-item.t-warning i{color:var(--orange)}.ticker-item.t-urgent i{color:var(--red)}.ticker-item.t-success i{color:var(--p)}
 .ticker-item .tk-pin{font-size:9px;font-weight:800;color:#1a1405;background:#ffd76a;padding:1px 5px;border-radius:6px}
+#appBar .ab-av{position:relative}
+#appBar.ab-alert .ab-av::after{content:"";position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:#ff4d6a;border:2px solid #0b3a20;box-shadow:0 0 0 0 rgba(255,77,106,.7);animation:ab-ping 1.8s infinite}
+#appBar.ab-alert.tb-no-av h3::after{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff4d6a;margin-left:6px;vertical-align:middle;-webkit-text-fill-color:initial}
+@keyframes ab-ping{0%{box-shadow:0 0 0 0 rgba(255,77,106,.7)}70%{box-shadow:0 0 0 7px rgba(255,77,106,0)}100%{box-shadow:0 0 0 0 rgba(255,77,106,0)}}
+.pf-todo{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:14px;margin-bottom:10px;background:linear-gradient(100deg,rgba(255,77,106,.16),rgba(255,140,66,.12));border:1px solid rgba(255,77,106,.4);text-align:left}
+.pf-todo .pf-ic{background:rgba(255,77,106,.15);color:#ff6b84}
+.pf-todo b{display:block;font-size:13.5px;color:#fff}.pf-todo small{display:block;font-size:11.5px;color:var(--txt2);line-height:1.35;margin-top:2px}
+.pf-todo button{flex:none;border:0;border-radius:18px;padding:8px 12px;font-weight:800;font-size:12px;background:#ff4d6a;color:#fff;cursor:pointer;font-family:inherit}
+.pf-sec2 .pf-pw{display:none;margin-top:10px}.pf-sec2.open .pf-pw{display:block}
+.pf-pw label{display:block;font-size:11.5px;color:var(--txt2);margin:8px 0 4px}
+.pf-pwf{position:relative}.pf-pwf input{width:100%;height:42px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25);color:#fff;padding:0 40px 0 12px;font-size:14px;font-family:inherit;box-sizing:border-box}
+.pf-pwf input:focus{outline:none;border-color:var(--p)}.pf-pwf input.bad{border-color:var(--red)}
+.pf-pwf button{position:absolute;right:4px;top:4px;width:34px;height:34px;border:0;background:none;color:var(--txt2);cursor:pointer}
+.pf-pwmeter{display:flex;gap:4px;margin-top:6px}.pf-pwmeter i{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.08)}
+.pf-pwmeter.s1 i:nth-child(1){background:var(--red)}.pf-pwmeter.s2 i:nth-child(-n+2){background:var(--orange)}.pf-pwmeter.s3 i{background:var(--p)}
+.pf-pwmsg{font-size:12px;margin-top:8px;min-height:16px}.pf-pwmsg.err{color:var(--red)}.pf-pwmsg.ok{color:var(--p)}
+#profileModal .mc > *{flex-shrink:0}
 .pf-head{text-align:center;margin:2px 0 14px}
 .pf-av{width:68px;height:68px;margin:0 auto 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;background:radial-gradient(circle at 30% 30%,rgba(29,219,128,.5),rgba(10,110,53,.6));border:2px solid var(--p);box-shadow:0 0 0 5px rgba(29,219,128,.12),0 10px 24px rgba(0,0,0,.35)}
 .pf-av b{font-size:28px;font-weight:900}
@@ -2393,12 +2410,29 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
       <div class="pf-stat"><small>Applications</small><b id="pfApps">0</b></div>
       <div class="pf-stat" onclick="closeModal('profileModal'); openReferModal()"><small>Active invites</small><b id="pfInv">–</b></div>
     </div>
+    <div class="pf-todo" id="pfTodo" style="display:none"></div>
     <div class="pf-card" id="pfLatest" style="display:none"></div>
     <div class="pf-card">
       <div class="pf-ct"><div class="pf-ring" id="pfRing" style="--pc:0"><span id="pfPct">0%</span></div>
         <div><b>Loan profile</b><small id="pfSum">Checking your details…</small></div></div>
       <div class="pf-secs" id="pfSecs"></div>
       <button class="mbtn-full pf-go" id="pfGo" onclick="closeModal('profileModal'); handleMainAction()"><i class="fa-solid fa-pen-to-square"></i> <span>Complete my profile</span></button>
+    </div>
+    <div class="pf-card pf-sec2" id="pfSec">
+      <div class="pf-ct"><div class="pf-ic"><i class="fa-solid fa-lock"></i></div>
+        <div><b>Login password</b><small>Change the password you use to log in</small></div>
+        <button class="pf-mini" id="pfPwToggle" onclick="_pfPwOpen()">Change</button></div>
+      <div class="pf-pw">
+        <label for="pwCur">Current password</label>
+        <div class="pf-pwf"><input type="password" id="pwCur" autocomplete="current-password"><button type="button" onclick="_pfEye('pwCur',this)" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div>
+        <label for="pwNew">New password</label>
+        <div class="pf-pwf"><input type="password" id="pwNew" autocomplete="new-password" oninput="_pfMeter()"><button type="button" onclick="_pfEye('pwNew',this)" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div>
+        <div class="pf-pwmeter" id="pwMeter"><i></i><i></i><i></i></div>
+        <label for="pwNew2">Type the new password again</label>
+        <div class="pf-pwf"><input type="password" id="pwNew2" autocomplete="new-password"><button type="button" onclick="_pfEye('pwNew2',this)" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div>
+        <div class="pf-pwmsg" id="pwMsg">At least 8 characters, with letters and numbers.</div>
+        <button class="mbtn-full pf-go" id="pwSave" onclick="_pfPwSave()"><i class="fa-solid fa-key"></i> Save new password</button>
+      </div>
     </div>
     <div class="pf-card pf-inv">
       <div class="pf-ct"><div class="pf-ic"><i class="fa-solid fa-user-group"></i></div>
@@ -4719,7 +4753,58 @@ function openProfileModal() {
   document.getElementById('profPhone').innerText = '+880 ' + u.phone;
   document.getElementById('profileModal').classList.add('on');
   _loadRefEntry();
-  _pfStats(); _pfProgress(); _pfInvites();
+  _pfStats(); _pfProgress(); _pfInvites(); _pfTodo(); _pfPwReset();
+}
+function _pfTodo(){
+  const box = document.getElementById('pfTodo'); if(!box) return;
+  const t = typeof window._tbTodo === 'function' ? window._tbTodo() : window._tbTodoItem;
+  if(!t){ box.style.display = 'none'; return; }
+  box.style.display = 'flex';
+  box.innerHTML = `<div class="pf-ic"><i class="fa-solid fa-circle-exclamation"></i></div><div style="flex:1;min-width:0"><b>${_escH(t.title)}</b><small>${_escH(t.text)}</small></div><button onclick="_pfDoTodo()">${_escH(t.btn)}</button>`;
+}
+function _pfDoTodo(){
+  const t = typeof window._tbTodo === 'function' ? window._tbTodo() : window._tbTodoItem; if(!t) return;
+  closeModal('profileModal');
+  if(t.kind === 'fee'){ window._latestAppId = t.app.id; _restoreAppState(t.app); goToFeePayment(); }
+}
+// change password
+function _pfPwReset(){
+  document.getElementById('pfSec').classList.remove('open');
+  document.getElementById('pfPwToggle').innerText = 'Change';
+  ['pwCur','pwNew','pwNew2'].forEach(id => { const e = document.getElementById(id); e.value = ''; e.type = 'password'; e.classList.remove('bad'); });
+  _pfPwMsg('At least 8 characters, with letters and numbers.', '');
+  _pfMeter();
+}
+function _pfPwOpen(){
+  const sec = document.getElementById('pfSec');
+  if(sec.classList.contains('open')){ _pfPwReset(); return; }
+  sec.classList.add('open'); document.getElementById('pfPwToggle').innerText = 'Cancel';
+  setTimeout(() => document.getElementById('pwCur').focus(), 50);
+}
+function _pfEye(id, btn){ const e = document.getElementById(id); e.type = e.type === 'password' ? 'text' : 'password'; btn.querySelector('i').className = 'fa-solid fa-eye' + (e.type === 'text' ? '-slash' : ''); }
+function _pfPwMsg(t, k){ const m = document.getElementById('pwMsg'); m.textContent = t; m.className = 'pf-pwmsg' + (k ? ' ' + k : ''); }
+function _pfMeter(){
+  const v = document.getElementById('pwNew').value, m = document.getElementById('pwMeter');
+  const sc = !v ? 0 : (v.length >= 8 && /[A-Za-z]/.test(v) && /\d/.test(v)) ? (v.length >= 12 || /[^A-Za-z0-9]/.test(v) ? 3 : 2) : 1;
+  m.className = 'pf-pwmeter' + (sc ? ' s' + sc : '');
+}
+let _pfPwBusy = false;
+async function _pfPwSave(){
+  if(_pfPwBusy) return;
+  const cur = document.getElementById('pwCur'), n1 = document.getElementById('pwNew'), n2 = document.getElementById('pwNew2');
+  [cur, n1, n2].forEach(e => e.classList.remove('bad'));
+  if(!cur.value){ cur.classList.add('bad'); return _pfPwMsg('Enter your current password.', 'err'); }
+  if(!isStrongPassword(n1.value)){ n1.classList.add('bad'); return _pfPwMsg('New password: at least 8 characters, with letters and numbers.', 'err'); }
+  if(n1.value === cur.value){ n1.classList.add('bad'); return _pfPwMsg('The new password must be different from the current one.', 'err'); }
+  if(n1.value !== n2.value){ n2.classList.add('bad'); return _pfPwMsg('The two new passwords do not match.', 'err'); }
+  if(typeof window.changeLoginPassword !== 'function') return _pfPwMsg('Please try again in a moment.', 'err');
+  _pfPwBusy = true;
+  const btn = document.getElementById('pwSave'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
+  const r = await window.changeLoginPassword(cur.value, n1.value);
+  _pfPwBusy = false; btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-key"></i> Save new password';
+  if(!r.ok){ if(r.field === 'cur') cur.classList.add('bad'); return _pfPwMsg(r.error, 'err'); }
+  _pfPwReset();
+  showAlert('Password Changed ✅', 'Your new password is saved. Use it the next time you log in.', 'success');
 }
 // ── My Profile: details, application progress and invites ──
 const _PF_SECS = [
@@ -5314,7 +5399,7 @@ async function startNewSupportChat() {
 <script type="module">
 import{initializeApp} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,setDoc,doc,orderBy,onSnapshot} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,EmailAuthProvider,reauthenticateWithCredential,updatePassword} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
 const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
@@ -5337,6 +5422,27 @@ try{ const app = initializeApp(FB); db = getFirestore(app); fbAuth = getAuth(app
 const USER_EMAIL_DOMAIN = 'users.creditup.online';
 const _phoneEmail = ph => `${ph}@${USER_EMAIL_DOMAIN}`;
 async function _signIn(ph, pw){ return signInWithEmailAndPassword(fbAuth, _phoneEmail(ph), pw); }
+// My Profile → Change password: Firebase checks the current password, then saves the new one
+window.changeLoginPassword = async function(cur, next){
+  const u = fbAuth && fbAuth.currentUser;
+  if(!u || !u.email) return { ok:false, error:'Please log in again, then try once more.' };
+  try{
+    await reauthenticateWithCredential(u, EmailAuthProvider.credential(u.email, cur));
+  }catch(e){
+    const c = String(e && e.code || '');
+    if(/wrong-password|invalid-credential|invalid-login/.test(c)) return { ok:false, error:'Your current password is not correct.', field:'cur' };
+    if(/too-many-requests/.test(c)) return { ok:false, error:'Too many tries. Please wait a few minutes and try again.' };
+    if(/network/.test(c)) return { ok:false, error:'No internet connection. Please try again.' };
+    return { ok:false, error:'Could not check your password. Please try again.' };
+  }
+  try{
+    await updatePassword(u, next);
+    const me = _getUser();
+    if(me && me.phone) _pushMyNotif(me.phone, 'Password Changed 🔒', 'Your login password was changed. If this was not you, contact support right away.', 'warning').catch(() => {});
+    return { ok:true };
+  }
+  catch(e){ return { ok:false, error: /weak-password/.test(String(e && e.code)) ? 'This password is too weak. Use at least 8 characters with letters and numbers.' : 'Could not save the new password. Please try again.' }; }
+};
 window._fbSignOut = function(){ try{ if(fbAuth && fbAuth.currentUser) return signOut(fbAuth); }catch(e){} };
 // server side account actions (register, older-account move, offer, referrals, live feed)
 async function _api(action, data, withToken){
@@ -6408,14 +6514,27 @@ window.applyTopBar = async function(){
     else if(B.title === 'name' && window._latestApp && window._latestApp.name) t.innerText = String(window._latestApp.name).split(' ').slice(0, 2).join(' ');
     else t.innerText = B.greet === false ? `Hello, ${_fullPhone(u.phone)}` : _fullPhone(u.phone);
   }
+  // red dot: something the user still has to do (an application whose fee is not paid yet)
+  const todo = on ? _tbTodo() : null;
+  window._tbTodoItem = todo;
+  bar.classList.toggle('ab-alert', !!todo && B.alert !== false);
   const av = document.getElementById('abAv');
   if(av){
     const nm = on && window._latestApp && window._latestApp.name ? String(window._latestApp.name).trim() : '';
     av.innerHTML = nm ? `<b>${_escT(nm.charAt(0).toUpperCase())}</b>` : '<i class="fa-solid fa-user"></i>';
     av.onclick = () => on ? openProfileModal() : nav('screen-login');
+    av.setAttribute('aria-label', todo ? 'My profile (action needed)' : 'My profile');
   }
   _tbScroll();
 };
+function _tbTodo(){
+  const p = window._pendingFeeApp;
+  if(!p) return null;
+  const t = (window._trxByApp || {})[p.id];
+  if(t && t.status !== 'Rejected') return null;     // paid, waiting for verification
+  return { kind:'fee', app:p, title:'Fee not paid yet', text:`Pay the fee for CU-${String(p.id).slice(-6).toUpperCase()} so we can review your application.`, btn:'Pay now' };
+}
+window._tbTodo = _tbTodo;
 let _tbLast = 0;
 function _tbScroll(){
   const app = document.getElementById('app'), bar = document.getElementById('appBar'), B = window._tb || {};
@@ -6590,6 +6709,7 @@ window.loadUserDashboardData = async function() {
         tSnap.docs.map(d => d.data()).sort((x,y) => new Date(x.submittedAt||0) - new Date(y.submittedAt||0))
           .forEach(t => { if(t.appId) map[t.appId] = t; });   // newest payment per application wins
         window._trxByApp = map;
+        if(window.applyTopBar) window.applyTopBar();
       }catch(e){ window._trxByApp = {}; }
       // with more than one application the card says so
       if(apps.length > 1){

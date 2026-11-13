@@ -249,6 +249,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .tb-prev.tp-dark{background:rgba(10,16,26,var(--tb-a))}.tb-prev.tp-gold{background:rgba(18,16,10,var(--tb-a));border-bottom-color:rgba(255,215,106,.3)}
 .tp-av{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid #1ddb80;display:flex;align-items:center;justify-content:center;font-size:12px;flex:none}
 .tp-gold .tp-av{border-color:#ffd76a}
+.tp-av{position:relative}.tp-dot{position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;background:#ff4d6a;border:2px solid #0b3a20}
 .tp-mid{flex:1;min-width:0;display:flex;flex-direction:column}.tp-mid small{font-size:9.5px;color:rgba(255,255,255,.7)}.tp-mid b{font-size:12px}
 .tp-bal{font-size:9.5px;color:#1ddb80;margin-top:2px}.tp-b{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:10px;flex:none}
 .of-row{align-items:flex-start}
@@ -1007,6 +1008,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
             <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-notif" checked><span class="tog-sl"></span></label>Notifications button</label></div>
             <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-support" checked><span class="tog-sl"></span></label>Support button</label></div>
             <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-logout" checked><span class="tog-sl"></span></label>Log out button</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-alert" checked><span class="tog-sl"></span></label>Red dot when the user has something to do (e.g. fee not paid)</label></div>
             <div class="fg"><label>Title for logged-in users</label><select id="tb-name"><option value="phone">Phone number</option><option value="name">Name from the last application</option><option value="brand">Credit Up</option></select></div>
             <div class="fg"><label>Title for visitors</label><input id="tb-vtext" maxlength="40" placeholder="Welcome to Credit Up"></div>
           </div>
@@ -2778,7 +2780,7 @@ async function loadHome(){
   document.getElementById('foRound').textContent = F.round || 1;
   const B=_H.topbar;
   set('tb-theme',B.theme); set('tb-clear',B.clear); set('tb-glass',B.glass); set('tb-compact',B.compact); set('tb-hide',B.hideOnScroll); set('tb-avatar',B.avatar); set('tb-hi',B.greet);
-  set('tb-balance',B.balance); set('tb-notif',B.notif); set('tb-support',B.support); set('tb-logout',B.logout); set('tb-name',B.title); set('tb-vtext',B.visitorText);
+  set('tb-balance',B.balance); set('tb-notif',B.notif); set('tb-support',B.support); set('tb-logout',B.logout); set('tb-alert',B.alert); set('tb-name',B.title); set('tb-vtext',B.visitorText);
   hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers();
   _dirty.home = new Set(); _paintSave();
   if(document.getElementById('hp-live').classList.contains('on')) hpLoadFeed();
@@ -2798,7 +2800,7 @@ function _hpRead(){
     bannerTitle:t('fo-btitle'), bannerText:t('fo-btext'), popupTitle:t('fo-ptitle'), button:t('fo-button')||FO_DEF.button, popupText:t('fo-ptext'), popupNote:t('fo-pnote'),
     counterLabel:t('fo-clabel')||FO_DEF.counterLabel, endedText:t('fo-ended')||FO_DEF.endedText, successTitle:t('fo-stitle')||FO_DEF.successTitle, successText:t('fo-stext')||FO_DEF.successText });
   Object.assign(_H.topbar, { theme:t('tb-theme')||'green', clear:Math.min(80,Math.max(0,n('tb-clear',35))), glass:c('tb-glass'), compact:c('tb-compact'), hideOnScroll:c('tb-hide'),
-    avatar:c('tb-avatar'), greet:c('tb-hi'), balance:c('tb-balance'), notif:c('tb-notif'), support:c('tb-support'), logout:c('tb-logout'), title:t('tb-name')||'phone', visitorText:t('tb-vtext') });
+    avatar:c('tb-avatar'), greet:c('tb-hi'), balance:c('tb-balance'), notif:c('tb-notif'), support:c('tb-support'), logout:c('tb-logout'), alert:c('tb-alert'), title:t('tb-name')||'phone', visitorText:t('tb-vtext') });
   const mn=Math.min(10,Math.max(0,f('sl-min',1.5)));
   Object.assign(_H.splash, { on:c('sl-on'), once:c('sl-once'), minSec:mn, maxSec:Math.min(15,Math.max(mn,1,f('sl-max',5))), theme:t('sl-theme')||'light', loader:t('sl-loader')||'bar', glow:c('sl-glow'),
     showTitle:c('sl-showtitle'), title:t('sl-title'), showSub:c('sl-showsub'), sub:t('sl-sub'), showBadge:c('sl-showbadge'), badge:t('sl-badge'),
@@ -2922,11 +2924,11 @@ function hpFomoRound(){
   markDirty('home','fo'); hpFomoPreview();
 }
 // top bar
-const TB_DEF = { theme:'green', clear:35, glass:true, compact:true, hideOnScroll:false, avatar:true, greet:true, balance:true, notif:true, support:true, logout:true, title:'phone', visitorText:'Welcome to Credit Up' };
+const TB_DEF = { theme:'green', clear:35, glass:true, compact:true, hideOnScroll:false, avatar:true, greet:true, balance:true, notif:true, support:true, logout:true, alert:true, title:'phone', visitorText:'Welcome to Credit Up' };
 function hpTopPreview(){
   if(!_H) return; _hpRead(); const B=_H.topbar;
   const h=(sc)=>{ const ic=(i,on)=>on?`<span class="tp-b"><i class="fa-solid fa-${i}"></i></span>`:'';
-    return `${B.avatar?'<span class="tp-av"><i class="fa-solid fa-user"></i></span>':''}<div class="tp-mid">${B.greet&&!(sc&&B.compact)?'<small>Good evening 👋</small>':''}<b>${B.title==='brand'?'Credit Up':B.title==='name'?'Rahim Uddin':'017XXXXXXXX'}</b>${B.balance&&!(sc&&B.compact)?'<span class="tp-bal"><i class="fa-solid fa-wallet"></i> ৳ ••••</span>':''}</div>${ic('bell',B.notif)}${ic('headset',B.support)}${ic('right-from-bracket',B.logout)}`; };
+    return `${B.avatar?`<span class="tp-av">${B.alert?'<em class="tp-dot"></em>':''}<i class="fa-solid fa-user"></i></span>`:''}<div class="tp-mid">${B.greet&&!(sc&&B.compact)?'<small>Good evening 👋</small>':''}<b>${B.title==='brand'?'Credit Up':B.title==='name'?'Rahim Uddin':'017XXXXXXXX'}</b>${B.balance&&!(sc&&B.compact)?'<span class="tp-bal"><i class="fa-solid fa-wallet"></i> ৳ ••••</span>':''}</div>${ic('bell',B.notif)}${ic('headset',B.support)}${ic('right-from-bracket',B.logout)}`; };
   const a=document.getElementById('tbPrev'), b=document.getElementById('tbPrev2');
   [a,b].forEach((el,i)=>{ el.className='tb-prev tp-'+B.theme+(i?' scrolled'+(B.compact?' compact':''):''); el.innerHTML=h(!!i);
     el.style.setProperty('--tb-a', i ? (B.glass ? (1-B.clear/100).toFixed(2) : '1') : '.94'); });
