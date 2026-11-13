@@ -1611,6 +1611,8 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .rcv-cat{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt2);background:rgba(29,219,128,.05);border:1px solid rgba(29,219,128,.16);border-radius:9px;padding:8px 10px;margin-bottom:10px;line-height:1.4}
 .rcv-cat + .ph-row{margin-bottom:12px}
 .rcv-cat strong{color:var(--p);font-weight:800}
+.rcv-cat{flex-wrap:wrap}
+.rcv-extra{flex-basis:100%;padding-left:17px;color:var(--txt);opacity:.85;font-size:11px}
 .bank-hint{
   font-size:11px;color:var(--txt2);margin:-16px 0 20px;line-height:1.5;
   display:flex;align-items:center;gap:6px;
@@ -4762,8 +4764,9 @@ async function loadWallets(){
     const snap=await getDocs(query(collection(db,'wallets'),orderBy('order','asc')));
     const wallets=snap.docs.map(d=>({id:d.id,...d.data()})).filter(w=>w.enabled);
     window._wallets = wallets;
-    window._feeWallets = wallets.filter(w => w.useForFee !== false && walletOptions(w).length);
-    window._payoutWallets = wallets.filter(w => w.useForPayout !== false);
+    // each method has its own switch for the fee page and for the loan form
+    window._feeWallets = wallets.filter(w => w.useForFee !== false && !w.feeOff && walletOptions(w).length);
+    window._payoutWallets = wallets.filter(w => w.useForPayout !== false && !w.payoutOff);
 
     // ── loan receiving (step 4) ──
     const pw = window._payoutWallets;
@@ -4865,6 +4868,9 @@ function _rcvCatHint(){
   if(w.kind === 'bank'){ cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--p)"></i><span>Use a bank account in <strong>your own name</strong>.</span>`; return; }
   if(selPayoutType){ cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--p)"></i><span>Enter your own <strong>${_escU(selPayoutType)}</strong> ${_escU(w.name)} number.</span>`; }
   else { cat.style.display='flex'; cat.innerHTML=`<i class="fa-solid fa-hand-pointer" style="color:var(--orange)"></i><span>Choose the account type of your ${_escU(w.name)} number.</span>`; }
+  // the admin's delivery time and note for this method
+  const extra = [w.payoutTime ? `<i class="fa-regular fa-clock"></i> ${_escU(w.payoutTime)}` : '', w.payoutNote ? _escU(w.payoutNote) : ''].filter(Boolean).join(' · ');
+  if(extra) cat.innerHTML += `<div class="rcv-extra">${extra}</div>`;
 }
 function logoHtml(w){
   // a broken logo URL must never leave an empty card — fall back to an icon
