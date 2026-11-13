@@ -4114,7 +4114,10 @@ function _setBalUsed(used){
     box.classList.remove('open','active');
     if(t) t.innerHTML = 'Use Account Balance <span class="bal-used-tag">Used</span>';
     const o = window._balOffer || {}, need = Number(o.needMore) || Number(o.perUse) || 5;
-    if(sub) sub.innerHTML = 'You already used this offer. '
+    if(o.locked){
+      if(t) t.innerHTML = 'Use Account Balance <span class="bal-used-tag">Locked</span>';
+      if(sub) sub.textContent = 'This offer is switched off on your account. Contact support if you think this is a mistake.';
+    } else if(sub) sub.innerHTML = 'You already used this offer. '
       + `<a class="bal-unlock" onclick="event.stopPropagation(); openReferModal()"><i class="fa-solid fa-user-plus"></i> Invite ${need} more active friend${need === 1 ? '' : 's'} to use it again</a>`;
     if(pm) pm.innerHTML = '<i class="fa-solid fa-lock"></i>';
   } else {

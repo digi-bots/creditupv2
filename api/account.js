@@ -7,7 +7,8 @@
 //   offerCount    {}                        → how many users took the "first 50" offer
 //   claimOffer    {}            (signed in) → 'ok' | 'already' | 'full'
 //   referrals     {}            (signed in) → { total, active }
-//   balanceOffer  {}            (signed in) → { available, used, allowed, active, needMore } (one-time balance use; +1 use per 5 active friends)
+//   balanceOffer  {}            (signed in) → { available, locked, used, allowed, active, needMore } (balance use: 1 + 1 per 5 active friends + admin extras)
+//   adminBalanceOffer { phone, op: status|unlock|lock } (admin) → same state; unlock gives one more use now, lock switches it off
 //   adminResetPassword { phone, password } (admin) → sets a user's new password
 //   adminDeleteLogin   { phone }           (admin) → removes a deleted user's login
 // Needs FIREBASE_SERVICE_ACCOUNT in Vercel → Settings → Environment Variables.
@@ -24,6 +25,27 @@ const sameText = (a, b) => {
   const y = crypto.createHash('sha256').update(String(b)).digest();
   return crypto.timingSafeEqual(x, y);
 };
+
+// the one-time "use balance for the fee" offer:
+// 1 use + 1 per BAL_FRIENDS_PER_USE active friends + any uses an admin added; an admin lock switches it off
+async function balanceState(d, phone, syncFlag) {
+  const data = d.data() || {};
+  const [refs, trx] = await Promise.all([
+    db().collection('users').where('referredBy', '==', phone).get(),
+    db().collection('transactions').where('uid', '==', phone).get()
+  ]);
+  const active = refs.docs.filter(x => x.data().status === 'active').length;
+  const used = trx.docs.filter(x => Number(x.data().appliedBalance) > 0 && x.data().status !== 'Rejected').length;
+  const extra = Math.max(0, Number(data.balanceExtraUses) || 0);
+  const locked = data.balanceLocked === true;
+  const allowed = 1 + Math.floor(active / BAL_FRIENDS_PER_USE) + extra;
+  const available = !locked && used < allowed;
+  // friends still needed for the next use (0 when free or when an admin lock is on)
+  const needMore = (available || locked) ? 0 : (used + 1 - allowed) * BAL_FRIENDS_PER_USE - (active % BAL_FRIENDS_PER_USE);
+  // keep the profile flag in step: the online payment reads it
+  if (syncFlag && (data.balanceAdjustUsed === true) === available) await d.ref.update({ balanceAdjustUsed: !available });
+  return { available, locked, used, allowed, extra, active, needMore, perUse: BAL_FRIENDS_PER_USE };
+}
 
 async function authUser(uid) { try { return await auth().getUser(uid); } catch (e) { return null; } }
 
@@ -141,19 +163,26 @@ const actions = {
     if (!me) return [401, { error: 'Please login again.' }];
     const d = await findUserDoc(me.uid);
     if (!d) return [404, { error: 'Account not found.' }];
-    const [refs, trx] = await Promise.all([
-      db().collection('users').where('referredBy', '==', me.uid).get(),
-      db().collection('transactions').where('uid', '==', me.uid).get()
-    ]);
-    const active = refs.docs.filter(x => x.data().status === 'active').length;
-    const used = trx.docs.filter(x => Number(x.data().appliedBalance) > 0 && x.data().status !== 'Rejected').length;
-    const allowed = 1 + Math.floor(active / BAL_FRIENDS_PER_USE);
-    const available = used < allowed;
-    // friends still needed for the next use
-    const needMore = available ? 0 : (used + 1 - allowed) * BAL_FRIENDS_PER_USE - (active % BAL_FRIENDS_PER_USE);
-    // keep the profile flag in step: the online payment reads it
-    if ((d.data().balanceAdjustUsed === true) === available) await d.ref.update({ balanceAdjustUsed: !available });
-    return [200, { available, used, allowed, active, needMore, perUse: BAL_FRIENDS_PER_USE }];
+    return [200, await balanceState(d, me.uid, true)];
+  },
+
+  // admin: see the offer, give one more use now ('unlock'), or switch it off for this user ('lock')
+  async adminBalanceOffer(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    const phone = String(b.phone || '');
+    if (!isPhone(phone)) return [400, { error: 'Invalid phone number.' }];
+    const d = await findUserDoc(phone);
+    if (!d) return [404, { error: 'Account not found.' }];
+    const op = String(b.op || 'status');
+    if (op === 'unlock') {
+      const st = await balanceState(d, phone, false);
+      const extra = (Number(d.data().balanceExtraUses) || 0) + Math.max(0, st.used + 1 - st.allowed);
+      await d.ref.update({ balanceExtraUses: extra, balanceLocked: false, balanceOfferBy: me.uid, balanceOfferAt: new Date().toISOString() });
+    } else if (op === 'lock') {
+      await d.ref.update({ balanceLocked: true, balanceOfferBy: me.uid, balanceOfferAt: new Date().toISOString() });
+    } else if (op !== 'status') return [400, { error: 'Unknown action.' }];
+    const fresh = await d.ref.get();
+    return [200, await balanceState(fresh, phone, true)];
   },
 
   async adminResetPassword(b, me) {
