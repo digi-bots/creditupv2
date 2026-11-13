@@ -52,7 +52,8 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .screen{display:none;padding:20px;min-height:100dvh;background:var(--bg);overflow-x:hidden}
 .screen.active{display:block;animation:screenIn .28s ease}
 @keyframes screenIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
-#screen-policy.active{display:flex;flex-direction:column;height:100dvh;padding:0}
+#screen-policy.active{display:flex;flex-direction:column;min-height:calc(100dvh - 57px);padding:0;overflow:visible}
+#app:has(#screen-policy.active){padding-bottom:0}
 #screen-approved.active,#screen-fee-payment.active,#screen-waiting.active{display:flex;flex-direction:column;padding:0}
 #screen-review-progress.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative}
 #screen-home.active{display:block;padding:0}
@@ -152,17 +153,51 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .partner-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--surf);border-radius:16px;border:1px solid var(--bord);padding:15px 10px}
 .partner-item{background:#fff;border-radius:8px;padding:6px;display:flex;justify-content:center;align-items:center;height:40px;overflow:hidden}
 .partner-item img{max-width:100%;max-height:100%;object-fit:contain}
-.pol-hdr{background:var(--bg2);color:#fff;text-align:center;padding:16px;font-size:17px;font-weight:700;border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)}
-.pol-body{flex:1;overflow-y:auto;padding:20px;padding-bottom:140px;color:var(--txt2);font-size:13.5px;line-height:1.7}
-.pol-body p{margin-bottom:14px}
-.pol-updated{text-align:center;margin-bottom:18px;border-bottom:1px solid var(--bord);padding-bottom:14px;color:var(--txt);font-weight:600}
-.pol-h{color:var(--p);font-weight:700;font-size:14px;margin:18px 0 8px;border-bottom:1px solid var(--bord);padding-bottom:5px}
-.pol-body ul{padding-left:18px;margin-bottom:14px}
-.pol-body li{margin-bottom:8px}
-.pol-foot{position:sticky;bottom:0;left:0;width:100%;background:var(--bg2);padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px rgba(0,0,0,.5);z-index:10;border-top:1px solid var(--bord)}
-.agree-wrap{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;color:var(--txt2);cursor:pointer}
-.agree-wrap input[type="checkbox"]{width:18px;height:18px;accent-color:var(--p);cursor:pointer;flex-shrink:0}
-.btn-pol{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:16px;border-radius:28px;font-size:16px;font-weight:700;width:100%;cursor:pointer;box-shadow:var(--glow)}
+.pol-top{display:flex;gap:12px;align-items:center;padding:18px 16px 4px}
+.pol-top-ic{width:42px;height:42px;flex:0 0 42px;border-radius:13px;background:rgba(29,219,128,.14);color:var(--p);display:flex;align-items:center;justify-content:center;font-size:18px}
+.pol-top-t{font-size:18px;font-weight:800;color:var(--txt);line-height:1.25}
+.pol-top-s{font-size:12.5px;color:var(--txt2);line-height:1.45;margin-top:2px}
+#screen-policy .prefill-banner{margin:12px 16px 0}
+#screen-policy .prefill-banner .pf-desc{font-size:12px;line-height:1.5}
+#screen-policy .prefill-banner .pf-nid{font-size:11.5px}
+.pol-body{flex:1;padding:14px 16px 18px;color:var(--txt2);font-size:13.5px;line-height:1.65}
+.pol-card{background:var(--surf,rgba(255,255,255,.04));border:1px solid var(--bord);border-radius:16px;padding:14px;margin-bottom:12px}
+.pol-card-t{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--txt);margin-bottom:10px}
+.pol-card-t>i{color:var(--p);font-size:14px}
+.pol-fee{border-color:rgba(255,140,66,.4);background:rgba(255,140,66,.07)}
+.pol-fee .pol-card-t>i{color:var(--orange)}
+.fee-sub{font-size:12px;color:var(--txt2);margin:-4px 0 8px}
+.fee-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.1);font-size:13px}
+.fee-row b{color:var(--txt);text-align:right;white-space:nowrap}
+.fee-row .fee-r-sm{white-space:normal;font-size:12.5px;max-width:58%}
+.fee-ex{margin-top:10px;padding:9px 11px;border-radius:11px;background:rgba(0,0,0,.22);font-size:12.5px;color:var(--txt2)}
+.fee-ex b{color:var(--txt)}
+.fee-note{display:flex;gap:8px;margin-top:10px;font-size:12.5px;line-height:1.55}
+.fee-note i{color:var(--orange);margin-top:3px}
+.fee-note b{color:var(--txt)}
+.pol-updated{margin-left:auto;font-size:10.5px;font-weight:600;color:var(--txt3,var(--txt2));background:rgba(255,255,255,.06);padding:3px 8px;border-radius:20px;white-space:nowrap}
+.pol-updated:empty{display:none}
+.pol-intro{font-size:13px;margin-bottom:6px}
+.pol-acc{border-top:1px solid var(--bord)}
+.pol-acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;font-size:13.5px;font-weight:700;color:var(--txt)}
+.pol-acc summary::-webkit-details-marker{display:none}
+.pol-acc summary::after{content:'\f078';font-family:'Font Awesome 6 Free';font-weight:900;font-size:11px;color:var(--p);transition:transform .2s}
+.pol-acc[open] summary::after{transform:rotate(180deg)}
+.pol-acc p,.pol-acc ul{margin:0 0 12px;font-size:13px}
+.pol-acc ul{padding-left:18px}
+.pol-acc li{margin-bottom:6px}
+.pol-contact{padding:4px 4px 0;font-size:12.5px}
+.pol-contact p{margin-bottom:4px}
+.pol-ct-t{display:flex;gap:7px;align-items:center;font-weight:700;color:var(--txt);margin-bottom:6px}
+.pol-ct-t i{color:var(--p)}
+.pol-foot{position:sticky;bottom:0;z-index:20;background:rgba(10,20,36,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:12px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -10px 28px rgba(0,0,0,.45);border-top:1px solid var(--bord)}
+.agree-wrap{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--bord);background:rgba(255,255,255,.04);font-size:12.5px;line-height:1.45;color:var(--txt2);cursor:pointer;transition:border-color .2s,background .2s}
+.agree-wrap input[type="checkbox"]{width:20px;height:20px;margin-top:1px;accent-color:var(--p);cursor:pointer;flex-shrink:0}
+.agree-wrap.on{border-color:rgba(29,219,128,.5);background:rgba(29,219,128,.08);color:var(--txt)}
+.agree-wrap.shake{animation:polShake .4s;border-color:var(--orange)}
+@keyframes polShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.btn-pol{display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;padding:15px;border-radius:28px;font-size:15.5px;font-weight:800;width:100%;cursor:pointer;box-shadow:var(--glow);transition:opacity .2s,filter .2s}
+.btn-pol.off{opacity:.45;filter:grayscale(.5);box-shadow:none}
 .auth-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;margin-top:8px;position:relative}
 .auth-logo{font-size:28px;font-weight:900;color:var(--txt);letter-spacing:-.5px}
 .auth-logo span{color:var(--p)}
@@ -2294,7 +2329,10 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 </div>
 
 <div id="screen-policy" class="screen">
-  <div class="pol-hdr">Privacy Policy</div>
+  <div class="pol-top">
+    <div class="pol-top-ic"><i class="fa-solid fa-file-signature"></i></div>
+    <div><div class="pol-top-t">Before you apply</div><div class="pol-top-s">Check the fees and our policy, then tick the box below to continue.</div></div>
+  </div>
   <div class="prefill-banner" id="prefillBanner" style="display:none;">
     <div class="pf-ic"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
     <div class="pf-txt">
@@ -2305,22 +2343,25 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
     <button class="pf-clear" onclick="clearApplicationForm()"><i class="fa-solid fa-eraser"></i> Clear all</button>
   </div>
   <div class="pol-body">
-    <div class="fee-disc" id="feeDisclosure" style="background:rgba(255,140,66,.08);border:1px solid rgba(255,140,66,.35);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12.5px;line-height:1.6;color:var(--txt2)"></div>
-    <div class="pol-updated" id="policyDateText">...</div>
-    <p>This Privacy Agreement explains how we collect, use, store, share and protect your personal information when you use Credit Up services.</p>
-    <div class="pol-h">How we collect and use your personal information</div>
-    <p>We only collect and use your personal information to the extent necessary to provide loan services and improve your experience.</p>
-    <div class="pol-h">How we protect your personal information</div>
-    <p>We adopt security measures and technical means that meet industry standards, including 256-bit SSL encryption.</p>
-    <div class="pol-h">Data retention and deletion</div>
-    <p>We retain personal information as required by law. You may request deletion of your data at any time by contacting us.</p>
-    <div class="pol-h">Your rights</div>
-    <ul><li><strong>Right to review:</strong> Review your personal information collected and used by us.</li><li><strong>Right to correction:</strong> Request correction of inaccurate or incomplete information.</li><li><strong>Right to delete:</strong> Request deletion of your account and personal information.</li></ul>
-    <div class="pol-h">Fraud prevention reminder</div>
-    <p>Be cautious of messages, websites or people impersonating Credit Up. Never disclose your passwords or OTP codes to anyone.</p>
-    <div style="margin-top:22px;"><p style="font-weight:700;color:var(--txt);">Contact Us</p><p>Email: <a href="mailto:stormltdgames@gmail.com" id="policyEmailLink" style="color:var(--blue)">stormltdgames@gmail.com</a></p><p id="policyAddressText">Address: STORM SKIN LTD, 12 Constance Street, London, E16 2DQ</p></div>
+    <div class="pol-card pol-fee">
+      <div class="pol-card-t"><i class="fa-solid fa-receipt"></i>Fees &amp; refund</div>
+      <div class="fee-disc" id="feeDisclosure"></div>
+    </div>
+    <div class="pol-card">
+      <div class="pol-card-t"><i class="fa-solid fa-shield-halved"></i>Privacy Policy<span class="pol-updated" id="policyDateText"></span></div>
+      <p class="pol-intro">This Privacy Agreement explains how we collect, use, store, share and protect your personal information when you use Credit Up services.</p>
+      <details class="pol-acc" open><summary>How we collect and use your information</summary><p>We only collect and use your personal information to the extent necessary to provide loan services and improve your experience.</p></details>
+      <details class="pol-acc"><summary>How we protect your information</summary><p>We adopt security measures and technical means that meet industry standards, including 256-bit SSL encryption.</p></details>
+      <details class="pol-acc"><summary>Data retention and deletion</summary><p>We retain personal information as required by law. You may request deletion of your data at any time by contacting us.</p></details>
+      <details class="pol-acc"><summary>Your rights</summary><ul><li><strong>Right to review:</strong> Review your personal information collected and used by us.</li><li><strong>Right to correction:</strong> Request correction of inaccurate or incomplete information.</li><li><strong>Right to delete:</strong> Request deletion of your account and personal information.</li></ul></details>
+      <details class="pol-acc"><summary>Fraud prevention reminder</summary><p>Be cautious of messages, websites or people impersonating Credit Up. Never disclose your passwords or OTP codes to anyone.</p></details>
+    </div>
+    <div class="pol-contact"><div class="pol-ct-t"><i class="fa-solid fa-envelope"></i>Contact us</div><p>Email: <a href="mailto:stormltdgames@gmail.com" id="policyEmailLink" style="color:var(--blue)">stormltdgames@gmail.com</a></p><p id="policyAddressText">Address: STORM SKIN LTD, 12 Constance Street, London, E16 2DQ</p></div>
   </div>
-  <div class="pol-foot"><label class="agree-wrap"><input type="checkbox" id="policyCheck"><span>I have read and agree to the fees and refund policy above, the Privacy Policy and Terms &amp; Conditions.</span></label><button class="btn-pol" onclick="acceptPolicy()">OK, I Agree</button></div>
+  <div class="pol-foot">
+    <label class="agree-wrap" id="agreeWrap"><input type="checkbox" id="policyCheck" onchange="_polSync()"><span>I have read and agree to the fees and refund policy above, the Privacy Policy and Terms &amp; Conditions.</span></label>
+    <button class="btn-pol off" id="btnPol" onclick="acceptPolicy()"><span id="btnPolTxt">Tick the box to continue</span><i class="fa-solid fa-arrow-right"></i></button>
+  </div>
 </div>
 
 <div id="screen-login" class="screen">
@@ -3349,20 +3390,34 @@ function renderFeeDisclosure(){
   const fixed = (ADMIN.orgFee||0) + (ADMIN.serviceCharge||0) + (ADMIN.processingFee||0);
   const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const refund = (window._refundPolicy && String(window._refundPolicy).trim()) || DEFAULT_REFUND_POLICY;
-  box.innerHTML = `<div style="font-weight:800;color:var(--txt);margin-bottom:6px"><i class="fa-solid fa-circle-info" style="color:var(--orange)"></i> Fees you pay before the loan is reviewed</div>
-    <div>Origination fee: <strong style="color:var(--txt)">৳${_fmt(ADMIN.orgFee||0)}</strong></div>
-    <div>Service charge + processing fee: <strong style="color:var(--txt)">৳${_fmt((ADMIN.serviceCharge||0)+(ADMIN.processingFee||0))}</strong></div>
-    <div>Interest: <strong style="color:var(--txt)">${esc(ADMIN.annualRate)}% per year for the whole term, paid in advance</strong></div>
-    <div style="margin-top:4px">Example: ৳10,000 for 6 months = ৳${_fmt(fixed + Math.round(10000*(ADMIN.annualRate/100)*0.5))} total fee.</div>
-    <div style="margin-top:6px">Paying the fee does <strong style="color:var(--txt)">not</strong> guarantee approval. ${esc(refund)}</div>`;
+  const total = fixed + Math.round(10000*(ADMIN.annualRate/100)*0.5);
+  box.innerHTML = `<div class="fee-sub">These are paid before your loan is reviewed.</div>
+    <div class="fee-row"><span>Origination fee</span><b>৳${_fmt(ADMIN.orgFee||0)}</b></div>
+    <div class="fee-row"><span>Service charge + processing fee</span><b>৳${_fmt((ADMIN.serviceCharge||0)+(ADMIN.processingFee||0))}</b></div>
+    <div class="fee-row"><span>Interest</span><b class="fee-r-sm">${esc(ADMIN.annualRate)}% per year for the whole term, paid in advance</b></div>
+    <div class="fee-ex">Example: ৳10,000 for 6 months = <b>৳${_fmt(total)}</b> total fee.</div>
+    <div class="fee-note"><i class="fa-solid fa-circle-info"></i><span>Paying the fee does <b>not</b> guarantee approval. ${esc(refund)}</span></div>`;
 }
 function resetPolicyCheck(){
   renderFeeDisclosure();
   const c = document.getElementById('policyCheck');
   if(c) c.checked = false;
+  _polSync();
+}
+function _polSync(){
+  const on = !!document.getElementById('policyCheck')?.checked;
+  document.getElementById('agreeWrap')?.classList.toggle('on', on);
+  document.getElementById('btnPol')?.classList.toggle('off', !on);
+  const t = document.getElementById('btnPolTxt');
+  if(t) t.textContent = on ? 'Agree & Continue' : 'Tick the box to continue';
 }
 function acceptPolicy(){
-  if(!document.getElementById('policyCheck').checked){ showAlert('Agreement Required','Please read and accept the Privacy Policy to continue.','info'); return; }
+  if(!document.getElementById('policyCheck').checked){
+    const w = document.getElementById('agreeWrap');
+    if(w){ w.classList.remove('shake'); void w.offsetWidth; w.classList.add('shake'); setTimeout(()=>w.classList.remove('shake'),450); }
+    if(navigator.vibrate) try{ navigator.vibrate(60); }catch(e){}
+    return;
+  }
   const u = _getUser();
   if(u){
     document.getElementById('dashSuccessText').innerText = "Let's get your application started ✅";
@@ -5162,7 +5217,7 @@ async function loadDynamicConfig() {
       }
       if(cfg.policyDate) {
         const polEl = document.getElementById('policyDateText');
-        if(polEl) polEl.innerText = 'Last updated: ' + cfg.policyDate;
+        if(polEl) polEl.innerText = 'Updated ' + cfg.policyDate;
       }
 
       // ক্যালকুলেটরের হার ও ফি আপডেট
