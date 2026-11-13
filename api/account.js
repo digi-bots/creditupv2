@@ -6,8 +6,8 @@
 //   feed          { admin? }                → live activity: approved loans + verified fees (masked), per Home Page settings
 //   myReferral    {}            (signed in) → can this user still add an invite code?
 //   setReferrer   { code }      (signed in) → adds the inviter's code after sign-up (if the admin allows it)
-//   offerCount    {}                        → how many users took the "first 50" offer
-//   claimOffer    {}            (signed in) → 'ok' | 'already' | 'full'
+//   offerCount    {}                        → { count, limit, open } for the hot offer (Home Page → Hot Offer)
+//   claimOffer    {}            (signed in) → 'ok' | 'already' | 'full' | 'closed'
 //   referrals     {}            (signed in) → { total, active }
 //   balanceOffer  {}            (signed in) → { available, locked, used, allowed, active, needMore } (balance use: 1 + 1 per 5 active friends + admin extras)
 //   adminBalanceOffer { phone, op: status|unlock|lock } (admin) → same state; unlock gives one more use now, lock switches it off
@@ -18,7 +18,6 @@ const crypto = require('crypto');
 const { readBody } = require('./_lib/pay');
 const { admin, db, auth, caller, isAdmin, findUserDoc, phoneEmail, isPhone } = require('./_lib/auth');
 
-const OFFER_LIMIT = 50;
 // the "use balance for the fee" offer: 1 use, plus 1 more for every this many active friends
 const BAL_FRIENDS_PER_USE = 5;
 const strong = (pw) => typeof pw === 'string' && pw.length >= 8 && pw.length <= 128 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw);
@@ -78,6 +77,23 @@ async function notifyReferrer(ref) {
 async function homeCfg() {
   try { const s = await db().collection('siteConfig').doc('home').get(); return s.exists ? (s.data() || {}) : {}; }
   catch (e) { return {}; }
+}
+// the hot ("first N users") offer, set in Admin → Home Page → Hot Offer. A new round restarts the count.
+async function fomoCfg() {
+  const f = (await homeCfg()).fomo || {};
+  const end = f.end ? new Date(f.end).getTime() : 0;
+  return {
+    on: f.on !== false,
+    ended: !!end && Date.now() > end,
+    limit: Math.min(100000, Math.max(1, parseInt(f.limit, 10) || 50)),
+    round: Math.max(1, parseInt(f.round, 10) || 1),
+    promo: String(f.promo || 'First installment free').slice(0, 80)
+  };
+}
+async function fomoClaims(round) {
+  // round 1 counts every earlier claim too (they were made before rounds existed)
+  const q = round === 1 ? db().collection('users').where('promoClaimed', '==', true) : db().collection('users').where('promoRound', '==', round);
+  return (await q.count().get()).data().count;
 }
 const maskName = (n) => { n = String(n || 'User').trim() || 'User'; return n.length > 4 ? n.substring(0, 4) + '***' : n; };
 const maskPhone = (p) => { p = String(p || '').replace(/\D/g, ''); return p.length >= 6 ? '0' + p.slice(0, 3) + '*****' + p.slice(-2) : 'User'; };
@@ -238,19 +254,22 @@ const actions = {
   },
 
   async offerCount() {
-    const c = await db().collection('users').where('promoClaimed', '==', true).count().get();
-    return [200, { count: c.data().count, limit: OFFER_LIMIT }];
+    const f = await fomoCfg();
+    return [200, { count: await fomoClaims(f.round), limit: f.limit, open: f.on && !f.ended }];
   },
 
   async claimOffer(b, me) {
     if (!me) return [401, { error: 'Please login again.' }];
     const d = await findUserDoc(me.uid);
     if (!d) return [404, { error: 'Account not found.' }];
-    if (d.data().promoClaimed === true) return [200, { result: 'already' }];
-    const c = await db().collection('users').where('promoClaimed', '==', true).count().get();
-    if (c.data().count >= OFFER_LIMIT) return [200, { result: 'full' }];
-    await d.ref.update({ promoClaimed: true, promoClaimedAt: new Date().toISOString(), promo: 'First installment free' });
-    return [200, { result: 'ok' }];
+    const f = await fomoCfg();
+    if (!f.on || f.ended) return [200, { result: 'closed' }];
+    const u = d.data();
+    const mine = f.round === 1 ? u.promoClaimed === true : Number(u.promoRound) === f.round;
+    if (mine) return [200, { result: 'already' }];
+    if ((await fomoClaims(f.round)) >= f.limit) return [200, { result: 'full' }];
+    await d.ref.update({ promoClaimed: true, promoRound: f.round, promoClaimedAt: new Date().toISOString(), promo: f.promo });
+    return [200, { result: 'ok', promo: f.promo }];
   },
 
   async referrals(b, me) {

@@ -106,6 +106,22 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #appBar .notif-btn{width:36px;height:36px;font-size:16px}
 #appBar .notif-badge{width:auto;min-width:17px;height:17px;border-radius:10px;top:-5px;right:-5px;font-size:9.5px;font-weight:800;color:#fff;align-items:center;justify-content:center;padding:0 4px;line-height:1}
 #appBar .ab-out{color:#ff8a8a}
+/* top bar: glass when scrolled, optional compact / hide-on-scroll (Admin → Home Page → Top Bar) */
+#appBar{--tb-rgb:6,58,30;--tb-a:.94;background:rgba(var(--tb-rgb),var(--tb-a));transition:background .3s,padding .25s,transform .3s,box-shadow .3s}
+#appBar.tb-dark{--tb-rgb:10,16,26;border-bottom-color:rgba(255,255,255,.08)}
+#appBar.tb-gold{--tb-rgb:18,16,10;border-bottom-color:rgba(255,215,106,.28)}
+#appBar.tb-gold h3{background:linear-gradient(90deg,#fff,#ffd76a,#fff);-webkit-background-clip:text;background-clip:text}
+#appBar.ab-scrolled{box-shadow:0 8px 24px rgba(0,0,0,.28);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%)}
+#appBar.ab-scrolled.tb-compact{padding-top:6px;padding-bottom:6px}
+#appBar.ab-scrolled.tb-compact .balance-pill,#appBar.ab-scrolled.tb-compact .ab-hi{display:none!important}
+#appBar.ab-hidden{transform:translateY(-110%)}
+#appBar .ab-av{width:38px;height:38px;flex:none;border-radius:50%;border:2px solid var(--p);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.22),rgba(255,255,255,.06));color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px rgba(29,219,128,.15);padding:0}
+#appBar.tb-gold .ab-av{border-color:#ffd76a;box-shadow:0 0 0 3px rgba(255,215,106,.15)}
+#appBar .ab-av b{font-size:14px;font-weight:900}
+#appBar .ab-back:not([style*="none"]) ~ .ab-av{display:none}
+#appBar .ab-hi{display:block;font-size:10.5px;font-weight:600;color:rgba(255,255,255,.72);line-height:1.2;margin-bottom:1px}
+#appBar .ab-hi:empty{display:none}
+#appBar.tb-no-av .ab-av,#appBar.tb-no-bal #balanceContainer,#appBar.tb-no-notif #notifBtnContainer,#appBar.tb-no-sup .ab-sup,#appBar.tb-no-out #logoutTopBtn{display:none!important}
 /* the bar above already has back + support: hide the per-screen copies */
 .screen .back-ic,.screen .dash-hdr .ic-headset,#screen-register .auth-hdr>.fa-arrow-left,.screen .auth-hdr .ic-headset{display:none !important}
 .screen .dash-hdr{justify-content:center}
@@ -202,6 +218,59 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .ticker-item a{color:inherit;text-decoration:underline}
 .ticker-item.t-offer i{color:#ffd76a}.ticker-item.t-warning i{color:var(--orange)}.ticker-item.t-urgent i{color:var(--red)}.ticker-item.t-success i{color:var(--p)}
 .ticker-item .tk-pin{font-size:9px;font-weight:800;color:#1a1405;background:#ffd76a;padding:1px 5px;border-radius:6px}
+.pf-head{text-align:center;margin:2px 0 14px}
+.pf-av{width:68px;height:68px;margin:0 auto 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;background:radial-gradient(circle at 30% 30%,rgba(29,219,128,.5),rgba(10,110,53,.6));border:2px solid var(--p);box-shadow:0 0 0 5px rgba(29,219,128,.12),0 10px 24px rgba(0,0,0,.35)}
+.pf-av b{font-size:28px;font-weight:900}
+.pf-name{font-size:18px;font-weight:900;color:#fff}
+.pf-phone{font-size:13px;color:var(--txt2);margin-top:2px}
+.pf-chips{display:flex;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.pf-chip{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--txt2);display:inline-flex;gap:5px;align-items:center}
+.pf-chip.ok{color:var(--p);border-color:rgba(29,219,128,.35);background:rgba(29,219,128,.08)}
+.pf-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.pf-stat{padding:10px 6px;border-radius:13px;text-align:center;background:var(--bg2);border:1px solid var(--bord);cursor:pointer}
+.pf-stat small{display:block;font-size:10.5px;color:var(--txt2);margin-bottom:3px}.pf-stat b{font-size:15px;color:#fff;white-space:nowrap}
+.pf-card{background:var(--bg2);border:1px solid var(--bord);border-radius:15px;padding:12px;margin-bottom:10px;text-align:left}
+.pf-ct{display:flex;align-items:center;gap:10px}.pf-ct > div:nth-child(2){flex:1;min-width:0}
+.pf-ct b{display:block;font-size:14px;color:#fff}.pf-ct small{display:block;font-size:11.5px;color:var(--txt2);margin-top:2px;line-height:1.35}
+.pf-ic{width:38px;height:38px;flex:none;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(29,219,128,.1);color:var(--p);font-size:15px}
+.pf-ring{--pc:0;width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--p) calc(var(--pc)*1%),rgba(255,255,255,.08) 0);position:relative}
+.pf-ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--bg2)}
+.pf-ring span{position:relative;font-size:11.5px;font-weight:900;color:#fff}
+.pf-secs{display:flex;flex-direction:column;gap:6px;margin:12px 0 4px}
+.pf-sec{border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.02);cursor:pointer}
+.pf-sh{display:flex;align-items:center;gap:8px;padding:9px 10px;font-size:12.5px;font-weight:700;color:#fff}
+.pf-sh > span{flex:1;min-width:0}
+.pf-si{width:16px;text-align:center;color:var(--txt2)}.pf-sec.ok .pf-si{color:var(--p)}
+.pf-sh em{font-style:normal;font-size:10.5px;font-weight:800;padding:3px 7px;border-radius:9px;display:flex;gap:4px;align-items:center;white-space:nowrap}
+.pf-sh em.ok{color:var(--p);background:rgba(29,219,128,.1)}.pf-sh em.no{color:var(--orange);background:rgba(255,140,66,.12)}
+.pf-chev{font-size:10px;color:var(--txt2);transition:.2s}.pf-sec.open .pf-chev{transform:rotate(180deg)}
+.pf-sb{display:none;padding:0 10px 8px 34px}.pf-sec.open .pf-sb{display:block}
+.pf-f{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;padding:4px 0;border-top:1px dashed rgba(255,255,255,.06)}
+.pf-f span{color:var(--txt2)}.pf-f b{color:#fff;font-weight:700;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}.pf-f b.no{color:var(--orange)}
+.pf-go{margin-top:10px;height:46px;font-size:14px}
+.pf-st{font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:9px;white-space:nowrap}
+.pf-st.ok{color:var(--p);background:rgba(29,219,128,.1)}.pf-st.bad{color:var(--red);background:rgba(255,77,106,.1)}.pf-st.wait{color:var(--orange);background:rgba(255,140,66,.12)}
+.pf-mini{flex:none;font-size:12px;font-weight:800;padding:7px 12px;border-radius:18px;border:0;background:var(--p);color:#04160c;cursor:pointer;font-family:inherit}
+.pf-invrow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;text-align:center}
+.pf-invrow div{padding:8px 4px;border-radius:10px;background:rgba(255,255,255,.03)}
+.pf-invrow b{display:block;font-size:16px;color:#fff}.pf-invrow small{font-size:10px;color:var(--txt2)}
+.hx-guest{text-align:center;padding:14px 6px 4px}
+.hx-g-ic{width:62px;height:62px;margin:4px auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--p);background:rgba(29,219,128,.1);border:1px solid rgba(29,219,128,.35)}
+.hx-guest h4{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px}
+.hx-guest p{font-size:12.5px;color:var(--txt2);line-height:1.55;margin-bottom:14px}
+.hx-g-steps{display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.hx-g-steps span{font-size:11px;font-weight:700;padding:5px 9px;border-radius:14px;display:flex;gap:5px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.hx-g-steps span:nth-child(1) i{color:var(--orange)}.hx-g-steps span:nth-child(2) i{color:var(--p)}.hx-g-steps span:nth-child(3) i{color:var(--red)}
+.hx-g-reg{background:none;border:0;color:var(--p);font-weight:700;font-size:13px;margin-top:10px;cursor:pointer;font-family:inherit}
+.hot-offer-floating.ho-gold{background:linear-gradient(90deg,#d99a1e,#ffcf5a);box-shadow:0 10px 30px rgba(217,154,30,.4),0 0 0 2px rgba(255,255,255,.25) inset}
+.hot-offer-floating.ho-green{background:linear-gradient(90deg,#0b8a43,#1ddb80);box-shadow:0 10px 30px rgba(29,219,128,.35),0 0 0 2px rgba(255,255,255,.2) inset}
+.hot-offer-floating.ho-purple{background:linear-gradient(90deg,#6d3bd8,#b05cff);box-shadow:0 10px 30px rgba(140,80,255,.4),0 0 0 2px rgba(255,255,255,.2) inset}
+#fomoModal .fomo-txt b{color:var(--orange)}
+#fomoModal .fm-gold .fomo-txt b{color:#ffcf5a}#fomoModal .fm-green .fomo-txt b{color:var(--p)}#fomoModal .fm-purple .fomo-txt b{color:#c89bff}
+#fomoModal .fm-gold .premium-danger,#fomoModal .fm-gold .fomo-progress-fill{background:linear-gradient(135deg,#d99a1e,#ffcf5a)!important;color:#1a1405!important}
+#fomoModal .fm-green .premium-danger,#fomoModal .fm-green .fomo-progress-fill{background:linear-gradient(135deg,#0b8a43,#1ddb80)!important}
+#fomoModal .fm-purple .premium-danger,#fomoModal .fm-purple .fomo-progress-fill{background:linear-gradient(135deg,#6d3bd8,#b05cff)!important}
+#fomoModal .fm-gold #offerCount,#fomoModal .fm-gold .fomo-warning{color:#ffcf5a!important}#fomoModal .fm-green #offerCount,#fomoModal .fm-green .fomo-warning{color:var(--p)!important}#fomoModal .fm-purple #offerCount,#fomoModal .fm-purple .fomo-warning{color:#c89bff!important}
 .hx-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:10px 0 6px;margin-right:16px}
 .hx-tabs::-webkit-scrollbar{display:none}
 .hx-tabs button{min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;padding:7px 2px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--txt2);font-size:11px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;white-space:nowrap}
@@ -2023,10 +2092,10 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 
 <div class="hot-offer-floating" id="hotOfferBanner" onclick="onHotOfferTap()">
   <div class="hot-offer-content">
-    <span class="hot-icon">🔥</span>
+    <span class="hot-icon" id="hotIcon">🔥</span>
     <div class="hot-text">
-      <h4>SUPER HOT OFFER!</h4>
-      <p>First 50 lucky users get the <b>1st month's installment free!</b></p>
+      <h4 id="hotTitle">SUPER HOT OFFER!</h4>
+      <p id="hotText">First 50 lucky users get the <b>1st month's installment free!</b></p>
     </div>
     <button class="hot-close" onclick="event.stopPropagation(); closeHotOffer();"><i class="fa-solid fa-xmark"></i></button>
   </div>
@@ -2035,15 +2104,15 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 <div class="modal-overlay premium-popup" id="fomoModal">
   <div class="mc pp" style="max-width: 360px; text-align: center;">
     <button class="popup-close" aria-label="Close" onclick="closeFomoModal()"><i class="fa-solid fa-xmark"></i></button>
-    <div class="fomo-fire-icon">🔥</div>
-    <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">Lucky 50 Offer!</h2>
-    <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">Be one of the first 50 users and your loan's <b style="color:var(--orange);">1st month installment is completely free!</b> <br><span style="font-size: 11px; color: var(--p);">(We pay the 1st installment. Your payments start from the 2nd month.)</span></p>
-    <div class="fomo-progress-wrap">
-      <div class="fomo-progress-header"><span>Offers claimed</span><span style="color: var(--red); font-weight: 800;" id="offerCount">…/50</span></div>
+    <div class="fomo-fire-icon" id="fomoIcon">🔥</div>
+    <h2 id="fomoTitle" style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">Lucky 50 Offer!</h2>
+    <p class="fomo-txt" style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;"><span id="fomoText">Be one of the first 50 users and your loan's <b>1st month installment is completely free!</b></span> <br><span id="fomoNote" style="font-size: 11px; color: var(--p);">(We pay the 1st installment. Your payments start from the 2nd month.)</span></p>
+    <div class="fomo-progress-wrap" id="fomoCounter">
+      <div class="fomo-progress-header"><span id="fomoCountLbl">Offers claimed</span><span style="color: var(--red); font-weight: 800;" id="offerCount">…/50</span></div>
       <div class="fomo-progress-track"><div class="fomo-progress-fill" id="offerFill" style="width: 0%;"></div></div>
       <p class="fomo-warning" id="offerLeft"><i class="fa-solid fa-triangle-exclamation"></i> …</p>
     </div>
-    <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> Claim the offer now</button>
+    <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> <span id="fomoBtn">Claim the offer now</span></button>
   </div>
 </div>
 
@@ -2313,12 +2382,30 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 <div class="modal-overlay premium-popup" id="profileModal">
   <div class="mc pp">
     <button class="popup-close" aria-label="Close" onclick="closeModal('profileModal')"><i class="fa-solid fa-xmark"></i></button>
-    <div class="m-icon m-ic-suc"><i class="fa-solid fa-user"></i></div>
-    <div class="m-title">My Profile</div>
-    <div style="background:var(--bg2); border-radius:14px; padding:15px; margin:15px 0; border:1px solid var(--bord);">
-      <div class="detail-row"><div class="detail-lbl">Phone Number</div><div class="detail-val" id="profPhone">-</div></div>
-      <div class="detail-row"><div class="detail-lbl">Account Status</div><div class="detail-val" style="color:var(--p);">Active</div></div>
-      <div class="detail-row" id="profRefRow" style="display:none"><div class="detail-lbl">Invited by</div><div class="detail-val" id="profRefBy">-</div></div>
+    <div class="pf-head">
+      <div class="pf-av" id="pfAv"><i class="fa-solid fa-user"></i></div>
+      <div class="pf-name" id="pfName">My Profile</div>
+      <div class="pf-phone" id="profPhone">-</div>
+      <div class="pf-chips"><span class="pf-chip ok"><i class="fa-solid fa-circle-check"></i>Active</span><span class="pf-chip" id="pfSince" style="display:none"></span></div>
+    </div>
+    <div class="pf-stats">
+      <div class="pf-stat" onclick="toggleBalanceVisibility(); _pfStats()"><small>Balance</small><b id="pfBal">৳ ••••</b></div>
+      <div class="pf-stat"><small>Applications</small><b id="pfApps">0</b></div>
+      <div class="pf-stat" onclick="closeModal('profileModal'); openReferModal()"><small>Active invites</small><b id="pfInv">–</b></div>
+    </div>
+    <div class="pf-card" id="pfLatest" style="display:none"></div>
+    <div class="pf-card">
+      <div class="pf-ct"><div class="pf-ring" id="pfRing" style="--pc:0"><span id="pfPct">0%</span></div>
+        <div><b>Loan profile</b><small id="pfSum">Checking your details…</small></div></div>
+      <div class="pf-secs" id="pfSecs"></div>
+      <button class="mbtn-full pf-go" id="pfGo" onclick="closeModal('profileModal'); handleMainAction()"><i class="fa-solid fa-pen-to-square"></i> <span>Complete my profile</span></button>
+    </div>
+    <div class="pf-card pf-inv">
+      <div class="pf-ct"><div class="pf-ic"><i class="fa-solid fa-user-group"></i></div>
+        <div><b>Invites</b><small id="pfInvSub">Friends who joined with your code</small></div>
+        <button class="pf-mini" onclick="closeModal('profileModal'); openReferModal()">Invite</button></div>
+      <div class="pf-invrow"><div><b id="pfInvTotal">–</b><small>Joined</small></div><div><b id="pfInvActive">–</b><small>Active</small></div><div><b id="pfInvNext">–</b><small>To next reward</small></div></div>
+      <div class="detail-row" id="profRefRow" style="display:none;margin-top:8px"><div class="detail-lbl">Invited by</div><div class="detail-val" id="profRefBy">-</div></div>
     </div>
     <div class="ref-entry" id="refEntry" style="display:none">
       <div class="re-t"><i class="fa-solid fa-user-plus"></i>Have an invite code?</div>
@@ -2516,13 +2603,15 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 
 <div id="appBar">
   <button class="ab-back" id="abBack" onclick="navBack()" aria-label="Back" style="display:none"><i class="fa-solid fa-arrow-left"></i></button>
+  <button class="ab-av" id="abAv" onclick="openProfileModal()" aria-label="My profile"><i class="fa-solid fa-user"></i></button>
   <div class="ab-mid">
+    <small class="ab-hi" id="abHi"></small>
     <h3 id="userGreeting">Welcome to Credit Up</h3>
     <div class="balance-pill" id="balanceContainer" style="display:none;"><span class="bp-lbl"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
   </div>
   <div class="ab-acts">
     <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;" aria-label="Notifications"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
-    <div class="notif-btn" onclick="toggleCS()" aria-label="Support"><i class="fa-solid fa-headset"></i><div class="cs-unread-badge" data-support-badge>0</div></div>
+    <div class="notif-btn ab-sup" onclick="toggleCS()" aria-label="Support"><i class="fa-solid fa-headset"></i><div class="cs-unread-badge" data-support-badge>0</div></div>
     <div class="notif-btn ab-out" id="logoutTopBtn" onclick="confirmLogout()" style="display:none;" aria-label="Log out"><i class="fa-solid fa-right-from-bracket"></i></div>
   </div>
 </div>
@@ -2999,7 +3088,31 @@ window.isConfigLoaded = false;
 
 function showLoader(on){ document.getElementById('loader').classList.toggle('on',on); }
 
-const OFFER_LIMIT = 50;
+let OFFER_LIMIT = 50;
+// Admin → Home Page → Hot Offer (siteConfig/home.fomo)
+const FOMO_DEF = { on:true, audience:'all', icon:'🔥', theme:'red', delay:3.5, limit:50, showCounter:true,
+  bannerTitle:'SUPER HOT OFFER!', bannerText:"First {limit} lucky users get the *1st month's installment free!*",
+  popupTitle:'Lucky {limit} Offer!', popupText:"Be one of the first {limit} users and your loan's *1st month installment is completely free!*",
+  popupNote:'(We pay the 1st installment. Your payments start from the 2nd month.)', counterLabel:'Offers claimed', button:'Claim the offer now',
+  successTitle:'Offer Activated! 🎉', successText:'Congratulations! You got the free 1st installment offer. If your loan is approved, we will pay your 1st month installment.',
+  endedText:'Sorry, all {limit} offers have been claimed.' };
+window._fomo = { ...FOMO_DEF };
+function _fomoTxt(t, left){
+  const e = String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return e.replace(/\{limit\}/g, OFFER_LIMIT).replace(/\{left\}/g, left == null ? '' : left).replace(/\*([^*]+)\*/g, '<b>$1</b>');
+}
+function _applyFomo(){
+  const F = window._fomo, set = (id, v) => { const el = document.getElementById(id); if(el) el.innerHTML = v; };
+  OFFER_LIMIT = Math.max(1, parseInt(F.limit) || 50);
+  set('hotIcon', _fomoTxt(F.icon || '🔥')); set('fomoIcon', _fomoTxt(F.icon || '🔥'));
+  set('hotTitle', _fomoTxt(F.bannerTitle)); set('hotText', _fomoTxt(F.bannerText));
+  set('fomoTitle', _fomoTxt(F.popupTitle)); set('fomoText', _fomoTxt(F.popupText)); set('fomoNote', _fomoTxt(F.popupNote));
+  set('fomoCountLbl', _fomoTxt(F.counterLabel)); set('fomoBtn', _fomoTxt(F.button));
+  const n = document.getElementById('fomoNote'); if(n) n.style.display = F.popupNote ? '' : 'none';
+  const c = document.getElementById('fomoCounter'); if(c) c.style.display = F.showCounter === false ? 'none' : '';
+  const b = document.getElementById('hotOfferBanner'), m = document.querySelector('#fomoModal .mc');
+  ['red','gold','green','purple'].forEach(t => { if(b) b.classList.toggle('ho-' + t, F.theme === t); if(m) m.classList.toggle('fm-' + t, F.theme === t); });
+}
 function _offerFolded(){ try{ return localStorage.getItem('hotOfferClosed') === 'true'; }catch(e){ return false; } }
 function _setOfferFolded(f){
   const b = document.getElementById('hotOfferBanner'); if(!b) return;
@@ -3009,18 +3122,25 @@ function _setOfferFolded(f){
 let _hotOfferInit = false;
 function initHotOffer() {
   if(_hotOfferInit) return; _hotOfferInit = true;
-  setTimeout(async () => {
+  (async () => {
+    const home = (typeof window.loadHomeCfg === 'function') ? await window.loadHomeCfg() : {};
+    window._fomo = { ...FOMO_DEF, ...(home.fomo || {}) };
+    _applyFomo();
+    const F = window._fomo, u = _getUser(), who = (u && u.phone) ? 'users' : 'visitors';
     const banner = document.getElementById('hotOfferBanner');
-    if(!banner) return;
-    // the offer ends for real once 50 users have claimed it
+    const endAt = F.end ? new Date(F.end).getTime() : 0, startAt = F.start ? new Date(F.start).getTime() : 0;
+    if(!banner || F.on === false || (endAt && Date.now() > endAt) || (startAt && Date.now() < startAt)
+      || (F.audience && F.audience !== 'all' && F.audience !== who)){ if(banner) banner.style.display = 'none'; return; }
+    await new Promise(r => setTimeout(r, Math.min(30, Math.max(0, Number(F.delay) || 0)) * 1000));
+    // the offer ends for real once the limit is reached (real claims, counted on the server)
     const n = (typeof window.getOfferClaimCount === 'function') ? await window.getOfferClaimCount() : null;
-    if(n !== null && n >= OFFER_LIMIT) { banner.remove(); return; }
+    if((n !== null && n >= OFFER_LIMIT) || window._fomoOpen === false) { banner.style.display = 'none'; return; }
     _updateOfferCounter(n);
     banner.classList.toggle('folded', _offerFolded());   // closed before → stays pinned to the side
     const cur = document.querySelector('.screen.active');
     banner.classList.toggle('away', !!cur && cur.id !== 'screen-home');
     banner.style.display = 'block';
-  }, 3500);
+  })();
 }
 function _updateOfferCounter(n){
   const c = document.getElementById('offerCount'), f = document.getElementById('offerFill'), l = document.getElementById('offerLeft');
@@ -3028,7 +3148,8 @@ function _updateOfferCounter(n){
   const used = Math.min(n, OFFER_LIMIT);
   if(c) c.innerText = `${used}/${OFFER_LIMIT}`;
   if(f) f.style.width = Math.round(used / OFFER_LIMIT * 100) + '%';
-  if(l) l.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Only ${OFFER_LIMIT - used} offers left`;
+  const left = OFFER_LIMIT - used;
+  if(l) l.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Only ${left} offer${left === 1 ? '' : 's'} left`;
 }
 // tap: folded tab slides out like a drawer; tap again (expanded) opens the popup
 function onHotOfferTap(){
@@ -3053,11 +3174,12 @@ async function claimFomoOffer() {
   if (u) {
     // the claim is saved on the profile and carried onto the next application, so the admin can honour it
     const res = (typeof window.claimOffer === 'function') ? await window.claimOffer(u.phone) : 'error';
-    if(res === 'full'){ showAlert('Offer Ended', 'Sorry, all 50 offers have been claimed.', 'info'); const b=document.getElementById('hotOfferBanner'); if(b) b.remove(); return; }
+    const F = window._fomo || FOMO_DEF, strip = t => _fomoTxt(t).replace(/<[^>]+>/g, '');
+    if(res === 'full' || res === 'closed'){ showAlert('Offer Ended', strip(F.endedText || FOMO_DEF.endedText), 'info'); const b=document.getElementById('hotOfferBanner'); if(b) b.style.display = 'none'; return; }
     if(res === 'already'){ showAlert('Already Claimed', 'You have already claimed this offer. It will be added to your next loan application.', 'info'); return; }
     if(res !== 'ok'){ showAlert('Error', 'The offer cannot be claimed right now. Please try again in a moment.', 'error'); return; }
     window._promoClaimed = true;
-    showAlert('Offer Activated! 🎉', 'Congratulations! You got the free 1st installment offer. If your loan is approved, we will pay your 1st month installment.', 'success', () => {
+    showAlert(strip(F.successTitle || FOMO_DEF.successTitle), strip(F.successText || FOMO_DEF.successText), 'success', () => {
       startNewApplication();
     });
   } else {
@@ -4549,6 +4671,7 @@ function updateUIForUser() {
     if(window.renderOffers) window.renderOffers();
     const greet = document.getElementById('userGreeting');
     if(greet) greet.innerText = `Hello, ${_fullPhone(u.phone)}`;
+    if(window.applyTopBar) window.applyTopBar();
     const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'flex';
     // Start support chat real-time listener
     if (typeof window._startSupportListener === 'function' && !window._supportListenerStarted) {
@@ -4563,6 +4686,7 @@ function updateUIForUser() {
     if(window.renderOffers) window.renderOffers();
     const greet = document.getElementById('userGreeting');
     if(greet) greet.innerText = 'Welcome to Credit Up';
+    if(window.applyTopBar) window.applyTopBar();
     const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'none';
     const statusCard = document.getElementById('userStatusCard');
     if(statusCard) statusCard.style.display = 'none';
@@ -4595,6 +4719,87 @@ function openProfileModal() {
   document.getElementById('profPhone').innerText = '+880 ' + u.phone;
   document.getElementById('profileModal').classList.add('on');
   _loadRefEntry();
+  _pfStats(); _pfProgress(); _pfInvites();
+}
+// ── My Profile: details, application progress and invites ──
+const _PF_SECS = [
+  { k:'loan', t:'Loan details', ic:'hand-holding-dollar', f:[['selAmount','Amount'],['selTerm','Term'],['selPurpose','Purpose']] },
+  { k:'personal', t:'Personal info', ic:'id-card', f:[['infoName','Full name'],['selDob','Date of birth'],['selGender','Gender'],['selMarital','Marital status'],['selEdu','Education'],['infoAddress','Address']] },
+  { k:'work', t:'Work & income', ic:'briefcase', f:[['selOccupation','Occupation'],['infoCompany','Company'],['selIncome','Monthly income']] },
+  { k:'contacts', t:'Emergency contacts', ic:'phone', f:[['c1Name','Contact 1 name'],['c1Phone','Contact 1 phone'],['selRel1','Contact 1 relation'],['c2Name','Contact 2 name'],['c2Phone','Contact 2 phone'],['selRel2','Contact 2 relation']] },
+  { k:'nid', t:'NID', ic:'address-card', f:[['infoId','NID number'],['_nidFront','NID front photo'],['_nidBack','NID back photo']] },
+  { k:'pay', t:'Receiving account', ic:'wallet', f:[['selWallet','Method'],['bankPhone','Account number']] }
+];
+function _pfData(){
+  const u = _getUser();
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem('creditUpFormDraft')); } catch(e) {}
+  if(d && d._owner && u && d._owner !== u.phone) d = null;
+  const remote = (typeof _mapAppToForm === 'function') ? _mapAppToForm(window._latestApp || _savedApp) : null;
+  // an unsent draft is newer; otherwise use the last application; fill gaps from the other one
+  const a = (d && !d._submitted) ? d : (remote || d || {}), b = a === d ? (remote || {}) : (d || {});
+  const out = {};
+  _PF_SECS.forEach(sec => sec.f.forEach(([k]) => { out[k] = a[k] || b[k] || ''; }));
+  if(!out.infoId && typeof _savedNid !== 'undefined' && _savedNid) out.infoId = _savedNid;
+  return out;
+}
+function _pfShow(k, v){
+  if(!v) return '';
+  if(k === '_nidFront' || k === '_nidBack') return 'Uploaded';
+  if(k === 'infoId') return '•••• ' + String(v).slice(-4);
+  if(k === 'selAmount') return '৳ ' + Number(String(v).replace(/,/g, '') || 0).toLocaleString('en-US');
+  if(k === 'selTerm') return v + ' months';
+  return String(v);
+}
+function _pfProgress(){
+  const D = _pfData(); let done = 0;
+  const html = _PF_SECS.map((sec, i) => {
+    const miss = sec.f.filter(([k]) => !D[k]).length, ok = !miss; if(ok) done++;
+    return `<div class="pf-sec ${ok ? 'ok' : ''}" onclick="this.classList.toggle('open')">
+      <div class="pf-sh"><i class="fa-solid fa-${sec.ic} pf-si"></i><span>${sec.t}</span>
+        <em class="${ok ? 'ok' : 'no'}">${ok ? '<i class="fa-solid fa-circle-check"></i> Complete' : `<i class="fa-solid fa-circle-exclamation"></i> ${miss} missing`}</em><i class="fa-solid fa-chevron-down pf-chev"></i></div>
+      <div class="pf-sb">${sec.f.map(([k, l]) => `<div class="pf-f"><span>${l}</span><b class="${D[k] ? '' : 'no'}">${D[k] ? _escH(_pfShow(k, D[k])) : 'Missing'}</b></div>`).join('')}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('pfSecs').innerHTML = html;
+  const pct = Math.round(done / _PF_SECS.length * 100);
+  document.getElementById('pfRing').style.setProperty('--pc', pct);
+  document.getElementById('pfPct').innerText = pct + '%';
+  document.getElementById('pfSum').innerText = done === _PF_SECS.length ? 'All details are complete' : `${done} of ${_PF_SECS.length} sections complete · tap a section to see what is missing`;
+  const go = document.getElementById('pfGo');
+  go.querySelector('span').innerText = done === _PF_SECS.length ? 'Apply for a loan' : 'Complete my profile';
+  go.querySelector('i').className = 'fa-solid fa-' + (done === _PF_SECS.length ? 'bolt' : 'pen-to-square');
+  const nm = String(D.infoName || '').trim();
+  document.getElementById('pfName').innerText = nm || 'Credit Up member';
+  document.getElementById('pfAv').innerHTML = nm ? `<b>${_escH(nm.charAt(0).toUpperCase())}</b>` : '<i class="fa-solid fa-user"></i>';
+}
+function _pfStats(){
+  const u = _getUser() || {};
+  const bal = Number(window._userRealBalance) || 0;
+  document.getElementById('pfBal').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + bal.toLocaleString('en-US');
+  const apps = window._allApps || [];
+  document.getElementById('pfApps').innerText = apps.length;
+  const since = document.getElementById('pfSince');
+  if(u.createdAt){ since.style.display = ''; since.innerHTML = '<i class="fa-regular fa-calendar"></i>Since ' + new Date(u.createdAt).toLocaleDateString('en-GB', { month:'short', year:'numeric' }); }
+  const la = window._latestApp, box = document.getElementById('pfLatest');
+  if(la){
+    const st = String(la.status || 'Pending'), col = /approved|disbursed|sent/i.test(st) ? 'ok' : /reject|fail/i.test(st) ? 'bad' : 'wait';
+    box.style.display = '';
+    box.innerHTML = `<div class="pf-ct"><div class="pf-ic"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      <div><b>Latest application</b><small>CU-${_escH(String(la.id || window._latestAppId || '').slice(-6).toUpperCase())} · ৳ ${Number(la.loanAmount || 0).toLocaleString('en-US')} · ${_escH(la.term || '')} months</small></div>
+      <span class="pf-st ${col}">${_escH(st)}</span></div>`;
+  } else box.style.display = 'none';
+}
+async function _pfInvites(){
+  const r = await _api('referrals', {}, true);
+  if(!r.ok) return;
+  const total = Number(r.data.total) || 0, active = Number(r.data.active) || 0;
+  const goal = [20, 50, 100].find(g => active < g);
+  document.getElementById('pfInv').innerText = active;
+  document.getElementById('pfInvTotal').innerText = total;
+  document.getElementById('pfInvActive').innerText = active;
+  document.getElementById('pfInvNext').innerText = goal ? goal - active : '✓';
+  document.getElementById('pfInvSub').innerText = goal ? `${goal - active} more active friend${goal - active === 1 ? '' : 's'} to reach ${goal}` : 'All invite rewards unlocked';
 }
 // a user whose invite link did not work can add the inviter's code later (if the admin allows it)
 async function _loadRefEntry(){
@@ -6052,7 +6257,7 @@ window.saveApplicationToFirebase=async function(){
       ...(_payoutIsBank() ? { payoutBank: { accountName: document.getElementById('rcvAccName').value.trim(), bankName: document.getElementById('rcvBankName').value.trim(), branch: document.getElementById('rcvBranch').value.trim(), accountNumber: document.getElementById('bankPhone').value.trim() } } : {}),
       bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
       status: 'Pending Fee Payment', submittedAt:new Date().toISOString(),
-      ...(window._promoClaimed ? { promo: 'First installment free' } : {})
+      ...(window._promoClaimed ? { promo: window._promoLabel || 'First installment free' } : {})
     }).then(ref => { window._latestAppId = ref.id; return ref; });
     _pushMyNotif(u?.phone, 'Application Received 📝', `Your loan application ${'CU-' + String(window._latestAppId||'').slice(-6).toUpperCase()} for ৳${selAmount} (${selTerm} months) has been received. Next step: pay the fee to start verification.`, 'application');
     return true;
@@ -6094,11 +6299,13 @@ window.markBalanceAdjustUsed = async function(phone, used){
 // "first 50 users" offer: counted from real claims on user profiles
 window.getOfferClaimCount = async function(){
   const r = await _api('offerCount');
+  if(r.ok) window._fomoOpen = r.data.open !== false;
   return r.ok ? Number(r.data.count) || 0 : null;
 };
 window.claimOffer = async function(phone){
   if(!fbAuth || !fbAuth.currentUser) return 'error';
   const r = await _api('claimOffer', {}, true);
+  if(r.ok && r.data.promo) window._promoLabel = r.data.promo;
   return r.ok ? (r.data.result || 'error') : 'error';
 };
 // each TrxID gets its own record id, so the same TrxID can never be saved twice (by anyone)
@@ -6180,6 +6387,47 @@ window.renderHomeBlocks = async function(){
   }
   const lt = document.getElementById('liveTitleTxt'); if(lt) lt.innerText = (cfg.live && cfg.live.title) || 'Live Transactions';
 };
+
+// top bar (Admin → Home Page → Top Bar)
+window.applyTopBar = async function(){
+  const bar = document.getElementById('appBar'); if(!bar) return;
+  const B = { theme:'green', clear:35, glass:true, compact:true, hideOnScroll:false, avatar:true, greet:true, balance:true, notif:true, support:true, logout:true, title:'phone', visitorText:'Welcome to Credit Up',
+    ...(((await window.loadHomeCfg()) || {}).topbar || {}) };
+  window._tb = B;
+  const u = _getUser(), on = !!(u && u.phone);
+  const cls = { 'tb-dark':B.theme === 'dark', 'tb-gold':B.theme === 'gold', 'tb-compact':B.compact !== false,
+    'tb-no-av':B.avatar === false, 'tb-no-bal':B.balance === false, 'tb-no-notif':B.notif === false, 'tb-no-sup':B.support === false, 'tb-no-out':B.logout === false };
+  Object.entries(cls).forEach(([c, v]) => bar.classList.toggle(c, !!v));
+  const h = new Date().getHours();
+  const hi = document.getElementById('abHi');
+  if(hi) hi.textContent = B.greet === false ? '' : (h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening') + ' 👋';
+  const t = document.getElementById('userGreeting');
+  if(t){
+    if(!on) t.innerText = B.visitorText || 'Welcome to Credit Up';
+    else if(B.title === 'brand') t.innerText = 'Credit Up';
+    else if(B.title === 'name' && window._latestApp && window._latestApp.name) t.innerText = String(window._latestApp.name).split(' ').slice(0, 2).join(' ');
+    else t.innerText = B.greet === false ? `Hello, ${_fullPhone(u.phone)}` : _fullPhone(u.phone);
+  }
+  const av = document.getElementById('abAv');
+  if(av){
+    const nm = on && window._latestApp && window._latestApp.name ? String(window._latestApp.name).trim() : '';
+    av.innerHTML = nm ? `<b>${_escT(nm.charAt(0).toUpperCase())}</b>` : '<i class="fa-solid fa-user"></i>';
+    av.onclick = () => on ? openProfileModal() : nav('screen-login');
+  }
+  _tbScroll();
+};
+let _tbLast = 0;
+function _tbScroll(){
+  const app = document.getElementById('app'), bar = document.getElementById('appBar'), B = window._tb || {};
+  if(!app || !bar) return;
+  const y = app.scrollTop, sc = y > 8;
+  bar.classList.toggle('ab-scrolled', sc);
+  bar.style.setProperty('--tb-a', sc && B.glass !== false ? (1 - Math.min(80, Math.max(0, Number(B.clear ?? 35))) / 100).toFixed(2) : '.94');
+  if(B.hideOnScroll) bar.classList.toggle('ab-hidden', y > 80 && y > _tbLast + 4 ? true : (y < _tbLast - 4 || y <= 80) ? false : bar.classList.contains('ab-hidden'));
+  else bar.classList.remove('ab-hidden');
+  _tbLast = y;
+}
+document.getElementById('app')?.addEventListener('scroll', () => requestAnimationFrame(_tbScroll), { passive:true });
 
 // offer banner at the top of the home screen (Admin → Home Page → Offers)
 let _osTimer = null;
@@ -6287,6 +6535,7 @@ window.loadUserDashboardData = async function() {
   const user = _getUser(); if(!user || !user.phone || !db) return;
   if(!fbAuth || !fbAuth.currentUser){ if(typeof logoutUser === 'function') logoutUser(true); return; }
   document.getElementById('userGreeting').innerText = `Hello, ${_fullPhone(user.phone)}`;
+  if(window.applyTopBar) window.applyTopBar();
   
   try {
     const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
@@ -6303,6 +6552,7 @@ window.loadUserDashboardData = async function() {
         window._userDocId = uDoc.id;
         window._balanceAdjustUsed = uDoc.data().balanceAdjustUsed === true;
         window._promoClaimed = uDoc.data().promoClaimed === true;
+        window._promoLabel = uDoc.data().promo || '';
       } catch(e) {}
       window._userRealBalance = uSnap.docs[0].data().balance || 0;
       document.getElementById('headerBalance').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + window._userRealBalance.toLocaleString();
@@ -6330,7 +6580,7 @@ window.loadUserDashboardData = async function() {
     card.style.display = 'none'; mainBtn.style.display = 'flex'; window._pendingFeeApp = null; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
     if(!appSnap.empty) {
       const apps = appSnap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
-      const latestApp = apps[0]; window._latestApp = latestApp;
+      const latestApp = apps[0]; window._latestApp = latestApp; if(window.applyTopBar) window.applyTopBar();
       // newest application (any, not only the latest) whose fee is still unpaid
       window._pendingFeeApp = apps.find(x => x.status === 'Pending Fee Payment') || null;
       window._allApps = apps;
@@ -6412,7 +6662,23 @@ window.loadReferralStats = async function(phone) {
 
 window.loadTransactionHistory = async function() {
   const user = _getUser(); const container = document.getElementById('historyListContainer');
-  if(!container || !user || !user.phone || !db) return;
+  const tabs = document.getElementById('hxTabs');
+  if(!container) return;
+  if(!user || !user.phone){
+    // visitors: explain what the history is and how to see it
+    if(tabs) tabs.style.display = 'none';
+    container.innerHTML = `<div class="hx-guest">
+      <div class="hx-g-ic"><i class="fa-solid fa-clock-rotate-left"></i></div>
+      <h4>Your payments will show here</h4>
+      <p>Log in to see every fee payment you made, with its TrxID and status: Pending, Verified or Rejected.</p>
+      <div class="hx-g-steps"><span><i class="fa-solid fa-hourglass-half"></i>Pending</span><span><i class="fa-solid fa-circle-check"></i>Verified</span><span><i class="fa-solid fa-circle-xmark"></i>Rejected</span></div>
+      <button class="mbtn-full" onclick="closeModal('historyModal'); nav('screen-login')"><i class="fa-solid fa-right-to-bracket"></i> Log in</button>
+      <button class="hx-g-reg" onclick="closeModal('historyModal'); nav('screen-register')">New here? Create an account</button>
+    </div>`;
+    return;
+  }
+  if(tabs) tabs.style.display = '';
+  if(!db) return;
   container.innerHTML = '<p style="text-align:center; color:var(--txt2); font-size:13px;">Loading...</p>';
   try {
     const snap = await getDocs(query(collection(db, 'transactions'), where('uid', '==', user.phone)));
@@ -6496,6 +6762,7 @@ loadDynamicConfig();
 document.addEventListener("DOMContentLoaded", () => {
   if(typeof window.renderHomeBlocks === 'function') window.renderHomeBlocks();
   if(typeof window.renderOffers === 'function') window.renderOffers();
+  if(typeof window.applyTopBar === 'function') window.applyTopBar();
   if(typeof window.loadTicker === 'function') window.loadTicker();
   if(typeof window.loadLiveFeed === 'function')    window.loadLiveFeed();
   if(typeof initHotOffer === 'function')           initHotOffer();

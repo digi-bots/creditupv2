@@ -228,6 +228,29 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .sl-phone iframe{width:375px;height:750px;border:0;transform:scale(.7253);transform-origin:0 0;background:#fff}
 @media(max-width:900px){.sl-wrap{grid-template-columns:1fr}.sl-prev{position:static}}
 .hp-step{display:flex;align-items:center;gap:6px}
+.fo-stat{margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(29,219,128,.07);border:1px solid rgba(29,219,128,.2);font-size:13px}
+.fo-prev{display:flex;flex-direction:column;gap:14px;align-items:center}
+.fo-ban{width:100%;display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:14px;color:#fff;background:linear-gradient(90deg,#ff4d6a,#ff8c42)}
+.fo-ban.fo-gold{background:linear-gradient(90deg,#d99a1e,#ffcf5a)}.fo-ban.fo-green{background:linear-gradient(90deg,#0b8a43,#1ddb80)}.fo-ban.fo-purple{background:linear-gradient(90deg,#6d3bd8,#b05cff)}
+.fo-ban .fo-ic{font-size:22px}.fo-ban h4{font-size:13px;font-weight:900;text-transform:uppercase}.fo-ban p{font-size:11.5px;opacity:.95}
+.fo-pop{width:100%;padding:18px 16px;border-radius:18px;background:#101b2d;border:1px solid rgba(255,255,255,.1);text-align:center}
+.fo-pop .fo-big{font-size:42px}.fo-pop h3{font-size:18px;font-weight:900;margin:4px 0 6px}.fo-pop p{font-size:12px;color:var(--txt2);line-height:1.5}.fo-pop p b{color:#ff8c42}
+.fo-p-gold p b{color:#ffcf5a!important}.fo-p-green p b{color:#1ddb80!important}.fo-p-purple p b{color:#c89bff!important}
+.fo-p-gold .fo-btn,.fo-p-gold .fo-trk i{background:linear-gradient(90deg,#d99a1e,#ffcf5a);color:#1a1405}.fo-p-gold .fo-cnt b{color:#ffcf5a}
+.fo-p-green .fo-btn,.fo-p-green .fo-trk i{background:linear-gradient(90deg,#0b8a43,#1ddb80)}.fo-p-green .fo-cnt b{color:#1ddb80}
+.fo-p-purple .fo-btn,.fo-p-purple .fo-trk i{background:linear-gradient(90deg,#6d3bd8,#b05cff)}.fo-p-purple .fo-cnt b{color:#c89bff}
+.fo-pop small{display:block;font-size:10.5px;color:#1ddb80;margin-top:4px}
+.fo-cnt{display:flex;justify-content:space-between;font-size:11px;margin-top:12px}.fo-cnt b{color:#ff4d6a}
+.fo-trk{height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:5px}.fo-trk i{display:block;height:100%;background:linear-gradient(90deg,#ff4d6a,#ff8c42)}
+.fo-btn{margin-top:14px;padding:11px;border-radius:12px;background:linear-gradient(90deg,#ff4d6a,#ff8c42);font-weight:800;font-size:14px}
+.tb-prevwrap{width:280px;margin:0 auto;border-radius:18px;overflow:hidden;border:6px solid #1b2430;background:linear-gradient(180deg,#0a6e35,#06301a 70%,#060d1a)}
+.tb-prev{--tb-a:.94;display:flex;align-items:center;gap:7px;padding:10px;background:rgba(6,58,30,var(--tb-a));border-bottom:1px solid rgba(29,219,128,.2);transition:.3s}
+.tb-prev.scrolled{margin-top:110px;backdrop-filter:blur(10px)}.tb-prev.compact{padding:6px 10px}
+.tb-prev.tp-dark{background:rgba(10,16,26,var(--tb-a))}.tb-prev.tp-gold{background:rgba(18,16,10,var(--tb-a));border-bottom-color:rgba(255,215,106,.3)}
+.tp-av{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid #1ddb80;display:flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+.tp-gold .tp-av{border-color:#ffd76a}
+.tp-mid{flex:1;min-width:0;display:flex;flex-direction:column}.tp-mid small{font-size:9.5px;color:rgba(255,255,255,.7)}.tp-mid b{font-size:12px}
+.tp-bal{font-size:9.5px;color:#1ddb80;margin-top:2px}.tp-b{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:10px;flex:none}
 .of-row{align-items:flex-start}
 .of-ic{width:46px!important;text-align:center;font-size:20px;padding:6px 0!important;flex:none}
 .of-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
@@ -800,6 +823,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <button data-p="trust" onclick="hpTab('trust')"><i class="fa-solid fa-shield-halved"></i>Trust Badges</button>
     <button data-p="ref" onclick="hpTab('ref')"><i class="fa-solid fa-user-plus"></i>Invite Code</button>
     <button data-p="offers" onclick="hpTab('offers')"><i class="fa-solid fa-gift"></i>Offers</button>
+    <button data-p="fomo" onclick="hpTab('fomo')"><i class="fa-solid fa-fire"></i>Hot Offer</button>
+    <button data-p="topbar" onclick="hpTab('topbar')"><i class="fa-solid fa-window-maximize"></i>Top Bar</button>
     <button data-p="splash" onclick="hpTab('splash')"><i class="fa-solid fa-mobile-screen"></i>Loading Screen</button>
   </div>
 
@@ -911,6 +936,86 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-ol"></i>Offers <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="hpAddOffer()"><i class="fa-solid fa-plus"></i>Add offer</button></div>
       <div id="ofList" class="hp-list"></div>
+    </div>
+  </div>
+
+  <!-- HOT OFFER -->
+  <div class="hp-pane" id="hp-fomo">
+    <div class="sl-wrap">
+      <div class="sl-form">
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-fire"></i>Hot Offer (floating banner + popup)</div>
+          <div class="fgrid">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="fo-on" checked><span class="tog-sl"></span></label>Show the hot offer</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="fo-counter" checked><span class="tog-sl"></span></label>Show the claimed counter in the popup</label></div>
+            <div class="fg"><label>Who sees it</label><select id="fo-aud"><option value="all">Everyone</option><option value="visitors">Visitors only</option><option value="users">Logged-in users only</option></select></div>
+            <div class="fg"><label>Colour</label><select id="fo-theme"><option value="red">Red / orange</option><option value="gold">Gold</option><option value="green">Green</option><option value="purple">Purple</option></select></div>
+            <div class="fg"><label>How many users can claim it</label><div class="hp-step"><button type="button" onclick="hpStep('fo-limit',-5)">−</button><input id="fo-limit" type="number" min="1" max="100000" value="50"><button type="button" onclick="hpStep('fo-limit',5)">+</button></div></div>
+            <div class="fg"><label>Show after (seconds)</label><div class="hp-step"><button type="button" onclick="hpStep('fo-delay',-0.5)">−</button><input id="fo-delay" type="number" min="0" max="30" step="0.5" value="3.5"><button type="button" onclick="hpStep('fo-delay',0.5)">+</button></div></div>
+            <div class="fg"><label>Start (optional)</label><input id="fo-start" type="datetime-local"></div>
+            <div class="fg"><label>End (optional)</label><input id="fo-end" type="datetime-local"></div>
+          </div>
+          <div class="fo-stat" id="foStat"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking claims…</div>
+          <div class="hint" style="margin-top:8px">The counter shows only real claims. When the limit is reached the offer closes by itself. Every claim is saved on the user and copied to their next application (Applications → Promo), so you can honour it. Only promise what you will really give.</div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-font"></i>Texts</div>
+          <div class="fgrid">
+            <div class="fg"><label>Icon (emoji)</label><input id="fo-icon" maxlength="4" placeholder="🔥"></div>
+            <div class="fg"><label>Saved on the user as</label><input id="fo-promo" maxlength="80" placeholder="First installment free"></div>
+            <div class="fg"><label>Banner title</label><input id="fo-btitle" maxlength="40"></div>
+            <div class="fg"><label>Banner text</label><input id="fo-btext" maxlength="100"></div>
+            <div class="fg"><label>Popup title</label><input id="fo-ptitle" maxlength="40"></div>
+            <div class="fg"><label>Popup button</label><input id="fo-button" maxlength="30"></div>
+            <div class="fg" style="grid-column:1/-1"><label>Popup text</label><input id="fo-ptext" maxlength="160"></div>
+            <div class="fg" style="grid-column:1/-1"><label>Small note under the text (empty = none)</label><input id="fo-pnote" maxlength="140"></div>
+            <div class="fg"><label>Counter label</label><input id="fo-clabel" maxlength="30"></div>
+            <div class="fg"><label>"Offer ended" message</label><input id="fo-ended" maxlength="120"></div>
+            <div class="fg"><label>Success title</label><input id="fo-stitle" maxlength="40"></div>
+            <div class="fg"><label>Success message</label><input id="fo-stext" maxlength="200"></div>
+          </div>
+          <div class="hint" style="margin-top:8px"><b>{limit}</b> = how many can claim. Put words between <b>*stars*</b> to highlight them.</div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-rotate"></i>Rounds</div>
+          <div class="hint" style="margin-bottom:10px">Start a new round to run the offer again from 0 claims. Users who claimed before keep their claim; they can claim again in the new round. Current round: <b id="foRound">1</b></div>
+          <button class="btn btn-sm btn-s" onclick="hpFomoRound()"><i class="fa-solid fa-rotate"></i>Start a new round</button>
+        </div>
+      </div>
+      <div class="sl-prev">
+        <div class="fo-prev" id="foPrev"></div>
+        <div class="hint" style="text-align:center;margin-top:8px">Preview of the banner and popup with your unsaved changes.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP BAR -->
+  <div class="hp-pane" id="hp-topbar">
+    <div class="sl-wrap">
+      <div class="sl-form">
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-window-maximize"></i>Top Bar Look</div>
+          <div class="fgrid">
+            <div class="fg"><label>Colour</label><select id="tb-theme"><option value="green">Green glass</option><option value="dark">Dark glass</option><option value="gold">Dark + gold</option></select></div>
+            <div class="fg"><label>See-through when scrolled (%)</label><div class="hp-step"><button type="button" onclick="hpStep('tb-clear',-5)">−</button><input id="tb-clear" type="number" min="0" max="80" value="35"><button type="button" onclick="hpStep('tb-clear',5)">+</button></div></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-glass" checked><span class="tog-sl"></span></label>Glass effect when scrolling</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-compact" checked><span class="tog-sl"></span></label>Make it smaller when scrolling</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-hide"><span class="tog-sl"></span></label>Hide when scrolling down, show when scrolling up</label></div>
+          </div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-user"></i>What it shows</div>
+          <div class="fgrid">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-avatar" checked><span class="tog-sl"></span></label>Profile picture button (opens My Profile)</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-hi" checked><span class="tog-sl"></span></label>Greeting by time of day (Good morning / evening)</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-balance" checked><span class="tog-sl"></span></label>Balance</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-notif" checked><span class="tog-sl"></span></label>Notifications button</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-support" checked><span class="tog-sl"></span></label>Support button</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-logout" checked><span class="tog-sl"></span></label>Log out button</label></div>
+            <div class="fg"><label>Title for logged-in users</label><select id="tb-name"><option value="phone">Phone number</option><option value="name">Name from the last application</option><option value="brand">Credit Up</option></select></div>
+            <div class="fg"><label>Title for visitors</label><input id="tb-vtext" maxlength="40" placeholder="Welcome to Credit Up"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sl-prev">
+        <div class="tb-prevwrap"><div class="tb-prev" id="tbPrev"></div><div class="tb-prev scrolled" id="tbPrev2"></div></div>
+        <div class="hint" style="text-align:center;margin-top:8px">Top: at the top of the page. Bottom: while scrolling.</div>
+      </div>
     </div>
   </div>
 
@@ -2628,6 +2733,8 @@ function hpTab(p){
   document.querySelectorAll('.hp-pane').forEach(x => x.classList.toggle('on', x.id === 'hp-' + p));
   if(p === 'live') hpLoadFeed();
   if(p === 'splash') hpSplashPreview();
+  if(p === 'fomo'){ hpFomoPreview(); hpFomoStat(); }
+  if(p === 'topbar') hpTopPreview();
 }
 async function loadHome(){
   showL(true);
@@ -2640,7 +2747,9 @@ async function loadHome(){
     trust: { on:true, note:'', items: null, ...(d.trust||{}) },
     referralEntry: { on:true, days:7, ...(d.referralEntry||{}) },
     splash: { ...SL_DEF, ...(d.splash||{}) },
-    offers: { on:true, rotate:4, items:null, ...(d.offers||{}) }
+    offers: { on:true, rotate:4, items:null, ...(d.offers||{}) },
+    fomo: { ...FO_DEF, ...(d.fomo||{}) },
+    topbar: { ...TB_DEF, ...(d.topbar||{}) }
   };
   if(!Array.isArray(_H.offers.items)) _H.offers.items = [ { ...OF_DEF } ];
   _H.offers.items = _H.offers.items.map(x => ({ ...OF_DEF, id:_hid(), ...x }));
@@ -2662,6 +2771,14 @@ async function loadHome(){
   set('sl-showtitle',S.showTitle); set('sl-title',S.title); set('sl-showsub',S.showSub); set('sl-sub',S.sub); set('sl-showbadge',S.showBadge); set('sl-badge',S.badge);
   set('sl-showfoot',S.showFoot); set('sl-foot',S.foot); set('sl-showpay',S.showPay); set('sl-paytitle',S.payTitle);
   set('of-on',_H.offers.on); set('of-rotate',_H.offers.rotate);
+  const F=_H.fomo;
+  set('fo-on',F.on); set('fo-counter',F.showCounter); set('fo-aud',F.audience); set('fo-theme',F.theme); set('fo-limit',F.limit); set('fo-delay',F.delay); set('fo-start',F.start); set('fo-end',F.end);
+  set('fo-icon',F.icon); set('fo-promo',F.promo); set('fo-btitle',F.bannerTitle); set('fo-btext',F.bannerText); set('fo-ptitle',F.popupTitle); set('fo-button',F.button);
+  set('fo-ptext',F.popupText); set('fo-pnote',F.popupNote); set('fo-clabel',F.counterLabel); set('fo-ended',F.endedText); set('fo-stitle',F.successTitle); set('fo-stext',F.successText);
+  document.getElementById('foRound').textContent = F.round || 1;
+  const B=_H.topbar;
+  set('tb-theme',B.theme); set('tb-clear',B.clear); set('tb-glass',B.glass); set('tb-compact',B.compact); set('tb-hide',B.hideOnScroll); set('tb-avatar',B.avatar); set('tb-hi',B.greet);
+  set('tb-balance',B.balance); set('tb-notif',B.notif); set('tb-support',B.support); set('tb-logout',B.logout); set('tb-name',B.title); set('tb-vtext',B.visitorText);
   hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers();
   _dirty.home = new Set(); _paintSave();
   if(document.getElementById('hp-live').classList.contains('on')) hpLoadFeed();
@@ -2676,6 +2793,12 @@ function _hpRead(){
   Object.assign(_H.referralEntry, { on:c('rf-on'), days:Math.max(0,n('rf-days',7)) });
   const f=(id,d)=>{ const x=parseFloat(t(id)); return isNaN(x)?d:x; };
   Object.assign(_H.offers, { on:c('of-on'), rotate:Math.min(20,Math.max(2,n('of-rotate',4))) });
+  Object.assign(_H.fomo, { on:c('fo-on'), showCounter:c('fo-counter'), audience:t('fo-aud')||'all', theme:t('fo-theme')||'red', limit:Math.min(100000,Math.max(1,n('fo-limit',50))),
+    delay:Math.min(30,Math.max(0,f('fo-delay',3.5))), start:t('fo-start'), end:t('fo-end'), icon:t('fo-icon')||'🔥', promo:t('fo-promo')||FO_DEF.promo,
+    bannerTitle:t('fo-btitle'), bannerText:t('fo-btext'), popupTitle:t('fo-ptitle'), button:t('fo-button')||FO_DEF.button, popupText:t('fo-ptext'), popupNote:t('fo-pnote'),
+    counterLabel:t('fo-clabel')||FO_DEF.counterLabel, endedText:t('fo-ended')||FO_DEF.endedText, successTitle:t('fo-stitle')||FO_DEF.successTitle, successText:t('fo-stext')||FO_DEF.successText });
+  Object.assign(_H.topbar, { theme:t('tb-theme')||'green', clear:Math.min(80,Math.max(0,n('tb-clear',35))), glass:c('tb-glass'), compact:c('tb-compact'), hideOnScroll:c('tb-hide'),
+    avatar:c('tb-avatar'), greet:c('tb-hi'), balance:c('tb-balance'), notif:c('tb-notif'), support:c('tb-support'), logout:c('tb-logout'), title:t('tb-name')||'phone', visitorText:t('tb-vtext') });
   const mn=Math.min(10,Math.max(0,f('sl-min',1.5)));
   Object.assign(_H.splash, { on:c('sl-on'), once:c('sl-once'), minSec:mn, maxSec:Math.min(15,Math.max(mn,1,f('sl-max',5))), theme:t('sl-theme')||'light', loader:t('sl-loader')||'bar', glow:c('sl-glow'),
     showTitle:c('sl-showtitle'), title:t('sl-title'), showSub:c('sl-showsub'), sub:t('sl-sub'), showBadge:c('sl-showbadge'), badge:t('sl-badge'),
@@ -2765,6 +2888,49 @@ function hpSplashPreview(){
 }
 let _slT=null;
 function hpSplashAuto(){ clearTimeout(_slT); _slT=setTimeout(()=>{ if(document.getElementById('hp-splash')?.classList.contains('on')) hpSplashPreview(); }, 700); }
+// hot offer
+const FO_DEF = { on:true, audience:'all', icon:'🔥', theme:'red', delay:3.5, limit:50, showCounter:true, start:'', end:'', round:1, promo:'First installment free',
+  bannerTitle:'SUPER HOT OFFER!', bannerText:"First {limit} lucky users get the *1st month's installment free!*",
+  popupTitle:'Lucky {limit} Offer!', popupText:"Be one of the first {limit} users and your loan's *1st month installment is completely free!*",
+  popupNote:'(We pay the 1st installment. Your payments start from the 2nd month.)', counterLabel:'Offers claimed', button:'Claim the offer now',
+  successTitle:'Offer Activated! 🎉', successText:'Congratulations! You got the free 1st installment offer. If your loan is approved, we will pay your 1st month installment.',
+  endedText:'Sorry, all {limit} offers have been claimed.' };
+const _foTxt = (t,lim) => _he(t).replace(/\{limit\}/g, lim).replace(/\*([^*]+)\*/g,'<b>$1</b>');
+let _foCount = null;
+function hpFomoPreview(){
+  const el=document.getElementById('foPrev'); if(!el||!_H) return;
+  _hpRead(); const F=_H.fomo, L=F.limit, used=Math.min(_foCount??0, L);
+  el.innerHTML = `<div class="fo-ban fo-${_he(F.theme)}"><span class="fo-ic">${_he(F.icon)}</span><div><h4>${_foTxt(F.bannerTitle,L)}</h4><p>${_foTxt(F.bannerText,L)}</p></div></div>
+    <div class="fo-pop fo-p-${_he(F.theme)}"><div class="fo-big">${_he(F.icon)}</div><h3>${_foTxt(F.popupTitle,L)}</h3><p>${_foTxt(F.popupText,L)}</p>${F.popupNote?`<small>${_foTxt(F.popupNote,L)}</small>`:''}
+    ${F.showCounter?`<div class="fo-cnt"><span>${_foTxt(F.counterLabel,L)}</span><b>${used}/${L}</b></div><div class="fo-trk"><i style="width:${Math.round(used/L*100)}%"></i></div>`:''}
+    <div class="fo-btn">⚡ ${_foTxt(F.button,L)}</div></div>`;
+}
+async function hpFomoStat(){
+  const el=document.getElementById('foStat'); if(!el) return;
+  const r=await window._accountApi('offerCount');
+  if(!r.ok){ el.innerHTML='<i class="fa-solid fa-triangle-exclamation"></i> Could not load the claim count.'; return; }
+  _foCount=Number(r.data.count)||0;
+  el.innerHTML=`<i class="fa-solid fa-users"></i> <b>${_foCount}</b> of <b>${r.data.limit}</b> claimed in this round${r.data.open===false?' · <span style="color:var(--orange)">closed</span>':''}`;
+  hpFomoPreview();
+}
+function hpFomoRound(){
+  if(!_H) return;
+  if(!confirm('Start a new round? The claim count goes back to 0 after you press Save.')) return;
+  _H.fomo.round=(parseInt(_H.fomo.round)||1)+1; _foCount=0;
+  document.getElementById('foRound').textContent=_H.fomo.round;
+  document.getElementById('foStat').innerHTML='<i class="fa-solid fa-rotate"></i> New round '+_H.fomo.round+' starts when you press Save.';
+  markDirty('home','fo'); hpFomoPreview();
+}
+// top bar
+const TB_DEF = { theme:'green', clear:35, glass:true, compact:true, hideOnScroll:false, avatar:true, greet:true, balance:true, notif:true, support:true, logout:true, title:'phone', visitorText:'Welcome to Credit Up' };
+function hpTopPreview(){
+  if(!_H) return; _hpRead(); const B=_H.topbar;
+  const h=(sc)=>{ const ic=(i,on)=>on?`<span class="tp-b"><i class="fa-solid fa-${i}"></i></span>`:'';
+    return `${B.avatar?'<span class="tp-av"><i class="fa-solid fa-user"></i></span>':''}<div class="tp-mid">${B.greet&&!(sc&&B.compact)?'<small>Good evening 👋</small>':''}<b>${B.title==='brand'?'Credit Up':B.title==='name'?'Rahim Uddin':'017XXXXXXXX'}</b>${B.balance&&!(sc&&B.compact)?'<span class="tp-bal"><i class="fa-solid fa-wallet"></i> ৳ ••••</span>':''}</div>${ic('bell',B.notif)}${ic('headset',B.support)}${ic('right-from-bracket',B.logout)}`; };
+  const a=document.getElementById('tbPrev'), b=document.getElementById('tbPrev2');
+  [a,b].forEach((el,i)=>{ el.className='tb-prev tp-'+B.theme+(i?' scrolled'+(B.compact?' compact':''):''); el.innerHTML=h(!!i);
+    el.style.setProperty('--tb-a', i ? (B.glass ? (1-B.clear/100).toFixed(2) : '1') : '.94'); });
+}
 // offers banner
 const OF_DEF = { icon:'🎁', text:'নতুন ইউজারদের জন্য *{bonus} টাকা* সাইন-আপ বোনাস!', cta:'Sign up', action:'register', link:'', audience:'visitors', style:'orange', start:'', end:'', on:true };
 function hpRenderOffers(){
@@ -2835,7 +3001,7 @@ function hpRenderNotices(){
       <button class="ab ab-no" title="Delete" onclick="_hpAct('n','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
   </div>`; }).join('') : '<div class="hint">No notices here.</div>';
 }
-function hpStep(id,d){ const e=document.getElementById(id); if(!e) return; const v=Math.min(Number(e.max)||99,Math.max(Number(e.min)||0,(parseFloat(e.value)||0)+d)); e.value=Math.round(v*10)/10; markDirty('home','s'); if(/^sl-/.test(id)) hpSplashAuto(); }
+function hpStep(id,d){ const e=document.getElementById(id); if(!e) return; const v=Math.min(Number(e.max)||99,Math.max(Number(e.min)||0,(parseFloat(e.value)||0)+d)); e.value=Math.round(v*10)/10; markDirty('home','s'); if(/^sl-/.test(id)) hpSplashAuto(); if(/^fo-/.test(id)) hpFomoPreview(); if(/^tb-/.test(id)) hpTopPreview(); }
 function hpPin(id){ const it=_H.notice.items.find(x=>x.id===id); if(it){ it.pin=!it.pin; markDirty('home','n'); hpRenderNotices(); } }
 function hpAddNotice(){
   const g=id=>(document.getElementById(id)?.value||'').trim();
@@ -2869,7 +3035,7 @@ function hpHide(id){
 document.addEventListener('DOMContentLoaded',()=>{
   const sec=document.getElementById('sec-home');
   // the static setting fields (not the list rows, which mark themselves)
-  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl|of)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); } }));
+  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl|of|fo|tb)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); if(/^fo-/.test(e.target.id)) hpFomoPreview(); if(/^tb-/.test(e.target.id)) hpTopPreview(); } }));
 });
 
 // ══ BROADCAST ════════════════════════════════════════
