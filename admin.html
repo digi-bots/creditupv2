@@ -228,6 +228,11 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .sl-phone iframe{width:375px;height:750px;border:0;transform:scale(.7253);transform-origin:0 0;background:#fff}
 @media(max-width:900px){.sl-wrap{grid-template-columns:1fr}.sl-prev{position:static}}
 .hp-step{display:flex;align-items:center;gap:6px}
+.of-row{align-items:flex-start}
+.of-ic{width:46px!important;text-align:center;font-size:20px;padding:6px 0!important;flex:none}
+.of-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.of-opts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.of-opts select,.of-opts input{width:auto}
 .hp-step button{width:36px;height:38px;border-radius:9px;border:1.5px solid var(--border);background:rgba(255,255,255,.05);color:var(--txt);font-size:18px;font-weight:800;cursor:pointer}
 .hp-step button:hover{border-color:var(--p);color:var(--p)}
 .hp-step input{text-align:center;flex:1;min-width:0}
@@ -706,7 +711,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="wblk">
       <div class="wblk-h">
         <div class="wblk-ic in"><i class="fa-solid fa-arrow-down"></i></div>
-        <div class="wblk-t"><strong>1 · Fee receive from users</strong><span>ইউজার ফি পাঠাবে এই নম্বরগুলোতে, তারপর TrxID দেবে</span></div>
+        <div class="wblk-t"><strong>1 · Fee receive from users</strong><span>Users send the fee to these numbers, then enter the TrxID</span></div>
         <button class="btn btn-sm btn-p" onclick="openWM('fee')"><i class="fa-solid fa-plus"></i>Add</button>
       </div>
       <div id="wFeeRows" class="wgrid"><div class="wload">Loading...</div></div>
@@ -714,7 +719,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="wblk">
       <div class="wblk-h">
         <div class="wblk-ic out"><i class="fa-solid fa-arrow-up"></i></div>
-        <div class="wblk-t"><strong>2 · Loan send to customer</strong><span>লোন approve হলে আপনি এই মেথডে কাস্টমারের নম্বরে টাকা পাঠাবেন</span></div>
+        <div class="wblk-t"><strong>2 · Loan send to customer</strong><span>After a loan is approved, you send the money to the customer's number with these methods</span></div>
         <button class="btn btn-sm btn-p" onclick="openWM('payout')"><i class="fa-solid fa-plus"></i>Add</button>
       </div>
       <div id="wPayRows" class="wgrid"><div class="wload">Loading...</div></div>
@@ -732,7 +737,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="wblk">
       <div class="wblk-h">
         <div class="wblk-ic in"><i class="fa-solid fa-arrow-down"></i></div>
-        <div class="wblk-t"><strong>1 · Fee receive from users (online)</strong><span>ইউজার SSLCommerz পেজে পে করবে, ফি নিজে থেকেই verify হবে, TrxID লাগবে না</span></div>
+        <div class="wblk-t"><strong>1 · Fee receive from users (online)</strong><span>Users pay on the SSLCommerz page. The fee is verified automatically, no TrxID needed</span></div>
         <label class="tog" title="Show online payment to users"><input type="checkbox" id="gwEn" onchange="markDirty('wallets','gw')"><span class="tog-sl"></span></label>
       </div>
       <div id="gwStatus" class="gw-st"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking the server…</div>
@@ -748,29 +753,29 @@ tr:hover td{background:rgba(255,255,255,.015)}
         </div>
       </details>
       <details class="wdet">
-        <summary><i class="fa-solid fa-screwdriver-wrench"></i>একবার সেটআপ করতে হবে (Setup guide)</summary>
+        <summary><i class="fa-solid fa-screwdriver-wrench"></i>One-time setup (Setup guide)</summary>
         <div class="gw-guide" style="margin:10px 0 0">
-          <p>অনলাইন পেমেন্ট চালু করতে <strong>Vercel → Project → Settings → Environment Variables</strong>-এ নিচের ভ্যালুগুলো বসান, তারপর <strong>Redeploy</strong> করুন। এগুলো গোপন, তাই এই প্যানেলে বা Firestore-এ রাখা হয় না।</p>
+          <p>To turn on online payment, add these values in <strong>Vercel → Project → Settings → Environment Variables</strong>, then <strong>Redeploy</strong>. They are secret, so they are never kept in this panel or in Firestore.</p>
           <ol>
-            <li><code>SSLCZ_STORE_ID</code> — SSLCommerz merchant panel থেকে পাওয়া <b>Store ID</b></li>
-            <li><code>SSLCZ_STORE_PASSWD</code> — SSLCommerz-এর <b>Store Password</b> (API password)</li>
-            <li><code>SSLCZ_SANDBOX</code> — টেস্টের জন্য <b>true</b>, আসল পেমেন্টের জন্য <b>false</b></li>
-            <li><code>FIREBASE_SERVICE_ACCOUNT</code> — Firebase Console → Project settings → Service accounts → <b>Generate new private key</b> চাপলে যে JSON ফাইল নামে, তার পুরো লেখা কপি করে বসান</li>
-            <li><code>PUBLIC_BASE_URL</code> (ঐচ্ছিক) — যেমন <b>https://creditup.online</b></li>
+            <li><code>SSLCZ_STORE_ID</code> — the <b>Store ID</b> from the SSLCommerz merchant panel</li>
+            <li><code>SSLCZ_STORE_PASSWD</code> — the SSLCommerz <b>Store Password</b> (API password)</li>
+            <li><code>SSLCZ_SANDBOX</code> — <b>true</b> for testing, <b>false</b> for real payments</li>
+            <li><code>FIREBASE_SERVICE_ACCOUNT</code> — Firebase Console → Project settings → Service accounts → press <b>Generate new private key</b> and paste the full text of the JSON file it downloads</li>
+            <li><code>PUBLIC_BASE_URL</code> (optional) — for example <b>https://creditup.online</b></li>
           </ol>
-          <p>সব ঠিক থাকলে উপরে সবুজ টিক আর <b>"Server is ready"</b> দেখাবে। তারপর ডান পাশের সুইচ চালু করুন। প্রথমে Sandbox-এ টেস্ট করে নিন।</p>
+          <p>When everything is right, a green tick and <b>"Server is ready"</b> show above. Then turn on the switch on the right. Test in Sandbox first.</p>
         </div>
       </details>
     </div>
     <div class="wblk">
       <div class="wblk-h">
         <div class="wblk-ic out"><i class="fa-solid fa-arrow-up"></i></div>
-        <div class="wblk-t"><strong>2 · Loan send to customer (automatic)</strong><span>লোন approve হলে API দিয়ে নিজে থেকে কাস্টমারের নম্বরে টাকা যাবে</span></div>
+        <div class="wblk-t"><strong>2 · Loan send to customer (automatic)</strong><span>After a loan is approved, the money goes to the customer's number automatically through an API</span></div>
         <span class="wsoon">Not connected</span>
       </div>
       <div class="wauto-note">
-        <p>অটোমেটিক টাকা পাঠাতে প্রতিটা প্রোভাইডারের আলাদা <b>Disbursement / B2C API</b> লাগে। যেমন bKash, Nagad আর Rocket-এর merchant disbursement। এগুলো প্রোভাইডারের সাথে চুক্তি করে আলাদা credential নিতে হয়। SSLCommerz দিয়ে শুধু টাকা নেওয়া যায়, পাঠানো যায় না।</p>
-        <p>যে প্রোভাইডারের API অ্যাক্সেস পাবেন, তার ডকুমেন্টেশন আর sandbox credential দিলে সেটা এখানে যোগ করা যাবে। ততদিন লোন পাঠাবেন <b>Manual → Loan send</b> থেকে।</p>
+        <p>Sending money automatically needs each provider's own <b>Disbursement / B2C API</b>, such as bKash, Nagad and Rocket merchant disbursement. You get these credentials through an agreement with each provider. SSLCommerz can only receive money, not send it.</p>
+        <p>When you get API access from a provider, share its documentation and sandbox credentials and it can be added here. Until then, send loans from <b>Manual → Loan send</b>.</p>
         <div class="gwm" style="margin-top:8px">
           <span class="gwm-i dis"><b>bKash</b>Disbursement API</span><span class="gwm-i dis"><b>Nagad</b>Disbursement API</span><span class="gwm-i dis"><b>Rocket</b>Disbursement API</span><span class="gwm-i dis"><b>Upay</b>Disbursement API</span>
         </div>
@@ -794,6 +799,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <button data-p="partners" onclick="hpTab('partners')"><i class="fa-solid fa-handshake"></i>Partners</button>
     <button data-p="trust" onclick="hpTab('trust')"><i class="fa-solid fa-shield-halved"></i>Trust Badges</button>
     <button data-p="ref" onclick="hpTab('ref')"><i class="fa-solid fa-user-plus"></i>Invite Code</button>
+    <button data-p="offers" onclick="hpTab('offers')"><i class="fa-solid fa-gift"></i>Offers</button>
     <button data-p="splash" onclick="hpTab('splash')"><i class="fa-solid fa-mobile-screen"></i>Loading Screen</button>
   </div>
 
@@ -894,6 +900,20 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="hint" style="margin-top:10px">For users whose invite link did not work when they signed up. A code can be added only once, never the user's own code, and never the code of someone they invited. The inviter gets a notification.</div>
     </div>
   </div>
+  <!-- OFFERS -->
+  <div class="hp-pane" id="hp-offers">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Offer Banner (top of the home screen)</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="of-on" checked><span class="tog-sl"></span></label>Show offer banner</label></div>
+        <div class="fg"><label>Change offer every (seconds)</label><div class="hp-step"><button type="button" onclick="hpStep('of-rotate',-1)">−</button><input id="of-rotate" type="number" min="2" max="20" value="4"><button type="button" onclick="hpStep('of-rotate',1)">+</button></div></div>
+      </div>
+      <div class="hint" style="margin-top:10px">Write <b>{bonus}</b> to show the sign-up bonus from Site Config (an offer with {bonus} hides itself when the bonus is 0). Put words between <b>*stars*</b> to highlight them. Keep every offer true: users must really get what it says.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-ol"></i>Offers <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="hpAddOffer()"><i class="fa-solid fa-plus"></i>Add offer</button></div>
+      <div id="ofList" class="hp-list"></div>
+    </div>
+  </div>
+
   <!-- LOADING SCREEN -->
   <div class="hp-pane" id="hp-splash">
     <div class="sl-wrap">
@@ -2619,8 +2639,11 @@ async function loadHome(){
     partners: { on:true, title:'Our Partners', size:'lg', items: null, ...(d.partners||{}) },
     trust: { on:true, note:'', items: null, ...(d.trust||{}) },
     referralEntry: { on:true, days:7, ...(d.referralEntry||{}) },
-    splash: { ...SL_DEF, ...(d.splash||{}) }
+    splash: { ...SL_DEF, ...(d.splash||{}) },
+    offers: { on:true, rotate:4, items:null, ...(d.offers||{}) }
   };
+  if(!Array.isArray(_H.offers.items)) _H.offers.items = [ { ...OF_DEF } ];
+  _H.offers.items = _H.offers.items.map(x => ({ ...OF_DEF, id:_hid(), ...x }));
   if(!Array.isArray(_H.splash.pays)) _H.splash.pays = SL_DEF.pays;
   _H.splash.pays = _H.splash.pays.map(x => ({ id:_hid(), on:true, ...x }));
   if(!Array.isArray(_H.partners.items)) _H.partners.items = HP_PARTNERS.map(([name,logo]) => ({ id:_hid(), name, logo, on:true }));
@@ -2638,7 +2661,8 @@ async function loadHome(){
   set('sl-on',S.on); set('sl-once',S.once); set('sl-min',S.minSec); set('sl-max',S.maxSec); set('sl-theme',S.theme); set('sl-loader',S.loader); set('sl-glow',S.glow);
   set('sl-showtitle',S.showTitle); set('sl-title',S.title); set('sl-showsub',S.showSub); set('sl-sub',S.sub); set('sl-showbadge',S.showBadge); set('sl-badge',S.badge);
   set('sl-showfoot',S.showFoot); set('sl-foot',S.foot); set('sl-showpay',S.showPay); set('sl-paytitle',S.payTitle);
-  hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays();
+  set('of-on',_H.offers.on); set('of-rotate',_H.offers.rotate);
+  hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers();
   _dirty.home = new Set(); _paintSave();
   if(document.getElementById('hp-live').classList.contains('on')) hpLoadFeed();
 }
@@ -2651,6 +2675,7 @@ function _hpRead(){
   Object.assign(_H.trust, { on:c('tr-on'), note:t('tr-note') });
   Object.assign(_H.referralEntry, { on:c('rf-on'), days:Math.max(0,n('rf-days',7)) });
   const f=(id,d)=>{ const x=parseFloat(t(id)); return isNaN(x)?d:x; };
+  Object.assign(_H.offers, { on:c('of-on'), rotate:Math.min(20,Math.max(2,n('of-rotate',4))) });
   const mn=Math.min(10,Math.max(0,f('sl-min',1.5)));
   Object.assign(_H.splash, { on:c('sl-on'), once:c('sl-once'), minSec:mn, maxSec:Math.min(15,Math.max(mn,1,f('sl-max',5))), theme:t('sl-theme')||'light', loader:t('sl-loader')||'bar', glow:c('sl-glow'),
     showTitle:c('sl-showtitle'), title:t('sl-title'), showSub:c('sl-showsub'), sub:t('sl-sub'), showBadge:c('sl-showbadge'), badge:t('sl-badge'),
@@ -2664,12 +2689,14 @@ async function saveHome(){
   const badT = _H.trust.items.find(x => !x.title);
   if(badT) throw new Error('Every badge needs a title');
   if(_H.splash.pays.find(x => !x.name)) throw new Error('Every payment logo needs a name');
+  if(_H.offers.items.find(x => !String(x.text||'').trim())) throw new Error('Every offer needs text');
+  if(_H.offers.items.find(x => x.action==='link' && !/^https?:\/\//i.test(x.link||''))) throw new Error('An offer set to "Open link" needs a link starting with https://');
   await window._setDoc('siteConfig','home',{ ..._H, updatedAt:new Date().toISOString() });
   await logAct('Home page settings saved','config','home');
 }
 // list helpers
-const _hpList = kind => kind==='p' ? _H.partners.items : kind==='t' ? _H.trust.items : kind==='s' ? _H.splash.pays : _H.notice.items;
-const _hpRender = kind => kind==='p' ? hpRenderPartners() : kind==='t' ? hpRenderTrust() : kind==='s' ? hpRenderPays() : hpRenderNotices();
+const _hpList = kind => kind==='p' ? _H.partners.items : kind==='t' ? _H.trust.items : kind==='s' ? _H.splash.pays : kind==='o' ? _H.offers.items : _H.notice.items;
+const _hpRender = kind => kind==='p' ? hpRenderPartners() : kind==='t' ? hpRenderTrust() : kind==='s' ? hpRenderPays() : kind==='o' ? hpRenderOffers() : hpRenderNotices();
 function _hpMove(list, id, dir){ const i=list.findIndex(x=>x.id===id), j=i+dir; if(i<0||j<0||j>=list.length) return; [list[i],list[j]]=[list[j],list[i]]; }
 function _hpEdit(kind, id, key, el){
   const list = _hpList(kind);
@@ -2680,6 +2707,7 @@ function _hpEdit(kind, id, key, el){
   if((kind==='p'||kind==='s') && key==='logo'){ const im=el.closest('.hp-row')?.querySelector('.hp-logo img'); if(im) im.src=el.value; }
   if(kind==='s') hpSplashAuto();
   if(key==='on'){ el.closest('.hp-row')?.classList.toggle('off', !el.checked); if(kind==='n') hpRenderNotices(); }
+  if(kind==='o' && ['on','action','start','end'].includes(key)) hpRenderOffers();
 }
 function _hpAct(kind, id, act){
   const list = _hpList(kind);
@@ -2737,6 +2765,30 @@ function hpSplashPreview(){
 }
 let _slT=null;
 function hpSplashAuto(){ clearTimeout(_slT); _slT=setTimeout(()=>{ if(document.getElementById('hp-splash')?.classList.contains('on')) hpSplashPreview(); }, 700); }
+// offers banner
+const OF_DEF = { icon:'🎁', text:'নতুন ইউজারদের জন্য *{bonus} টাকা* সাইন-আপ বোনাস!', cta:'Sign up', action:'register', link:'', audience:'visitors', style:'orange', start:'', end:'', on:true };
+function hpRenderOffers(){
+  const el=document.getElementById('ofList'); if(!el||!_H) return;
+  const L=_H.offers.items;
+  const sel=(id,key,val,opts)=>`<select class="hp-mini" onchange="_hpEdit('o','${id}','${key}',this)">${opts.map(([v,l])=>`<option value="${v}" ${v===val?'selected':''}>${l}</option>`).join('')}</select>`;
+  el.innerHTML = L.length ? L.map((x,i)=>{ const st=_ntState(x); return `<div class="hp-row of-row ${st==='live'?'':'off'}">
+    <span class="hp-s" style="width:18px;text-align:center;font-weight:800">${i+1}</span>
+    <input class="of-ic" value="${_he(x.icon)}" maxlength="4" title="Emoji" oninput="_hpEdit('o','${x.id}','icon',this)">
+    <div class="of-main">
+      <input value="${_he(x.text)}" maxlength="120" placeholder="Offer text, e.g. Get a *{bonus} Tk* sign-up bonus" oninput="_hpEdit('o','${x.id}','text',this)">
+      <div class="of-opts">
+        <input value="${_he(x.cta)}" maxlength="14" placeholder="Button (empty = none)" style="width:130px" oninput="_hpEdit('o','${x.id}','cta',this)">
+        ${sel(x.id,'action',x.action,[['register','Open sign-up'],['borrow','Start a loan'],['link','Open link'],['none','Do nothing']])}
+        ${sel(x.id,'audience',x.audience,[['visitors','Visitors only'],['users','Users only'],['all','Everyone']])}
+        ${sel(x.id,'style',x.style,[['orange','Orange'],['gold','Gold'],['glass','Glass']])}
+        <input value="${_he(x.link)}" placeholder="https://..." style="flex:1;min-width:120px;${x.action==='link'?'':'display:none'}" oninput="_hpEdit('o','${x.id}','link',this)">
+      </div>
+      <div class="of-opts"><label class="hint" style="margin:0">Start</label><input type="datetime-local" value="${_he(x.start)}" onchange="_hpEdit('o','${x.id}','start',this)"><label class="hint" style="margin:0">End</label><input type="datetime-local" value="${_he(x.end)}" onchange="_hpEdit('o','${x.id}','end',this)"><span class="hp-badge ${st}">${({live:'Live now',scheduled:'Scheduled',expired:'Expired',off:'Off'})[st]}</span></div>
+    </div>
+    <div class="hp-acts">${_tog('o',x.id,x.on)}${_arrows('o',x.id)}<button class="ab ab-v" title="Duplicate" onclick="_hpAct('o','${x.id}','dup')"><i class="fa-solid fa-copy"></i></button><button class="ab ab-no" title="Delete" onclick="_hpAct('o','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`; }).join('') : '<div class="hint">No offers. The banner stays hidden until you add one.</div>';
+}
+function hpAddOffer(){ _H.offers.items.push({ ...OF_DEF, id:_hid(), text:'', cta:'', action:'none' }); markDirty('home','o'); hpRenderOffers(); }
 function hpAddPartner(){ _H.partners.items.push({ id:_hid(), name:'', logo:'', on:true }); markDirty('home','p'); hpRenderPartners(); }
 async function hpUploadLogo(id, input, kind){
   kind = kind || 'p';
@@ -2817,7 +2869,7 @@ function hpHide(id){
 document.addEventListener('DOMContentLoaded',()=>{
   const sec=document.getElementById('sec-home');
   // the static setting fields (not the list rows, which mark themselves)
-  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); } }));
+  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl|of)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); } }));
 });
 
 // ══ BROADCAST ════════════════════════════════════════

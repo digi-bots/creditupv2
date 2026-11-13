@@ -202,6 +202,32 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .ticker-item a{color:inherit;text-decoration:underline}
 .ticker-item.t-offer i{color:#ffd76a}.ticker-item.t-warning i{color:var(--orange)}.ticker-item.t-urgent i{color:var(--red)}.ticker-item.t-success i{color:var(--p)}
 .ticker-item .tk-pin{font-size:9px;font-weight:800;color:#1a1405;background:#ffd76a;padding:1px 5px;border-radius:6px}
+.hx-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:10px 0 6px;margin-right:16px}
+.hx-tabs::-webkit-scrollbar{display:none}
+.hx-tabs button{min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;padding:7px 2px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--txt2);font-size:11px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;white-space:nowrap}
+.hx-tabs button em{font-style:normal;font-size:9.5px;min-width:15px;padding:1px 4px;border-radius:9px;background:rgba(255,255,255,.1)}
+.hx-tabs button em:empty{display:none}
+.hx-tabs button.on{background:var(--p);border-color:var(--p);color:#04160c}
+.hx-tabs button.on em{background:rgba(0,0,0,.18)}
+.hx-st{font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;margin-left:auto}
+#historyListContainer .notif-content{flex:1;min-width:0}#historyListContainer h4{width:100%;align-items:center;gap:8px}
+.hx-empty{text-align:center;color:var(--txt2);font-size:13px;padding:30px 10px}
+.offer-strip{position:relative;z-index:2;width:100%;max-width:380px;margin:0 auto 18px}
+.os-slide{display:none;align-items:center;gap:10px;padding:9px 9px 9px 10px;border-radius:14px;text-align:left;cursor:pointer;background:linear-gradient(100deg,rgba(255,140,66,.26),rgba(255,77,106,.2));border:1px solid rgba(255,176,96,.55);box-shadow:0 6px 18px rgba(0,0,0,.18);-webkit-tap-highlight-color:transparent}
+.os-slide.on{display:flex;animation:os-in .45s ease}
+.os-slide.os-gold{background:linear-gradient(100deg,rgba(255,215,106,.28),rgba(227,178,60,.18));border-color:rgba(255,215,106,.6)}
+.os-slide.os-glass{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28);backdrop-filter:blur(6px)}
+@keyframes os-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.os-ic{flex:none;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1}
+.os-ic span{display:inline-block;animation:shake 2.4s infinite cubic-bezier(.36,.07,.19,.97) both}
+.os-t{flex:1;min-width:0;font-size:13px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word}
+.os-t b{color:#ffc773;font-weight:900}
+.os-gold .os-t b{color:#ffe08a}
+.os-cta{flex:none;font-size:11px;font-weight:800;color:#1a1405;background:#ffd76a;padding:7px 11px;border-radius:20px;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.os-dots{display:flex;gap:4px;justify-content:center;margin-top:7px}
+.os-dots i{width:5px;height:5px;border-radius:3px;background:rgba(255,255,255,.35);transition:.3s}
+.os-dots i.on{width:14px;background:#fff}
+@media(max-width:360px){.os-t{font-size:12px}.os-cta{padding:6px 9px}}
 .ticker-wrap.tk-pausable:hover .ticker,.ticker-wrap.tk-pausable:active .ticker{animation-play-state:paused}
 .ticker-wrap.tk-gold{background:rgba(255,200,60,.12);border-bottom-color:rgba(255,200,60,.3)}.tk-gold .ticker-title{background:#e3b23c;color:#1a1405;box-shadow:0 2px 8px rgba(227,178,60,.35)}
 .ticker-wrap.tk-blue{background:rgba(60,140,255,.11);border-bottom-color:rgba(60,140,255,.3)}.tk-blue .ticker-title{background:#3c8cff;box-shadow:0 2px 8px rgba(60,140,255,.35)}
@@ -2000,7 +2026,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
     <span class="hot-icon">🔥</span>
     <div class="hot-text">
       <h4>SUPER HOT OFFER!</h4>
-      <p>প্রথম ৫০ জন লাকি ইউজারের জন্য <b>১ম মাসের কিস্তি ফ্রি!</b></p>
+      <p>First 50 lucky users get the <b>1st month's installment free!</b></p>
     </div>
     <button class="hot-close" onclick="event.stopPropagation(); closeHotOffer();"><i class="fa-solid fa-xmark"></i></button>
   </div>
@@ -2010,14 +2036,14 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
   <div class="mc pp" style="max-width: 360px; text-align: center;">
     <button class="popup-close" aria-label="Close" onclick="closeFomoModal()"><i class="fa-solid fa-xmark"></i></button>
     <div class="fomo-fire-icon">🔥</div>
-    <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
-    <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">প্রথম ৫০ জন ইউজারের মধ্যে থাকলে আপনার লোনের <b style="color:var(--orange);">১ম মাসের কিস্তি সম্পূর্ণ ফ্রি!</b> <br><span style="font-size: 11px; color: var(--p);">(১ম মাসের কিস্তি কোম্পানিই বহন করবে, ২য় মাস থেকে পরিশোধ শুরু)</span></p>
+    <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">Lucky 50 Offer!</h2>
+    <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">Be one of the first 50 users and your loan's <b style="color:var(--orange);">1st month installment is completely free!</b> <br><span style="font-size: 11px; color: var(--p);">(We pay the 1st installment. Your payments start from the 2nd month.)</span></p>
     <div class="fomo-progress-wrap">
-      <div class="fomo-progress-header"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;" id="offerCount">…/৫০ জন</span></div>
+      <div class="fomo-progress-header"><span>Offers claimed</span><span style="color: var(--red); font-weight: 800;" id="offerCount">…/50</span></div>
       <div class="fomo-progress-track"><div class="fomo-progress-fill" id="offerFill" style="width: 0%;"></div></div>
       <p class="fomo-warning" id="offerLeft"><i class="fa-solid fa-triangle-exclamation"></i> …</p>
     </div>
-    <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
+    <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> Claim the offer now</button>
   </div>
 </div>
 
@@ -2267,6 +2293,12 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 <div class="modal-overlay premium-popup" id="historyModal">
   <div class="mc pp" style="max-width: 380px;">
     <div class="pp-bar"><span class="pp-bar-title">Transaction History</span><button class="popup-close" aria-label="Close" onclick="closeModal('historyModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="hx-tabs" id="hxTabs" role="tablist">
+      <button class="on" data-f="all" onclick="setHistoryTab('all')">All<em></em></button>
+      <button data-f="Pending" onclick="setHistoryTab('Pending')">Pending<em></em></button>
+      <button data-f="Verified" onclick="setHistoryTab('Verified')">Verified<em></em></button>
+      <button data-f="Rejected" onclick="setHistoryTab('Rejected')">Rejected<em></em></button>
+    </div>
     <div class="notif-list" id="historyListContainer"></div>
   </div>
 </div>
@@ -2499,7 +2531,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
   <div class="ticker-wrap" id="tickerWrap" style="display:none;"><div class="ticker-title">Notice</div><div class="ticker" id="tickerContent"></div></div>
   <div class="home-hdr">
     <div class="h-logo">Credit <span>Up</span></div>
-    <div class="bonus-banner" id="bonusBanner" style="display:none;"><span class="shake-icon">🎁</span><span id="bonusBannerText">...</span></div>
+    <div class="offer-strip" id="bonusBanner" style="display:none;"></div>
     <div class="h-label">Borrow up to (BDT)</div>
     <div class="h-amount" id="homeMaxBorrow">...</div>
     <div class="h-feats">
@@ -2968,7 +3000,6 @@ window.isConfigLoaded = false;
 function showLoader(on){ document.getElementById('loader').classList.toggle('on',on); }
 
 const OFFER_LIMIT = 50;
-const _bnDigits = n => String(n).replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d]);
 function _offerFolded(){ try{ return localStorage.getItem('hotOfferClosed') === 'true'; }catch(e){ return false; } }
 function _setOfferFolded(f){
   const b = document.getElementById('hotOfferBanner'); if(!b) return;
@@ -2995,9 +3026,9 @@ function _updateOfferCounter(n){
   const c = document.getElementById('offerCount'), f = document.getElementById('offerFill'), l = document.getElementById('offerLeft');
   if(n === null || n === undefined){ if(c) c.innerText = ''; if(f) f.parentElement.style.display = 'none'; if(l) l.style.display = 'none'; return; }
   const used = Math.min(n, OFFER_LIMIT);
-  if(c) c.innerText = `${_bnDigits(used)}/${_bnDigits(OFFER_LIMIT)} জন`;
+  if(c) c.innerText = `${used}/${OFFER_LIMIT}`;
   if(f) f.style.width = Math.round(used / OFFER_LIMIT * 100) + '%';
-  if(l) l.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${_bnDigits(OFFER_LIMIT - used)}টি অফার বাকি`;
+  if(l) l.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Only ${OFFER_LIMIT - used} offers left`;
 }
 // tap: folded tab slides out like a drawer; tap again (expanded) opens the popup
 function onHotOfferTap(){
@@ -3022,15 +3053,15 @@ async function claimFomoOffer() {
   if (u) {
     // the claim is saved on the profile and carried onto the next application, so the admin can honour it
     const res = (typeof window.claimOffer === 'function') ? await window.claimOffer(u.phone) : 'error';
-    if(res === 'full'){ showAlert('অফার শেষ', 'দুঃখিত, ৫০ জনের অফারটি শেষ হয়ে গেছে।', 'info'); const b=document.getElementById('hotOfferBanner'); if(b) b.remove(); return; }
-    if(res === 'already'){ showAlert('অফার আগেই নেওয়া হয়েছে', 'আপনি ইতিমধ্যে এই অফারটি নিয়েছেন। আপনার পরের লোন আবেদনে এটি যুক্ত থাকবে।', 'info'); return; }
-    if(res !== 'ok'){ showAlert('Error', 'অফারটি এখন নেওয়া যাচ্ছে না, একটু পরে আবার চেষ্টা করুন।', 'error'); return; }
+    if(res === 'full'){ showAlert('Offer Ended', 'Sorry, all 50 offers have been claimed.', 'info'); const b=document.getElementById('hotOfferBanner'); if(b) b.remove(); return; }
+    if(res === 'already'){ showAlert('Already Claimed', 'You have already claimed this offer. It will be added to your next loan application.', 'info'); return; }
+    if(res !== 'ok'){ showAlert('Error', 'The offer cannot be claimed right now. Please try again in a moment.', 'error'); return; }
     window._promoClaimed = true;
-    showAlert('অফার একটিভেটেড! 🎉', 'অভিনন্দন! আপনি ১ম মাসের ফ্রি কিস্তির অফার পেয়েছেন। আপনার লোন অ্যাপ্রুভ হলে ১ম মাসের কিস্তি কোম্পানিই দিয়ে দিবে!', 'success', () => {
+    showAlert('Offer Activated! 🎉', 'Congratulations! You got the free 1st installment offer. If your loan is approved, we will pay your 1st month installment.', 'success', () => {
       startNewApplication();
     });
   } else {
-    showAlert('অফারটি আপনার জন্য অপেক্ষা করছে! 🎁', 'এই অফারটি পেতে দ্রুত একটি অ্যাকাউন্ট তৈরি করুন এবং আবেদন করুন।', 'info', () => {
+    showAlert('This Offer Is Waiting for You! 🎁', 'Create an account and apply to get this offer.', 'info', () => {
       nav('screen-login');
     });
   }
@@ -4515,7 +4546,7 @@ function updateUIForUser() {
     if(notifBtnContainer) notifBtnContainer.style.display = 'flex';
     // button text for a logged-in user is decided by loadUserDashboardData (Borrow Now / Apply for Another)
     if(loginLink) loginLink.style.display = 'none';
-    if(bonusBanner) bonusBanner.style.display = 'none';
+    if(window.renderOffers) window.renderOffers();
     const greet = document.getElementById('userGreeting');
     if(greet) greet.innerText = `Hello, ${_fullPhone(u.phone)}`;
     const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'flex';
@@ -4529,7 +4560,7 @@ function updateUIForUser() {
     if(notifBtnContainer) notifBtnContainer.style.display = 'none';
     if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
     if(loginLink) loginLink.style.display = 'block';
-    if(bonusBanner) bonusBanner.style.display = 'flex';
+    if(window.renderOffers) window.renderOffers();
     const greet = document.getElementById('userGreeting');
     if(greet) greet.innerText = 'Welcome to Credit Up';
     const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'none';
@@ -4755,7 +4786,7 @@ function openReferModal() {
   document.getElementById('referModal').classList.add('on');
   if(typeof window.loadReferralStats === 'function') window.loadReferralStats(u.phone);
 }
-function openHistoryModal() { document.getElementById('historyModal').classList.add('on'); if (typeof window.loadTransactionHistory === 'function') window.loadTransactionHistory(); }
+function openHistoryModal() { window._hxTab = 'all'; document.getElementById('historyModal').classList.add('on'); if (typeof window.loadTransactionHistory === 'function') window.loadTransactionHistory(); }
 async function _copyText(t){
   try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(t); return true; } }catch(e){}
   try{
@@ -5516,15 +5547,10 @@ async function loadDynamicConfig() {
         if(mbEl) mbEl.innerText = cfg.maxBorrowAmount;
       }
 
-      if(cfg.newUserBonus !== undefined && !(Number(cfg.newUserBonus) > 0)) {
-        // bonus switched off by the admin: drop the banner instead of advertising ৳0
-        const bb = document.getElementById('bonusBanner'); if(bb) bb.remove();
-      } else if(cfg.newUserBonus !== undefined) {
-        const bonusEl = document.getElementById('bonusBannerText');
-        if(bonusEl) bonusEl.innerHTML = `নতুন ইউজারদের জন্য <b style="color:var(--orange);">${cfg.newUserBonus} টাকা</b> সাইন-আপ বোনাস!`;
-      }
-
+      // offers that use {bonus} hide themselves when the bonus is 0, so ৳0 is never advertised
       window._newUserBonus = Number(cfg.newUserBonus) || 0;
+      window._bonusKnown = true;
+      if(window.renderOffers) window.renderOffers();
       if(cfg.orgFee !== undefined) ADMIN.orgFee = Number(cfg.orgFee);
       if(cfg.serviceCharge !== undefined) ADMIN.serviceCharge = Number(cfg.serviceCharge);
       if(cfg.processingFee !== undefined) ADMIN.processingFee = Number(cfg.processingFee);
@@ -5573,7 +5599,7 @@ async function loadDynamicConfig() {
         if(polEl) polEl.innerText = 'Updated ' + cfg.policyDate;
       }
 
-      // ক্যালকুলেটরের হার ও ফি আপডেট
+      // calculator rate and fees
       if(cfg.annualInterestRate) {
         const rateLbl = document.getElementById('calcRateLabel');
         if(rateLbl) rateLbl.innerText = cfg.annualInterestRate;
@@ -5582,7 +5608,7 @@ async function loadDynamicConfig() {
       const feeEl = document.getElementById('calcFee');
       if(feeEl) feeEl.innerText = '৳ ' + totalProcFee.toLocaleString();
 
-      // কাস্টমার সাপোর্ট লিঙ্ক আপডেট
+      // customer support links
       // support links: shown only when the admin has filled them in (no placeholder numbers)
       const waNum = String(cfg.contact?.whatsapp || '').replace(/\D/g,'').replace(/^0(?=1)/,'880').replace(/^(?=1[3-9]\d{8}$)/,'880');
       if(waNum.length >= 10) {
@@ -5602,7 +5628,7 @@ async function loadDynamicConfig() {
         if(rvEm) { rvEm.href = 'mailto:' + cfg.contact.email; rvEm.innerText = cfg.contact.email; }
       }
 
-      // প্রাইভেসি পলিসি ইমেইল ও ঠিকানা আপডেট
+      // privacy policy email and address
       if(cfg.policyEmail) {
         const polEm = document.getElementById('policyEmailLink');
         if(polEm) { polEm.href = 'mailto:' + cfg.policyEmail; polEm.innerText = cfg.policyEmail; }
@@ -6155,6 +6181,49 @@ window.renderHomeBlocks = async function(){
   const lt = document.getElementById('liveTitleTxt'); if(lt) lt.innerText = (cfg.live && cfg.live.title) || 'Live Transactions';
 };
 
+// offer banner at the top of the home screen (Admin → Home Page → Offers)
+let _osTimer = null;
+window.renderOffers = async function(){
+  const el = document.getElementById('bonusBanner'); if(!el) return;
+  const cfg = (await window.loadHomeCfg()).offers || {};
+  const def = [{ icon:'🎁', text:'নতুন ইউজারদের জন্য *{bonus} টাকা* সাইন-আপ বোনাস!', cta:'Sign up', action:'register', audience:'visitors', style:'orange', on:true }];
+  const items = Array.isArray(cfg.items) ? cfg.items : def;
+  const user = _getUser(), who = (user && user.phone) ? 'users' : 'visitors';
+  const bonus = Number(window._newUserBonus) || 0, now = Date.now();
+  const list = items.filter(x => x && x.on !== false && String(x.text || '').trim()
+    && (!x.audience || x.audience === 'all' || x.audience === who)
+    && (!x.start || new Date(x.start).getTime() <= now) && (!x.end || new Date(x.end).getTime() >= now)
+    && (!/\{bonus\}/.test(x.text) || (window._bonusKnown && bonus > 0)));
+  // called again on login, logout and config load: keep the running slideshow if nothing changed
+  const sig = JSON.stringify([cfg.on, cfg.rotate, list, bonus]);
+  if(sig === window._osSig) return;
+  window._osSig = sig;
+  clearInterval(_osTimer);
+  if(cfg.on === false || !list.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
+  const fmt = t => _escT(t).replace(/\{bonus\}/g, bonus.toLocaleString('en-US')).replace(/\*([^*]+)\*/g, '<b>$1</b>');
+  window._osList = list;
+  el.innerHTML = list.map((x, i) => `<div class="os-slide os-${['gold','glass'].includes(x.style) ? x.style : 'orange'}${i ? '' : ' on'}" role="button" tabindex="0" onclick="_osTap(${i})">
+      <div class="os-ic"><span>${_escT(x.icon || '🎁')}</span></div>
+      <div class="os-t">${fmt(x.text)}</div>
+      ${x.cta && x.action !== 'none' ? `<div class="os-cta">${_escT(x.cta)} <i class="fa-solid fa-chevron-right"></i></div>` : ''}
+    </div>`).join('') + (list.length > 1 ? `<div class="os-dots">${list.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : '');
+  el.style.display = 'block';
+  if(list.length > 1){
+    let k = 0;
+    _osTimer = setInterval(() => {
+      k = (k + 1) % list.length;
+      el.querySelectorAll('.os-slide').forEach((d, i) => d.classList.toggle('on', i === k));
+      el.querySelectorAll('.os-dots i').forEach((d, i) => d.classList.toggle('on', i === k));
+    }, Math.min(20, Math.max(2, Number(cfg.rotate) || 4)) * 1000);
+  }
+};
+window._osTap = function(i){
+  const x = (window._osList || [])[i]; if(!x) return;
+  if(x.action === 'register') nav(_getUser() ? 'screen-home' : 'screen-register');
+  else if(x.action === 'borrow') handleMainAction();
+  else if(x.action === 'link' && /^https?:\/\//i.test(x.link || '')) window.open(x.link, '_blank', 'noopener');
+};
+
 window.loadTicker = async function() {
   try {
     const cfg = (await window.loadHomeCfg()).notice || {};
@@ -6348,18 +6417,32 @@ window.loadTransactionHistory = async function() {
   try {
     const snap = await getDocs(query(collection(db, 'transactions'), where('uid', '==', user.phone)));
     if(snap.empty) { container.innerHTML = '<p style="text-align:center; color:var(--txt2); font-size:13px;">No transactions found.</p>'; return; }
-    const trxs = snap.docs.map(d => d.data()).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
-    container.innerHTML = trxs.map(t => `
-      <div class="notif-item" style="border-left:3px solid ${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">
-        <div class="notif-icon" style="background:${t.status === 'Verified' ? 'rgba(29,219,128,.1)' : 'rgba(255,140,66,.1)'}; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">
-          <i class="fa-solid fa-money-bill-transfer"></i>
-        </div>
-        <div class="notif-content"><h4 style="display:flex; justify-content:space-between;">৳ ${t.amount} <span style="font-size:10px; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">${t.status}</span></h4>
-          <p>TrxID: <strong>${t.trxId}</strong> via ${t.payMethod}${t.appId ? ` · for <strong>CU-${String(t.appId).slice(-6).toUpperCase()}</strong>` : ''}</p>
-          <div class="notif-date">${new Date(t.submittedAt).toLocaleString()}</div>
-        </div>
-      </div>`).join('');
+    window._hxList = snap.docs.map(d => d.data()).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
+    window.renderHistory();
   } catch(e) { container.innerHTML = '<p style="text-align:center; color:var(--red); font-size:13px;">Failed to load history.</p>'; }
+};
+window._hxTab = 'all';
+window.setHistoryTab = function(f){ window._hxTab = f; window.renderHistory(); };
+window.renderHistory = function(){
+  const container = document.getElementById('historyListContainer'); if(!container) return;
+  const all = window._hxList || [];
+  const st = t => t.status === 'Verified' || t.status === 'Rejected' ? t.status : 'Pending';
+  document.querySelectorAll('#hxTabs button').forEach(b => {
+    const f = b.dataset.f, n = f === 'all' ? all.length : all.filter(t => st(t) === f).length;
+    b.classList.toggle('on', f === window._hxTab);
+    b.querySelector('em').textContent = n ? n : '';
+  });
+  const list = window._hxTab === 'all' ? all : all.filter(t => st(t) === window._hxTab);
+  if(!list.length){ container.innerHTML = `<p class="hx-empty">${all.length ? 'No ' + _escT(window._hxTab.toLowerCase()) + ' payments.' : 'No transactions found.'}</p>`; return; }
+  const col = { Verified:['var(--p)','rgba(29,219,128,.1)','circle-check'], Rejected:['var(--red)','rgba(255,77,106,.1)','circle-xmark'], Pending:['var(--orange)','rgba(255,140,66,.1)','clock'] };
+  container.innerHTML = list.map(t => { const s = st(t), [c, bg, ic] = col[s]; return `
+      <div class="notif-item" style="border-left:3px solid ${c};">
+        <div class="notif-icon" style="background:${bg}; color:${c};"><i class="fa-solid fa-${ic}"></i></div>
+        <div class="notif-content"><h4 style="display:flex; justify-content:space-between;">৳ ${_escT(Number(t.amount||0).toLocaleString('en-US'))} <span class="hx-st" style="color:${c}; background:${bg};">${_escT(t.status || 'Pending')}</span></h4>
+          <p>TrxID: <strong>${_escT(t.trxId || '-')}</strong> via ${_escT(t.payMethod || '-')}${t.appId ? ` · for <strong>CU-${_escT(String(t.appId).slice(-6).toUpperCase())}</strong>` : ''}</p>
+          <div class="notif-date">${t.submittedAt ? new Date(t.submittedAt).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : ''}</div>
+        </div>
+      </div>`; }).join('');
 };
 
 // live activity: real approved loans and verified fee payments, chosen and shortened on the server
@@ -6412,6 +6495,7 @@ loadDynamicConfig();
 
 document.addEventListener("DOMContentLoaded", () => {
   if(typeof window.renderHomeBlocks === 'function') window.renderHomeBlocks();
+  if(typeof window.renderOffers === 'function') window.renderOffers();
   if(typeof window.loadTicker === 'function') window.loadTicker();
   if(typeof window.loadLiveFeed === 'function')    window.loadLiveFeed();
   if(typeof initHotOffer === 'function')           initHotOffer();

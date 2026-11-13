@@ -1,60 +1,60 @@
-# নিরাপদ লগইন চালু করার ধাপ (Firebase Authentication)
+# Steps to turn on secure login (Firebase Authentication)
 
-এই আপডেটের পর:
+After this update:
 
-- **Admin panel**-এ লগইন হবে email + password দিয়ে (Firebase Authentication)। কোডে বা database-এ কোনো পাসওয়ার্ড থাকে না।
-- **ইউজাররা** আগের মতোই ফোন নম্বর + পাসওয়ার্ড দিয়ে লগইন করবে। পাসওয়ার্ড Firebase নিজে hash করে রাখে, Firestore-এ আর থাকে না।
-- **Firestore rules** দিয়ে প্রত্যেক ইউজার শুধু নিজের data দেখতে পারবে। লোন approve, পেমেন্ট verify, balance বদলানো শুধু admin পারবে।
+- **Admin panel** login uses email + password (Firebase Authentication). No password is kept in the code or the database.
+- **Users** log in with phone number + password as before. Firebase stores the password as a hash; it is no longer kept in Firestore.
+- **Firestore rules** let each user see only their own data. Only an admin can approve loans, verify payments or change balances.
 
-> ⚠️ **ধাপগুলো এই ক্রমেই করবেন।** ধাপ ৫ (rules publish) সবার শেষে করবেন। নতুন সাইট deploy হওয়ার আগে rules publish করলে পুরনো সাইট কাজ করা বন্ধ করে দেবে।
+> ⚠️ **Do the steps in this order.** Do step 5 (publish rules) last. If you publish the rules before the new site is deployed, the old site stops working.
 
 ---
 
-## ধাপ ১ — Vercel-এ Firebase service account (না থাকলে)
+## Step 1 — Firebase service account in Vercel (if not added yet)
 
-অনলাইন পেমেন্টের জন্য এটা আগেই বসানোর কথা ছিল। এখন **লগইন আর রেজিস্ট্রেশনের জন্যও এটা লাগবে।**
+This was already needed for online payments. It is now **also needed for login and registration.**
 
-1. Firebase Console → ⚙️ **Project settings** → **Service accounts** → **Generate new private key**। একটা JSON ফাইল ডাউনলোড হবে।
-2. Vercel → আপনার project → **Settings → Environment Variables**।
-3. Name: `FIREBASE_SERVICE_ACCOUNT`। Value: JSON ফাইলের পুরো লেখা paste করুন। Environment: Production (আর চাইলে Preview)।
-4. Save করে **Redeploy** করুন।
+1. Firebase Console → ⚙️ **Project settings** → **Service accounts** → **Generate new private key**. A JSON file downloads.
+2. Vercel → your project → **Settings → Environment Variables**.
+3. Name: `FIREBASE_SERVICE_ACCOUNT`. Value: paste the full text of the JSON file. Environment: Production (and Preview if you like).
+4. Save, then **Redeploy**.
 
-## ধাপ ২ — Email/Password লগইন চালু করুন
+## Step 2 — Turn on Email/Password login
 
-Firebase Console → **Authentication** → (প্রথমবার হলে **Get started**) → **Sign-in method** → **Email/Password** → **Enable** → Save।
+Firebase Console → **Authentication** → (**Get started** the first time) → **Sign-in method** → **Email/Password** → **Enable** → Save.
 
-## ধাপ ৩ — Admin account বানান
+## Step 3 — Create the admin account
 
-1. **Authentication → Users → Add user**।
-2. আপনার admin email আর একটা শক্ত পাসওয়ার্ড দিন (কমপক্ষে ১২ অক্ষর)।
-3. তালিকায় নতুন user-এর **User UID** কপি করুন।
+1. **Authentication → Users → Add user**.
+2. Enter your admin email and a strong password (at least 12 characters).
+3. Copy the new user's **User UID** from the list.
 
-## ধাপ ৪ — সেই account-কে admin বানান
+## Step 4 — Make that account an admin
 
-1. Firebase Console → **Firestore Database → Data** → **Start collection**।
+1. Firebase Console → **Firestore Database → Data** → **Start collection**.
 2. Collection ID: `admins`
-3. Document ID: ধাপ ৩-এ কপি করা **UID** paste করুন।
-4. যেকোনো একটা field দিন, যেমন `role` = `admin` → Save।
+3. Document ID: paste the **UID** you copied in step 3.
+4. Add any one field, for example `role` = `admin` → Save.
 
-একাধিক admin লাগলে প্রত্যেকের জন্য ধাপ ৩ আর ৪ আবার করুন।
+For more admins, repeat steps 3 and 4 for each one.
 
-এখন `admin.html`-এ ওই email/password দিয়ে লগইন করে দেখুন।
+Now log in to `admin.html` with that email and password.
 
-## ধাপ ৫ — Security rules publish করুন (সবার শেষে)
+## Step 5 — Publish the security rules (last)
 
-1. নতুন সাইট deploy হয়েছে আর admin লগইন কাজ করছে কিনা নিশ্চিত হোন।
-2. Firebase Console → **Firestore Database → Rules**।
-3. এই repo-র `firestore.rules` ফাইলের পুরো লেখা paste করুন → **Publish**।
+1. Make sure the new site is deployed and admin login works.
+2. Firebase Console → **Firestore Database → Rules**.
+3. Paste the full text of this repo's `firestore.rules` file → **Publish**.
 
-## ধাপ ৬ — পুরনো admin পাসওয়ার্ড মুছে ফেলুন
+## Step 6 — Delete the old admin password
 
-Firestore → `admin` collection → `credentials` document → **Delete**। এখানে পুরনো admin পাসওয়ার্ড সাধারণ লেখা হিসেবে আছে, এটা আর লাগবে না।
+Firestore → `admin` collection → `credentials` document → **Delete**. It holds the old admin password as plain text and is no longer needed.
 
 ---
 
-## ইউজারদের জন্য কী বদলাবে
+## What changes for users
 
-- আপডেটের পর সবাইকে **একবার আবার লগইন** করতে হবে।
-- পুরনো ইউজার নিজের আগের পাসওয়ার্ড দিয়ে লগইন করলেই তার account নিজে থেকে নতুন নিরাপদ লগইনে চলে যাবে, আর Firestore থেকে তার পাসওয়ার্ড মুছে যাবে।
-- কারো পাসওয়ার্ড ৬ অক্ষরের কম হলে সে "contact support" মেসেজ পাবে। Admin panel → Users → ইউজার খুলে **Reset Login Password** দিয়ে নতুন পাসওয়ার্ড সেট করে দিন।
-- পাসওয়ার্ড ভুলে গেলেও admin একইভাবে নতুন পাসওয়ার্ড সেট করে দিতে পারবে। Admin কারো পাসওয়ার্ড দেখতে পারে না।
+- After the update, everyone has to **log in once more**.
+- When an existing user logs in with their old password, their account moves to the new secure login automatically, and their password is deleted from Firestore.
+- If someone's password is shorter than 6 characters, they see a "contact support" message. Open Admin panel → Users → the user → **Reset Login Password** to set a new one.
+- If a user forgets their password, the admin can set a new one the same way. Admins can never see anyone's password.
