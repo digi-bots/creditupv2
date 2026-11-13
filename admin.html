@@ -1427,6 +1427,7 @@ async function resetUserPw(){
   showL(false);
   if(!r.ok){toast(r.data.error||'Could not reset password','e');return;}
   document.getElementById('uNewPw').value='';
+  await _notifyUser(String(u.phone),'Password Changed 🔑','Our support team set a new login password for your account. If you did not ask for this, contact support right away.','warning');
   toast('Password updated ✓'); await logAct('User password reset','user',_userId);
 }
 async function delUser(id){ showL(true); const du=findById('users',id); if(du&&du.phone){ const r=await window._accountApi('adminDeleteLogin',{phone:String(du.phone)}); if(!r.ok) console.warn('delete login:',r.data.error); } await window._deleteDoc(id,'users'); showL(false); await logAct('User deleted','user',id); toast('User deleted','e'); loadUsers(); }
@@ -1522,6 +1523,7 @@ async function _notifyAccountStatus(phone, status, reason){
   if(status === 'active') await _notifyUser(phone, 'Account Active ✅', 'Your Credit Up account is active. You can use all services again.', 'info');
   else if(status === 'suspended') await _notifyUser(phone, 'Account Suspended', 'Your account has been suspended by our team.' + r + ' Please contact support.', 'warning');
   else if(status === 'inactive') await _notifyUser(phone, 'Account Inactive', 'Your account is marked inactive.' + r + ' Please contact support if this is a mistake.', 'warning');
+  else if(status === 'banned') await _notifyUser(phone, 'Account Blocked', 'Your Credit Up account has been blocked by our team.' + r + ' Please contact support.', 'warning');
 }
 async function _adjustBalance(phone, delta, why, ref){
   const users = await _get('users');

@@ -43,8 +43,34 @@ async function balanceState(d, phone, syncFlag) {
   // friends still needed for the next use (0 when free or when an admin lock is on)
   const needMore = (available || locked) ? 0 : (used + 1 - allowed) * BAL_FRIENDS_PER_USE - (active % BAL_FRIENDS_PER_USE);
   // keep the profile flag in step: the online payment reads it
-  if (syncFlag && (data.balanceAdjustUsed === true) === available) await d.ref.update({ balanceAdjustUsed: !available });
+  const wasUsed = data.balanceAdjustUsed === true;
+  if (syncFlag && wasUsed === available) {
+    await d.ref.update({ balanceAdjustUsed: !available });
+    // it was used before and is free again (new friends or an admin unlock): tell the user
+    if (available && wasUsed) await notifyUser(phone, 'Balance Offer Unlocked 🔓', 'You can use up to ৳100 of your Credit Up balance on your next fee payment again.', 'bonus');
+  }
   return { available, locked, used, allowed, extra, active, needMore, perUse: BAL_FRIENDS_PER_USE };
+}
+
+async function notifyUser(uid, title, message, type) {
+  try { await db().collection('user_notifications').add({ uid, title, message, type: type || 'info', createdAt: new Date().toISOString() }); }
+  catch (e) { console.warn('notify', e); }
+}
+
+// a friend joined with this user's link: tell them, plus any reward or balance-offer use it unlocked
+const REF_MILESTONES = { 20: '1st installment free (loans under ৳10,000)', 50: '৳5,000 loan, no need to pay back', 100: '৳50,000 cash reward' };
+async function notifyReferrer(ref) {
+  try {
+    const d = await findUserDoc(ref);
+    if (!d) return;
+    const refs = await db().collection('users').where('referredBy', '==', ref).get();
+    const active = refs.docs.filter(x => x.data().status === 'active').length;
+    const next = [20, 50, 100].find(n => n > active);
+    await notifyUser(ref, 'A Friend Joined! 👋', `A friend joined Credit Up with your invite link. You now have ${active} active friend${active === 1 ? '' : 's'}.`
+      + (next ? ` ${next - active} more to unlock: ${REF_MILESTONES[next]}.` : ''), 'bonus');
+    if (REF_MILESTONES[active]) await notifyUser(ref, 'Reward Unlocked! 🏆', `You reached ${active} active friends and unlocked: ${REF_MILESTONES[active]}. Contact support to claim it.`, 'bonus');
+    await balanceState(d, ref, true);   // sends "Balance Offer Unlocked" if 5 more friends freed it again
+  } catch (e) { console.warn('referrer notify', e); }
 }
 
 async function authUser(uid) { try { return await auth().getUser(uid); } catch (e) { return null; } }
@@ -104,6 +130,7 @@ const actions = {
     const notes = store.collection('user_notifications');
     await notes.add({ uid: phone, title: 'Welcome to Credit Up! 🎉', message: 'Your account is created successfully.', type: 'welcome', createdAt: new Date(Date.now() - 2000).toISOString() });
     if (bonus > 0) await notes.add({ uid: phone, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonus} sign-up bonus.`, type: 'bonus', createdAt: now });
+    if (u.referredBy) await notifyReferrer(u.referredBy);
     return [200, { ok: true, bonus }];
   },
 
@@ -179,7 +206,9 @@ const actions = {
       const extra = (Number(d.data().balanceExtraUses) || 0) + Math.max(0, st.used + 1 - st.allowed);
       await d.ref.update({ balanceExtraUses: extra, balanceLocked: false, balanceOfferBy: me.uid, balanceOfferAt: new Date().toISOString() });
     } else if (op === 'lock') {
+      const wasLocked = d.data().balanceLocked === true;
       await d.ref.update({ balanceLocked: true, balanceOfferBy: me.uid, balanceOfferAt: new Date().toISOString() });
+      if (!wasLocked) await notifyUser(phone, 'Balance Offer Paused', 'The "use balance for the fee" offer is switched off on your account for now. Please contact support if you have questions.', 'warning');
     } else if (op !== 'status') return [400, { error: 'Unknown action.' }];
     const fresh = await d.ref.get();
     return [200, await balanceState(fresh, phone, true)];
