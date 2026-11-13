@@ -27,28 +27,54 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .loader-ring{width:48px;height:48px;border:3px solid rgba(29,219,128,.15);border-top-color:var(--p);border-radius:50%;animation:spin .9s linear infinite}
 .loader-text{color:var(--txt2);font-size:13px;font-weight:500;letter-spacing:.5px}
 @keyframes spin{to{transform:rotate(360deg)}}
-#splash{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:99999;transition:opacity .7s ease,visibility .7s ease}
+#splash{--sp-bg:#fff;--sp-t:#0f172a;--sp-t2:#64748b;--sp-chip:#fff;--sp-line:#e2e8f0;--sp-acc:#16a34a;position:fixed;inset:0;background:var(--sp-bg);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:100001;transition:opacity .6s ease,visibility .6s ease;padding:24px 16px 60px;text-align:center;overflow:hidden}
+#splash::before{content:"";position:absolute;width:520px;height:520px;left:50%;top:38%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(34,197,94,.13),transparent 62%);pointer-events:none}
+#splash.sp-dark{--sp-bg:#070e1b;--sp-t:#f1f5f9;--sp-t2:#94a3b8;--sp-chip:#fff;--sp-line:#1e293b;--sp-acc:#22c55e}
+#splash.sp-brand{--sp-bg:linear-gradient(160deg,#064e26,#0a6e35 55%,#0b8a43);--sp-t:#fff;--sp-t2:rgba(255,255,255,.78);--sp-chip:#fff;--sp-line:rgba(255,255,255,.22);--sp-acc:#86efac}
+#splash.sp-brand::before{background:radial-gradient(circle,rgba(255,255,255,.12),transparent 62%)}
 #splash.out{opacity:0;visibility:hidden}
-.sp-logo{width:110px;height:110px;background:linear-gradient(145deg,#0a6e35,#0f9e4e);border-radius:28px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:18px;box-shadow:0 12px 40px rgba(10,110,53,.4);margin-bottom:18px}
+.sp-stage{position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.sp-ring{position:absolute;inset:20px;border-radius:34px;border:2px solid rgba(34,197,94,.45);animation:sp-ring 2.4s cubic-bezier(.2,.6,.3,1) infinite;opacity:0}
+.sp-ring.r2{animation-delay:1.2s}
+#splash.sp-noglow .sp-ring{display:none}
+@keyframes sp-ring{0%{transform:scale(.85);opacity:.9}100%{transform:scale(1.35);opacity:0}}
+.sp-logo{width:110px;height:110px;background:linear-gradient(145deg,#0a6e35,#0f9e4e);border-radius:28px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:18px;box-shadow:0 14px 40px rgba(10,110,53,.38);animation:sp-in .7s cubic-bezier(.2,.9,.3,1.2) both}
+.sp-logo::after{content:"";position:absolute;top:-20%;left:-60%;width:40%;height:140%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-18deg);animation:sp-shine 2.6s ease-in-out .8s infinite}
+@keyframes sp-in{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes sp-shine{0%{left:-60%}55%,100%{left:140%}}
 .sp-c{width:46px;height:46px;border:8px solid #fff;border-right-color:transparent;border-radius:50%;transform:rotate(-35deg)}
 .sp-bars{position:absolute;bottom:20px;display:flex;align-items:flex-end;gap:3px}
-.sp-bar{width:6px;background:#4ade80;border-radius:2px}
-.sp-bar:nth-child(1){height:10px}.sp-bar:nth-child(2){height:16px}.sp-bar:nth-child(3){height:24px}
+.sp-bar{width:6px;background:#4ade80;border-radius:2px;transform-origin:bottom;animation:sp-grow .6s ease-out both}
+.sp-bar:nth-child(1){height:10px;animation-delay:.35s}.sp-bar:nth-child(2){height:16px;animation-delay:.47s}.sp-bar:nth-child(3){height:24px;animation-delay:.59s}
+@keyframes sp-grow{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
 .sp-curve{position:absolute;bottom:0;width:100%;height:28px;background:#fff;border-top-left-radius:50% 100%;border-top-right-radius:50% 100%;display:flex;justify-content:center;align-items:center}
 .sp-curve-txt{font-size:12px;font-weight:800;color:#065c25;letter-spacing:.5px}
 .sp-curve-txt span{color:#22c55e}
-.sp-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:3px}
-.sp-sub{font-size:12px;color:#64748b;margin-bottom:18px;font-weight:500}
-.sp-pay-title{font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:700}
-.sp-pay-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:18px;padding:0 15px}
-.sp-logo-chip{background:#fff;border:1px solid #e2e8f0;padding:4px 10px;border-radius:6px;height:28px;display:flex;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.sp-logo-chip img{height:13px;width:auto;object-fit:contain}
-.sp-badge{display:flex;align-items:center;gap:6px;background:#f0fdf4;color:#15803d;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:14px;border:1px solid #bbf7d0}
-.sp-bar-wrap{width:130px;height:3px;background:#e2e8f0;border-radius:2px;overflow:hidden;margin-bottom:5px}
-.sp-progress{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);width:0%;animation:sp-load 3.5s ease-in-out forwards;border-radius:2px}
-@keyframes sp-load{0%{width:0%}50%{width:60%}100%{width:100%}}
-.sp-foot{position:absolute;bottom:22px;font-size:10px;color:#94a3b8;display:flex;align-items:center;gap:6px;font-weight:500}
-.sp-foot i{color:#22c55e}
+.sp-up{animation:sp-up .6s ease-out both}
+@keyframes sp-up{0%{transform:translateY(10px);opacity:0}100%{transform:none;opacity:1}}
+.sp-title{font-size:17px;font-weight:800;color:var(--sp-t);margin-bottom:4px;letter-spacing:.2px;animation-delay:.25s}
+.sp-sub{font-size:12.5px;color:var(--sp-t2);margin-bottom:22px;font-weight:500;max-width:300px;animation-delay:.35s}
+.sp-pay-title{font-size:10px;color:var(--sp-t2);text-transform:uppercase;letter-spacing:1.8px;margin-bottom:10px;font-weight:700;display:flex;align-items:center;gap:8px;animation-delay:.45s}
+.sp-pay-title::before,.sp-pay-title::after{content:"";width:22px;height:1px;background:var(--sp-line)}
+.sp-pay-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:20px;max-width:340px}
+.sp-chip{background:var(--sp-chip);border:1px solid var(--sp-line);border-radius:12px;height:44px;min-width:76px;padding:6px 12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(15,23,42,.08)}
+.sp-chip img{height:28px;max-width:92px;width:auto;object-fit:contain;display:block}
+.sp-chip span{font-size:12px;font-weight:800;color:#0f172a}
+.sp-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.1);color:var(--sp-acc);padding:6px 14px;border-radius:20px;font-size:11.5px;font-weight:700;margin-bottom:18px;border:1px solid rgba(34,197,94,.3);animation-delay:.6s}
+.sp-badge svg,.sp-foot svg{width:13px;height:13px;flex:none}
+.sp-load{height:22px;display:flex;align-items:center;justify-content:center;animation-delay:.7s}
+.sp-track{width:150px;height:4px;background:var(--sp-line);border-radius:4px;overflow:hidden;position:relative}
+.sp-fill{position:absolute;inset:0 auto 0 0;width:40%;border-radius:4px;background:linear-gradient(90deg,#22c55e,#4ade80,#16a34a);animation:sp-slide 1.25s ease-in-out infinite}
+#splash.done .sp-fill{animation:none;width:100%;left:0;transition:width .3s}
+@keyframes sp-slide{0%{left:-40%}100%{left:100%}}
+.sp-dots{display:flex;gap:7px}
+.sp-dots i{width:8px;height:8px;border-radius:50%;background:var(--sp-acc);animation:sp-dot 1s ease-in-out infinite}
+.sp-dots i:nth-child(2){animation-delay:.15s}.sp-dots i:nth-child(3){animation-delay:.3s}
+@keyframes sp-dot{0%,80%,100%{transform:scale(.55);opacity:.4}40%{transform:scale(1);opacity:1}}
+.sp-spin{width:24px;height:24px;border-radius:50%;border:3px solid var(--sp-line);border-top-color:var(--sp-acc);animation:spin .8s linear infinite}
+.sp-foot{position:absolute;bottom:22px;left:0;right:0;font-size:10.5px;color:var(--sp-t2);display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;animation-delay:.8s}
+.sp-foot svg{color:var(--sp-acc)}
+@media (prefers-reduced-motion:reduce){#splash *,#splash::before{animation:none!important}}
 .screen{display:none;padding:20px;min-height:100dvh;background:var(--bg);overflow-x:hidden}
 .screen.active{display:block;animation:screenIn .28s ease}
 @keyframes screenIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
@@ -62,7 +88,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .ticker{display:flex;white-space:nowrap;animation:ticker 20s linear infinite;padding-left:15px;will-change:transform}
 .ticker-item{font-size:12px;color:var(--txt);font-weight:500;margin-right:30px;display:inline-flex;align-items:center;gap:6px}
 .ticker-item i{color:var(--p);font-size:10px}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .home-hdr{background:linear-gradient(145deg,#063a1e 0%,#0a5c2f 50%,#0d7a40 100%);padding:20px 20px 48px;border-bottom-left-radius:28px;border-bottom-right-radius:28px;position:relative;overflow:hidden}
 .home-hdr::before{content:'';position:absolute;top:-80px;right:-80px;width:240px;height:240px;background:radial-gradient(circle,rgba(29,219,128,.18) 0%,transparent 70%);border-radius:50%;animation:orb 6s ease-in-out infinite}
 .home-hdr::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(29,219,128,.1) 0%,transparent 70%);border-radius:50%;animation:orb 8s ease-in-out infinite reverse}
@@ -80,6 +106,22 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #appBar .notif-btn{width:36px;height:36px;font-size:16px}
 #appBar .notif-badge{width:auto;min-width:17px;height:17px;border-radius:10px;top:-5px;right:-5px;font-size:9.5px;font-weight:800;color:#fff;align-items:center;justify-content:center;padding:0 4px;line-height:1}
 #appBar .ab-out{color:#ff8a8a}
+/* top bar: glass when scrolled, optional compact / hide-on-scroll (Admin → Home Page → Top Bar) */
+#appBar{--tb-rgb:6,58,30;--tb-a:.94;background:rgba(var(--tb-rgb),var(--tb-a));transition:background .3s,padding .25s,transform .3s,box-shadow .3s}
+#appBar.tb-dark{--tb-rgb:10,16,26;border-bottom-color:rgba(255,255,255,.08)}
+#appBar.tb-gold{--tb-rgb:18,16,10;border-bottom-color:rgba(255,215,106,.28)}
+#appBar.tb-gold h3{background:linear-gradient(90deg,#fff,#ffd76a,#fff);-webkit-background-clip:text;background-clip:text}
+#appBar.ab-scrolled{box-shadow:0 8px 24px rgba(0,0,0,.28);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%)}
+#appBar.ab-scrolled.tb-compact{padding-top:6px;padding-bottom:6px}
+#appBar.ab-scrolled.tb-compact .balance-pill,#appBar.ab-scrolled.tb-compact .ab-hi{display:none!important}
+#appBar.ab-hidden{transform:translateY(-110%)}
+#appBar .ab-av{width:38px;height:38px;flex:none;border-radius:50%;border:2px solid var(--p);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.22),rgba(255,255,255,.06));color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px rgba(29,219,128,.15);padding:0}
+#appBar.tb-gold .ab-av{border-color:#ffd76a;box-shadow:0 0 0 3px rgba(255,215,106,.15)}
+#appBar .ab-av b{font-size:14px;font-weight:900}
+#appBar .ab-back:not([style*="none"]) ~ .ab-av{display:none}
+#appBar .ab-hi{display:block;font-size:10.5px;font-weight:600;color:rgba(255,255,255,.72);line-height:1.2;margin-bottom:1px}
+#appBar .ab-hi:empty{display:none}
+#appBar.tb-no-av .ab-av,#appBar.tb-no-bal #balanceContainer,#appBar.tb-no-notif #notifBtnContainer,#appBar.tb-no-sup .ab-sup,#appBar.tb-no-out #logoutTopBtn{display:none!important}
 /* the bar above already has back + support: hide the per-screen copies */
 .screen .back-ic,.screen .dash-hdr .ic-headset,#screen-register .auth-hdr>.fa-arrow-left,.screen .auth-hdr .ic-headset{display:none !important}
 .screen .dash-hdr{justify-content:center}
@@ -151,6 +193,143 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .live-info p{font-size:10px;color:var(--txt2)}
 .live-amount{font-size:14px;font-weight:800;color:var(--p)}
 .partner-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--surf);border-radius:16px;border:1px solid var(--bord);padding:15px 10px}
+.partner-grid.pg-md{grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 12px}
+.partner-grid.pg-md .partner-item{height:58px;border-radius:12px;padding:8px}
+.partner-grid.pg-lg{grid-template-columns:repeat(2,1fr);gap:12px;padding:14px}
+.partner-grid.pg-lg .partner-item{height:72px;border-radius:14px;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.live-dot{color:var(--p);font-size:12px;font-weight:400;float:right}
+.live-dot i{font-size:6px;animation:wait-pulse 1.5s infinite}
+.live-avatar.fee{background:rgba(77,143,255,.12);color:#7aa8ff}
+.live-amount.fee{color:#7aa8ff}
+.live-info p .lk{display:inline-block;font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:10px;margin-right:5px;background:rgba(29,219,128,.12);color:var(--p)}
+.live-info p .lk.fee{background:rgba(77,143,255,.14);color:#7aa8ff}
+.live-feed.scrolling{overflow:hidden;position:relative}
+.live-feed .lf-track{animation:lfScroll var(--lf-dur,20s) linear infinite}
+.live-feed:hover .lf-track{animation-play-state:paused}
+@keyframes lfScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+.trust-block{margin-top:18px;padding:14px 12px 12px;border-radius:16px;background:linear-gradient(160deg,rgba(29,219,128,.07),rgba(255,255,255,.02));border:1px solid rgba(29,219,128,.18)}
+.trust-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.trust-item{display:flex;gap:9px;align-items:flex-start;padding:10px;border-radius:12px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.06)}
+.trust-item i{width:30px;height:30px;flex:0 0 30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(29,219,128,.14);color:var(--p);font-size:13px}
+.trust-item b{display:block;font-size:12px;color:var(--txt);line-height:1.25}
+.trust-item span{display:block;font-size:10.5px;color:var(--txt2);line-height:1.35;margin-top:2px}
+.trust-note{text-align:center;font-size:10.5px;color:var(--txt3);margin-top:10px}
+.trust-note:empty{display:none}
+.ticker-item a{color:inherit;text-decoration:underline}
+.ticker-item.t-offer i{color:#ffd76a}.ticker-item.t-warning i{color:var(--orange)}.ticker-item.t-urgent i{color:var(--red)}.ticker-item.t-success i{color:var(--p)}
+.ticker-item .tk-pin{font-size:9px;font-weight:800;color:#1a1405;background:#ffd76a;padding:1px 5px;border-radius:6px}
+#appBar .ab-av{position:relative}
+#appBar.ab-alert .ab-av::after{content:"";position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:#ff4d6a;border:2px solid #0b3a20;box-shadow:0 0 0 0 rgba(255,77,106,.7);animation:ab-ping 1.8s infinite}
+#appBar.ab-alert.tb-no-av h3::after{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff4d6a;margin-left:6px;vertical-align:middle;-webkit-text-fill-color:initial}
+@keyframes ab-ping{0%{box-shadow:0 0 0 0 rgba(255,77,106,.7)}70%{box-shadow:0 0 0 7px rgba(255,77,106,0)}100%{box-shadow:0 0 0 0 rgba(255,77,106,0)}}
+.pf-todo{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:14px;margin-bottom:10px;background:linear-gradient(100deg,rgba(255,77,106,.16),rgba(255,140,66,.12));border:1px solid rgba(255,77,106,.4);text-align:left}
+.pf-todo .pf-ic{background:rgba(255,77,106,.15);color:#ff6b84}
+.pf-todo b{display:block;font-size:13.5px;color:#fff}.pf-todo small{display:block;font-size:11.5px;color:var(--txt2);line-height:1.35;margin-top:2px}
+.pf-todo button{flex:none;border:0;border-radius:18px;padding:8px 12px;font-weight:800;font-size:12px;background:#ff4d6a;color:#fff;cursor:pointer;font-family:inherit}
+.pf-sec2 .pf-pw{display:none;margin-top:10px}.pf-sec2.open .pf-pw{display:block}
+.pf-pw label{display:block;font-size:11.5px;color:var(--txt2);margin:8px 0 4px}
+.pf-pwf{position:relative}.pf-pwf input{width:100%;height:42px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25);color:#fff;padding:0 40px 0 12px;font-size:14px;font-family:inherit;box-sizing:border-box}
+.pf-pwf input:focus{outline:none;border-color:var(--p)}.pf-pwf input.bad{border-color:var(--red)}
+.pf-pwf button{position:absolute;right:4px;top:4px;width:34px;height:34px;border:0;background:none;color:var(--txt2);cursor:pointer}
+.pf-pwmeter{display:flex;gap:4px;margin-top:6px}.pf-pwmeter i{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.08)}
+.pf-pwmeter.s1 i:nth-child(1){background:var(--red)}.pf-pwmeter.s2 i:nth-child(-n+2){background:var(--orange)}.pf-pwmeter.s3 i{background:var(--p)}
+.pf-pwmsg{font-size:12px;margin-top:8px;min-height:16px}.pf-pwmsg.err{color:var(--red)}.pf-pwmsg.ok{color:var(--p)}
+#profileModal .mc > *{flex-shrink:0}
+.pf-head{text-align:center;margin:2px 0 14px}
+.pf-av{width:68px;height:68px;margin:0 auto 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;background:radial-gradient(circle at 30% 30%,rgba(29,219,128,.5),rgba(10,110,53,.6));border:2px solid var(--p);box-shadow:0 0 0 5px rgba(29,219,128,.12),0 10px 24px rgba(0,0,0,.35)}
+.pf-av b{font-size:28px;font-weight:900}
+.pf-name{font-size:18px;font-weight:900;color:#fff}
+.pf-phone{font-size:13px;color:var(--txt2);margin-top:2px}
+.pf-chips{display:flex;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.pf-chip{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--txt2);display:inline-flex;gap:5px;align-items:center}
+.pf-chip.ok{color:var(--p);border-color:rgba(29,219,128,.35);background:rgba(29,219,128,.08)}
+.pf-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.pf-stat{padding:10px 6px;border-radius:13px;text-align:center;background:var(--bg2);border:1px solid var(--bord);cursor:pointer}
+.pf-stat small{display:block;font-size:10.5px;color:var(--txt2);margin-bottom:3px}.pf-stat b{font-size:15px;color:#fff;white-space:nowrap}
+.pf-card{background:var(--bg2);border:1px solid var(--bord);border-radius:15px;padding:12px;margin-bottom:10px;text-align:left}
+.pf-ct{display:flex;align-items:center;gap:10px}.pf-ct > div:nth-child(2){flex:1;min-width:0}
+.pf-ct b{display:block;font-size:14px;color:#fff}.pf-ct small{display:block;font-size:11.5px;color:var(--txt2);margin-top:2px;line-height:1.35}
+.pf-ic{width:38px;height:38px;flex:none;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(29,219,128,.1);color:var(--p);font-size:15px}
+.pf-ring{--pc:0;width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--p) calc(var(--pc)*1%),rgba(255,255,255,.08) 0);position:relative}
+.pf-ring::before{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--bg2)}
+.pf-ring span{position:relative;font-size:11.5px;font-weight:900;color:#fff}
+.pf-secs{display:flex;flex-direction:column;gap:6px;margin:12px 0 4px}
+.pf-sec{border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.02);cursor:pointer}
+.pf-sh{display:flex;align-items:center;gap:8px;padding:9px 10px;font-size:12.5px;font-weight:700;color:#fff}
+.pf-sh > span{flex:1;min-width:0}
+.pf-si{width:16px;text-align:center;color:var(--txt2)}.pf-sec.ok .pf-si{color:var(--p)}
+.pf-sh em{font-style:normal;font-size:10.5px;font-weight:800;padding:3px 7px;border-radius:9px;display:flex;gap:4px;align-items:center;white-space:nowrap}
+.pf-sh em.ok{color:var(--p);background:rgba(29,219,128,.1)}.pf-sh em.no{color:var(--orange);background:rgba(255,140,66,.12)}
+.pf-chev{font-size:10px;color:var(--txt2);transition:.2s}.pf-sec.open .pf-chev{transform:rotate(180deg)}
+.pf-sb{display:none;padding:0 10px 8px 34px}.pf-sec.open .pf-sb{display:block}
+.pf-f{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;padding:4px 0;border-top:1px dashed rgba(255,255,255,.06)}
+.pf-f span{color:var(--txt2)}.pf-f b{color:#fff;font-weight:700;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}.pf-f b.no{color:var(--orange)}
+.pf-go{margin-top:10px;height:46px;font-size:14px}
+.pf-st{font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:9px;white-space:nowrap}
+.pf-st.ok{color:var(--p);background:rgba(29,219,128,.1)}.pf-st.bad{color:var(--red);background:rgba(255,77,106,.1)}.pf-st.wait{color:var(--orange);background:rgba(255,140,66,.12)}
+.pf-mini{flex:none;font-size:12px;font-weight:800;padding:7px 12px;border-radius:18px;border:0;background:var(--p);color:#04160c;cursor:pointer;font-family:inherit}
+.pf-invrow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;text-align:center}
+.pf-invrow div{padding:8px 4px;border-radius:10px;background:rgba(255,255,255,.03)}
+.pf-invrow b{display:block;font-size:16px;color:#fff}.pf-invrow small{font-size:10px;color:var(--txt2)}
+.hx-guest{text-align:center;padding:14px 6px 4px}
+.hx-g-ic{width:62px;height:62px;margin:4px auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--p);background:rgba(29,219,128,.1);border:1px solid rgba(29,219,128,.35)}
+.hx-guest h4{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px}
+.hx-guest p{font-size:12.5px;color:var(--txt2);line-height:1.55;margin-bottom:14px}
+.hx-g-steps{display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.hx-g-steps span{font-size:11px;font-weight:700;padding:5px 9px;border-radius:14px;display:flex;gap:5px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.hx-g-steps span:nth-child(1) i{color:var(--orange)}.hx-g-steps span:nth-child(2) i{color:var(--p)}.hx-g-steps span:nth-child(3) i{color:var(--red)}
+.hx-g-reg{background:none;border:0;color:var(--p);font-weight:700;font-size:13px;margin-top:10px;cursor:pointer;font-family:inherit}
+.hot-offer-floating.ho-gold{background:linear-gradient(90deg,#d99a1e,#ffcf5a);box-shadow:0 10px 30px rgba(217,154,30,.4),0 0 0 2px rgba(255,255,255,.25) inset}
+.hot-offer-floating.ho-green{background:linear-gradient(90deg,#0b8a43,#1ddb80);box-shadow:0 10px 30px rgba(29,219,128,.35),0 0 0 2px rgba(255,255,255,.2) inset}
+.hot-offer-floating.ho-purple{background:linear-gradient(90deg,#6d3bd8,#b05cff);box-shadow:0 10px 30px rgba(140,80,255,.4),0 0 0 2px rgba(255,255,255,.2) inset}
+#fomoModal .fomo-txt b{color:var(--orange)}
+#fomoModal .fm-gold .fomo-txt b{color:#ffcf5a}#fomoModal .fm-green .fomo-txt b{color:var(--p)}#fomoModal .fm-purple .fomo-txt b{color:#c89bff}
+#fomoModal .fm-gold .premium-danger,#fomoModal .fm-gold .fomo-progress-fill{background:linear-gradient(135deg,#d99a1e,#ffcf5a)!important;color:#1a1405!important}
+#fomoModal .fm-green .premium-danger,#fomoModal .fm-green .fomo-progress-fill{background:linear-gradient(135deg,#0b8a43,#1ddb80)!important}
+#fomoModal .fm-purple .premium-danger,#fomoModal .fm-purple .fomo-progress-fill{background:linear-gradient(135deg,#6d3bd8,#b05cff)!important}
+#fomoModal .fm-gold #offerCount,#fomoModal .fm-gold .fomo-warning{color:#ffcf5a!important}#fomoModal .fm-green #offerCount,#fomoModal .fm-green .fomo-warning{color:var(--p)!important}#fomoModal .fm-purple #offerCount,#fomoModal .fm-purple .fomo-warning{color:#c89bff!important}
+.hx-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:10px 0 6px;margin-right:16px}
+.hx-tabs::-webkit-scrollbar{display:none}
+.hx-tabs button{min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;padding:7px 2px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--txt2);font-size:11px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;white-space:nowrap}
+.hx-tabs button em{font-style:normal;font-size:9.5px;min-width:15px;padding:1px 4px;border-radius:9px;background:rgba(255,255,255,.1)}
+.hx-tabs button em:empty{display:none}
+.hx-tabs button.on{background:var(--p);border-color:var(--p);color:#04160c}
+.hx-tabs button.on em{background:rgba(0,0,0,.18)}
+.hx-st{font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;margin-left:auto}
+#historyListContainer .notif-content{flex:1;min-width:0}#historyListContainer h4{width:100%;align-items:center;gap:8px}
+.hx-empty{text-align:center;color:var(--txt2);font-size:13px;padding:30px 10px}
+.offer-strip{position:relative;z-index:2;width:100%;max-width:380px;margin:0 auto 18px}
+.os-slide{display:none;align-items:center;gap:10px;padding:9px 9px 9px 10px;border-radius:14px;text-align:left;cursor:pointer;background:linear-gradient(100deg,rgba(255,140,66,.26),rgba(255,77,106,.2));border:1px solid rgba(255,176,96,.55);box-shadow:0 6px 18px rgba(0,0,0,.18);-webkit-tap-highlight-color:transparent}
+.os-slide.on{display:flex;animation:os-in .45s ease}
+.os-slide.os-gold{background:linear-gradient(100deg,rgba(255,215,106,.28),rgba(227,178,60,.18));border-color:rgba(255,215,106,.6)}
+.os-slide.os-glass{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28);backdrop-filter:blur(6px)}
+@keyframes os-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.os-ic{flex:none;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1}
+.os-ic span{display:inline-block;animation:shake 2.4s infinite cubic-bezier(.36,.07,.19,.97) both}
+.os-t{flex:1;min-width:0;font-size:13px;font-weight:700;color:#fff;line-height:1.35;word-break:break-word}
+.os-t b{color:#ffc773;font-weight:900}
+.os-gold .os-t b{color:#ffe08a}
+.os-cta{flex:none;font-size:11px;font-weight:800;color:#1a1405;background:#ffd76a;padding:7px 11px;border-radius:20px;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.os-dots{display:flex;gap:4px;justify-content:center;margin-top:7px}
+.os-dots i{width:5px;height:5px;border-radius:3px;background:rgba(255,255,255,.35);transition:.3s}
+.os-dots i.on{width:14px;background:#fff}
+@media(max-width:360px){.os-t{font-size:12px}.os-cta{padding:6px 9px}}
+.ticker-wrap.tk-pausable:hover .ticker,.ticker-wrap.tk-pausable:active .ticker{animation-play-state:paused}
+.ticker-wrap.tk-gold{background:rgba(255,200,60,.12);border-bottom-color:rgba(255,200,60,.3)}.tk-gold .ticker-title{background:#e3b23c;color:#1a1405;box-shadow:0 2px 8px rgba(227,178,60,.35)}
+.ticker-wrap.tk-blue{background:rgba(60,140,255,.11);border-bottom-color:rgba(60,140,255,.3)}.tk-blue .ticker-title{background:#3c8cff;box-shadow:0 2px 8px rgba(60,140,255,.35)}
+.ticker-wrap.tk-red{background:rgba(255,80,80,.1);border-bottom-color:rgba(255,80,80,.3)}.tk-red .ticker-title{background:#ff5050;box-shadow:0 2px 8px rgba(255,80,80,.35)}
+.ticker-wrap.tk-dark{background:#11161c;border-bottom-color:#222b35}.tk-dark .ticker-item{color:#e8edf2}.tk-dark .ticker-title{background:#2a3440}
+.tk-sm .ticker-item{font-size:11px}.tk-lg .ticker-item{font-size:14px}.tk-lg{padding:10px 0}
+.tk-close{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.45);border:0;color:#fff;font-size:12px;cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center}
+.ref-entry{margin:0 0 14px;padding:12px;border-radius:14px;background:rgba(255,215,106,.07);border:1px solid rgba(255,215,106,.3)}
+.ref-entry .re-t{font-size:13px;font-weight:800;color:var(--txt);display:flex;gap:7px;align-items:center}
+.ref-entry .re-t i{color:#ffd76a}
+.ref-entry .re-s{font-size:11.5px;color:var(--txt2);margin:3px 0 9px;line-height:1.45}
+.ref-entry .re-row{display:flex;gap:8px}
+.ref-entry input{flex:1;min-width:0;background:var(--bg2);border:1px solid var(--bord);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;font-family:inherit}
+.ref-entry button{border:0;border-radius:10px;padding:0 14px;font-weight:800;font-family:inherit;color:#1a1405;background:linear-gradient(135deg,#ffd76a,#f5b72f);cursor:pointer}
+.ref-entry .re-msg{font-size:11.5px;margin-top:7px}
+.ref-entry .re-msg.ok{color:var(--p)}.ref-entry .re-msg.err{color:var(--red)}
 .partner-item{background:#fff;border-radius:8px;padding:6px;display:flex;justify-content:center;align-items:center;height:40px;overflow:hidden}
 .partner-item img{max-width:100%;max-height:100%;object-fit:contain}
 .pol-top{display:flex;gap:12px;align-items:center;padding:18px 16px 4px}
@@ -1930,10 +2109,10 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 
 <div class="hot-offer-floating" id="hotOfferBanner" onclick="onHotOfferTap()">
   <div class="hot-offer-content">
-    <span class="hot-icon">🔥</span>
+    <span class="hot-icon" id="hotIcon">🔥</span>
     <div class="hot-text">
-      <h4>SUPER HOT OFFER!</h4>
-      <p>প্রথম ৫০ জন লাকি ইউজারের জন্য <b>১ম মাসের কিস্তি ফ্রি!</b></p>
+      <h4 id="hotTitle">SUPER HOT OFFER!</h4>
+      <p id="hotText">First 50 lucky users get the <b>1st month's installment free!</b></p>
     </div>
     <button class="hot-close" onclick="event.stopPropagation(); closeHotOffer();"><i class="fa-solid fa-xmark"></i></button>
   </div>
@@ -1942,15 +2121,15 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 <div class="modal-overlay premium-popup" id="fomoModal">
   <div class="mc pp" style="max-width: 360px; text-align: center;">
     <button class="popup-close" aria-label="Close" onclick="closeFomoModal()"><i class="fa-solid fa-xmark"></i></button>
-    <div class="fomo-fire-icon">🔥</div>
-    <h2 style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">লাকি ৫০ জনের অফার!</h2>
-    <p style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;">প্রথম ৫০ জন ইউজারের মধ্যে থাকলে আপনার লোনের <b style="color:var(--orange);">১ম মাসের কিস্তি সম্পূর্ণ ফ্রি!</b> <br><span style="font-size: 11px; color: var(--p);">(১ম মাসের কিস্তি কোম্পানিই বহন করবে, ২য় মাস থেকে পরিশোধ শুরু)</span></p>
-    <div class="fomo-progress-wrap">
-      <div class="fomo-progress-header"><span>অফারটি নেওয়া হয়েছে</span><span style="color: var(--red); font-weight: 800;" id="offerCount">…/৫০ জন</span></div>
+    <div class="fomo-fire-icon" id="fomoIcon">🔥</div>
+    <h2 id="fomoTitle" style="font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px;">Lucky 50 Offer!</h2>
+    <p class="fomo-txt" style="font-size: 13px; color: var(--txt2); margin-bottom: 15px; line-height: 1.5;"><span id="fomoText">Be one of the first 50 users and your loan's <b>1st month installment is completely free!</b></span> <br><span id="fomoNote" style="font-size: 11px; color: var(--p);">(We pay the 1st installment. Your payments start from the 2nd month.)</span></p>
+    <div class="fomo-progress-wrap" id="fomoCounter">
+      <div class="fomo-progress-header"><span id="fomoCountLbl">Offers claimed</span><span style="color: var(--red); font-weight: 800;" id="offerCount">…/50</span></div>
       <div class="fomo-progress-track"><div class="fomo-progress-fill" id="offerFill" style="width: 0%;"></div></div>
       <p class="fomo-warning" id="offerLeft"><i class="fa-solid fa-triangle-exclamation"></i> …</p>
     </div>
-    <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> এখনই অফারটি নিন</button>
+    <button class="mbtn-full premium-danger" style="font-size:16px; margin-bottom:12px;" onclick="claimFomoOffer()"><i class="fa-solid fa-bolt"></i> <span id="fomoBtn">Claim the offer now</span></button>
   </div>
 </div>
 
@@ -2200,6 +2379,12 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 <div class="modal-overlay premium-popup" id="historyModal">
   <div class="mc pp" style="max-width: 380px;">
     <div class="pp-bar"><span class="pp-bar-title">Transaction History</span><button class="popup-close" aria-label="Close" onclick="closeModal('historyModal')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="hx-tabs" id="hxTabs" role="tablist">
+      <button class="on" data-f="all" onclick="setHistoryTab('all')">All<em></em></button>
+      <button data-f="Pending" onclick="setHistoryTab('Pending')">Pending<em></em></button>
+      <button data-f="Verified" onclick="setHistoryTab('Verified')">Verified<em></em></button>
+      <button data-f="Rejected" onclick="setHistoryTab('Rejected')">Rejected<em></em></button>
+    </div>
     <div class="notif-list" id="historyListContainer"></div>
   </div>
 </div>
@@ -2214,11 +2399,53 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 <div class="modal-overlay premium-popup" id="profileModal">
   <div class="mc pp">
     <button class="popup-close" aria-label="Close" onclick="closeModal('profileModal')"><i class="fa-solid fa-xmark"></i></button>
-    <div class="m-icon m-ic-suc"><i class="fa-solid fa-user"></i></div>
-    <div class="m-title">My Profile</div>
-    <div style="background:var(--bg2); border-radius:14px; padding:15px; margin:15px 0; border:1px solid var(--bord);">
-      <div class="detail-row"><div class="detail-lbl">Phone Number</div><div class="detail-val" id="profPhone">-</div></div>
-      <div class="detail-row"><div class="detail-lbl">Account Status</div><div class="detail-val" style="color:var(--p);">Active</div></div>
+    <div class="pf-head">
+      <div class="pf-av" id="pfAv"><i class="fa-solid fa-user"></i></div>
+      <div class="pf-name" id="pfName">My Profile</div>
+      <div class="pf-phone" id="profPhone">-</div>
+      <div class="pf-chips"><span class="pf-chip ok"><i class="fa-solid fa-circle-check"></i>Active</span><span class="pf-chip" id="pfSince" style="display:none"></span></div>
+    </div>
+    <div class="pf-stats">
+      <div class="pf-stat" onclick="toggleBalanceVisibility(); _pfStats()"><small>Balance</small><b id="pfBal">৳ ••••</b></div>
+      <div class="pf-stat"><small>Applications</small><b id="pfApps">0</b></div>
+      <div class="pf-stat" onclick="closeModal('profileModal'); openReferModal()"><small>Active invites</small><b id="pfInv">–</b></div>
+    </div>
+    <div class="pf-todo" id="pfTodo" style="display:none"></div>
+    <div class="pf-card" id="pfLatest" style="display:none"></div>
+    <div class="pf-card">
+      <div class="pf-ct"><div class="pf-ring" id="pfRing" style="--pc:0"><span id="pfPct">0%</span></div>
+        <div><b>Loan profile</b><small id="pfSum">Checking your details…</small></div></div>
+      <div class="pf-secs" id="pfSecs"></div>
+      <button class="mbtn-full pf-go" id="pfGo" onclick="closeModal('profileModal'); handleMainAction()"><i class="fa-solid fa-pen-to-square"></i> <span>Complete my profile</span></button>
+    </div>
+    <div class="pf-card pf-sec2" id="pfSec">
+      <div class="pf-ct"><div class="pf-ic"><i class="fa-solid fa-lock"></i></div>
+        <div><b>Login password</b><small>Change the password you use to log in</small></div>
+        <button class="pf-mini" id="pfPwToggle" onclick="_pfPwOpen()">Change</button></div>
+      <div class="pf-pw">
+        <label for="pwCur">Current password</label>
+        <div class="pf-pwf"><input type="password" id="pwCur" autocomplete="current-password"><button type="button" onclick="_pfEye('pwCur',this)" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div>
+        <label for="pwNew">New password</label>
+        <div class="pf-pwf"><input type="password" id="pwNew" autocomplete="new-password" oninput="_pfMeter()"><button type="button" onclick="_pfEye('pwNew',this)" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div>
+        <div class="pf-pwmeter" id="pwMeter"><i></i><i></i><i></i></div>
+        <label for="pwNew2">Type the new password again</label>
+        <div class="pf-pwf"><input type="password" id="pwNew2" autocomplete="new-password"><button type="button" onclick="_pfEye('pwNew2',this)" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div>
+        <div class="pf-pwmsg" id="pwMsg">At least 8 characters, with letters and numbers.</div>
+        <button class="mbtn-full pf-go" id="pwSave" onclick="_pfPwSave()"><i class="fa-solid fa-key"></i> Save new password</button>
+      </div>
+    </div>
+    <div class="pf-card pf-inv">
+      <div class="pf-ct"><div class="pf-ic"><i class="fa-solid fa-user-group"></i></div>
+        <div><b>Invites</b><small id="pfInvSub">Friends who joined with your code</small></div>
+        <button class="pf-mini" onclick="closeModal('profileModal'); openReferModal()">Invite</button></div>
+      <div class="pf-invrow"><div><b id="pfInvTotal">–</b><small>Joined</small></div><div><b id="pfInvActive">–</b><small>Active</small></div><div><b id="pfInvNext">–</b><small>To next reward</small></div></div>
+      <div class="detail-row" id="profRefRow" style="display:none;margin-top:8px"><div class="detail-lbl">Invited by</div><div class="detail-val" id="profRefBy">-</div></div>
+    </div>
+    <div class="ref-entry" id="refEntry" style="display:none">
+      <div class="re-t"><i class="fa-solid fa-user-plus"></i>Have an invite code?</div>
+      <div class="re-s" id="refEntrySub">If a friend invited you, add their code so they get credit. You can add it only once.</div>
+      <div class="re-row"><input id="refEntryCode" inputmode="numeric" maxlength="14" placeholder="Friend's code, e.g. 017XXXXXXXX"><button id="refEntryBtn" onclick="submitRefCode()">Add</button></div>
+      <div class="re-msg" id="refEntryMsg"></div>
     </div>
     <button class="mbtn-full premium-danger" style="margin-bottom:10px;" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
   </div>
@@ -2330,15 +2557,75 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 </div>
 
 <div id="splash">
-  <div class="sp-logo"><div class="sp-c"></div><div class="sp-bars"><div class="sp-bar"></div><div class="sp-bar"></div><div class="sp-bar"></div></div><div class="sp-curve"><div class="sp-curve-txt">Credit <span>Up</span></div></div></div>
-  <div class="sp-title">CreditUp – Smart Credit &amp; Loans</div>
-  <div class="sp-sub" id="splashSubtitle">...</div>
-  <div class="sp-pay-title">Supported Payments</div>
-  <div class="sp-pay-row"><div class="sp-logo-chip"><img src="https://premiumedutools.com/uploads/payment.png" alt="payments" style="height:18px;width:auto"></div><div class="sp-logo-chip"><i class="fa-solid fa-dollar-sign" style="color:#15803d;font-size:13px;font-weight:800;margin-right:2px"></i><span style="font-size:11px;font-weight:800;color:#15803d">USD</span></div></div>
-  <div class="sp-badge"><i class="fa-solid fa-shield-check"></i> 100% Authentic &amp; Verified</div>
-  <div class="sp-bar-wrap"><div class="sp-progress"></div></div>
-  <div class="sp-foot"><i class="fa-solid fa-lock"></i> 256-bit SSL Encrypted | Safe &amp; Secure</div>
+  <div class="sp-stage"><div class="sp-ring"></div><div class="sp-ring r2"></div><div class="sp-logo"><div class="sp-c"></div><div class="sp-bars"><div class="sp-bar"></div><div class="sp-bar"></div><div class="sp-bar"></div></div><div class="sp-curve"><div class="sp-curve-txt">Credit <span>Up</span></div></div></div></div>
+  <div class="sp-title sp-up" id="spTitle"></div>
+  <div class="sp-sub sp-up" id="splashSubtitle"></div>
+  <div id="spPay"></div>
+  <div class="sp-badge sp-up" id="spBadge"></div>
+  <div class="sp-load sp-up" id="spLoad"></div>
+  <div class="sp-foot sp-up" id="spFoot"></div>
 </div>
+<script>
+/* Loading screen. Admin sets it in Home Page > Loading Screen (siteConfig/home.splash).
+   The last saved settings are kept in localStorage, so they apply before Firebase loads. */
+(function(){
+  var W = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
+  var DEF = { on:true, theme:'light', glow:true, showTitle:true, title:'CreditUp – Smart Credit & Loans',
+    showSub:true, sub:'', showPay:true, payTitle:'Supported Payments',
+    pays:[ {name:'bKash', logo:W+'4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png', on:true},
+           {name:'Nagad', logo:W+'c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png', on:true},
+           {name:'Rocket', logo:W+'2/28/Rocket_Logo.svg/250px-Rocket_Logo.svg.png', on:true} ],
+    showBadge:true, badge:'100% Authentic & Verified', loader:'bar',
+    showFoot:true, foot:'256-bit SSL Encrypted | Safe & Secure', minSec:1.5, maxSec:5, once:false };
+  window.CU_SPLASH_DEF = DEF;
+  var SHIELD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>';
+  var LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
+  function esc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function merge(c){ var o = {}, k; for(k in DEF) o[k] = DEF[k]; if(c && typeof c === 'object') for(k in c) if(c[k] !== undefined && c[k] !== null) o[k] = c[k]; return o; }
+  function show(id, on){ var e = document.getElementById(id); if(e) e.style.display = on ? '' : 'none'; return e; }
+  window._paintSplash = function(c){
+    var s = document.getElementById('splash'); if(!s) return;
+    c = merge(c); window._splashCfg = c;
+    s.className = (s.classList.contains('out') ? 'out ' : '') + 'sp-' + (['dark','brand'].indexOf(c.theme) > -1 ? c.theme : 'light') + (c.glow === false ? ' sp-noglow' : '');
+    var t = show('spTitle', c.showTitle !== false && c.title); if(t) t.textContent = c.title;
+    var sub = c.sub || window._mainSplashSub || 'Smart credit, made simple';
+    var st = show('splashSubtitle', c.showSub !== false); if(st) st.textContent = sub;
+    var pays = (Array.isArray(c.pays) ? c.pays : []).filter(function(p){ return p && p.on !== false && (p.logo || p.name); });
+    var pb = show('spPay', c.showPay !== false && pays.length);
+    if(pb) pb.innerHTML = (c.payTitle ? '<div class="sp-pay-title sp-up">' + esc(c.payTitle) + '</div>' : '') +
+      '<div class="sp-pay-row">' + pays.map(function(p, i){
+        var logo = /^https:\/\//i.test(p.logo || '') ? p.logo : '';
+        return '<div class="sp-chip sp-up" style="animation-delay:' + (0.5 + i * 0.08).toFixed(2) + 's">' +
+          (logo ? '<img src="' + esc(logo) + '" alt="' + esc(p.name) + '" decoding="async" onerror="this.outerHTML=\'<span>' + esc(esc(p.name)) + '</span>\'">' : '<span>' + esc(p.name) + '</span>') + '</div>';
+      }).join('') + '</div>';
+    var b = show('spBadge', c.showBadge !== false && c.badge); if(b) b.innerHTML = SHIELD + esc(c.badge);
+    var l = show('spLoad', c.loader !== 'none');
+    if(l) l.innerHTML = c.loader === 'dots' ? '<div class="sp-dots"><i></i><i></i><i></i></div>' : c.loader === 'spin' ? '<div class="sp-spin"></div>' : '<div class="sp-track"><div class="sp-fill"></div></div>';
+    var f = show('spFoot', c.showFoot !== false && c.foot); if(f) f.innerHTML = LOCK + esc(c.foot);
+  };
+  var preview = /[?&]splashPreview=1/.test(location.search), raw = null, cfg;
+  try{ raw = localStorage.getItem(preview ? 'cu_splash_preview' : 'cu_splash'); }catch(e){}
+  try{ cfg = raw ? JSON.parse(raw) : {}; }catch(e){ cfg = {}; }
+  window._splashPreview = preview;
+  var c = merge(cfg), seen = false;
+  try{ seen = sessionStorage.getItem('cu_splash_seen') === '1'; sessionStorage.setItem('cu_splash_seen', '1'); }catch(e){}
+  var el = document.getElementById('splash');
+  if(!preview && (c.on === false || (c.once && seen))){ el.parentNode.removeChild(el); return; }
+  window._paintSplash(cfg);
+  if(preview) return;                 // admin preview stays on screen
+  var t0 = Date.now(), minMs = Math.max(0, Number(c.minSec) || 0) * 1000, maxMs = Math.max(minMs, Math.max(1, Number(c.maxSec) || 5) * 1000);
+  function hide(){
+    clearInterval(iv);
+    var s = document.getElementById('splash'); if(!s || s.classList.contains('out')) return;
+    s.classList.add('done');
+    setTimeout(function(){ s.classList.add('out'); setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 650); }, 250);
+  }
+  var iv = setInterval(function(){
+    var dt = Date.now() - t0;
+    if((window.isConfigLoaded && dt >= minMs) || dt >= maxMs) hide();
+  }, 100);
+})();
+</script>
 
 <div id="maintenanceScreen" style="display:none; position:fixed; inset:0; background:#060d1a; z-index:999999; flex-direction:column; justify-content:center; align-items:center; color:#fff; text-align:center; padding:20px;">
   <i class="fa-solid fa-screwdriver-wrench" style="font-size:50px; color:var(--p); margin-bottom:20px;"></i>
@@ -2350,13 +2637,15 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 
 <div id="appBar">
   <button class="ab-back" id="abBack" onclick="navBack()" aria-label="Back" style="display:none"><i class="fa-solid fa-arrow-left"></i></button>
+  <button class="ab-av" id="abAv" onclick="openProfileModal()" aria-label="My profile"><i class="fa-solid fa-user"></i></button>
   <div class="ab-mid">
+    <small class="ab-hi" id="abHi"></small>
     <h3 id="userGreeting">Welcome to Credit Up</h3>
     <div class="balance-pill" id="balanceContainer" style="display:none;"><span class="bp-lbl"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
   </div>
   <div class="ab-acts">
     <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;" aria-label="Notifications"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
-    <div class="notif-btn" onclick="toggleCS()" aria-label="Support"><i class="fa-solid fa-headset"></i><div class="cs-unread-badge" data-support-badge>0</div></div>
+    <div class="notif-btn ab-sup" onclick="toggleCS()" aria-label="Support"><i class="fa-solid fa-headset"></i><div class="cs-unread-badge" data-support-badge>0</div></div>
     <div class="notif-btn ab-out" id="logoutTopBtn" onclick="confirmLogout()" style="display:none;" aria-label="Log out"><i class="fa-solid fa-right-from-bracket"></i></div>
   </div>
 </div>
@@ -2365,7 +2654,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
   <div class="ticker-wrap" id="tickerWrap" style="display:none;"><div class="ticker-title">Notice</div><div class="ticker" id="tickerContent"></div></div>
   <div class="home-hdr">
     <div class="h-logo">Credit <span>Up</span></div>
-    <div class="bonus-banner" id="bonusBanner" style="display:none;"><span class="shake-icon">🎁</span><span id="bonusBannerText">...</span></div>
+    <div class="offer-strip" id="bonusBanner" style="display:none;"></div>
     <div class="h-label">Borrow up to (BDT)</div>
     <div class="h-amount" id="homeMaxBorrow">...</div>
     <div class="h-feats">
@@ -2397,18 +2686,26 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
       <div class="step-row"><div class="step-ic bg-b"><i class="fa-solid fa-credit-card"></i></div><div class="step-cont"><span class="step-badge bd-b">Step 3</span><div class="step-title">Receive Funds</div><div class="step-desc">Approved funds deposited directly into your mobile wallet.</div></div></div>
     </div>
     <div class="live-section" id="liveSection" style="margin-top: 25px;">
-      <div class="live-title" id="liveFeedTitle">লাইভ ট্রানজেকশন <span style="color:var(--p); font-size:12px; font-weight:400; float:right;"><i class="fa-solid fa-circle" style="font-size:6px; animation:wait-pulse 1.5s infinite;"></i> Live</span></div>
-      <div class="live-feed" id="liveFeedContainer"><div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Loading recent activity...</div></div>
-      <div class="live-title" style="margin-top:20px;">আমাদের পার্টনার</div>
-      <div class="partner-grid">
-        <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png" alt="bKash" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Bkash</span>'"></div>
-        <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png" alt="Nagad" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Nagad</span>'"></div>
+      <div id="liveBlock">
+        <div class="live-title" id="liveFeedTitle"><span id="liveTitleTxt">Live Transactions</span> <span class="live-dot"><i class="fa-solid fa-circle"></i> Live</span></div>
+        <div class="live-feed" id="liveFeedContainer"><div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Loading recent activity...</div></div>
+      </div>
+      <div id="partnerBlock">
+        <div class="live-title" style="margin-top:20px;" id="partnerTitle">Our Partners</div>
+        <div class="partner-grid pg-lg" id="partnerGrid">
+        <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png" alt="bKash" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Bkash</span>'"></div>
+        <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png" alt="Nagad" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Nagad</span>'"></div>
         <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Rocket</span>'"></div>
         <div class="partner-item"><img src="https://logo.clearbit.com/citybankbd.com" alt="City Bank" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>City</span>'"></div>
         <div class="partner-item"><img src="https://logo.clearbit.com/bracbank.com" alt="Brac Bank" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Brac</span>'"></div>
         <div class="partner-item"><img src="https://logo.clearbit.com/dbbl.com" alt="DBBL" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>DBBL</span>'"></div>
         <div class="partner-item"><img src="https://logo.clearbit.com/islamibankbd.com" alt="Islami Bank" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>IBBL</span>'"></div>
         <div class="partner-item"><img src="https://logo.clearbit.com/upaybd.com" alt="Upay" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Upay</span>'"></div>
+        </div>
+      </div>
+      <div id="trustBlock" class="trust-block" style="display:none">
+        <div class="trust-grid" id="trustGrid"></div>
+        <div class="trust-note" id="trustNote"></div>
       </div>
     </div>
   </div>
@@ -2784,8 +3081,8 @@ const ADMIN = {
   // legacy only: Wallets is the single source of truth, this stays empty on purpose
   paymentNumbers: { Bkash:'', Nagad:'', Rocket:'' },
   walletLogos: {
-    Bkash:  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png',
-    Nagad:  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png',
+    Bkash:  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png',
+    Nagad:  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png',
     Rocket: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png'
   }
 };
@@ -2823,30 +3120,33 @@ window._isBalanceHidden = true;
 
 window.isConfigLoaded = false;
 
-const splashCheck = setInterval(() => {
-  if(window.isConfigLoaded) {
-    clearInterval(splashCheck);
-    const s = document.getElementById('splash');
-    if(s) { 
-      s.classList.add('out'); 
-      setTimeout(()=>s.remove(), 750); 
-    }
-  }
-}, 100);
-
-setTimeout(() => {
-  clearInterval(splashCheck);
-  const s = document.getElementById('splash');
-  if(s && !s.classList.contains('out')) {
-    s.classList.add('out'); 
-    setTimeout(()=>s.remove(), 750);
-  }
-}, 5000);
-
 function showLoader(on){ document.getElementById('loader').classList.toggle('on',on); }
 
-const OFFER_LIMIT = 50;
-const _bnDigits = n => String(n).replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+let OFFER_LIMIT = 50;
+// Admin → Home Page → Hot Offer (siteConfig/home.fomo)
+const FOMO_DEF = { on:true, audience:'all', icon:'🔥', theme:'red', delay:3.5, limit:50, showCounter:true,
+  bannerTitle:'SUPER HOT OFFER!', bannerText:"First {limit} lucky users get the *1st month's installment free!*",
+  popupTitle:'Lucky {limit} Offer!', popupText:"Be one of the first {limit} users and your loan's *1st month installment is completely free!*",
+  popupNote:'(We pay the 1st installment. Your payments start from the 2nd month.)', counterLabel:'Offers claimed', button:'Claim the offer now',
+  successTitle:'Offer Activated! 🎉', successText:'Congratulations! You got the free 1st installment offer. If your loan is approved, we will pay your 1st month installment.',
+  endedText:'Sorry, all {limit} offers have been claimed.' };
+window._fomo = { ...FOMO_DEF };
+function _fomoTxt(t, left){
+  const e = String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return e.replace(/\{limit\}/g, OFFER_LIMIT).replace(/\{left\}/g, left == null ? '' : left).replace(/\*([^*]+)\*/g, '<b>$1</b>');
+}
+function _applyFomo(){
+  const F = window._fomo, set = (id, v) => { const el = document.getElementById(id); if(el) el.innerHTML = v; };
+  OFFER_LIMIT = Math.max(1, parseInt(F.limit) || 50);
+  set('hotIcon', _fomoTxt(F.icon || '🔥')); set('fomoIcon', _fomoTxt(F.icon || '🔥'));
+  set('hotTitle', _fomoTxt(F.bannerTitle)); set('hotText', _fomoTxt(F.bannerText));
+  set('fomoTitle', _fomoTxt(F.popupTitle)); set('fomoText', _fomoTxt(F.popupText)); set('fomoNote', _fomoTxt(F.popupNote));
+  set('fomoCountLbl', _fomoTxt(F.counterLabel)); set('fomoBtn', _fomoTxt(F.button));
+  const n = document.getElementById('fomoNote'); if(n) n.style.display = F.popupNote ? '' : 'none';
+  const c = document.getElementById('fomoCounter'); if(c) c.style.display = F.showCounter === false ? 'none' : '';
+  const b = document.getElementById('hotOfferBanner'), m = document.querySelector('#fomoModal .mc');
+  ['red','gold','green','purple'].forEach(t => { if(b) b.classList.toggle('ho-' + t, F.theme === t); if(m) m.classList.toggle('fm-' + t, F.theme === t); });
+}
 function _offerFolded(){ try{ return localStorage.getItem('hotOfferClosed') === 'true'; }catch(e){ return false; } }
 function _setOfferFolded(f){
   const b = document.getElementById('hotOfferBanner'); if(!b) return;
@@ -2856,26 +3156,34 @@ function _setOfferFolded(f){
 let _hotOfferInit = false;
 function initHotOffer() {
   if(_hotOfferInit) return; _hotOfferInit = true;
-  setTimeout(async () => {
+  (async () => {
+    const home = (typeof window.loadHomeCfg === 'function') ? await window.loadHomeCfg() : {};
+    window._fomo = { ...FOMO_DEF, ...(home.fomo || {}) };
+    _applyFomo();
+    const F = window._fomo, u = _getUser(), who = (u && u.phone) ? 'users' : 'visitors';
     const banner = document.getElementById('hotOfferBanner');
-    if(!banner) return;
-    // the offer ends for real once 50 users have claimed it
+    const endAt = F.end ? new Date(F.end).getTime() : 0, startAt = F.start ? new Date(F.start).getTime() : 0;
+    if(!banner || F.on === false || (endAt && Date.now() > endAt) || (startAt && Date.now() < startAt)
+      || (F.audience && F.audience !== 'all' && F.audience !== who)){ if(banner) banner.style.display = 'none'; return; }
+    await new Promise(r => setTimeout(r, Math.min(30, Math.max(0, Number(F.delay) || 0)) * 1000));
+    // the offer ends for real once the limit is reached (real claims, counted on the server)
     const n = (typeof window.getOfferClaimCount === 'function') ? await window.getOfferClaimCount() : null;
-    if(n !== null && n >= OFFER_LIMIT) { banner.remove(); return; }
+    if((n !== null && n >= OFFER_LIMIT) || window._fomoOpen === false) { banner.style.display = 'none'; return; }
     _updateOfferCounter(n);
     banner.classList.toggle('folded', _offerFolded());   // closed before → stays pinned to the side
     const cur = document.querySelector('.screen.active');
     banner.classList.toggle('away', !!cur && cur.id !== 'screen-home');
     banner.style.display = 'block';
-  }, 3500);
+  })();
 }
 function _updateOfferCounter(n){
   const c = document.getElementById('offerCount'), f = document.getElementById('offerFill'), l = document.getElementById('offerLeft');
   if(n === null || n === undefined){ if(c) c.innerText = ''; if(f) f.parentElement.style.display = 'none'; if(l) l.style.display = 'none'; return; }
   const used = Math.min(n, OFFER_LIMIT);
-  if(c) c.innerText = `${_bnDigits(used)}/${_bnDigits(OFFER_LIMIT)} জন`;
+  if(c) c.innerText = `${used}/${OFFER_LIMIT}`;
   if(f) f.style.width = Math.round(used / OFFER_LIMIT * 100) + '%';
-  if(l) l.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${_bnDigits(OFFER_LIMIT - used)}টি অফার বাকি`;
+  const left = OFFER_LIMIT - used;
+  if(l) l.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Only ${left} offer${left === 1 ? '' : 's'} left`;
 }
 // tap: folded tab slides out like a drawer; tap again (expanded) opens the popup
 function onHotOfferTap(){
@@ -2900,15 +3208,16 @@ async function claimFomoOffer() {
   if (u) {
     // the claim is saved on the profile and carried onto the next application, so the admin can honour it
     const res = (typeof window.claimOffer === 'function') ? await window.claimOffer(u.phone) : 'error';
-    if(res === 'full'){ showAlert('অফার শেষ', 'দুঃখিত, ৫০ জনের অফারটি শেষ হয়ে গেছে।', 'info'); const b=document.getElementById('hotOfferBanner'); if(b) b.remove(); return; }
-    if(res === 'already'){ showAlert('অফার আগেই নেওয়া হয়েছে', 'আপনি ইতিমধ্যে এই অফারটি নিয়েছেন। আপনার পরের লোন আবেদনে এটি যুক্ত থাকবে।', 'info'); return; }
-    if(res !== 'ok'){ showAlert('Error', 'অফারটি এখন নেওয়া যাচ্ছে না, একটু পরে আবার চেষ্টা করুন।', 'error'); return; }
+    const F = window._fomo || FOMO_DEF, strip = t => _fomoTxt(t).replace(/<[^>]+>/g, '');
+    if(res === 'full' || res === 'closed'){ showAlert('Offer Ended', strip(F.endedText || FOMO_DEF.endedText), 'info'); const b=document.getElementById('hotOfferBanner'); if(b) b.style.display = 'none'; return; }
+    if(res === 'already'){ showAlert('Already Claimed', 'You have already claimed this offer. It will be added to your next loan application.', 'info'); return; }
+    if(res !== 'ok'){ showAlert('Error', 'The offer cannot be claimed right now. Please try again in a moment.', 'error'); return; }
     window._promoClaimed = true;
-    showAlert('অফার একটিভেটেড! 🎉', 'অভিনন্দন! আপনি ১ম মাসের ফ্রি কিস্তির অফার পেয়েছেন। আপনার লোন অ্যাপ্রুভ হলে ১ম মাসের কিস্তি কোম্পানিই দিয়ে দিবে!', 'success', () => {
+    showAlert(strip(F.successTitle || FOMO_DEF.successTitle), strip(F.successText || FOMO_DEF.successText), 'success', () => {
       startNewApplication();
     });
   } else {
-    showAlert('অফারটি আপনার জন্য অপেক্ষা করছে! 🎁', 'এই অফারটি পেতে দ্রুত একটি অ্যাকাউন্ট তৈরি করুন এবং আবেদন করুন।', 'info', () => {
+    showAlert('This Offer Is Waiting for You! 🎁', 'Create an account and apply to get this offer.', 'info', () => {
       nav('screen-login');
     });
   }
@@ -4393,9 +4702,10 @@ function updateUIForUser() {
     if(notifBtnContainer) notifBtnContainer.style.display = 'flex';
     // button text for a logged-in user is decided by loadUserDashboardData (Borrow Now / Apply for Another)
     if(loginLink) loginLink.style.display = 'none';
-    if(bonusBanner) bonusBanner.style.display = 'none';
+    if(window.renderOffers) window.renderOffers();
     const greet = document.getElementById('userGreeting');
     if(greet) greet.innerText = `Hello, ${_fullPhone(u.phone)}`;
+    if(window.applyTopBar) window.applyTopBar();
     const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'flex';
     // Start support chat real-time listener
     if (typeof window._startSupportListener === 'function' && !window._supportListenerStarted) {
@@ -4407,9 +4717,10 @@ function updateUIForUser() {
     if(notifBtnContainer) notifBtnContainer.style.display = 'none';
     if(mainBtnText) mainBtnText.innerText = 'Borrow Now';
     if(loginLink) loginLink.style.display = 'block';
-    if(bonusBanner) bonusBanner.style.display = 'flex';
+    if(window.renderOffers) window.renderOffers();
     const greet = document.getElementById('userGreeting');
     if(greet) greet.innerText = 'Welcome to Credit Up';
+    if(window.applyTopBar) window.applyTopBar();
     const lo = document.getElementById('logoutTopBtn'); if(lo) lo.style.display = 'none';
     const statusCard = document.getElementById('userStatusCard');
     if(statusCard) statusCard.style.display = 'none';
@@ -4441,6 +4752,163 @@ function openProfileModal() {
   if (!u) { nav('screen-login'); return; }
   document.getElementById('profPhone').innerText = '+880 ' + u.phone;
   document.getElementById('profileModal').classList.add('on');
+  _loadRefEntry();
+  _pfStats(); _pfProgress(); _pfInvites(); _pfTodo(); _pfPwReset();
+}
+function _pfTodo(){
+  const box = document.getElementById('pfTodo'); if(!box) return;
+  const t = typeof window._tbTodo === 'function' ? window._tbTodo() : window._tbTodoItem;
+  if(!t){ box.style.display = 'none'; return; }
+  box.style.display = 'flex';
+  box.innerHTML = `<div class="pf-ic"><i class="fa-solid fa-circle-exclamation"></i></div><div style="flex:1;min-width:0"><b>${_escH(t.title)}</b><small>${_escH(t.text)}</small></div><button onclick="_pfDoTodo()">${_escH(t.btn)}</button>`;
+}
+function _pfDoTodo(){
+  const t = typeof window._tbTodo === 'function' ? window._tbTodo() : window._tbTodoItem; if(!t) return;
+  closeModal('profileModal');
+  if(t.kind === 'fee'){ window._latestAppId = t.app.id; _restoreAppState(t.app); goToFeePayment(); }
+}
+// change password
+function _pfPwReset(){
+  document.getElementById('pfSec').classList.remove('open');
+  document.getElementById('pfPwToggle').innerText = 'Change';
+  ['pwCur','pwNew','pwNew2'].forEach(id => { const e = document.getElementById(id); e.value = ''; e.type = 'password'; e.classList.remove('bad'); });
+  _pfPwMsg('At least 8 characters, with letters and numbers.', '');
+  _pfMeter();
+}
+function _pfPwOpen(){
+  const sec = document.getElementById('pfSec');
+  if(sec.classList.contains('open')){ _pfPwReset(); return; }
+  sec.classList.add('open'); document.getElementById('pfPwToggle').innerText = 'Cancel';
+  setTimeout(() => document.getElementById('pwCur').focus(), 50);
+}
+function _pfEye(id, btn){ const e = document.getElementById(id); e.type = e.type === 'password' ? 'text' : 'password'; btn.querySelector('i').className = 'fa-solid fa-eye' + (e.type === 'text' ? '-slash' : ''); }
+function _pfPwMsg(t, k){ const m = document.getElementById('pwMsg'); m.textContent = t; m.className = 'pf-pwmsg' + (k ? ' ' + k : ''); }
+function _pfMeter(){
+  const v = document.getElementById('pwNew').value, m = document.getElementById('pwMeter');
+  const sc = !v ? 0 : (v.length >= 8 && /[A-Za-z]/.test(v) && /\d/.test(v)) ? (v.length >= 12 || /[^A-Za-z0-9]/.test(v) ? 3 : 2) : 1;
+  m.className = 'pf-pwmeter' + (sc ? ' s' + sc : '');
+}
+let _pfPwBusy = false;
+async function _pfPwSave(){
+  if(_pfPwBusy) return;
+  const cur = document.getElementById('pwCur'), n1 = document.getElementById('pwNew'), n2 = document.getElementById('pwNew2');
+  [cur, n1, n2].forEach(e => e.classList.remove('bad'));
+  if(!cur.value){ cur.classList.add('bad'); return _pfPwMsg('Enter your current password.', 'err'); }
+  if(!isStrongPassword(n1.value)){ n1.classList.add('bad'); return _pfPwMsg('New password: at least 8 characters, with letters and numbers.', 'err'); }
+  if(n1.value === cur.value){ n1.classList.add('bad'); return _pfPwMsg('The new password must be different from the current one.', 'err'); }
+  if(n1.value !== n2.value){ n2.classList.add('bad'); return _pfPwMsg('The two new passwords do not match.', 'err'); }
+  if(typeof window.changeLoginPassword !== 'function') return _pfPwMsg('Please try again in a moment.', 'err');
+  _pfPwBusy = true;
+  const btn = document.getElementById('pwSave'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
+  const r = await window.changeLoginPassword(cur.value, n1.value);
+  _pfPwBusy = false; btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-key"></i> Save new password';
+  if(!r.ok){ if(r.field === 'cur') cur.classList.add('bad'); return _pfPwMsg(r.error, 'err'); }
+  _pfPwReset();
+  showAlert('Password Changed ✅', 'Your new password is saved. Use it the next time you log in.', 'success');
+}
+// ── My Profile: details, application progress and invites ──
+const _PF_SECS = [
+  { k:'loan', t:'Loan details', ic:'hand-holding-dollar', f:[['selAmount','Amount'],['selTerm','Term'],['selPurpose','Purpose']] },
+  { k:'personal', t:'Personal info', ic:'id-card', f:[['infoName','Full name'],['selDob','Date of birth'],['selGender','Gender'],['selMarital','Marital status'],['selEdu','Education'],['infoAddress','Address']] },
+  { k:'work', t:'Work & income', ic:'briefcase', f:[['selOccupation','Occupation'],['infoCompany','Company'],['selIncome','Monthly income']] },
+  { k:'contacts', t:'Emergency contacts', ic:'phone', f:[['c1Name','Contact 1 name'],['c1Phone','Contact 1 phone'],['selRel1','Contact 1 relation'],['c2Name','Contact 2 name'],['c2Phone','Contact 2 phone'],['selRel2','Contact 2 relation']] },
+  { k:'nid', t:'NID', ic:'address-card', f:[['infoId','NID number'],['_nidFront','NID front photo'],['_nidBack','NID back photo']] },
+  { k:'pay', t:'Receiving account', ic:'wallet', f:[['selWallet','Method'],['bankPhone','Account number']] }
+];
+function _pfData(){
+  const u = _getUser();
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem('creditUpFormDraft')); } catch(e) {}
+  if(d && d._owner && u && d._owner !== u.phone) d = null;
+  const remote = (typeof _mapAppToForm === 'function') ? _mapAppToForm(window._latestApp || _savedApp) : null;
+  // an unsent draft is newer; otherwise use the last application; fill gaps from the other one
+  const a = (d && !d._submitted) ? d : (remote || d || {}), b = a === d ? (remote || {}) : (d || {});
+  const out = {};
+  _PF_SECS.forEach(sec => sec.f.forEach(([k]) => { out[k] = a[k] || b[k] || ''; }));
+  if(!out.infoId && typeof _savedNid !== 'undefined' && _savedNid) out.infoId = _savedNid;
+  return out;
+}
+function _pfShow(k, v){
+  if(!v) return '';
+  if(k === '_nidFront' || k === '_nidBack') return 'Uploaded';
+  if(k === 'infoId') return '•••• ' + String(v).slice(-4);
+  if(k === 'selAmount') return '৳ ' + Number(String(v).replace(/,/g, '') || 0).toLocaleString('en-US');
+  if(k === 'selTerm') return v + ' months';
+  return String(v);
+}
+function _pfProgress(){
+  const D = _pfData(); let done = 0;
+  const html = _PF_SECS.map((sec, i) => {
+    const miss = sec.f.filter(([k]) => !D[k]).length, ok = !miss; if(ok) done++;
+    return `<div class="pf-sec ${ok ? 'ok' : ''}" onclick="this.classList.toggle('open')">
+      <div class="pf-sh"><i class="fa-solid fa-${sec.ic} pf-si"></i><span>${sec.t}</span>
+        <em class="${ok ? 'ok' : 'no'}">${ok ? '<i class="fa-solid fa-circle-check"></i> Complete' : `<i class="fa-solid fa-circle-exclamation"></i> ${miss} missing`}</em><i class="fa-solid fa-chevron-down pf-chev"></i></div>
+      <div class="pf-sb">${sec.f.map(([k, l]) => `<div class="pf-f"><span>${l}</span><b class="${D[k] ? '' : 'no'}">${D[k] ? _escH(_pfShow(k, D[k])) : 'Missing'}</b></div>`).join('')}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('pfSecs').innerHTML = html;
+  const pct = Math.round(done / _PF_SECS.length * 100);
+  document.getElementById('pfRing').style.setProperty('--pc', pct);
+  document.getElementById('pfPct').innerText = pct + '%';
+  document.getElementById('pfSum').innerText = done === _PF_SECS.length ? 'All details are complete' : `${done} of ${_PF_SECS.length} sections complete · tap a section to see what is missing`;
+  const go = document.getElementById('pfGo');
+  go.querySelector('span').innerText = done === _PF_SECS.length ? 'Apply for a loan' : 'Complete my profile';
+  go.querySelector('i').className = 'fa-solid fa-' + (done === _PF_SECS.length ? 'bolt' : 'pen-to-square');
+  const nm = String(D.infoName || '').trim();
+  document.getElementById('pfName').innerText = nm || 'Credit Up member';
+  document.getElementById('pfAv').innerHTML = nm ? `<b>${_escH(nm.charAt(0).toUpperCase())}</b>` : '<i class="fa-solid fa-user"></i>';
+}
+function _pfStats(){
+  const u = _getUser() || {};
+  const bal = Number(window._userRealBalance) || 0;
+  document.getElementById('pfBal').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + bal.toLocaleString('en-US');
+  const apps = window._allApps || [];
+  document.getElementById('pfApps').innerText = apps.length;
+  const since = document.getElementById('pfSince');
+  if(u.createdAt){ since.style.display = ''; since.innerHTML = '<i class="fa-regular fa-calendar"></i>Since ' + new Date(u.createdAt).toLocaleDateString('en-GB', { month:'short', year:'numeric' }); }
+  const la = window._latestApp, box = document.getElementById('pfLatest');
+  if(la){
+    const st = String(la.status || 'Pending'), col = /approved|disbursed|sent/i.test(st) ? 'ok' : /reject|fail/i.test(st) ? 'bad' : 'wait';
+    box.style.display = '';
+    box.innerHTML = `<div class="pf-ct"><div class="pf-ic"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      <div><b>Latest application</b><small>CU-${_escH(String(la.id || window._latestAppId || '').slice(-6).toUpperCase())} · ৳ ${Number(la.loanAmount || 0).toLocaleString('en-US')} · ${_escH(la.term || '')} months</small></div>
+      <span class="pf-st ${col}">${_escH(st)}</span></div>`;
+  } else box.style.display = 'none';
+}
+async function _pfInvites(){
+  const r = await _api('referrals', {}, true);
+  if(!r.ok) return;
+  const total = Number(r.data.total) || 0, active = Number(r.data.active) || 0;
+  const goal = [20, 50, 100].find(g => active < g);
+  document.getElementById('pfInv').innerText = active;
+  document.getElementById('pfInvTotal').innerText = total;
+  document.getElementById('pfInvActive').innerText = active;
+  document.getElementById('pfInvNext').innerText = goal ? goal - active : '✓';
+  document.getElementById('pfInvSub').innerText = goal ? `${goal - active} more active friend${goal - active === 1 ? '' : 's'} to reach ${goal}` : 'All invite rewards unlocked';
+}
+// a user whose invite link did not work can add the inviter's code later (if the admin allows it)
+async function _loadRefEntry(){
+  const box = document.getElementById('refEntry'), row = document.getElementById('profRefRow');
+  box.style.display = 'none'; row.style.display = 'none';
+  document.getElementById('refEntryMsg').textContent = '';
+  const r = await _api('myReferral', {}, true);
+  if(!r.ok) return;
+  if(r.data.referredBy){ row.style.display = 'flex'; document.getElementById('profRefBy').innerText = '0' + String(r.data.referredBy).replace(/^0+/, ''); return; }
+  if(!r.data.canSet) return;
+  document.getElementById('refEntrySub').innerText = 'If a friend invited you, add their code so they get credit. You can add it only once'
+    + (r.data.days ? `, within ${r.data.days} day${r.data.days === 1 ? '' : 's'} of joining.` : '.');
+  box.style.display = 'block';
+}
+async function submitRefCode(){
+  const inp = document.getElementById('refEntryCode'), msg = document.getElementById('refEntryMsg'), btn = document.getElementById('refEntryBtn');
+  const code = inp.value.trim();
+  if(!code){ msg.className = 're-msg err'; msg.textContent = 'Enter your friend\'s invite code.'; return; }
+  btn.disabled = true; btn.textContent = '...';
+  const r = await _api('setReferrer', { code }, true);
+  btn.disabled = false; btn.textContent = 'Add';
+  if(!r.ok){ msg.className = 're-msg err'; msg.textContent = (r.data && r.data.error) || 'Could not add the code. Please try again.'; return; }
+  msg.className = 're-msg ok'; msg.textContent = 'Invite code added ✓';
+  setTimeout(_loadRefEntry, 1200);
 }
 // forget everything that belongs to the signed-out user, so the next person on this device sees none of it
 function _clearUserSession(){
@@ -4460,6 +4928,7 @@ function _clearUserSession(){
 }
 function logoutUser(silent) {
   _clearUserSession();
+  if(window.loadTicker) window.loadTicker();
   closeModal('profileModal');
   if(typeof updateUIForUser === 'function') updateUIForUser();
   nav('screen-home');
@@ -4607,7 +5076,7 @@ function openReferModal() {
   document.getElementById('referModal').classList.add('on');
   if(typeof window.loadReferralStats === 'function') window.loadReferralStats(u.phone);
 }
-function openHistoryModal() { document.getElementById('historyModal').classList.add('on'); if (typeof window.loadTransactionHistory === 'function') window.loadTransactionHistory(); }
+function openHistoryModal() { window._hxTab = 'all'; document.getElementById('historyModal').classList.add('on'); if (typeof window.loadTransactionHistory === 'function') window.loadTransactionHistory(); }
 async function _copyText(t){
   try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(t); return true; } }catch(e){}
   try{
@@ -4930,7 +5399,7 @@ async function startNewSupportChat() {
 <script type="module">
 import{initializeApp} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,setDoc,doc,orderBy,onSnapshot} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,EmailAuthProvider,reauthenticateWithCredential,updatePassword} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
 const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
@@ -4953,6 +5422,27 @@ try{ const app = initializeApp(FB); db = getFirestore(app); fbAuth = getAuth(app
 const USER_EMAIL_DOMAIN = 'users.creditup.online';
 const _phoneEmail = ph => `${ph}@${USER_EMAIL_DOMAIN}`;
 async function _signIn(ph, pw){ return signInWithEmailAndPassword(fbAuth, _phoneEmail(ph), pw); }
+// My Profile → Change password: Firebase checks the current password, then saves the new one
+window.changeLoginPassword = async function(cur, next){
+  const u = fbAuth && fbAuth.currentUser;
+  if(!u || !u.email) return { ok:false, error:'Please log in again, then try once more.' };
+  try{
+    await reauthenticateWithCredential(u, EmailAuthProvider.credential(u.email, cur));
+  }catch(e){
+    const c = String(e && e.code || '');
+    if(/wrong-password|invalid-credential|invalid-login/.test(c)) return { ok:false, error:'Your current password is not correct.', field:'cur' };
+    if(/too-many-requests/.test(c)) return { ok:false, error:'Too many tries. Please wait a few minutes and try again.' };
+    if(/network/.test(c)) return { ok:false, error:'No internet connection. Please try again.' };
+    return { ok:false, error:'Could not check your password. Please try again.' };
+  }
+  try{
+    await updatePassword(u, next);
+    const me = _getUser();
+    if(me && me.phone) _pushMyNotif(me.phone, 'Password Changed 🔒', 'Your login password was changed. If this was not you, contact support right away.', 'warning').catch(() => {});
+    return { ok:true };
+  }
+  catch(e){ return { ok:false, error: /weak-password/.test(String(e && e.code)) ? 'This password is too weak. Use at least 8 characters with letters and numbers.' : 'Could not save the new password. Please try again.' }; }
+};
 window._fbSignOut = function(){ try{ if(fbAuth && fbAuth.currentUser) return signOut(fbAuth); }catch(e){} };
 // server side account actions (register, older-account move, offer, referrals, live feed)
 async function _api(action, data, withToken){
@@ -5368,15 +5858,10 @@ async function loadDynamicConfig() {
         if(mbEl) mbEl.innerText = cfg.maxBorrowAmount;
       }
 
-      if(cfg.newUserBonus !== undefined && !(Number(cfg.newUserBonus) > 0)) {
-        // bonus switched off by the admin: drop the banner instead of advertising ৳0
-        const bb = document.getElementById('bonusBanner'); if(bb) bb.remove();
-      } else if(cfg.newUserBonus !== undefined) {
-        const bonusEl = document.getElementById('bonusBannerText');
-        if(bonusEl) bonusEl.innerHTML = `নতুন ইউজারদের জন্য <b style="color:var(--orange);">${cfg.newUserBonus} টাকা</b> সাইন-আপ বোনাস!`;
-      }
-
+      // offers that use {bonus} hide themselves when the bonus is 0, so ৳0 is never advertised
       window._newUserBonus = Number(cfg.newUserBonus) || 0;
+      window._bonusKnown = true;
+      if(window.renderOffers) window.renderOffers();
       if(cfg.orgFee !== undefined) ADMIN.orgFee = Number(cfg.orgFee);
       if(cfg.serviceCharge !== undefined) ADMIN.serviceCharge = Number(cfg.serviceCharge);
       if(cfg.processingFee !== undefined) ADMIN.processingFee = Number(cfg.processingFee);
@@ -5412,8 +5897,9 @@ async function loadDynamicConfig() {
       }
 
       if(cfg.splashSubtitle) {
+        window._mainSplashSub = cfg.splashSubtitle;
         const splEl = document.getElementById('splashSubtitle');
-        if(splEl) splEl.innerText = cfg.splashSubtitle;
+        if(splEl && !(window._splashCfg && window._splashCfg.sub)) splEl.innerText = cfg.splashSubtitle;
       }
       if(cfg.tagline) {
         const tagEl = document.getElementById('homeTagline');
@@ -5424,7 +5910,7 @@ async function loadDynamicConfig() {
         if(polEl) polEl.innerText = 'Updated ' + cfg.policyDate;
       }
 
-      // ক্যালকুলেটরের হার ও ফি আপডেট
+      // calculator rate and fees
       if(cfg.annualInterestRate) {
         const rateLbl = document.getElementById('calcRateLabel');
         if(rateLbl) rateLbl.innerText = cfg.annualInterestRate;
@@ -5433,7 +5919,7 @@ async function loadDynamicConfig() {
       const feeEl = document.getElementById('calcFee');
       if(feeEl) feeEl.innerText = '৳ ' + totalProcFee.toLocaleString();
 
-      // কাস্টমার সাপোর্ট লিঙ্ক আপডেট
+      // customer support links
       // support links: shown only when the admin has filled them in (no placeholder numbers)
       const waNum = String(cfg.contact?.whatsapp || '').replace(/\D/g,'').replace(/^0(?=1)/,'880').replace(/^(?=1[3-9]\d{8}$)/,'880');
       if(waNum.length >= 10) {
@@ -5453,7 +5939,7 @@ async function loadDynamicConfig() {
         if(rvEm) { rvEm.href = 'mailto:' + cfg.contact.email; rvEm.innerText = cfg.contact.email; }
       }
 
-      // প্রাইভেসি পলিসি ইমেইল ও ঠিকানা আপডেট
+      // privacy policy email and address
       if(cfg.policyEmail) {
         const polEm = document.getElementById('policyEmailLink');
         if(polEm) { polEm.href = 'mailto:' + cfg.policyEmail; polEm.innerText = cfg.policyEmail; }
@@ -5813,6 +6299,7 @@ window.submitLoginPassword=async function(){
     if(prof.status === 'banned'){ await signOut(fbAuth); showLoader(false); showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.'); return; }
     delete prof.password;
     localStorage.setItem('creditUpUser', JSON.stringify(prof));
+    if(window.loadTicker) window.loadTicker();
     showLoader(false);
     closeGlobalModal();
     nav('screen-home');
@@ -5851,6 +6338,7 @@ window.registerUser=async function(){
     await _signIn(ph, pw);
     localStorage.setItem('creditUpUser', JSON.stringify({ phone: ph, id: ph, balance: bonusAmt, status: 'active', appStatus: 0, createdAt: new Date().toISOString() }));
     localStorage.removeItem('referrerPhone');
+    if(window.loadTicker) window.loadTicker();
     showLoader(false);
     showAlert('Account Created! 🎉', bonusAmt > 0 ? `Welcome! You received ৳${bonusAmt} bonus.` : 'Welcome to Credit Up!', 'success', () => {
       nav('screen-home');
@@ -5875,7 +6363,7 @@ window.saveApplicationToFirebase=async function(){
       ...(_payoutIsBank() ? { payoutBank: { accountName: document.getElementById('rcvAccName').value.trim(), bankName: document.getElementById('rcvBankName').value.trim(), branch: document.getElementById('rcvBranch').value.trim(), accountNumber: document.getElementById('bankPhone').value.trim() } } : {}),
       bankPhone:document.getElementById('bankPhone').value, nidFrontUrl: nidFrontUrl || '', nidBackUrl: nidBackUrl || '',
       status: 'Pending Fee Payment', submittedAt:new Date().toISOString(),
-      ...(window._promoClaimed ? { promo: 'First installment free' } : {})
+      ...(window._promoClaimed ? { promo: window._promoLabel || 'First installment free' } : {})
     }).then(ref => { window._latestAppId = ref.id; return ref; });
     _pushMyNotif(u?.phone, 'Application Received 📝', `Your loan application ${'CU-' + String(window._latestAppId||'').slice(-6).toUpperCase()} for ৳${selAmount} (${selTerm} months) has been received. Next step: pay the fee to start verification.`, 'application');
     return true;
@@ -5917,11 +6405,13 @@ window.markBalanceAdjustUsed = async function(phone, used){
 // "first 50 users" offer: counted from real claims on user profiles
 window.getOfferClaimCount = async function(){
   const r = await _api('offerCount');
+  if(r.ok) window._fomoOpen = r.data.open !== false;
   return r.ok ? Number(r.data.count) || 0 : null;
 };
 window.claimOffer = async function(phone){
   if(!fbAuth || !fbAuth.currentUser) return 'error';
   const r = await _api('claimOffer', {}, true);
+  if(r.ok && r.data.promo) window._promoLabel = r.data.promo;
   return r.ok ? (r.data.result || 'error') : 'error';
 };
 // each TrxID gets its own record id, so the same TrxID can never be saved twice (by anyone)
@@ -5963,27 +6453,199 @@ window.updateApplicationStatusByPhone = async function(phone, status, appId){
   }catch(e){ return false; }
 };
 
-window.loadTicker = async function() {
-  if(!db) return;
-  await window._authReady;
-  try {
-    const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
-    let notices = gSnap.docs.map(d => d.data());
-    
-    const user = _getUser();
-    if (user && user.phone) {
-      const pSnap = await getDocs(query(collection(db, 'user_notifications'), where('uid', '==', user.phone)));
-      const pNotifs = pSnap.docs.map(d => ({...d.data(), isPersonal: true}));
-      notices = [...pNotifs, ...notices];
-    }
+// home page settings (Admin → Home Page), read once and shared by the notice bar, live feed, partners and trust badges
+const _escT = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+window._homeCfgP = null;
+window.loadHomeCfg = function(){
+  if(!window._homeCfgP) window._homeCfgP = (async () => {
+    try { const s = await getDoc(doc(db, 'siteConfig', 'home')); return s.exists() ? (s.data() || {}) : {}; }
+    catch(e){ return {}; }
+  })();
+  return window._homeCfgP;
+};
+window.renderHomeBlocks = async function(){
+  const cfg = await window.loadHomeCfg();
+  // keep the loading-screen settings for the next visit; repaint now if it is still showing and changed
+  if(!window._splashPreview){
+    const sj = JSON.stringify(cfg.splash || {});
+    let prev = null; try{ prev = localStorage.getItem('cu_splash'); localStorage.setItem('cu_splash', sj); }catch(e){}
+    if(prev !== sj && document.getElementById('splash') && window._paintSplash) window._paintSplash(cfg.splash || {});
+  }
+  // partners
+  const P = cfg.partners;
+  const pb = document.getElementById('partnerBlock'), pg = document.getElementById('partnerGrid');
+  if(P && pb && pg){
+    const items = (Array.isArray(P.items) ? P.items : []).filter(x => x && x.on !== false && x.logo);
+    pb.style.display = (P.on === false || !items.length) ? 'none' : '';
+    document.getElementById('partnerTitle').innerText = P.title || 'Our Partners';
+    pg.className = 'partner-grid ' + (P.size === 'md' ? 'pg-md' : 'pg-lg');
+    pg.innerHTML = items.map(x => `<div class="partner-item" title="${_escT(x.name)}"><img src="${_escT(x.logo)}" alt="${_escT(x.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.alt,style:'color:#555;font-size:11px;font-weight:800'}))"></div>`).join('');
+  }
+  // trust badges
+  const T = cfg.trust || {};
+  const DEF = [['shield-halved','Secured','256-bit SSL encryption on every page'],['circle-check','Verified Payments','Every TrxID is checked by our team'],['receipt','Transparent Fees','All fees shown before you apply'],['user-shield','Private','Your data is never sold or shared']];
+  const titems = (Array.isArray(T.items) ? T.items : DEF.map(([icon,title,text]) => ({icon,title,text,on:true}))).filter(x => x && x.on !== false && x.title);
+  const tb = document.getElementById('trustBlock');
+  if(tb){
+    tb.style.display = (T.on === false || !titems.length) ? 'none' : 'block';
+    document.getElementById('trustGrid').innerHTML = titems.map(x => `<div class="trust-item"><i class="fa-solid fa-${_escT(x.icon || 'shield-halved')}"></i><div><b>${_escT(x.title)}</b>${x.text ? `<span>${_escT(x.text)}</span>` : ''}</div></div>`).join('');
+    document.getElementById('trustNote').innerText = T.note || '';
+  }
+  const lt = document.getElementById('liveTitleTxt'); if(lt) lt.innerText = (cfg.live && cfg.live.title) || 'Live Transactions';
+};
 
-    if(notices.length > 0) {
-      const ticker = document.getElementById('tickerContent');
-      ticker.innerHTML = notices.slice(0, 5).map(n =>
-        `<span class="ticker-item"><i class="fa-solid fa-circle"></i> <b>${n.title}:</b> ${(n.message || '').substring(0, 40)}...</span>`
-      ).join('');
-      document.getElementById('tickerWrap').style.display = 'flex';
+// top bar (Admin → Home Page → Top Bar)
+window.applyTopBar = async function(){
+  const bar = document.getElementById('appBar'); if(!bar) return;
+  const B = { theme:'green', clear:35, glass:true, compact:true, hideOnScroll:false, avatar:true, greet:true, balance:true, notif:true, support:true, logout:true, title:'phone', visitorText:'Welcome to Credit Up',
+    ...(((await window.loadHomeCfg()) || {}).topbar || {}) };
+  window._tb = B;
+  const u = _getUser(), on = !!(u && u.phone);
+  const cls = { 'tb-dark':B.theme === 'dark', 'tb-gold':B.theme === 'gold', 'tb-compact':B.compact !== false,
+    'tb-no-av':B.avatar === false, 'tb-no-bal':B.balance === false, 'tb-no-notif':B.notif === false, 'tb-no-sup':B.support === false, 'tb-no-out':B.logout === false };
+  Object.entries(cls).forEach(([c, v]) => bar.classList.toggle(c, !!v));
+  const h = new Date().getHours();
+  const hi = document.getElementById('abHi');
+  if(hi) hi.textContent = B.greet === false ? '' : (h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening') + ' 👋';
+  const t = document.getElementById('userGreeting');
+  if(t){
+    if(!on) t.innerText = B.visitorText || 'Welcome to Credit Up';
+    else if(B.title === 'brand') t.innerText = 'Credit Up';
+    else if(B.title === 'name' && window._latestApp && window._latestApp.name) t.innerText = String(window._latestApp.name).split(' ').slice(0, 2).join(' ');
+    else t.innerText = B.greet === false ? `Hello, ${_fullPhone(u.phone)}` : _fullPhone(u.phone);
+  }
+  // red dot: something the user still has to do (an application whose fee is not paid yet)
+  const todo = on ? _tbTodo() : null;
+  window._tbTodoItem = todo;
+  bar.classList.toggle('ab-alert', !!todo && B.alert !== false);
+  const av = document.getElementById('abAv');
+  if(av){
+    const nm = on && window._latestApp && window._latestApp.name ? String(window._latestApp.name).trim() : '';
+    av.innerHTML = nm ? `<b>${_escT(nm.charAt(0).toUpperCase())}</b>` : '<i class="fa-solid fa-user"></i>';
+    av.onclick = () => on ? openProfileModal() : nav('screen-login');
+    av.setAttribute('aria-label', todo ? 'My profile (action needed)' : 'My profile');
+  }
+  _tbScroll();
+};
+function _tbTodo(){
+  const p = window._pendingFeeApp;
+  if(!p) return null;
+  const t = (window._trxByApp || {})[p.id];
+  if(t && t.status !== 'Rejected') return null;     // paid, waiting for verification
+  return { kind:'fee', app:p, title:'Fee not paid yet', text:`Pay the fee for CU-${String(p.id).slice(-6).toUpperCase()} so we can review your application.`, btn:'Pay now' };
+}
+window._tbTodo = _tbTodo;
+let _tbLast = 0;
+function _tbScroll(){
+  const app = document.getElementById('app'), bar = document.getElementById('appBar'), B = window._tb || {};
+  if(!app || !bar) return;
+  const y = app.scrollTop, sc = y > 8;
+  bar.classList.toggle('ab-scrolled', sc);
+  bar.style.setProperty('--tb-a', sc && B.glass !== false ? (1 - Math.min(80, Math.max(0, Number(B.clear ?? 35))) / 100).toFixed(2) : '.94');
+  if(B.hideOnScroll) bar.classList.toggle('ab-hidden', y > 80 && y > _tbLast + 4 ? true : (y < _tbLast - 4 || y <= 80) ? false : bar.classList.contains('ab-hidden'));
+  else bar.classList.remove('ab-hidden');
+  _tbLast = y;
+}
+document.getElementById('app')?.addEventListener('scroll', () => requestAnimationFrame(_tbScroll), { passive:true });
+
+// offer banner at the top of the home screen (Admin → Home Page → Offers)
+let _osTimer = null;
+window.renderOffers = async function(){
+  const el = document.getElementById('bonusBanner'); if(!el) return;
+  const cfg = (await window.loadHomeCfg()).offers || {};
+  const def = [{ icon:'🎁', text:'নতুন ইউজারদের জন্য *{bonus} টাকা* সাইন-আপ বোনাস!', cta:'Sign up', action:'register', audience:'visitors', style:'orange', on:true }];
+  const items = Array.isArray(cfg.items) ? cfg.items : def;
+  const user = _getUser(), who = (user && user.phone) ? 'users' : 'visitors';
+  const bonus = Number(window._newUserBonus) || 0, now = Date.now();
+  const list = items.filter(x => x && x.on !== false && String(x.text || '').trim()
+    && (!x.audience || x.audience === 'all' || x.audience === who)
+    && (!x.start || new Date(x.start).getTime() <= now) && (!x.end || new Date(x.end).getTime() >= now)
+    && (!/\{bonus\}/.test(x.text) || (window._bonusKnown && bonus > 0)));
+  // called again on login, logout and config load: keep the running slideshow if nothing changed
+  const sig = JSON.stringify([cfg.on, cfg.rotate, list, bonus]);
+  if(sig === window._osSig) return;
+  window._osSig = sig;
+  clearInterval(_osTimer);
+  if(cfg.on === false || !list.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
+  const fmt = t => _escT(t).replace(/\{bonus\}/g, bonus.toLocaleString('en-US')).replace(/\*([^*]+)\*/g, '<b>$1</b>');
+  window._osList = list;
+  el.innerHTML = list.map((x, i) => `<div class="os-slide os-${['gold','glass'].includes(x.style) ? x.style : 'orange'}${i ? '' : ' on'}" role="button" tabindex="0" onclick="_osTap(${i})">
+      <div class="os-ic"><span>${_escT(x.icon || '🎁')}</span></div>
+      <div class="os-t">${fmt(x.text)}</div>
+      ${x.cta && x.action !== 'none' ? `<div class="os-cta">${_escT(x.cta)} <i class="fa-solid fa-chevron-right"></i></div>` : ''}
+    </div>`).join('') + (list.length > 1 ? `<div class="os-dots">${list.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : '');
+  el.style.display = 'block';
+  if(list.length > 1){
+    let k = 0;
+    _osTimer = setInterval(() => {
+      k = (k + 1) % list.length;
+      el.querySelectorAll('.os-slide').forEach((d, i) => d.classList.toggle('on', i === k));
+      el.querySelectorAll('.os-dots i').forEach((d, i) => d.classList.toggle('on', i === k));
+    }, Math.min(20, Math.max(2, Number(cfg.rotate) || 4)) * 1000);
+  }
+};
+window._osTap = function(i){
+  const x = (window._osList || [])[i]; if(!x) return;
+  if(x.action === 'register') nav(_getUser() ? 'screen-home' : 'screen-register');
+  else if(x.action === 'borrow') handleMainAction();
+  else if(x.action === 'link' && /^https?:\/\//i.test(x.link || '')) window.open(x.link, '_blank', 'noopener');
+};
+
+window.loadTicker = async function() {
+  try {
+    const cfg = (await window.loadHomeCfg()).notice || {};
+    const wrap = document.getElementById('tickerWrap'), ticker = document.getElementById('tickerContent');
+    const user = _getUser(), who = (user && user.phone) ? 'users' : 'visitors';
+    const forMe = a => !a || a === 'all' || a === who;
+    let closedKey = '';
+    try{ closedKey = sessionStorage.getItem('cu_notice_closed') || ''; }catch(e){}
+    if(cfg.on === false || !forMe(cfg.audience)){ wrap.style.display = 'none'; return; }
+    const now = Date.now();
+    const live = x => x && x.on !== false && x.text && forMe(x.audience) && (!x.start || new Date(x.start).getTime() <= now) && (!x.end || new Date(x.end).getTime() >= now);
+    let list = (Array.isArray(cfg.items) ? cfg.items : []).filter(live)
+      .sort((a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0))
+      .map(x => ({ text: x.text, link: x.link, type: x.type || 'info', pin: !!x.pin }));
+    if(cfg.broadcasts !== false){
+      const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
+      list = list.concat(gSnap.docs.slice(0, 3).map(d => d.data()).map(n => ({ text: (n.title ? n.title + ': ' : '') + (n.subject || n.message || ''), type: n.type || 'info', link: n.buttonUrl || '' })));
     }
+    if(cfg.own === true && user && user.phone){
+      const pSnap = await getDocs(query(collection(db, 'user_notifications'), where('uid', '==', user.phone)));
+      list = list.concat(pSnap.docs.map(d => d.data()).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))).slice(0, 2).map(n => ({ text: n.title + ': ' + (n.message || ''), type: n.type || 'info' })));
+    }
+    list = list.slice(0, Math.max(1, Number(cfg.max) || 6));
+    if(!list.length){ wrap.style.display = 'none'; return; }
+    // a closed bar stays closed this session, until the notices themselves change
+    const sig = list.map(x => x.text).join('|').length + ':' + list.length;
+    if(cfg.closable && closedKey === sig){ wrap.style.display = 'none'; return; }
+    const ic = { info:'circle-info', offer:'gift', success:'circle-check', warning:'triangle-exclamation', urgent:'bell', bonus:'gift', transaction:'receipt' };
+    const safeLink = l => /^https?:\/\//i.test(l || '') ? l : '';
+    const html = list.map(n => {
+      const t = _escT(String(n.text).length > 120 ? String(n.text).slice(0, 117) + '…' : n.text);
+      const l = safeLink(n.link);
+      return `<span class="ticker-item t-${_escT(n.type)}"><i class="fa-solid fa-${ic[n.type] || 'circle'}"></i>${n.pin ? '<span class="tk-pin">PINNED</span>' : ''} ${l ? `<a href="${_escT(l)}" target="_blank" rel="noopener">${t}</a>` : t}</span>`;
+    }).join('');
+    ticker.innerHTML = html + html;           // twice, so the loop has no gap
+    // speed 1 (slowest) … 10 (fastest); older configs saved slow/normal/fast
+    let sp = Number(cfg.speed);
+    if(!sp) sp = { slow: 3, normal: 5, fast: 8 }[cfg.speed] || 5;
+    sp = Math.min(10, Math.max(1, sp));
+    const per = 0.42 - sp * 0.034;           // seconds per character: 1 → .39s, 10 → .08s
+    const chars = list.reduce((n, x) => n + String(x.text).length, 0);
+    ticker.style.animationDuration = Math.max(6, Math.round(chars * per)) + 's';
+    ticker.style.animationDirection = cfg.dir === 'right' ? 'reverse' : 'normal';
+    const theme = ['green','gold','blue','red','dark'].includes(cfg.theme) ? cfg.theme : 'green';
+    const size = ['sm','md','lg'].includes(cfg.size) ? cfg.size : 'md';
+    wrap.className = `ticker-wrap tk-${theme} tk-${size}` + (cfg.pause !== false ? ' tk-pausable' : '');
+    const title = wrap.querySelector('.ticker-title');
+    title.innerText = cfg.label || 'Notice';
+    title.style.display = cfg.showLabel === false ? 'none' : '';
+    let x = wrap.querySelector('.tk-close');
+    if(cfg.closable){
+      if(!x){ x = document.createElement('button'); x.className = 'tk-close'; x.setAttribute('aria-label', 'Close notice'); x.innerHTML = '<i class="fa-solid fa-xmark"></i>'; wrap.appendChild(x); }
+      x.onclick = () => { wrap.style.display = 'none'; try{ sessionStorage.setItem('cu_notice_closed', sig); }catch(e){} };
+    } else if(x) x.remove();
+    wrap.style.display = 'flex';
   } catch(e) { console.log("Ticker Load Error:", e); }
 };
 
@@ -5992,6 +6654,7 @@ window.loadUserDashboardData = async function() {
   const user = _getUser(); if(!user || !user.phone || !db) return;
   if(!fbAuth || !fbAuth.currentUser){ if(typeof logoutUser === 'function') logoutUser(true); return; }
   document.getElementById('userGreeting').innerText = `Hello, ${_fullPhone(user.phone)}`;
+  if(window.applyTopBar) window.applyTopBar();
   
   try {
     const uSnap = await getDocs(query(collection(db, 'users'), where('phone', '==', user.phone)));
@@ -6008,6 +6671,7 @@ window.loadUserDashboardData = async function() {
         window._userDocId = uDoc.id;
         window._balanceAdjustUsed = uDoc.data().balanceAdjustUsed === true;
         window._promoClaimed = uDoc.data().promoClaimed === true;
+        window._promoLabel = uDoc.data().promo || '';
       } catch(e) {}
       window._userRealBalance = uSnap.docs[0].data().balance || 0;
       document.getElementById('headerBalance').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + window._userRealBalance.toLocaleString();
@@ -6035,7 +6699,7 @@ window.loadUserDashboardData = async function() {
     card.style.display = 'none'; mainBtn.style.display = 'flex'; window._pendingFeeApp = null; document.getElementById('mainBorrowBtnText').innerText = 'Borrow Now';
     if(!appSnap.empty) {
       const apps = appSnap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
-      const latestApp = apps[0]; window._latestApp = latestApp;
+      const latestApp = apps[0]; window._latestApp = latestApp; if(window.applyTopBar) window.applyTopBar();
       // newest application (any, not only the latest) whose fee is still unpaid
       window._pendingFeeApp = apps.find(x => x.status === 'Pending Fee Payment') || null;
       window._allApps = apps;
@@ -6045,6 +6709,7 @@ window.loadUserDashboardData = async function() {
         tSnap.docs.map(d => d.data()).sort((x,y) => new Date(x.submittedAt||0) - new Date(y.submittedAt||0))
           .forEach(t => { if(t.appId) map[t.appId] = t; });   // newest payment per application wins
         window._trxByApp = map;
+        if(window.applyTopBar) window.applyTopBar();
       }catch(e){ window._trxByApp = {}; }
       // with more than one application the card says so
       if(apps.length > 1){
@@ -6117,56 +6782,93 @@ window.loadReferralStats = async function(phone) {
 
 window.loadTransactionHistory = async function() {
   const user = _getUser(); const container = document.getElementById('historyListContainer');
-  if(!container || !user || !user.phone || !db) return;
+  const tabs = document.getElementById('hxTabs');
+  if(!container) return;
+  if(!user || !user.phone){
+    // visitors: explain what the history is and how to see it
+    if(tabs) tabs.style.display = 'none';
+    container.innerHTML = `<div class="hx-guest">
+      <div class="hx-g-ic"><i class="fa-solid fa-clock-rotate-left"></i></div>
+      <h4>Your payments will show here</h4>
+      <p>Log in to see every fee payment you made, with its TrxID and status: Pending, Verified or Rejected.</p>
+      <div class="hx-g-steps"><span><i class="fa-solid fa-hourglass-half"></i>Pending</span><span><i class="fa-solid fa-circle-check"></i>Verified</span><span><i class="fa-solid fa-circle-xmark"></i>Rejected</span></div>
+      <button class="mbtn-full" onclick="closeModal('historyModal'); nav('screen-login')"><i class="fa-solid fa-right-to-bracket"></i> Log in</button>
+      <button class="hx-g-reg" onclick="closeModal('historyModal'); nav('screen-register')">New here? Create an account</button>
+    </div>`;
+    return;
+  }
+  if(tabs) tabs.style.display = '';
+  if(!db) return;
   container.innerHTML = '<p style="text-align:center; color:var(--txt2); font-size:13px;">Loading...</p>';
   try {
     const snap = await getDocs(query(collection(db, 'transactions'), where('uid', '==', user.phone)));
     if(snap.empty) { container.innerHTML = '<p style="text-align:center; color:var(--txt2); font-size:13px;">No transactions found.</p>'; return; }
-    const trxs = snap.docs.map(d => d.data()).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
-    container.innerHTML = trxs.map(t => `
-      <div class="notif-item" style="border-left:3px solid ${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">
-        <div class="notif-icon" style="background:${t.status === 'Verified' ? 'rgba(29,219,128,.1)' : 'rgba(255,140,66,.1)'}; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">
-          <i class="fa-solid fa-money-bill-transfer"></i>
-        </div>
-        <div class="notif-content"><h4 style="display:flex; justify-content:space-between;">৳ ${t.amount} <span style="font-size:10px; color:${t.status === 'Verified' ? 'var(--p)' : 'var(--orange)'};">${t.status}</span></h4>
-          <p>TrxID: <strong>${t.trxId}</strong> via ${t.payMethod}${t.appId ? ` · for <strong>CU-${String(t.appId).slice(-6).toUpperCase()}</strong>` : ''}</p>
-          <div class="notif-date">${new Date(t.submittedAt).toLocaleString()}</div>
-        </div>
-      </div>`).join('');
+    window._hxList = snap.docs.map(d => d.data()).sort((a,b) => new Date(b.submittedAt||0) - new Date(a.submittedAt||0));
+    window.renderHistory();
   } catch(e) { container.innerHTML = '<p style="text-align:center; color:var(--red); font-size:13px;">Failed to load history.</p>'; }
 };
+window._hxTab = 'all';
+window.setHistoryTab = function(f){ window._hxTab = f; window.renderHistory(); };
+window.renderHistory = function(){
+  const container = document.getElementById('historyListContainer'); if(!container) return;
+  const all = window._hxList || [];
+  const st = t => t.status === 'Verified' || t.status === 'Rejected' ? t.status : 'Pending';
+  document.querySelectorAll('#hxTabs button').forEach(b => {
+    const f = b.dataset.f, n = f === 'all' ? all.length : all.filter(t => st(t) === f).length;
+    b.classList.toggle('on', f === window._hxTab);
+    b.querySelector('em').textContent = n ? n : '';
+  });
+  const list = window._hxTab === 'all' ? all : all.filter(t => st(t) === window._hxTab);
+  if(!list.length){ container.innerHTML = `<p class="hx-empty">${all.length ? 'No ' + _escT(window._hxTab.toLowerCase()) + ' payments.' : 'No transactions found.'}</p>`; return; }
+  const col = { Verified:['var(--p)','rgba(29,219,128,.1)','circle-check'], Rejected:['var(--red)','rgba(255,77,106,.1)','circle-xmark'], Pending:['var(--orange)','rgba(255,140,66,.1)','clock'] };
+  container.innerHTML = list.map(t => { const s = st(t), [c, bg, ic] = col[s]; return `
+      <div class="notif-item" style="border-left:3px solid ${c};">
+        <div class="notif-icon" style="background:${bg}; color:${c};"><i class="fa-solid fa-${ic}"></i></div>
+        <div class="notif-content"><h4 style="display:flex; justify-content:space-between;">৳ ${_escT(Number(t.amount||0).toLocaleString('en-US'))} <span class="hx-st" style="color:${c}; background:${bg};">${_escT(t.status || 'Pending')}</span></h4>
+          <p>TrxID: <strong>${_escT(t.trxId || '-')}</strong> via ${_escT(t.payMethod || '-')}${t.appId ? ` · for <strong>CU-${_escT(String(t.appId).slice(-6).toUpperCase())}</strong>` : ''}</p>
+          <div class="notif-date">${t.submittedAt ? new Date(t.submittedAt).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : ''}</div>
+        </div>
+      </div>`; }).join('');
+};
 
+// live activity: real approved loans and verified fee payments, chosen and shortened on the server
+let _lfTimer = null;
 window.loadLiveFeed = async function() {
   if(!db) return;
   const container = document.getElementById('liveFeedContainer');
+  const block = document.getElementById('liveBlock');
   if(!container) return;
+  const cfg = (await window.loadHomeCfg()).live || {};
+  if(cfg.on === false){ if(block) block.style.display = 'none'; return; }
   try {
-    // names come back already shortened from the server; other users' applications are never read here
     const r = await _api('feed');
     if(!r.ok) throw new Error(r.data.error || 'feed');
-    const approvedApps = (r.data.items || []).map(a => ({ name: a.name, loanAmount: a.amount, submittedAt: a.at }));
-    // only real, approved applications are shown; with none, the section is hidden
-    if(approvedApps.length === 0) {
-      container.innerHTML = '';
-      const sec = document.getElementById('liveFeedTitle'); if(sec) sec.style.display = 'none';
-      return;
+    const items = r.data.items || [];
+    if(r.data.off || !items.length){ if(block) block.style.display = 'none'; return; }
+    if(block) block.style.display = '';
+    const ago = at => {
+      const m = Math.max(0, Math.floor((Date.now() - new Date(at || Date.now())) / 60000));
+      return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.floor(m/60)} hr ago` : `${Math.floor(m/1440)} day${m >= 2880 ? 's' : ''} ago`;
+    };
+    const row = a => a.kind === 'fee'
+      ? `<div class="live-item"><div class="live-left"><div class="live-avatar fee"><i class="fa-solid fa-receipt"></i></div><div class="live-info"><h4>${_escT(a.name)}</h4><p><span class="lk fee">Fee paid</span>${ago(a.at)}</p></div></div><div class="live-amount fee">৳ ${_escT(a.amount)}</div></div>`
+      : `<div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>${_escT(a.name)}</h4><p><span class="lk">Loan approved</span>${ago(a.at)}</p></div></div><div class="live-amount">+ ৳ ${Number(a.amount || 0).toLocaleString('en-US')}</div></div>`;
+    const html = items.map(row).join('');
+    // auto-scroll only when the list is longer than the box
+    if(cfg.scroll !== false && items.length > 3){
+      container.classList.add('scrolling');
+      container.innerHTML = `<div class="lf-track" style="--lf-dur:${items.length * 3}s">${html}${html}</div>`;
+    } else {
+      container.classList.remove('scrolling');
+      container.innerHTML = html;
     }
-    container.innerHTML = approvedApps.map(a => {
-      let name = String(a.name || 'User');
-      if(name.length > 4) name = name.substring(0, 4) + '***';
-      name = name.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-      // time since the loan was actually approved / sent, not since it was applied for
-      const at = a.disbursedAt || a.creditedAt || a.approvedAt || a.statusUpdatedAt || a.submittedAt || Date.now();
-      const diffMins = Math.max(0, Math.floor((new Date() - new Date(at)) / 60000));
-      const timeText = diffMins < 60 ? `${diffMins} মিনিট আগে` : diffMins < 1440 ? `${Math.floor(diffMins/60)} ঘন্টা আগে` : `${Math.floor(diffMins/1440)} দিন আগে`;
-      return `
-        <div class="live-item"><div class="live-left"><div class="live-avatar"><i class="fa-solid fa-check"></i></div><div class="live-info"><h4>${name}</h4><p>${timeText}</p></div></div><div class="live-amount">+ ৳ ${Number(String(a.loanAmount).replace(/,/g,'')).toLocaleString()}</div></div>
-      `;
-    }).join('');
   } catch(e) {
     console.error("Live Feed Error:", e);
     container.innerHTML = '<div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Could not load recent activity.</div>';
   }
+  clearTimeout(_lfTimer);
+  const sec = Number(cfg.refresh);
+  if(sec > 0) _lfTimer = setTimeout(window.loadLiveFeed, Math.max(15, sec) * 1000);
 };
 
 // functions defined in this module but called from the classic script or from inline
@@ -6178,6 +6880,9 @@ handlePayReturn();
 loadDynamicConfig();
 
 document.addEventListener("DOMContentLoaded", () => {
+  if(typeof window.renderHomeBlocks === 'function') window.renderHomeBlocks();
+  if(typeof window.renderOffers === 'function') window.renderOffers();
+  if(typeof window.applyTopBar === 'function') window.applyTopBar();
   if(typeof window.loadTicker === 'function') window.loadTicker();
   if(typeof window.loadLiveFeed === 'function')    window.loadLiveFeed();
   if(typeof initHotOffer === 'function')           initHotOffer();

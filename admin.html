@@ -201,6 +201,69 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .fg textarea{resize:vertical;min-height:70px;line-height:1.5}
 .fg input::placeholder,.fg textarea::placeholder{color:var(--txt3)}
 .fg .hint{font-size:10px;color:var(--txt2);margin-top:2px}
+#sec-home .hint{font-size:11.5px;color:var(--txt2);line-height:1.5}
+.hp-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
+.hp-tabs button{display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:11px;border:1px solid var(--border);background:var(--card);color:var(--txt2);font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
+.hp-tabs button.on{background:rgba(29,219,128,.12);border-color:rgba(29,219,128,.45);color:var(--p)}
+.hp-pane{display:none}.hp-pane.on{display:block}
+.hp-sw{display:flex!important;align-items:center;gap:9px}
+.hp-list{display:flex;flex-direction:column;gap:8px}
+.hp-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.02)}
+.hp-row.off{opacity:.55}
+.hp-row .hp-main{flex:1;min-width:0}
+.hp-row .hp-t{font-weight:700;font-size:13px;color:var(--txt);overflow:hidden;text-overflow:ellipsis}
+.hp-row .hp-s{font-size:11px;color:var(--txt2);margin-top:2px}
+.hp-row input,.hp-row select,#ntFilter{padding:7px 9px;font-size:12.5px;border-radius:9px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);outline:none;font-family:inherit}
+.hp-row input:focus,.hp-row select:focus{border-color:var(--p)}
+.hp-row select option,#ntFilter option{background:#0c1525}
+.hp-logo{width:64px;height:40px;flex:0 0 64px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hp-logo img{max-width:90%;max-height:80%;object-fit:contain}
+.hp-ic{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(29,219,128,.12);color:var(--p)}
+.hp-acts{display:flex;gap:5px;flex-shrink:0}
+.hp-badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
+.hp-badge.live{background:rgba(29,219,128,.15);color:var(--p)}.hp-badge.scheduled{background:rgba(77,143,255,.15);color:#7aa8ff}.hp-badge.expired{background:rgba(255,255,255,.08);color:var(--txt2)}.hp-badge.off{background:rgba(255,77,106,.12);color:#ff8a9c}.hp-badge.pin{background:rgba(255,215,106,.15);color:#ffd76a}
+.sl-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+.sl-prev{position:sticky;top:12px}
+.sl-phone{width:280px;height:560px;margin:0 auto;border-radius:30px;border:8px solid #1b2430;background:#000;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.sl-phone iframe{width:375px;height:750px;border:0;transform:scale(.7253);transform-origin:0 0;background:#fff}
+@media(max-width:900px){.sl-wrap{grid-template-columns:1fr}.sl-prev{position:static}}
+.hp-step{display:flex;align-items:center;gap:6px}
+.fo-stat{margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(29,219,128,.07);border:1px solid rgba(29,219,128,.2);font-size:13px}
+.fo-prev{display:flex;flex-direction:column;gap:14px;align-items:center}
+.fo-ban{width:100%;display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:14px;color:#fff;background:linear-gradient(90deg,#ff4d6a,#ff8c42)}
+.fo-ban.fo-gold{background:linear-gradient(90deg,#d99a1e,#ffcf5a)}.fo-ban.fo-green{background:linear-gradient(90deg,#0b8a43,#1ddb80)}.fo-ban.fo-purple{background:linear-gradient(90deg,#6d3bd8,#b05cff)}
+.fo-ban .fo-ic{font-size:22px}.fo-ban h4{font-size:13px;font-weight:900;text-transform:uppercase}.fo-ban p{font-size:11.5px;opacity:.95}
+.fo-pop{width:100%;padding:18px 16px;border-radius:18px;background:#101b2d;border:1px solid rgba(255,255,255,.1);text-align:center}
+.fo-pop .fo-big{font-size:42px}.fo-pop h3{font-size:18px;font-weight:900;margin:4px 0 6px}.fo-pop p{font-size:12px;color:var(--txt2);line-height:1.5}.fo-pop p b{color:#ff8c42}
+.fo-p-gold p b{color:#ffcf5a!important}.fo-p-green p b{color:#1ddb80!important}.fo-p-purple p b{color:#c89bff!important}
+.fo-p-gold .fo-btn,.fo-p-gold .fo-trk i{background:linear-gradient(90deg,#d99a1e,#ffcf5a);color:#1a1405}.fo-p-gold .fo-cnt b{color:#ffcf5a}
+.fo-p-green .fo-btn,.fo-p-green .fo-trk i{background:linear-gradient(90deg,#0b8a43,#1ddb80)}.fo-p-green .fo-cnt b{color:#1ddb80}
+.fo-p-purple .fo-btn,.fo-p-purple .fo-trk i{background:linear-gradient(90deg,#6d3bd8,#b05cff)}.fo-p-purple .fo-cnt b{color:#c89bff}
+.fo-pop small{display:block;font-size:10.5px;color:#1ddb80;margin-top:4px}
+.fo-cnt{display:flex;justify-content:space-between;font-size:11px;margin-top:12px}.fo-cnt b{color:#ff4d6a}
+.fo-trk{height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:5px}.fo-trk i{display:block;height:100%;background:linear-gradient(90deg,#ff4d6a,#ff8c42)}
+.fo-btn{margin-top:14px;padding:11px;border-radius:12px;background:linear-gradient(90deg,#ff4d6a,#ff8c42);font-weight:800;font-size:14px}
+.tb-prevwrap{width:280px;margin:0 auto;border-radius:18px;overflow:hidden;border:6px solid #1b2430;background:linear-gradient(180deg,#0a6e35,#06301a 70%,#060d1a)}
+.tb-prev{--tb-a:.94;display:flex;align-items:center;gap:7px;padding:10px;background:rgba(6,58,30,var(--tb-a));border-bottom:1px solid rgba(29,219,128,.2);transition:.3s}
+.tb-prev.scrolled{margin-top:110px;backdrop-filter:blur(10px)}.tb-prev.compact{padding:6px 10px}
+.tb-prev.tp-dark{background:rgba(10,16,26,var(--tb-a))}.tb-prev.tp-gold{background:rgba(18,16,10,var(--tb-a));border-bottom-color:rgba(255,215,106,.3)}
+.tp-av{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid #1ddb80;display:flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+.tp-gold .tp-av{border-color:#ffd76a}
+.tp-av{position:relative}.tp-dot{position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;background:#ff4d6a;border:2px solid #0b3a20}
+.tp-mid{flex:1;min-width:0;display:flex;flex-direction:column}.tp-mid small{font-size:9.5px;color:rgba(255,255,255,.7)}.tp-mid b{font-size:12px}
+.tp-bal{font-size:9.5px;color:#1ddb80;margin-top:2px}.tp-b{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:10px;flex:none}
+.of-row{align-items:flex-start}
+.of-ic{width:46px!important;text-align:center;font-size:20px;padding:6px 0!important;flex:none}
+.of-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.of-opts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.of-opts select,.of-opts input{width:auto}
+.hp-step button{width:36px;height:38px;border-radius:9px;border:1.5px solid var(--border);background:rgba(255,255,255,.05);color:var(--txt);font-size:18px;font-weight:800;cursor:pointer}
+.hp-step button:hover{border-color:var(--p);color:var(--p)}
+.hp-step input{text-align:center;flex:1;min-width:0}
+.hp-mini{padding:2px 6px!important;font-size:11px!important;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--txt)}
+.hp-grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;flex:1;min-width:0}
+#slPays .hp-grid2{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+@media(max-width:700px){.hp-row{flex-wrap:wrap}.hp-grid2,#slPays .hp-grid2{grid-template-columns:1fr}}
 .cfg-blk{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:20px;margin-bottom:13px}
 .cfg-t{font-size:13px;font-weight:800;margin-bottom:13px;padding-bottom:9px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
 .cfg-t i{color:var(--p);font-size:13px}
@@ -528,6 +591,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="sb-sec">Configure</div>
   <div class="nav" id="n-wallets" onclick="gS('wallets',this)"><i class="fa-solid fa-wallet"></i>Wallets</div>
   <div class="nav" id="n-config" onclick="gS('config',this)"><i class="fa-solid fa-sliders"></i>Site Config</div>
+  <div class="nav" id="n-home" onclick="gS('home',this)"><i class="fa-solid fa-house-laptop"></i>Home Page</div>
   <div class="nav" id="n-broadcast" onclick="gS('broadcast',this)"><i class="fa-solid fa-bullhorn"></i>Broadcast</div>
   <div class="sb-sec">System</div>
   <div class="nav" id="n-support" onclick="gS('support',this)"><i class="fa-solid fa-headset"></i>Support Tickets<span class="nb nb-r" id="nb-st">0</span></div>
@@ -671,7 +735,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="wblk">
       <div class="wblk-h">
         <div class="wblk-ic in"><i class="fa-solid fa-arrow-down"></i></div>
-        <div class="wblk-t"><strong>1 · Fee receive from users</strong><span>ইউজার ফি পাঠাবে এই নম্বরগুলোতে, তারপর TrxID দেবে</span></div>
+        <div class="wblk-t"><strong>1 · Fee receive from users</strong><span>Users send the fee to these numbers, then enter the TrxID</span></div>
         <button class="btn btn-sm btn-p" onclick="openWM('fee')"><i class="fa-solid fa-plus"></i>Add</button>
       </div>
       <div id="wFeeRows" class="wgrid"><div class="wload">Loading...</div></div>
@@ -679,7 +743,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="wblk">
       <div class="wblk-h">
         <div class="wblk-ic out"><i class="fa-solid fa-arrow-up"></i></div>
-        <div class="wblk-t"><strong>2 · Loan send to customer</strong><span>লোন approve হলে আপনি এই মেথডে কাস্টমারের নম্বরে টাকা পাঠাবেন</span></div>
+        <div class="wblk-t"><strong>2 · Loan send to customer</strong><span>After a loan is approved, you send the money to the customer's number with these methods</span></div>
         <button class="btn btn-sm btn-p" onclick="openWM('payout')"><i class="fa-solid fa-plus"></i>Add</button>
       </div>
       <div id="wPayRows" class="wgrid"><div class="wload">Loading...</div></div>
@@ -697,7 +761,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="wblk">
       <div class="wblk-h">
         <div class="wblk-ic in"><i class="fa-solid fa-arrow-down"></i></div>
-        <div class="wblk-t"><strong>1 · Fee receive from users (online)</strong><span>ইউজার SSLCommerz পেজে পে করবে, ফি নিজে থেকেই verify হবে, TrxID লাগবে না</span></div>
+        <div class="wblk-t"><strong>1 · Fee receive from users (online)</strong><span>Users pay on the SSLCommerz page. The fee is verified automatically, no TrxID needed</span></div>
         <label class="tog" title="Show online payment to users"><input type="checkbox" id="gwEn" onchange="markDirty('wallets','gw')"><span class="tog-sl"></span></label>
       </div>
       <div id="gwStatus" class="gw-st"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking the server…</div>
@@ -713,29 +777,29 @@ tr:hover td{background:rgba(255,255,255,.015)}
         </div>
       </details>
       <details class="wdet">
-        <summary><i class="fa-solid fa-screwdriver-wrench"></i>একবার সেটআপ করতে হবে (Setup guide)</summary>
+        <summary><i class="fa-solid fa-screwdriver-wrench"></i>One-time setup (Setup guide)</summary>
         <div class="gw-guide" style="margin:10px 0 0">
-          <p>অনলাইন পেমেন্ট চালু করতে <strong>Vercel → Project → Settings → Environment Variables</strong>-এ নিচের ভ্যালুগুলো বসান, তারপর <strong>Redeploy</strong> করুন। এগুলো গোপন, তাই এই প্যানেলে বা Firestore-এ রাখা হয় না।</p>
+          <p>To turn on online payment, add these values in <strong>Vercel → Project → Settings → Environment Variables</strong>, then <strong>Redeploy</strong>. They are secret, so they are never kept in this panel or in Firestore.</p>
           <ol>
-            <li><code>SSLCZ_STORE_ID</code> — SSLCommerz merchant panel থেকে পাওয়া <b>Store ID</b></li>
-            <li><code>SSLCZ_STORE_PASSWD</code> — SSLCommerz-এর <b>Store Password</b> (API password)</li>
-            <li><code>SSLCZ_SANDBOX</code> — টেস্টের জন্য <b>true</b>, আসল পেমেন্টের জন্য <b>false</b></li>
-            <li><code>FIREBASE_SERVICE_ACCOUNT</code> — Firebase Console → Project settings → Service accounts → <b>Generate new private key</b> চাপলে যে JSON ফাইল নামে, তার পুরো লেখা কপি করে বসান</li>
-            <li><code>PUBLIC_BASE_URL</code> (ঐচ্ছিক) — যেমন <b>https://creditup.online</b></li>
+            <li><code>SSLCZ_STORE_ID</code> — the <b>Store ID</b> from the SSLCommerz merchant panel</li>
+            <li><code>SSLCZ_STORE_PASSWD</code> — the SSLCommerz <b>Store Password</b> (API password)</li>
+            <li><code>SSLCZ_SANDBOX</code> — <b>true</b> for testing, <b>false</b> for real payments</li>
+            <li><code>FIREBASE_SERVICE_ACCOUNT</code> — Firebase Console → Project settings → Service accounts → press <b>Generate new private key</b> and paste the full text of the JSON file it downloads</li>
+            <li><code>PUBLIC_BASE_URL</code> (optional) — for example <b>https://creditup.online</b></li>
           </ol>
-          <p>সব ঠিক থাকলে উপরে সবুজ টিক আর <b>"Server is ready"</b> দেখাবে। তারপর ডান পাশের সুইচ চালু করুন। প্রথমে Sandbox-এ টেস্ট করে নিন।</p>
+          <p>When everything is right, a green tick and <b>"Server is ready"</b> show above. Then turn on the switch on the right. Test in Sandbox first.</p>
         </div>
       </details>
     </div>
     <div class="wblk">
       <div class="wblk-h">
         <div class="wblk-ic out"><i class="fa-solid fa-arrow-up"></i></div>
-        <div class="wblk-t"><strong>2 · Loan send to customer (automatic)</strong><span>লোন approve হলে API দিয়ে নিজে থেকে কাস্টমারের নম্বরে টাকা যাবে</span></div>
+        <div class="wblk-t"><strong>2 · Loan send to customer (automatic)</strong><span>After a loan is approved, the money goes to the customer's number automatically through an API</span></div>
         <span class="wsoon">Not connected</span>
       </div>
       <div class="wauto-note">
-        <p>অটোমেটিক টাকা পাঠাতে প্রতিটা প্রোভাইডারের আলাদা <b>Disbursement / B2C API</b> লাগে। যেমন bKash, Nagad আর Rocket-এর merchant disbursement। এগুলো প্রোভাইডারের সাথে চুক্তি করে আলাদা credential নিতে হয়। SSLCommerz দিয়ে শুধু টাকা নেওয়া যায়, পাঠানো যায় না।</p>
-        <p>যে প্রোভাইডারের API অ্যাক্সেস পাবেন, তার ডকুমেন্টেশন আর sandbox credential দিলে সেটা এখানে যোগ করা যাবে। ততদিন লোন পাঠাবেন <b>Manual → Loan send</b> থেকে।</p>
+        <p>Sending money automatically needs each provider's own <b>Disbursement / B2C API</b>, such as bKash, Nagad and Rocket merchant disbursement. You get these credentials through an agreement with each provider. SSLCommerz can only receive money, not send it.</p>
+        <p>When you get API access from a provider, share its documentation and sandbox credentials and it can be added here. Until then, send loans from <b>Manual → Loan send</b>.</p>
         <div class="gwm" style="margin-top:8px">
           <span class="gwm-i dis"><b>bKash</b>Disbursement API</span><span class="gwm-i dis"><b>Nagad</b>Disbursement API</span><span class="gwm-i dis"><b>Rocket</b>Disbursement API</span><span class="gwm-i dis"><b>Upay</b>Disbursement API</span>
         </div>
@@ -748,6 +812,257 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="savebar-t"><i class="fa-solid fa-circle-exclamation"></i><span>You have unsaved changes</span></div>
   <button class="btn btn-s btn-sm" onclick="discardTab()">Discard</button>
   <button class="btn btn-p btn-sm" onclick="saveTab()"><i class="fa-solid fa-floppy-disk"></i>Save changes</button>
+</div>
+
+<!-- HOME PAGE -->
+<div class="sec" id="sec-home">
+  <div class="sec-head"><h2>Home Page</h2><button class="btn btn-p btn-lg sv-btn" id="svBtn-home" onclick="saveTab('home')" disabled><i class="fa-solid fa-floppy-disk"></i><span>All saved</span></button></div>
+  <div class="hp-tabs" id="hpTabs">
+    <button class="on" data-p="live" onclick="hpTab('live')"><i class="fa-solid fa-bolt"></i>Live Transactions</button>
+    <button data-p="notice" onclick="hpTab('notice')"><i class="fa-solid fa-bullhorn"></i>Notice Bar</button>
+    <button data-p="partners" onclick="hpTab('partners')"><i class="fa-solid fa-handshake"></i>Partners</button>
+    <button data-p="trust" onclick="hpTab('trust')"><i class="fa-solid fa-shield-halved"></i>Trust Badges</button>
+    <button data-p="ref" onclick="hpTab('ref')"><i class="fa-solid fa-user-plus"></i>Invite Code</button>
+    <button data-p="offers" onclick="hpTab('offers')"><i class="fa-solid fa-gift"></i>Offers</button>
+    <button data-p="fomo" onclick="hpTab('fomo')"><i class="fa-solid fa-fire"></i>Hot Offer</button>
+    <button data-p="topbar" onclick="hpTab('topbar')"><i class="fa-solid fa-window-maximize"></i>Top Bar</button>
+    <button data-p="splash" onclick="hpTab('splash')"><i class="fa-solid fa-mobile-screen"></i>Loading Screen</button>
+  </div>
+
+  <!-- LIVE -->
+  <div class="hp-pane on" id="hp-live">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-bolt"></i>Live Transactions</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="lv-on" checked><span class="tog-sl"></span></label>Show live section</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="lv-loans" checked><span class="tog-sl"></span></label>Approved loans</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="lv-fees" checked><span class="tog-sl"></span></label>Verified fee payments</label></div>
+        <div class="fg"><label>Section title</label><input id="lv-title" placeholder="Live Transactions"></div>
+        <div class="fg"><label>How many to show</label><input id="lv-count" type="number" min="1" max="30" placeholder="8"></div>
+        <div class="fg"><label>Only from the last (days, 0 = all)</label><input id="lv-days" type="number" min="0" placeholder="30"></div>
+        <div class="fg"><label>Auto refresh (seconds, 0 = off)</label><input id="lv-refresh" type="number" min="0" placeholder="60"></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="lv-scroll" checked><span class="tog-sl"></span></label>Auto-scroll the list</label></div>
+      </div>
+      <div class="hint" style="margin-top:10px">Only real records are shown: approved or sent loans, and fee payments you verified. Fees always show only the first 2 digits (for example ৳13**.00). Names are shortened and phone numbers are hidden.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-eye"></i>Preview &amp; hide entries <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadFeed()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+      <div id="lvPreview" class="hp-list"><div class="hint">Loading...</div></div>
+      <div class="hint" style="margin-top:8px">Hide any entry you do not want on the home page (for example a test record). Hidden entries stay in your records.</div>
+    </div>
+  </div>
+
+  <!-- NOTICE BAR -->
+  <div class="hp-pane" id="hp-notice">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Notice Bar Settings</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-on" checked><span class="tog-sl"></span></label>Show notice bar</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-bc" checked><span class="tog-sl"></span></label>Also show latest broadcasts</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-own"><span class="tog-sl"></span></label>Also show the user's own notifications</label></div>
+        <div class="fg"><label>Who sees the bar</label><select id="nt-aud"><option value="all">Everyone</option><option value="visitors">Visitors only (not logged in)</option><option value="users">Logged-in users only</option></select></div>
+        <div class="fg"><label>Speed (1 = slowest, 10 = fastest)</label><div class="hp-step"><button type="button" onclick="hpStep('nt-speed',-1)">−</button><input id="nt-speed" type="number" min="1" max="10" value="5"><button type="button" onclick="hpStep('nt-speed',1)">+</button></div></div>
+        <div class="fg"><label>Max items in the bar</label><div class="hp-step"><button type="button" onclick="hpStep('nt-max',-1)">−</button><input id="nt-max" type="number" min="1" max="20" value="6"><button type="button" onclick="hpStep('nt-max',1)">+</button></div></div>
+        <div class="fg"><label>Direction</label><select id="nt-dir"><option value="left">Right to left</option><option value="right">Left to right</option></select></div>
+        <div class="fg"><label>Colour</label><select id="nt-theme"><option value="green">Green</option><option value="gold">Gold</option><option value="blue">Blue</option><option value="red">Red</option><option value="dark">Dark</option></select></div>
+        <div class="fg"><label>Text size</label><select id="nt-size"><option value="sm">Small</option><option value="md" selected>Normal</option><option value="lg">Large</option></select></div>
+        <div class="fg"><label>Label</label><input id="nt-label" placeholder="Notice"></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-showlabel" checked><span class="tog-sl"></span></label>Show the label</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-pause" checked><span class="tog-sl"></span></label>Pause when touched</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nt-close"><span class="tog-sl"></span></label>Users can close the bar</label></div>
+      </div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-plus"></i>New Notice</div>
+      <div class="fgrid">
+        <div class="fg" style="grid-column:1/-1"><label><span class="req">*</span> Text</label><input id="ntn-text" maxlength="160" placeholder="e.g. Eid holiday: office closed 15–18 June, online service open"></div>
+        <div class="fg"><label>Show to</label><select id="ntn-aud"><option value="all">Everyone</option><option value="visitors">Visitors only</option><option value="users">Logged-in users only</option></select></div>
+        <div class="fg"><label>Style</label><select id="ntn-type"><option value="info">ℹ️ Info</option><option value="offer">🎁 Offer</option><option value="success">✅ Good news</option><option value="warning">⚠️ Warning</option><option value="urgent">🚨 Urgent</option></select></div>
+        <div class="fg"><label>Link (optional)</label><input id="ntn-link" placeholder="https://..."></div>
+        <div class="fg"><label>Start (optional)</label><input id="ntn-start" type="datetime-local"></div>
+        <div class="fg"><label>End (optional)</label><input id="ntn-end" type="datetime-local"></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="ntn-pin"><span class="tog-sl"></span></label>Pin to the front</label></div>
+      </div>
+      <button class="btn btn-p btn-sm" style="margin-top:12px" onclick="hpAddNotice()"><i class="fa-solid fa-plus"></i>Add notice</button>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-clock-rotate-left"></i>All Notices &amp; History
+      <select id="ntFilter" onchange="hpRenderNotices()" style="margin-left:auto;width:auto;padding:5px 8px;font-size:12px"><option value="all">All</option><option value="live">Live now</option><option value="scheduled">Scheduled</option><option value="expired">Expired</option><option value="off">Off</option></select></div>
+      <div id="ntList" class="hp-list"></div>
+    </div>
+  </div>
+
+  <!-- PARTNERS -->
+  <div class="hp-pane" id="hp-partners">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Partner Section</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="pt-on" checked><span class="tog-sl"></span></label>Show partner section</label></div>
+        <div class="fg"><label>Section title</label><input id="pt-title" placeholder="Our Partners"></div>
+        <div class="fg"><label>Logo size</label><select id="pt-size"><option value="md">Large</option><option value="lg" selected>Extra large</option></select></div>
+      </div>
+      <div class="hint" style="margin-top:10px">Only list companies you really work with. Showing a bank or wallet as a "partner" without an agreement can mislead users and misuse their brand.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-ol"></i>Partners <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="hpAddPartner()"><i class="fa-solid fa-plus"></i>Add partner</button></div>
+      <div id="ptList" class="hp-list"></div>
+    </div>
+  </div>
+
+  <!-- TRUST -->
+  <div class="hp-pane" id="hp-trust">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Trust Footer</div>
+      <div class="fgrid">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tr-on" checked><span class="tog-sl"></span></label>Show trust badges under partners</label></div>
+        <div class="fg"><label>Footer note (optional)</label><input id="tr-note" maxlength="140" placeholder="e.g. Payments through bKash, Nagad and Rocket"></div>
+      </div>
+      <div class="hint" style="margin-top:10px">Keep every badge true. Do not claim a licence, certificate or bank approval you do not have.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-ol"></i>Badges <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="hpAddTrust()"><i class="fa-solid fa-plus"></i>Add badge</button></div>
+      <div id="trList" class="hp-list"></div>
+    </div>
+  </div>
+
+  <!-- INVITE CODE -->
+  <div class="hp-pane" id="hp-ref">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-user-plus"></i>Invite Code in My Profile</div>
+      <div class="fgrid">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="rf-on" checked><span class="tog-sl"></span></label>Let users add an invite code after sign-up</label></div>
+        <div class="fg"><label>Allowed within (days after joining, 0 = any time)</label><input id="rf-days" type="number" min="0" placeholder="7"></div>
+      </div>
+      <div class="hint" style="margin-top:10px">For users whose invite link did not work when they signed up. A code can be added only once, never the user's own code, and never the code of someone they invited. The inviter gets a notification.</div>
+    </div>
+  </div>
+  <!-- OFFERS -->
+  <div class="hp-pane" id="hp-offers">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Offer Banner (top of the home screen)</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="of-on" checked><span class="tog-sl"></span></label>Show offer banner</label></div>
+        <div class="fg"><label>Change offer every (seconds)</label><div class="hp-step"><button type="button" onclick="hpStep('of-rotate',-1)">−</button><input id="of-rotate" type="number" min="2" max="20" value="4"><button type="button" onclick="hpStep('of-rotate',1)">+</button></div></div>
+      </div>
+      <div class="hint" style="margin-top:10px">Write <b>{bonus}</b> to show the sign-up bonus from Site Config (an offer with {bonus} hides itself when the bonus is 0). Put words between <b>*stars*</b> to highlight them. Keep every offer true: users must really get what it says.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-ol"></i>Offers <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="hpAddOffer()"><i class="fa-solid fa-plus"></i>Add offer</button></div>
+      <div id="ofList" class="hp-list"></div>
+    </div>
+  </div>
+
+  <!-- HOT OFFER -->
+  <div class="hp-pane" id="hp-fomo">
+    <div class="sl-wrap">
+      <div class="sl-form">
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-fire"></i>Hot Offer (floating banner + popup)</div>
+          <div class="fgrid">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="fo-on" checked><span class="tog-sl"></span></label>Show the hot offer</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="fo-counter" checked><span class="tog-sl"></span></label>Show the claimed counter in the popup</label></div>
+            <div class="fg"><label>Who sees it</label><select id="fo-aud"><option value="all">Everyone</option><option value="visitors">Visitors only</option><option value="users">Logged-in users only</option></select></div>
+            <div class="fg"><label>Colour</label><select id="fo-theme"><option value="red">Red / orange</option><option value="gold">Gold</option><option value="green">Green</option><option value="purple">Purple</option></select></div>
+            <div class="fg"><label>How many users can claim it</label><div class="hp-step"><button type="button" onclick="hpStep('fo-limit',-5)">−</button><input id="fo-limit" type="number" min="1" max="100000" value="50"><button type="button" onclick="hpStep('fo-limit',5)">+</button></div></div>
+            <div class="fg"><label>Show after (seconds)</label><div class="hp-step"><button type="button" onclick="hpStep('fo-delay',-0.5)">−</button><input id="fo-delay" type="number" min="0" max="30" step="0.5" value="3.5"><button type="button" onclick="hpStep('fo-delay',0.5)">+</button></div></div>
+            <div class="fg"><label>Start (optional)</label><input id="fo-start" type="datetime-local"></div>
+            <div class="fg"><label>End (optional)</label><input id="fo-end" type="datetime-local"></div>
+          </div>
+          <div class="fo-stat" id="foStat"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking claims…</div>
+          <div class="hint" style="margin-top:8px">The counter shows only real claims. When the limit is reached the offer closes by itself. Every claim is saved on the user and copied to their next application (Applications → Promo), so you can honour it. Only promise what you will really give.</div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-font"></i>Texts</div>
+          <div class="fgrid">
+            <div class="fg"><label>Icon (emoji)</label><input id="fo-icon" maxlength="4" placeholder="🔥"></div>
+            <div class="fg"><label>Saved on the user as</label><input id="fo-promo" maxlength="80" placeholder="First installment free"></div>
+            <div class="fg"><label>Banner title</label><input id="fo-btitle" maxlength="40"></div>
+            <div class="fg"><label>Banner text</label><input id="fo-btext" maxlength="100"></div>
+            <div class="fg"><label>Popup title</label><input id="fo-ptitle" maxlength="40"></div>
+            <div class="fg"><label>Popup button</label><input id="fo-button" maxlength="30"></div>
+            <div class="fg" style="grid-column:1/-1"><label>Popup text</label><input id="fo-ptext" maxlength="160"></div>
+            <div class="fg" style="grid-column:1/-1"><label>Small note under the text (empty = none)</label><input id="fo-pnote" maxlength="140"></div>
+            <div class="fg"><label>Counter label</label><input id="fo-clabel" maxlength="30"></div>
+            <div class="fg"><label>"Offer ended" message</label><input id="fo-ended" maxlength="120"></div>
+            <div class="fg"><label>Success title</label><input id="fo-stitle" maxlength="40"></div>
+            <div class="fg"><label>Success message</label><input id="fo-stext" maxlength="200"></div>
+          </div>
+          <div class="hint" style="margin-top:8px"><b>{limit}</b> = how many can claim. Put words between <b>*stars*</b> to highlight them.</div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-rotate"></i>Rounds</div>
+          <div class="hint" style="margin-bottom:10px">Start a new round to run the offer again from 0 claims. Users who claimed before keep their claim; they can claim again in the new round. Current round: <b id="foRound">1</b></div>
+          <button class="btn btn-sm btn-s" onclick="hpFomoRound()"><i class="fa-solid fa-rotate"></i>Start a new round</button>
+        </div>
+      </div>
+      <div class="sl-prev">
+        <div class="fo-prev" id="foPrev"></div>
+        <div class="hint" style="text-align:center;margin-top:8px">Preview of the banner and popup with your unsaved changes.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP BAR -->
+  <div class="hp-pane" id="hp-topbar">
+    <div class="sl-wrap">
+      <div class="sl-form">
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-window-maximize"></i>Top Bar Look</div>
+          <div class="fgrid">
+            <div class="fg"><label>Colour</label><select id="tb-theme"><option value="green">Green glass</option><option value="dark">Dark glass</option><option value="gold">Dark + gold</option></select></div>
+            <div class="fg"><label>See-through when scrolled (%)</label><div class="hp-step"><button type="button" onclick="hpStep('tb-clear',-5)">−</button><input id="tb-clear" type="number" min="0" max="80" value="35"><button type="button" onclick="hpStep('tb-clear',5)">+</button></div></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-glass" checked><span class="tog-sl"></span></label>Glass effect when scrolling</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-compact" checked><span class="tog-sl"></span></label>Make it smaller when scrolling</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-hide"><span class="tog-sl"></span></label>Hide when scrolling down, show when scrolling up</label></div>
+          </div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-user"></i>What it shows</div>
+          <div class="fgrid">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-avatar" checked><span class="tog-sl"></span></label>Profile picture button (opens My Profile)</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-hi" checked><span class="tog-sl"></span></label>Greeting by time of day (Good morning / evening)</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-balance" checked><span class="tog-sl"></span></label>Balance</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-notif" checked><span class="tog-sl"></span></label>Notifications button</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-support" checked><span class="tog-sl"></span></label>Support button</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-logout" checked><span class="tog-sl"></span></label>Log out button</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tb-alert" checked><span class="tog-sl"></span></label>Red dot when the user has something to do (e.g. fee not paid)</label></div>
+            <div class="fg"><label>Title for logged-in users</label><select id="tb-name"><option value="phone">Phone number</option><option value="name">Name from the last application</option><option value="brand">Credit Up</option></select></div>
+            <div class="fg"><label>Title for visitors</label><input id="tb-vtext" maxlength="40" placeholder="Welcome to Credit Up"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sl-prev">
+        <div class="tb-prevwrap"><div class="tb-prev" id="tbPrev"></div><div class="tb-prev scrolled" id="tbPrev2"></div></div>
+        <div class="hint" style="text-align:center;margin-top:8px">Top: at the top of the page. Bottom: while scrolling.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING SCREEN -->
+  <div class="hp-pane" id="hp-splash">
+    <div class="sl-wrap">
+      <div class="sl-form">
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Loading Screen</div>
+          <div class="fgrid">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-on" checked><span class="tog-sl"></span></label>Show loading screen</label></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-once"><span class="tog-sl"></span></label>Show only once per visit</label></div>
+            <div class="fg"><label>Shortest time on screen (seconds)</label><div class="hp-step"><button type="button" onclick="hpStep('sl-min',-0.5)">−</button><input id="sl-min" type="number" min="0" max="10" step="0.5" value="1.5"><button type="button" onclick="hpStep('sl-min',0.5)">+</button></div></div>
+            <div class="fg"><label>Longest time on screen (seconds)</label><div class="hp-step"><button type="button" onclick="hpStep('sl-max',-0.5)">−</button><input id="sl-max" type="number" min="1" max="15" step="0.5" value="5"><button type="button" onclick="hpStep('sl-max',0.5)">+</button></div></div>
+            <div class="fg"><label>Colour style</label><select id="sl-theme"><option value="light">Light (white)</option><option value="dark">Dark</option><option value="brand">Brand green</option></select></div>
+            <div class="fg"><label>Loading animation</label><select id="sl-loader"><option value="bar">Sliding bar</option><option value="dots">Bouncing dots</option><option value="spin">Spinner</option><option value="none">None</option></select></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-glow" checked><span class="tog-sl"></span></label>Glow rings around the logo</label></div>
+          </div>
+          <div class="hint" style="margin-top:10px">The screen closes when the app is ready, but never before the shortest time and never after the longest time. The logo itself is not changed.</div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-font"></i>What to show</div>
+          <div class="fgrid">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showtitle" checked><span class="tog-sl"></span></label>Title</label><input id="sl-title" maxlength="50" placeholder="CreditUp – Smart Credit &amp; Loans"></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showsub" checked><span class="tog-sl"></span></label>Subtitle</label><input id="sl-sub" maxlength="80" placeholder="Empty = the subtitle from Site Config"></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showbadge" checked><span class="tog-sl"></span></label>Badge</label><input id="sl-badge" maxlength="40" placeholder="100% Authentic &amp; Verified"></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showfoot" checked><span class="tog-sl"></span></label>Bottom line</label><input id="sl-foot" maxlength="60" placeholder="256-bit SSL Encrypted | Safe &amp; Secure"></div>
+          </div>
+        </div>
+        <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-wallet"></i>Payment logos <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="hpAddPay()"><i class="fa-solid fa-plus"></i>Add logo</button></div>
+          <div class="fgrid" style="margin-bottom:10px">
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showpay" checked><span class="tog-sl"></span></label>Show payment logos</label></div>
+            <div class="fg"><label>Heading</label><input id="sl-paytitle" maxlength="30" placeholder="Supported Payments"></div>
+          </div>
+          <div id="slPays" class="hp-list"></div>
+          <div class="hint" style="margin-top:8px">Use small logo files (under 100 KB) so the screen opens fast. Uploads go to Cloudinary.</div>
+        </div>
+      </div>
+      <div class="sl-prev">
+        <div class="sl-phone"><iframe id="slFrame" title="Loading screen preview" src="about:blank"></iframe></div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px">
+          <button class="btn btn-sm btn-p" onclick="hpSplashPreview()"><i class="fa-solid fa-play"></i>Preview / replay</button>
+        </div>
+        <div class="hint" style="text-align:center;margin-top:6px">Shows your changes before you save. Users see them only after you press Save.</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- SITE CONFIG -->
@@ -1178,7 +1493,7 @@ async function saveGateway(quiet){
 
 // ══ CONFIG ══════════════════════════════════════════
 const PG = 20;
-const TITLES = {dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',emi:'EMI Calculator',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Admin Settings'};
+const TITLES = {home:'Home Page',dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',emi:'EMI Calculator',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Admin Settings'};
 const PIPE_STEPS = ['Applied','Fee Pending','Fee Submitted','Fee Verified','Approved','Disbursed','Active','Repaid'];
 const PIPE_MAP = {'Pending Fee Payment':1,'TrxID Submitted':2,'Fee Verified':3,'Approved':4,'Disbursement Rejected':4,'Disbursed':5,'Active':6,'Repaid':7};
 
@@ -1226,7 +1541,7 @@ function refreshCur(){ loadSec(_sec); }
 function exportCur(){ exportCSV(_sec); }
 async function loadSec(id){
   if(!window._db) return;
-  const map={dashboard:loadDash,users:loadUsers,applications:loadApps,transactions:loadTrx,portfolio:loadPortfolio,analytics:loadAnalytics,wallets:loadWallets,config:loadConfig,broadcast:loadBC,support:loadSupport,actlog:loadActLog};
+  const map={dashboard:loadDash,users:loadUsers,applications:loadApps,transactions:loadTrx,portfolio:loadPortfolio,analytics:loadAnalytics,wallets:loadWallets,config:loadConfig,home:loadHome,broadcast:loadBC,support:loadSupport,actlog:loadActLog};
   if(map[id]) await map[id]();
 }
 
@@ -1973,8 +2288,8 @@ function calcEMI(){
 
 // ══ WALLETS ══════════════════════════════════════════
 const LEGACY_LOGOS = {
-  Bkash:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/2560px-BKash_Logo_New.svg.png',
-  Nagad:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/2560px-Nagad_Logo.svg.png',
+  Bkash:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png',
+  Nagad:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png',
   Rocket:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png'
 };
 
@@ -2334,7 +2649,7 @@ const _dirty={};
 function markDirty(tab,part){ (_dirty[tab]=_dirty[tab]||new Set()).add(part||'x'); _paintSave(); }
 function _isDirty(tab){ return !!(_dirty[tab] && _dirty[tab].size); }
 function _paintSave(){
-  ['wallets','config'].forEach(t=>{
+  ['wallets','config','home'].forEach(t=>{
     const b=document.getElementById('svBtn-'+t); if(!b) return;
     const d=_isDirty(t); b.disabled=!d; b.classList.toggle('dirty',d);
     b.querySelector('span').textContent = d ? 'Save changes' : 'All saved';
@@ -2348,6 +2663,7 @@ async function saveTab(tab){
   try{
     if(tab==='wallets') await _saveWalletsTab();
     else if(tab==='config') await saveConfig(true);
+    else if(tab==='home') await saveHome();
     _dirty[tab]=new Set(); _paintSave();
     toast('All changes saved ✓');
     if(tab==='wallets') loadWallets();
@@ -2360,6 +2676,7 @@ function discardTab(){
     _dirty[tab]=new Set();
     if(tab==='wallets'){ _wPend={}; _wDel=new Set(); loadWallets(); }
     if(tab==='config') loadConfig();
+    if(tab==='home') loadHome();
     _paintSave();
   });
 }
@@ -2393,6 +2710,335 @@ async function saveConfig(quiet){
   if(!quiet) showL(true); await window._setDoc('siteConfig','main',cfg); if(!quiet) showL(false);
   await logAct('Site config saved','config','main'); if(!quiet) toast('Configuration saved ✓');
 }
+
+// ══ HOME PAGE (live feed, notice bar, partners, trust badges, invite code) ═══
+// everything is kept in siteConfig/home and written only when Save is pressed
+const HP_PARTNERS = [
+  ['bKash','https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png'],
+  ['Nagad','https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png'],
+  ['Rocket','https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png'],
+  ['City Bank','https://logo.clearbit.com/citybankbd.com'],['Brac Bank','https://logo.clearbit.com/bracbank.com'],
+  ['DBBL','https://logo.clearbit.com/dbbl.com'],['Islami Bank','https://logo.clearbit.com/islamibankbd.com'],['Upay','https://logo.clearbit.com/upaybd.com']
+];
+const HP_TRUST = [
+  ['shield-halved','Secured','256-bit SSL encryption on every page'],
+  ['circle-check','Verified Payments','Every TrxID is checked by our team'],
+  ['receipt','Transparent Fees','All fees shown before you apply'],
+  ['user-shield','Private','Your data is never sold or shared']
+];
+const HP_ICONS = ['shield-halved','lock','circle-check','receipt','user-shield','bolt','headset','building-columns','file-shield','award','handshake','mobile-screen'];
+let _H = null;
+const _hid = () => Math.random().toString(36).slice(2, 10);
+const _he = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function hpTab(p){
+  document.querySelectorAll('#hpTabs button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  document.querySelectorAll('.hp-pane').forEach(x => x.classList.toggle('on', x.id === 'hp-' + p));
+  if(p === 'live') hpLoadFeed();
+  if(p === 'splash') hpSplashPreview();
+  if(p === 'fomo'){ hpFomoPreview(); hpFomoStat(); }
+  if(p === 'topbar') hpTopPreview();
+}
+async function loadHome(){
+  showL(true);
+  const d = (await window._getDoc('siteConfig','home')) || {};
+  showL(false);
+  _H = {
+    live: { on:true, loans:true, fees:true, title:'Live Transactions', count:8, days:30, refresh:60, scroll:true, hidden:[], ...(d.live||{}) },
+    notice: { on:true, broadcasts:true, own:false, label:'Notice', speed:5, max:6, audience:'all', dir:'left', theme:'green', size:'md', showLabel:true, pause:true, closable:false, items:[], ...(d.notice||{}) },
+    partners: { on:true, title:'Our Partners', size:'lg', items: null, ...(d.partners||{}) },
+    trust: { on:true, note:'', items: null, ...(d.trust||{}) },
+    referralEntry: { on:true, days:7, ...(d.referralEntry||{}) },
+    splash: { ...SL_DEF, ...(d.splash||{}) },
+    offers: { on:true, rotate:4, items:null, ...(d.offers||{}) },
+    fomo: { ...FO_DEF, ...(d.fomo||{}) },
+    topbar: { ...TB_DEF, ...(d.topbar||{}) }
+  };
+  if(!Array.isArray(_H.offers.items)) _H.offers.items = [ { ...OF_DEF } ];
+  _H.offers.items = _H.offers.items.map(x => ({ ...OF_DEF, id:_hid(), ...x }));
+  if(!Array.isArray(_H.splash.pays)) _H.splash.pays = SL_DEF.pays;
+  _H.splash.pays = _H.splash.pays.map(x => ({ id:_hid(), on:true, ...x }));
+  if(!Array.isArray(_H.partners.items)) _H.partners.items = HP_PARTNERS.map(([name,logo]) => ({ id:_hid(), name, logo, on:true }));
+  if(!Array.isArray(_H.trust.items)) _H.trust.items = HP_TRUST.map(([icon,title,text]) => ({ id:_hid(), icon, title, text, on:true }));
+  const L=_H.live, N=_H.notice, P=_H.partners, T=_H.trust, R=_H.referralEntry;
+  const set=(id,v)=>{ const e=document.getElementById(id); if(!e) return; if(e.type==='checkbox') e.checked=!!v; else e.value=v ?? ''; };
+  set('lv-on',L.on); set('lv-loans',L.loans); set('lv-fees',L.fees); set('lv-title',L.title); set('lv-count',L.count); set('lv-days',L.days); set('lv-refresh',L.refresh); set('lv-scroll',L.scroll);
+  if(typeof N.speed !== 'number') N.speed = ({slow:3,normal:5,fast:8})[N.speed] || 5;
+  set('nt-on',N.on); set('nt-bc',N.broadcasts); set('nt-own',N.own); set('nt-label',N.label); set('nt-speed',N.speed); set('nt-max',N.max);
+  set('nt-aud',N.audience); set('nt-dir',N.dir); set('nt-theme',N.theme); set('nt-size',N.size); set('nt-showlabel',N.showLabel); set('nt-pause',N.pause); set('nt-close',N.closable);
+  set('pt-on',P.on); set('pt-title',P.title); set('pt-size',P.size);
+  set('tr-on',T.on); set('tr-note',T.note);
+  set('rf-on',R.on); set('rf-days',R.days);
+  const S=_H.splash;
+  set('sl-on',S.on); set('sl-once',S.once); set('sl-min',S.minSec); set('sl-max',S.maxSec); set('sl-theme',S.theme); set('sl-loader',S.loader); set('sl-glow',S.glow);
+  set('sl-showtitle',S.showTitle); set('sl-title',S.title); set('sl-showsub',S.showSub); set('sl-sub',S.sub); set('sl-showbadge',S.showBadge); set('sl-badge',S.badge);
+  set('sl-showfoot',S.showFoot); set('sl-foot',S.foot); set('sl-showpay',S.showPay); set('sl-paytitle',S.payTitle);
+  set('of-on',_H.offers.on); set('of-rotate',_H.offers.rotate);
+  const F=_H.fomo;
+  set('fo-on',F.on); set('fo-counter',F.showCounter); set('fo-aud',F.audience); set('fo-theme',F.theme); set('fo-limit',F.limit); set('fo-delay',F.delay); set('fo-start',F.start); set('fo-end',F.end);
+  set('fo-icon',F.icon); set('fo-promo',F.promo); set('fo-btitle',F.bannerTitle); set('fo-btext',F.bannerText); set('fo-ptitle',F.popupTitle); set('fo-button',F.button);
+  set('fo-ptext',F.popupText); set('fo-pnote',F.popupNote); set('fo-clabel',F.counterLabel); set('fo-ended',F.endedText); set('fo-stitle',F.successTitle); set('fo-stext',F.successText);
+  document.getElementById('foRound').textContent = F.round || 1;
+  const B=_H.topbar;
+  set('tb-theme',B.theme); set('tb-clear',B.clear); set('tb-glass',B.glass); set('tb-compact',B.compact); set('tb-hide',B.hideOnScroll); set('tb-avatar',B.avatar); set('tb-hi',B.greet);
+  set('tb-balance',B.balance); set('tb-notif',B.notif); set('tb-support',B.support); set('tb-logout',B.logout); set('tb-alert',B.alert); set('tb-name',B.title); set('tb-vtext',B.visitorText);
+  hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers();
+  _dirty.home = new Set(); _paintSave();
+  if(document.getElementById('hp-live').classList.contains('on')) hpLoadFeed();
+}
+function _hpRead(){
+  const v=id=>document.getElementById(id), c=id=>!!v(id)?.checked, t=id=>(v(id)?.value||'').trim(), n=(id,d)=>{ const x=parseInt(t(id)); return isNaN(x)?d:x; };
+  Object.assign(_H.live, { on:c('lv-on'), loans:c('lv-loans'), fees:c('lv-fees'), title:t('lv-title')||'Live Transactions', count:Math.min(30,Math.max(1,n('lv-count',8))), days:Math.max(0,n('lv-days',30)), refresh:Math.max(0,n('lv-refresh',60)), scroll:c('lv-scroll') });
+  Object.assign(_H.notice, { on:c('nt-on'), broadcasts:c('nt-bc'), own:c('nt-own'), label:t('nt-label')||'Notice', speed:Math.min(10,Math.max(1,n('nt-speed',5))), max:Math.min(20,Math.max(1,n('nt-max',6))),
+    audience:t('nt-aud')||'all', dir:t('nt-dir')||'left', theme:t('nt-theme')||'green', size:t('nt-size')||'md', showLabel:c('nt-showlabel'), pause:c('nt-pause'), closable:c('nt-close') });
+  Object.assign(_H.partners, { on:c('pt-on'), title:t('pt-title')||'Our Partners', size:t('pt-size')||'lg' });
+  Object.assign(_H.trust, { on:c('tr-on'), note:t('tr-note') });
+  Object.assign(_H.referralEntry, { on:c('rf-on'), days:Math.max(0,n('rf-days',7)) });
+  const f=(id,d)=>{ const x=parseFloat(t(id)); return isNaN(x)?d:x; };
+  Object.assign(_H.offers, { on:c('of-on'), rotate:Math.min(20,Math.max(2,n('of-rotate',4))) });
+  Object.assign(_H.fomo, { on:c('fo-on'), showCounter:c('fo-counter'), audience:t('fo-aud')||'all', theme:t('fo-theme')||'red', limit:Math.min(100000,Math.max(1,n('fo-limit',50))),
+    delay:Math.min(30,Math.max(0,f('fo-delay',3.5))), start:t('fo-start'), end:t('fo-end'), icon:t('fo-icon')||'🔥', promo:t('fo-promo')||FO_DEF.promo,
+    bannerTitle:t('fo-btitle'), bannerText:t('fo-btext'), popupTitle:t('fo-ptitle'), button:t('fo-button')||FO_DEF.button, popupText:t('fo-ptext'), popupNote:t('fo-pnote'),
+    counterLabel:t('fo-clabel')||FO_DEF.counterLabel, endedText:t('fo-ended')||FO_DEF.endedText, successTitle:t('fo-stitle')||FO_DEF.successTitle, successText:t('fo-stext')||FO_DEF.successText });
+  Object.assign(_H.topbar, { theme:t('tb-theme')||'green', clear:Math.min(80,Math.max(0,n('tb-clear',35))), glass:c('tb-glass'), compact:c('tb-compact'), hideOnScroll:c('tb-hide'),
+    avatar:c('tb-avatar'), greet:c('tb-hi'), balance:c('tb-balance'), notif:c('tb-notif'), support:c('tb-support'), logout:c('tb-logout'), alert:c('tb-alert'), title:t('tb-name')||'phone', visitorText:t('tb-vtext') });
+  const mn=Math.min(10,Math.max(0,f('sl-min',1.5)));
+  Object.assign(_H.splash, { on:c('sl-on'), once:c('sl-once'), minSec:mn, maxSec:Math.min(15,Math.max(mn,1,f('sl-max',5))), theme:t('sl-theme')||'light', loader:t('sl-loader')||'bar', glow:c('sl-glow'),
+    showTitle:c('sl-showtitle'), title:t('sl-title'), showSub:c('sl-showsub'), sub:t('sl-sub'), showBadge:c('sl-showbadge'), badge:t('sl-badge'),
+    showFoot:c('sl-showfoot'), foot:t('sl-foot'), showPay:c('sl-showpay'), payTitle:t('sl-paytitle') });
+}
+async function saveHome(){
+  if(!_H) return;
+  _hpRead();
+  const bad = _H.partners.items.find(x => !x.name || !x.logo);
+  if(bad) throw new Error('Every partner needs a name and a logo');
+  const badT = _H.trust.items.find(x => !x.title);
+  if(badT) throw new Error('Every badge needs a title');
+  if(_H.splash.pays.find(x => !x.name)) throw new Error('Every payment logo needs a name');
+  if(_H.offers.items.find(x => !String(x.text||'').trim())) throw new Error('Every offer needs text');
+  if(_H.offers.items.find(x => x.action==='link' && !/^https?:\/\//i.test(x.link||''))) throw new Error('An offer set to "Open link" needs a link starting with https://');
+  await window._setDoc('siteConfig','home',{ ..._H, updatedAt:new Date().toISOString() });
+  await logAct('Home page settings saved','config','home');
+}
+// list helpers
+const _hpList = kind => kind==='p' ? _H.partners.items : kind==='t' ? _H.trust.items : kind==='s' ? _H.splash.pays : kind==='o' ? _H.offers.items : _H.notice.items;
+const _hpRender = kind => kind==='p' ? hpRenderPartners() : kind==='t' ? hpRenderTrust() : kind==='s' ? hpRenderPays() : kind==='o' ? hpRenderOffers() : hpRenderNotices();
+function _hpMove(list, id, dir){ const i=list.findIndex(x=>x.id===id), j=i+dir; if(i<0||j<0||j>=list.length) return; [list[i],list[j]]=[list[j],list[i]]; }
+function _hpEdit(kind, id, key, el){
+  const list = _hpList(kind);
+  const it = list.find(x=>x.id===id); if(!it) return;
+  it[key] = el.type==='checkbox' ? el.checked : el.value;
+  markDirty('home', kind);
+  if(kind==='t' && key==='icon'){ const ic=el.closest('.hp-row')?.querySelector('.hp-ic i'); if(ic) ic.className='fa-solid fa-'+el.value; }
+  if((kind==='p'||kind==='s') && key==='logo'){ const im=el.closest('.hp-row')?.querySelector('.hp-logo img'); if(im) im.src=el.value; }
+  if(kind==='s') hpSplashAuto();
+  if(key==='on'){ el.closest('.hp-row')?.classList.toggle('off', !el.checked); if(kind==='n') hpRenderNotices(); }
+  if(kind==='o' && ['on','action','start','end'].includes(key)) hpRenderOffers();
+}
+function _hpAct(kind, id, act){
+  const list = _hpList(kind);
+  if(act==='up') _hpMove(list,id,-1);
+  if(act==='down') _hpMove(list,id,1);
+  if(act==='del'){ const i=list.findIndex(x=>x.id===id); if(i>=0) list.splice(i,1); }
+  if(act==='dup'){ const it=list.find(x=>x.id===id); if(it) list.unshift({ ...it, id:_hid(), start:'', end:'', on:true, createdAt:new Date().toISOString() }); }
+  markDirty('home', kind);
+  _hpRender(kind);
+  if(kind==='s') hpSplashAuto();
+}
+const _tog = (kind,id,on) => `<label class="tog" title="On / off"><input type="checkbox" ${on?'checked':''} onchange="_hpEdit('${kind}','${id}','on',this)"><span class="tog-sl"></span></label>`;
+const _arrows = (kind,id) => `<button class="ab ab-v" title="Move up" onclick="_hpAct('${kind}','${id}','up')"><i class="fa-solid fa-arrow-up"></i></button><button class="ab ab-v" title="Move down" onclick="_hpAct('${kind}','${id}','down')"><i class="fa-solid fa-arrow-down"></i></button>`;
+// partners
+function hpRenderPartners(){
+  const el=document.getElementById('ptList'); if(!el||!_H) return;
+  const L=_H.partners.items;
+  el.innerHTML = L.length ? L.map((x,i)=>`<div class="hp-row ${x.on?'':'off'}">
+    <span class="hp-s" style="width:18px;text-align:center;font-weight:800">${i+1}</span>
+    <div class="hp-logo"><img src="${_he(x.logo)}" alt="" onerror="this.style.opacity=.2"></div>
+    <div class="hp-grid2">
+      <input value="${_he(x.name)}" placeholder="Name" oninput="_hpEdit('p','${x.id}','name',this)">
+      <div style="display:flex;gap:6px"><input value="${_he(x.logo)}" placeholder="Logo URL" style="flex:1;min-width:0" oninput="_hpEdit('p','${x.id}','logo',this)">
+      <label class="btn btn-s btn-sm" style="margin:0;cursor:pointer" title="Upload logo"><i class="fa-solid fa-upload"></i><input type="file" accept="image/*" style="display:none" onchange="hpUploadLogo('${x.id}',this)"></label></div>
+    </div>
+    <div class="hp-acts">${_tog('p',x.id,x.on)}${_arrows('p',x.id)}<button class="ab ab-no" title="Remove" onclick="_hpAct('p','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`).join('') : '<div class="hint">No partners yet. Add one above.</div>';
+}
+// loading screen
+const _WM = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
+const SL_DEF = { on:true, theme:'light', glow:true, showTitle:true, title:'CreditUp – Smart Credit & Loans', showSub:true, sub:'', showPay:true, payTitle:'Supported Payments',
+  pays:[ {name:'bKash', logo:_WM+'4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png'}, {name:'Nagad', logo:_WM+'c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png'}, {name:'Rocket', logo:_WM+'2/28/Rocket_Logo.svg/250px-Rocket_Logo.svg.png'} ],
+  showBadge:true, badge:'100% Authentic & Verified', loader:'bar', showFoot:true, foot:'256-bit SSL Encrypted | Safe & Secure', minSec:1.5, maxSec:5, once:false };
+function hpRenderPays(){
+  const el=document.getElementById('slPays'); if(!el||!_H) return;
+  const L=_H.splash.pays;
+  el.innerHTML = L.length ? L.map((x,i)=>`<div class="hp-row ${x.on?'':'off'}">
+    <span class="hp-s" style="width:18px;text-align:center;font-weight:800">${i+1}</span>
+    <div class="hp-logo"><img src="${_he(x.logo)}" alt="" onerror="this.style.opacity=.2"></div>
+    <div class="hp-grid2">
+      <input value="${_he(x.name)}" placeholder="Name (shown if the logo fails)" oninput="_hpEdit('s','${x.id}','name',this)">
+      <div style="display:flex;gap:6px"><input value="${_he(x.logo)}" placeholder="Logo URL (https://...)" style="flex:1;min-width:0" oninput="_hpEdit('s','${x.id}','logo',this)">
+      <label class="btn btn-s btn-sm" style="margin:0;cursor:pointer" title="Upload logo"><i class="fa-solid fa-upload"></i><input type="file" accept="image/*" style="display:none" onchange="hpUploadLogo('${x.id}',this,'s')"></label></div>
+    </div>
+    <div class="hp-acts">${_tog('s',x.id,x.on)}${_arrows('s',x.id)}<button class="ab ab-no" title="Remove" onclick="_hpAct('s','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`).join('') : '<div class="hint">No payment logos. Add one above.</div>';
+}
+function hpAddPay(){ _H.splash.pays.push({ id:_hid(), name:'', logo:'', on:true }); markDirty('home','s'); hpRenderPays(); }
+function hpSplashPreview(){
+  if(!_H) return;
+  _hpRead();
+  const S = { ..._H.splash, pays:_H.splash.pays.map(({id,...x}) => x) };
+  try{ localStorage.setItem('cu_splash_preview', JSON.stringify(S)); }catch(e){ toast('Preview needs browser storage','w'); return; }
+  const fr=document.getElementById('slFrame'); if(fr) fr.src='index.html?splashPreview=1&t='+Date.now();
+}
+let _slT=null;
+function hpSplashAuto(){ clearTimeout(_slT); _slT=setTimeout(()=>{ if(document.getElementById('hp-splash')?.classList.contains('on')) hpSplashPreview(); }, 700); }
+// hot offer
+const FO_DEF = { on:true, audience:'all', icon:'🔥', theme:'red', delay:3.5, limit:50, showCounter:true, start:'', end:'', round:1, promo:'First installment free',
+  bannerTitle:'SUPER HOT OFFER!', bannerText:"First {limit} lucky users get the *1st month's installment free!*",
+  popupTitle:'Lucky {limit} Offer!', popupText:"Be one of the first {limit} users and your loan's *1st month installment is completely free!*",
+  popupNote:'(We pay the 1st installment. Your payments start from the 2nd month.)', counterLabel:'Offers claimed', button:'Claim the offer now',
+  successTitle:'Offer Activated! 🎉', successText:'Congratulations! You got the free 1st installment offer. If your loan is approved, we will pay your 1st month installment.',
+  endedText:'Sorry, all {limit} offers have been claimed.' };
+const _foTxt = (t,lim) => _he(t).replace(/\{limit\}/g, lim).replace(/\*([^*]+)\*/g,'<b>$1</b>');
+let _foCount = null;
+function hpFomoPreview(){
+  const el=document.getElementById('foPrev'); if(!el||!_H) return;
+  _hpRead(); const F=_H.fomo, L=F.limit, used=Math.min(_foCount??0, L);
+  el.innerHTML = `<div class="fo-ban fo-${_he(F.theme)}"><span class="fo-ic">${_he(F.icon)}</span><div><h4>${_foTxt(F.bannerTitle,L)}</h4><p>${_foTxt(F.bannerText,L)}</p></div></div>
+    <div class="fo-pop fo-p-${_he(F.theme)}"><div class="fo-big">${_he(F.icon)}</div><h3>${_foTxt(F.popupTitle,L)}</h3><p>${_foTxt(F.popupText,L)}</p>${F.popupNote?`<small>${_foTxt(F.popupNote,L)}</small>`:''}
+    ${F.showCounter?`<div class="fo-cnt"><span>${_foTxt(F.counterLabel,L)}</span><b>${used}/${L}</b></div><div class="fo-trk"><i style="width:${Math.round(used/L*100)}%"></i></div>`:''}
+    <div class="fo-btn">⚡ ${_foTxt(F.button,L)}</div></div>`;
+}
+async function hpFomoStat(){
+  const el=document.getElementById('foStat'); if(!el) return;
+  const r=await window._accountApi('offerCount');
+  if(!r.ok){ el.innerHTML='<i class="fa-solid fa-triangle-exclamation"></i> Could not load the claim count.'; return; }
+  _foCount=Number(r.data.count)||0;
+  el.innerHTML=`<i class="fa-solid fa-users"></i> <b>${_foCount}</b> of <b>${r.data.limit}</b> claimed in this round${r.data.open===false?' · <span style="color:var(--orange)">closed</span>':''}`;
+  hpFomoPreview();
+}
+function hpFomoRound(){
+  if(!_H) return;
+  if(!confirm('Start a new round? The claim count goes back to 0 after you press Save.')) return;
+  _H.fomo.round=(parseInt(_H.fomo.round)||1)+1; _foCount=0;
+  document.getElementById('foRound').textContent=_H.fomo.round;
+  document.getElementById('foStat').innerHTML='<i class="fa-solid fa-rotate"></i> New round '+_H.fomo.round+' starts when you press Save.';
+  markDirty('home','fo'); hpFomoPreview();
+}
+// top bar
+const TB_DEF = { theme:'green', clear:35, glass:true, compact:true, hideOnScroll:false, avatar:true, greet:true, balance:true, notif:true, support:true, logout:true, alert:true, title:'phone', visitorText:'Welcome to Credit Up' };
+function hpTopPreview(){
+  if(!_H) return; _hpRead(); const B=_H.topbar;
+  const h=(sc)=>{ const ic=(i,on)=>on?`<span class="tp-b"><i class="fa-solid fa-${i}"></i></span>`:'';
+    return `${B.avatar?`<span class="tp-av">${B.alert?'<em class="tp-dot"></em>':''}<i class="fa-solid fa-user"></i></span>`:''}<div class="tp-mid">${B.greet&&!(sc&&B.compact)?'<small>Good evening 👋</small>':''}<b>${B.title==='brand'?'Credit Up':B.title==='name'?'Rahim Uddin':'017XXXXXXXX'}</b>${B.balance&&!(sc&&B.compact)?'<span class="tp-bal"><i class="fa-solid fa-wallet"></i> ৳ ••••</span>':''}</div>${ic('bell',B.notif)}${ic('headset',B.support)}${ic('right-from-bracket',B.logout)}`; };
+  const a=document.getElementById('tbPrev'), b=document.getElementById('tbPrev2');
+  [a,b].forEach((el,i)=>{ el.className='tb-prev tp-'+B.theme+(i?' scrolled'+(B.compact?' compact':''):''); el.innerHTML=h(!!i);
+    el.style.setProperty('--tb-a', i ? (B.glass ? (1-B.clear/100).toFixed(2) : '1') : '.94'); });
+}
+// offers banner
+const OF_DEF = { icon:'🎁', text:'নতুন ইউজারদের জন্য *{bonus} টাকা* সাইন-আপ বোনাস!', cta:'Sign up', action:'register', link:'', audience:'visitors', style:'orange', start:'', end:'', on:true };
+function hpRenderOffers(){
+  const el=document.getElementById('ofList'); if(!el||!_H) return;
+  const L=_H.offers.items;
+  const sel=(id,key,val,opts)=>`<select class="hp-mini" onchange="_hpEdit('o','${id}','${key}',this)">${opts.map(([v,l])=>`<option value="${v}" ${v===val?'selected':''}>${l}</option>`).join('')}</select>`;
+  el.innerHTML = L.length ? L.map((x,i)=>{ const st=_ntState(x); return `<div class="hp-row of-row ${st==='live'?'':'off'}">
+    <span class="hp-s" style="width:18px;text-align:center;font-weight:800">${i+1}</span>
+    <input class="of-ic" value="${_he(x.icon)}" maxlength="4" title="Emoji" oninput="_hpEdit('o','${x.id}','icon',this)">
+    <div class="of-main">
+      <input value="${_he(x.text)}" maxlength="120" placeholder="Offer text, e.g. Get a *{bonus} Tk* sign-up bonus" oninput="_hpEdit('o','${x.id}','text',this)">
+      <div class="of-opts">
+        <input value="${_he(x.cta)}" maxlength="14" placeholder="Button (empty = none)" style="width:130px" oninput="_hpEdit('o','${x.id}','cta',this)">
+        ${sel(x.id,'action',x.action,[['register','Open sign-up'],['borrow','Start a loan'],['link','Open link'],['none','Do nothing']])}
+        ${sel(x.id,'audience',x.audience,[['visitors','Visitors only'],['users','Users only'],['all','Everyone']])}
+        ${sel(x.id,'style',x.style,[['orange','Orange'],['gold','Gold'],['glass','Glass']])}
+        <input value="${_he(x.link)}" placeholder="https://..." style="flex:1;min-width:120px;${x.action==='link'?'':'display:none'}" oninput="_hpEdit('o','${x.id}','link',this)">
+      </div>
+      <div class="of-opts"><label class="hint" style="margin:0">Start</label><input type="datetime-local" value="${_he(x.start)}" onchange="_hpEdit('o','${x.id}','start',this)"><label class="hint" style="margin:0">End</label><input type="datetime-local" value="${_he(x.end)}" onchange="_hpEdit('o','${x.id}','end',this)"><span class="hp-badge ${st}">${({live:'Live now',scheduled:'Scheduled',expired:'Expired',off:'Off'})[st]}</span></div>
+    </div>
+    <div class="hp-acts">${_tog('o',x.id,x.on)}${_arrows('o',x.id)}<button class="ab ab-v" title="Duplicate" onclick="_hpAct('o','${x.id}','dup')"><i class="fa-solid fa-copy"></i></button><button class="ab ab-no" title="Delete" onclick="_hpAct('o','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`; }).join('') : '<div class="hint">No offers. The banner stays hidden until you add one.</div>';
+}
+function hpAddOffer(){ _H.offers.items.push({ ...OF_DEF, id:_hid(), text:'', cta:'', action:'none' }); markDirty('home','o'); hpRenderOffers(); }
+function hpAddPartner(){ _H.partners.items.push({ id:_hid(), name:'', logo:'', on:true }); markDirty('home','p'); hpRenderPartners(); }
+async function hpUploadLogo(id, input, kind){
+  kind = kind || 'p';
+  const f=input.files&&input.files[0]; if(!f) return;
+  if(f.size>2*1024*1024){ toast('Logo must be under 2 MB','w'); return; }
+  showL(true);
+  try{ const r=await window._cloudinaryUploadFile(f, kind==='s' ? 'payments' : 'partners'); const it=_hpList(kind).find(x=>x.id===id); if(it){ it.logo=r.url; markDirty('home',kind); _hpRender(kind); if(kind==='s') hpSplashAuto(); } toast('Logo uploaded ✓'); }
+  catch(e){ toast('Upload failed: '+(e.message||e),'e'); }
+  showL(false);
+}
+// trust badges
+function hpRenderTrust(){
+  const el=document.getElementById('trList'); if(!el||!_H) return;
+  const L=_H.trust.items;
+  el.innerHTML = L.length ? L.map(x=>`<div class="hp-row ${x.on?'':'off'}">
+    <div class="hp-ic"><i class="fa-solid fa-${_he(x.icon||'shield-halved')}"></i></div>
+    <select style="width:auto" onchange="_hpEdit('t','${x.id}','icon',this)">${HP_ICONS.map(i=>`<option value="${i}" ${i===x.icon?'selected':''}>${i.replace(/-/g,' ')}</option>`).join('')}</select>
+    <div class="hp-grid2">
+      <input value="${_he(x.title)}" maxlength="30" placeholder="Title" oninput="_hpEdit('t','${x.id}','title',this)">
+      <input value="${_he(x.text)}" maxlength="60" placeholder="Short line" oninput="_hpEdit('t','${x.id}','text',this)">
+    </div>
+    <div class="hp-acts">${_tog('t',x.id,x.on)}${_arrows('t',x.id)}<button class="ab ab-no" title="Remove" onclick="_hpAct('t','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`).join('') : '<div class="hint">No badges yet.</div>';
+}
+function hpAddTrust(){ _H.trust.items.push({ id:_hid(), icon:'circle-check', title:'', text:'', on:true }); markDirty('home','t'); hpRenderTrust(); }
+// notices
+function _ntState(x){
+  const now=Date.now(), s=x.start?new Date(x.start).getTime():0, e=x.end?new Date(x.end).getTime():0;
+  if(!x.on) return 'off'; if(e && now>e) return 'expired'; if(s && now<s) return 'scheduled'; return 'live';
+}
+function hpRenderNotices(){
+  const el=document.getElementById('ntList'); if(!el||!_H) return;
+  const f=document.getElementById('ntFilter')?.value||'all';
+  const L=_H.notice.items.filter(x=>f==='all'||_ntState(x)===f);
+  const lbl={live:'Live now',scheduled:'Scheduled',expired:'Expired',off:'Off'};
+  el.innerHTML = L.length ? L.map(x=>{ const st=_ntState(x); return `<div class="hp-row ${st==='live'?'':'off'}">
+    <div class="hp-main">
+      <div class="hp-t">${_he(x.text)}<span class="hp-badge ${st}">${lbl[st]}</span>${x.pin?'<span class="hp-badge pin">Pinned</span>':''}</div>
+      <div class="hp-s"><select class="hp-mini" onchange="_hpEdit('n','${x.id}','audience',this)">${[['all','Everyone'],['visitors','Visitors'],['users','Users']].map(([v,l])=>`<option value="${v}" ${(x.audience||'all')===v?'selected':''}>${l}</option>`).join('')}</select> ${_he(x.type||'info')} · added ${fd(x.createdAt)}${x.start?' · from '+fd(x.start):''}${x.end?' · until '+fd(x.end):''}${x.link?' · link':''}</div>
+    </div>
+    <div class="hp-acts">${_tog('n',x.id,x.on)}${_arrows('n',x.id)}
+      <button class="ab ab-v" title="Pin / unpin" onclick="hpPin('${x.id}')"><i class="fa-solid fa-thumbtack"></i></button>
+      <button class="ab ab-v" title="Use again" onclick="_hpAct('n','${x.id}','dup')"><i class="fa-solid fa-copy"></i></button>
+      <button class="ab ab-no" title="Delete" onclick="_hpAct('n','${x.id}','del')"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`; }).join('') : '<div class="hint">No notices here.</div>';
+}
+function hpStep(id,d){ const e=document.getElementById(id); if(!e) return; const v=Math.min(Number(e.max)||99,Math.max(Number(e.min)||0,(parseFloat(e.value)||0)+d)); e.value=Math.round(v*10)/10; markDirty('home','s'); if(/^sl-/.test(id)) hpSplashAuto(); if(/^fo-/.test(id)) hpFomoPreview(); if(/^tb-/.test(id)) hpTopPreview(); }
+function hpPin(id){ const it=_H.notice.items.find(x=>x.id===id); if(it){ it.pin=!it.pin; markDirty('home','n'); hpRenderNotices(); } }
+function hpAddNotice(){
+  const g=id=>(document.getElementById(id)?.value||'').trim();
+  const text=g('ntn-text'); if(!text){ toast('Write the notice text','w'); return; }
+  const start=g('ntn-start'), end=g('ntn-end');
+  if(start && end && new Date(end) <= new Date(start)){ toast('End must be after start','w'); return; }
+  _H.notice.items.unshift({ id:_hid(), text, audience:g('ntn-aud')||'all', type:g('ntn-type')||'info', link:g('ntn-link'), start:start?new Date(start).toISOString():'', end:end?new Date(end).toISOString():'', pin:!!document.getElementById('ntn-pin')?.checked, on:true, createdAt:new Date().toISOString() });
+  ['ntn-text','ntn-link','ntn-start','ntn-end'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
+  const pn=document.getElementById('ntn-pin'); if(pn) pn.checked=false;
+  markDirty('home','n'); hpRenderNotices(); toast('Notice added. Press Save to publish it.','i');
+}
+// live feed preview (real records only; admins can hide entries)
+async function hpLoadFeed(){
+  const el=document.getElementById('lvPreview'); if(!el) return;
+  el.innerHTML='<div class="hint">Loading...</div>';
+  const r=await window._accountApi('feed',{admin:true});
+  if(!r.ok){ el.innerHTML=`<div class="hint" style="color:var(--red)">${_he(r.data.error||'Could not load the live feed.')}</div>`; return; }
+  const items=r.data.items||[];
+  const hid=new Set(_H?_H.live.hidden:[]);
+  el.innerHTML = items.length ? items.map(x=>{ const h=hid.has(x.id); return `<div class="hp-row ${h?'off':''}">
+    <div class="hp-ic" style="${x.kind==='fee'?'background:rgba(77,143,255,.14);color:#7aa8ff':''}"><i class="fa-solid fa-${x.kind==='fee'?'receipt':'check'}"></i></div>
+    <div class="hp-main"><div class="hp-t">${_he(x.name)} · ${x.kind==='fee'?'Fee paid ৳'+_he(x.amount):'Loan approved ৳'+fa(x.amount)}${h?'<span class="hp-badge off">Hidden</span>':''}</div><div class="hp-s">${fd(x.at)}</div></div>
+    <button class="btn btn-sm ${h?'btn-p':'btn-s'}" onclick="hpHide('${x.id}')"><i class="fa-solid fa-${h?'eye':'eye-slash'}"></i>${h?'Show':'Hide'}</button>
+  </div>`; }).join('') : '<div class="hint">No approved loans or verified fees yet.</div>';
+}
+function hpHide(id){
+  if(!_H) return; const L=_H.live.hidden; const i=L.indexOf(id);
+  if(i>=0) L.splice(i,1); else L.push(id);
+  markDirty('home','live'); hpLoadFeed();
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const sec=document.getElementById('sec-home');
+  // the static setting fields (not the list rows, which mark themselves)
+  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl|of|fo|tb)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); if(/^fo-/.test(e.target.id)) hpFomoPreview(); if(/^tb-/.test(e.target.id)) hpTopPreview(); } }));
+});
 
 // ══ BROADCAST ════════════════════════════════════════
 const _escB = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

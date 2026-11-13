@@ -3,9 +3,11 @@
 //   exists        { phone }                 → { exists }
 //   register      { phone, password, referrer? } → creates the login + profile (bonus decided here)
 //   migrate       { phone, password }       → moves an older account (password kept in Firestore) to Firebase Auth
-//   feed          {}                        → recent approved loans, names masked
-//   offerCount    {}                        → how many users took the "first 50" offer
-//   claimOffer    {}            (signed in) → 'ok' | 'already' | 'full'
+//   feed          { admin? }                → live activity: approved loans + verified fees (masked), per Home Page settings
+//   myReferral    {}            (signed in) → can this user still add an invite code?
+//   setReferrer   { code }      (signed in) → adds the inviter's code after sign-up (if the admin allows it)
+//   offerCount    {}                        → { count, limit, open } for the hot offer (Home Page → Hot Offer)
+//   claimOffer    {}            (signed in) → 'ok' | 'already' | 'full' | 'closed'
 //   referrals     {}            (signed in) → { total, active }
 //   balanceOffer  {}            (signed in) → { available, locked, used, allowed, active, needMore } (balance use: 1 + 1 per 5 active friends + admin extras)
 //   adminBalanceOffer { phone, op: status|unlock|lock } (admin) → same state; unlock gives one more use now, lock switches it off
@@ -16,7 +18,6 @@ const crypto = require('crypto');
 const { readBody } = require('./_lib/pay');
 const { admin, db, auth, caller, isAdmin, findUserDoc, phoneEmail, isPhone } = require('./_lib/auth');
 
-const OFFER_LIMIT = 50;
 // the "use balance for the fee" offer: 1 use, plus 1 more for every this many active friends
 const BAL_FRIENDS_PER_USE = 5;
 const strong = (pw) => typeof pw === 'string' && pw.length >= 8 && pw.length <= 128 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw);
@@ -71,6 +72,44 @@ async function notifyReferrer(ref) {
     if (REF_MILESTONES[active]) await notifyUser(ref, 'Reward Unlocked! 🏆', `You reached ${active} active friends and unlocked: ${REF_MILESTONES[active]}. Contact support to claim it.`, 'bonus');
     await balanceState(d, ref, true);   // sends "Balance Offer Unlocked" if 5 more friends freed it again
   } catch (e) { console.warn('referrer notify', e); }
+}
+
+async function homeCfg() {
+  try { const s = await db().collection('siteConfig').doc('home').get(); return s.exists ? (s.data() || {}) : {}; }
+  catch (e) { return {}; }
+}
+// the hot ("first N users") offer, set in Admin → Home Page → Hot Offer. A new round restarts the count.
+async function fomoCfg() {
+  const f = (await homeCfg()).fomo || {};
+  const end = f.end ? new Date(f.end).getTime() : 0;
+  return {
+    on: f.on !== false,
+    ended: !!end && Date.now() > end,
+    limit: Math.min(100000, Math.max(1, parseInt(f.limit, 10) || 50)),
+    round: Math.max(1, parseInt(f.round, 10) || 1),
+    promo: String(f.promo || 'First installment free').slice(0, 80)
+  };
+}
+async function fomoClaims(round) {
+  // round 1 counts every earlier claim too (they were made before rounds existed)
+  const q = round === 1 ? db().collection('users').where('promoClaimed', '==', true) : db().collection('users').where('promoRound', '==', round);
+  return (await q.count().get()).data().count;
+}
+const maskName = (n) => { n = String(n || 'User').trim() || 'User'; return n.length > 4 ? n.substring(0, 4) + '***' : n; };
+const maskPhone = (p) => { p = String(p || '').replace(/\D/g, ''); return p.length >= 6 ? '0' + p.slice(0, 3) + '*****' + p.slice(-2) : 'User'; };
+// fees are never shown in full: first two digits, the rest hidden (৳1,300 → "13**.00")
+const maskFee = (n) => { const s = String(Math.round(Number(n) || 0)); return s.slice(0, 2) + '*'.repeat(Math.max(0, s.length - 2)) + '.00'; };
+
+async function referralEntryState(d) {
+  const data = d.data() || {};
+  const cfg = (await homeCfg()).referralEntry || {};
+  const days = Math.max(0, Number(cfg.days) || 0);
+  const base = { on: cfg.on !== false, days, referredBy: data.referredBy || '' };
+  if (cfg.on === false) return { ...base, canSet: false, reason: 'Adding an invite code is turned off right now.' };
+  if (data.referredBy) return { ...base, canSet: false, reason: 'An invite code is already added to your account.' };
+  if (days && data.createdAt && Date.now() - new Date(data.createdAt).getTime() > days * 864e5)
+    return { ...base, canSet: false, reason: `An invite code can only be added within ${days} day${days === 1 ? '' : 's'} of joining.` };
+  return { ...base, canSet: true };
 }
 
 async function authUser(uid) { try { return await auth().getUser(uid); } catch (e) { return null; } }
@@ -151,33 +190,86 @@ const actions = {
     return [200, { ok: true }];
   },
 
-  async feed() {
-    const snap = await db().collection('applications').where('status', 'in', ['Approved', 'Disbursed']).limit(300).get();
-    const at = (a) => a.disbursedAt || a.creditedAt || a.approvedAt || a.statusUpdatedAt || a.submittedAt || '';
-    const items = snap.docs.map(x => x.data())
-      .sort((a, b) => new Date(at(b) || 0) - new Date(at(a) || 0)).slice(0, 5)
-      .map(a => {
-        let name = String(a.name || 'User');
-        if (name.length > 4) name = name.substring(0, 4) + '***';
-        return { name, amount: Number(String(a.loanAmount || 0).replace(/,/g, '')) || 0, at: at(a) };
+  // live activity on the home page: real approved loans and verified fee payments only.
+  // The admin decides what is shown (Home Page → Live Transactions); fees are always partly hidden.
+  async feed(b, me) {
+    const cfg = (await homeCfg()).live || {};
+    const admin = !!(b && b.admin && me && await isAdmin(me.uid));
+    if (cfg.on === false && !admin) return [200, { items: [], off: true }];
+    const hidden = new Set(Array.isArray(cfg.hidden) ? cfg.hidden : []);
+    const days = Math.max(0, Number(cfg.days) || 0);
+    const since = days ? Date.now() - days * 864e5 : 0;
+    const count = Math.min(30, Math.max(1, Number(cfg.count) || 8));
+    const items = [];
+    if (cfg.loans !== false) {
+      const snap = await db().collection('applications').where('status', 'in', ['Approved', 'Disbursed']).limit(300).get();
+      const at = (a) => a.disbursedAt || a.creditedAt || a.approvedAt || a.statusUpdatedAt || a.submittedAt || '';
+      snap.docs.forEach(x => {
+        const a = x.data();
+        items.push({ id: 'a_' + x.id, kind: 'loan', name: maskName(a.name), amount: Number(String(a.loanAmount || 0).replace(/,/g, '')) || 0, at: at(a) });
       });
-    return [200, { items }];
+    }
+    if (cfg.fees !== false) {
+      const snap = await db().collection('transactions').where('status', '==', 'Verified').limit(300).get();
+      snap.docs.forEach(x => {
+        const t = x.data();
+        const amt = Number(t.amount) || 0;
+        if (amt <= 0) return;
+        items.push({ id: 't_' + x.id, kind: 'fee', name: maskPhone(t.uid), amount: maskFee(amt), at: t.verifiedAt || t.submittedAt || t.createdAt || '' });
+      });
+    }
+    const out = items
+      .filter(i => !since || new Date(i.at || 0).getTime() >= since)
+      .filter(i => admin || !hidden.has(i.id))
+      .sort((x, y) => new Date(y.at || 0) - new Date(x.at || 0))
+      .slice(0, admin ? 40 : count)
+      .map(i => admin ? { ...i, hidden: hidden.has(i.id) } : i);
+    return [200, { items: out }];
+  },
+
+  // a user who joined without an invite link can add the inviter's code later (Home Page → Invite Code in Profile)
+  async myReferral(b, me) {
+    if (!me) return [401, { error: 'Please login again.' }];
+    const d = await findUserDoc(me.uid);
+    if (!d) return [404, { error: 'Account not found.' }];
+    return [200, await referralEntryState(d)];
+  },
+
+  async setReferrer(b, me) {
+    if (!me) return [401, { error: 'Please login again.' }];
+    const d = await findUserDoc(me.uid);
+    if (!d) return [404, { error: 'Account not found.' }];
+    const st = await referralEntryState(d);
+    if (!st.canSet) return [400, { error: st.reason || 'You cannot add an invite code now.' }];
+    const ref = String(b.code || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+    if (!isPhone(ref)) return [400, { error: 'Please enter a valid invite code (the inviter\'s phone number).' }];
+    if (ref === me.uid) return [400, { error: 'You cannot use your own invite code.' }];
+    const rd = await findUserDoc(ref);
+    if (!rd) return [404, { error: 'No account found with this invite code.' }];
+    if (rd.data().referredBy === me.uid) return [400, { error: 'This person joined with your invite code, so you cannot use theirs.' }];
+    await d.ref.update({ referredBy: ref, referredVia: 'profile', referredAt: new Date().toISOString() });
+    await notifyUser(me.uid, 'Invite Code Added ✅', 'Your invite code was added. Your friend will get credit for inviting you.', 'info');
+    await notifyReferrer(ref);
+    return [200, { ok: true }];
   },
 
   async offerCount() {
-    const c = await db().collection('users').where('promoClaimed', '==', true).count().get();
-    return [200, { count: c.data().count, limit: OFFER_LIMIT }];
+    const f = await fomoCfg();
+    return [200, { count: await fomoClaims(f.round), limit: f.limit, open: f.on && !f.ended }];
   },
 
   async claimOffer(b, me) {
     if (!me) return [401, { error: 'Please login again.' }];
     const d = await findUserDoc(me.uid);
     if (!d) return [404, { error: 'Account not found.' }];
-    if (d.data().promoClaimed === true) return [200, { result: 'already' }];
-    const c = await db().collection('users').where('promoClaimed', '==', true).count().get();
-    if (c.data().count >= OFFER_LIMIT) return [200, { result: 'full' }];
-    await d.ref.update({ promoClaimed: true, promoClaimedAt: new Date().toISOString(), promo: 'First installment free' });
-    return [200, { result: 'ok' }];
+    const f = await fomoCfg();
+    if (!f.on || f.ended) return [200, { result: 'closed' }];
+    const u = d.data();
+    const mine = f.round === 1 ? u.promoClaimed === true : Number(u.promoRound) === f.round;
+    if (mine) return [200, { result: 'already' }];
+    if ((await fomoClaims(f.round)) >= f.limit) return [200, { result: 'full' }];
+    await d.ref.update({ promoClaimed: true, promoRound: f.round, promoClaimedAt: new Date().toISOString(), promo: f.promo });
+    return [200, { result: 'ok', promo: f.promo }];
   },
 
   async referrals(b, me) {
