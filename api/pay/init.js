@@ -74,6 +74,10 @@ module.exports = async (req, res) => {
       product_profile: 'non-physical-goods',
       value_a: appId
     });
+    // the admin can limit which groups the payment page shows (all = no limit)
+    const ALL = ['mobilebank', 'visacard', 'mastercard', 'amexcard', 'internetbank'];
+    const pick = Array.isArray(cfg.gateway?.methods) ? cfg.gateway.methods.filter(m => ALL.includes(m)) : ALL;
+    if (pick.length && pick.length < ALL.length) form.set('multi_card_name', pick.join(','));
     const r = await fetch(sslHost() + '/gwprocess/v4/api.php', {
       method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: form.toString()
     });
