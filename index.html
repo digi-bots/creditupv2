@@ -496,6 +496,36 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .calc-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--p);cursor:pointer;box-shadow:var(--glow);border:2px solid #fff}
 .calc-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--bord);font-size:14px;color:var(--txt2)}
 .calc-row:last-child{border:none}
+.cs-wrap{position:relative;height:30px;margin:0 2px 26px}
+.cs-wrap .calc-slider{position:absolute;inset:0;width:100%;height:30px;margin:0;background:transparent;z-index:3;cursor:pointer;touch-action:pan-y}
+.cs-wrap .calc-slider::-webkit-slider-runnable-track{height:30px;background:transparent}
+.cs-wrap .calc-slider::-moz-range-track{height:30px;background:transparent}
+.cs-wrap .calc-slider::-webkit-slider-thumb{margin-top:4px;transition:transform .15s}
+.cs-wrap .calc-slider:active::-webkit-slider-thumb{transform:scale(1.18)}
+.cs-wrap .calc-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--p);border:2px solid #fff;box-shadow:var(--glow)}
+.cs-track{position:absolute;left:11px;right:11px;top:12px;height:6px;border-radius:5px;background:var(--surf2);overflow:hidden}
+.cs-fill{display:block;height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,var(--p2),var(--p))}
+.cs-dots{position:absolute;left:11px;right:11px;top:11px;height:8px;z-index:2;pointer-events:none}
+.cs-dots i{position:absolute;top:0;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#2a3d58;border:1.5px solid var(--bg2);transition:background .2s,transform .2s}
+.cs-dots i.on{background:#bff5d8}
+.cs-dots i.cur{transform:scale(0)}
+.cs-labels{position:absolute;left:11px;right:11px;top:30px;height:14px;pointer-events:none}
+.cs-labels span{position:absolute;transform:translateX(-50%);font-size:9.5px;font-weight:600;color:var(--txt3);white-space:nowrap;transition:color .2s}
+.cs-labels span.cur{color:var(--p);font-weight:800}
+.calc-val{transition:transform .15s}
+.calc-val.bump{transform:scale(1.06)}
+.calc-offer{margin-top:14px;padding:12px;border-radius:14px;background:linear-gradient(145deg,#0b3b22,#0a2a1a 60%,#1a1405);border:1px solid rgba(255,207,92,.35)}
+.co-top{display:flex;gap:10px;align-items:center;margin-bottom:9px}
+.co-top>i{width:32px;height:32px;flex:0 0 32px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffd76a,#f5b72f);color:#1a1405;font-size:14px}
+.co-top b{display:block;font-size:13px;color:#fff}
+.co-top span{display:block;font-size:11px;color:#cfe9da}
+.co-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.co-tiers div{background:rgba(0,0,0,.28);border:1px solid rgba(255,215,106,.18);border-radius:10px;padding:7px 5px;text-align:center}
+.co-tiers b{display:block;font-size:14px;font-weight:900;color:#ffd76a;line-height:1.1}
+.co-tiers span{display:block;font-size:10px;color:#e9f6ee;line-height:1.3;margin-top:2px}
+.co-acts{display:flex;gap:8px}
+.co-btn{flex:2;height:38px;border:0;border-radius:11px;font-weight:800;font-size:13px;font-family:inherit;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;gap:7px}
+.co-btn.ghost{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#ffd76a}
 .calc-row span:last-child{color:var(--txt);font-weight:700}
 .notif-list{display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:5px}
 #notifModal .nc-card{max-width:400px;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;max-height:86vh}
@@ -849,6 +879,30 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 #referModal .inv-sh.wa i{color:#25d366}#referModal .inv-sh.fb i{color:#1877f2}#referModal .inv-sh.tg i{color:#29a9eb}#referModal .inv-sh.sm i{color:#ffb547}
 #referModal .refer-foot{display:flex;gap:8px;flex-shrink:0;padding:14px 18px 22px;border-top:1px solid rgba(29,219,128,.14);background:linear-gradient(180deg,rgba(10,20,36,0),rgba(10,20,36,.55))}
 #referModal .refer-foot .mbtn{height:44px;font-size:13.5px;border-radius:13px;margin:0}
+#referModal .inv-top{margin-bottom:10px}
+#referModal .inv-lvl{font-size:11px;font-weight:800;color:#ffd76a;background:rgba(255,215,106,.12);border:1px solid rgba(255,215,106,.3);padding:3px 9px;border-radius:20px}
+#referModal .inv-card .ref-tiers{position:relative;z-index:1;margin:0;padding:0;border:0;gap:7px}
+#referModal .inv-card .ref-tier{white-space:normal;background:rgba(0,0,0,.25);border:1px solid rgba(255,215,106,.14);padding:9px 10px;gap:10px}
+#referModal .inv-card .ref-tier .tg{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#1a1405;background:linear-gradient(135deg,#ffd76a,#f5b72f)}
+#referModal .inv-card .ref-tier .tx{display:flex;flex-direction:column;gap:1px;white-space:normal;font-size:12px;line-height:1.35}
+#referModal .inv-card .ref-tier .tx b{color:#fff;font-size:12px}
+#referModal .inv-card .ref-tier .tx em{color:#cfe9da;font-size:11.5px;font-weight:600}
+#referModal .inv-card .ref-tier .lk{font-size:13px}
+#referModal .inv-card .ref-tier.done{border-color:rgba(29,219,128,.6)!important;background:rgba(29,219,128,.1)!important}
+#referModal .inv-card .ref-progress{position:relative;z-index:1;margin-top:12px;background:rgba(0,0,0,.35)}
+#referModal .inv-card .ref-progress i{background:linear-gradient(90deg,#ffd76a,#1ddb80)}
+#referModal .inv-card .ref-progress-text{position:relative;z-index:1;color:#e9f6ee;font-size:11.5px;font-weight:600;margin-top:7px}
+#referModal button.inv-link{width:100%;cursor:pointer;font-family:inherit;text-align:left;margin-top:12px;transition:background .2s,border-color .2s}
+#referModal button.inv-link #invLink{flex:1;min-width:0}
+#referModal .inv-cp{flex-shrink:0;color:#ffd76a;font-size:13px}
+#referModal button.inv-link.ok{border-color:rgba(29,219,128,.7);background:rgba(29,219,128,.14);color:#bff5d8}
+#referModal button.inv-link.ok .inv-cp{color:var(--p)}
+#referModal .inv-card>.inv-code{position:relative;z-index:1;text-align:center;margin-top:7px;font-size:10.5px;color:rgba(255,215,106,.8)}
+#referModal .inv-share-t{font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin:0 2px 7px}
+#referModal .mbtn.ok{background:rgba(29,219,128,.15)!important;border-color:rgba(29,219,128,.5)!important;color:var(--p)!important}
+#referModal .refer-card{position:relative}
+#referModal .inv-toast{position:absolute;left:50%;bottom:84px;transform:translate(-50%,10px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;background:rgba(10,30,20,.95);border:1px solid rgba(29,219,128,.5);color:var(--p);font-size:12.5px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:opacity .2s,transform .25s;z-index:5}
+#referModal .inv-toast.on{opacity:1;transform:translate(-50%,0)}
 @media (max-width:360px){
   #referModal .ref-tier .tx{font-size:10.5px}
   #referModal .m-title{font-size:16px}
@@ -1694,6 +1748,17 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .bal-box.open .bal-caret{transform:rotate(180deg)}
 .bal-body{display:none;padding:0 14px 13px}
 .bal-box.open .bal-body{display:block}
+.bal-box.used{background:rgba(255,255,255,.02);border-style:dashed}
+.bal-box.used .bal-left h4,.bal-box.used .bal-left>i,.bal-box.used .bal-pm{opacity:.55}
+.bal-box.used .bal-head{cursor:not-allowed}
+.bal-box.used .bal-body{display:none!important}
+.bal-box.used .bal-left i{color:var(--txt3)}
+.bal-box.used .bal-left p strong{color:var(--txt2)}
+.bal-box.used .bal-pm{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--txt2)}
+.bal-unlock{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:4px 9px;border-radius:20px;background:rgba(255,215,106,.12);border:1px solid rgba(255,215,106,.35);color:#ffd76a;font-weight:700;font-size:10.5px;cursor:pointer}
+.bal-used-tag{display:inline-block;margin-left:6px;font-size:9.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--txt2);background:rgba(255,255,255,.08);padding:2px 7px;border-radius:20px;vertical-align:middle}
+.bal-box.used.flash{animation:balFlash .9s}
+@keyframes balFlash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 2px var(--orange)}}
 .bal-opt{
   display:flex;align-items:center;gap:10px;justify-content:space-between;
   background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
@@ -2056,16 +2121,36 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
     <p class="m-msg">Estimate your monthly repayment easily.</p>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Loan Amount (BDT)</label>
     <div class="calc-val" id="calcAmountDisplay">৳ 10,000</div>
-    <input type="range" class="calc-slider" id="calcAmount" min="0" max="6" step="1" value="3" oninput="updateCalc()">
-    <div class="calc-lim" id="calcAmtLim"></div>
+    <div class="cs-wrap" id="csAmt">
+      <div class="cs-track"><i class="cs-fill"></i></div>
+      <div class="cs-dots"></div>
+      <input type="range" class="calc-slider" id="calcAmount" min="0" max="6" step="any" value="3" oninput="_calcDrag(this)" onchange="_calcSnap(this)">
+      <div class="cs-labels"></div>
+    </div>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Term (Months)</label>
     <div class="calc-val" id="calcTermDisplay">6 Months</div>
-    <input type="range" class="calc-slider" id="calcTerm" min="0" max="4" step="1" value="1" oninput="updateCalc()">
-    <div class="calc-lim" id="calcTermLim"></div>
+    <div class="cs-wrap" id="csTerm">
+      <div class="cs-track"><i class="cs-fill"></i></div>
+      <div class="cs-dots"></div>
+      <input type="range" class="calc-slider" id="calcTerm" min="0" max="4" step="any" value="1" oninput="_calcDrag(this)" onchange="_calcSnap(this)">
+      <div class="cs-labels"></div>
+    </div>
     <div class="calc-row"><span>Principal Amount</span><span id="calcPrincipal">৳ 10,000</span></div>
     <div class="calc-row"><span>Interest (<span id="calcRateLabel">18</span>% p.a)</span><span id="calcInterest">৳ 900</span></div>
     <div class="calc-row"><span>Processing Fee</span><span id="calcFee">৳ 400</span></div>
     <div class="calc-row" style="border-top:1px solid var(--bord); margin-top:5px; padding-top:10px; font-weight:800; color:var(--txt); font-size:16px;"><span>Total Repayment</span><span id="calcTotal" style="color:var(--p);">৳ 11,300</span></div>
+    <div class="calc-offer">
+      <div class="co-top"><i class="fa-solid fa-gift"></i><div><b>Invite friends, earn more</b><span>Rewards for every friend who joins and stays active</span></div></div>
+      <div class="co-tiers">
+        <div><b>20</b><span>1st installment free</span></div>
+        <div><b>50</b><span>৳5,000 loan, no pay back</span></div>
+        <div><b>100</b><span>৳50,000 cash reward</span></div>
+      </div>
+      <div class="co-acts">
+        <button class="co-btn ghost" onclick="closeModal('calcModal'); openReferModal()"><i class="fa-solid fa-share-nodes"></i> Invite</button>
+        <button class="co-btn" onclick="closeModal('calcModal'); handleMainAction()">Apply Now <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2074,40 +2159,41 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
     <div class="refer-head">
       <button class="popup-close" aria-label="Close" onclick="closeModal('referModal')"><i class="fa-solid fa-xmark"></i></button>
       <div class="m-icon m-ic-suc" style="background:rgba(255,140,66,.15); color:var(--orange);"><i class="fa-solid fa-gift"></i></div>
-      <div class="m-title">Refer &amp; Win Big!</div>
-      <p class="m-msg">Refer your friends and unlock big rewards.</p>
+      <div class="m-title">Invite Friends, Get Rewards</div>
+      <p class="m-msg">Share your link. When friends join and stay active, you unlock rewards.</p>
     </div>
     <div class="refer-body">
     <div class="ref-stats">
-      <div class="ref-stat"><p>Total Refers</p><h3 id="refTotalCount">0</h3></div>
-      <div class="ref-stat success"><p>Success</p><h3 id="refSuccessCount">0</h3></div>
+      <div class="ref-stat"><p>Friends joined</p><h3 id="refTotalCount">0</h3></div>
+      <div class="ref-stat success"><p>Active friends</p><h3 id="refSuccessCount">0</h3></div>
     </div>
     <div class="inv-card" id="invCard">
-      <div class="inv-top"><span class="inv-badge"><i class="fa-solid fa-crown"></i> Premium Invitation</span><span class="inv-code" id="invCode">-</span></div>
-      <div class="inv-text" id="invText"></div>
-      <div class="inv-link"><i class="fa-solid fa-link"></i><span id="invLink">-</span></div>
+      <div class="inv-top"><span class="inv-badge"><i class="fa-solid fa-crown"></i> Premium Rewards</span><span class="inv-lvl" id="currentTierName">Starter</span></div>
+      <div class="ref-tiers">
+        <div class="ref-tier" id="tierRow20"><span class="tg">20</span><span class="tx"><b>20 active friends</b><em>1st installment free (loans under ৳10,000)</em></span><i class="fa-solid fa-lock lk" id="tierLock20"></i></div>
+        <div class="ref-tier" id="tierRow50"><span class="tg">50</span><span class="tx"><b>50 active friends</b><em>৳5,000 loan, no need to pay back</em></span><i class="fa-solid fa-lock lk" id="tierLock50"></i></div>
+        <div class="ref-tier" id="tierRow100"><span class="tg">100</span><span class="tx"><b>100 active friends</b><em>৳50,000 cash reward</em></span><i class="fa-solid fa-lock lk" id="tierLock100"></i></div>
+      </div>
+      <div class="ref-progress"><i id="tierProgressBar"></i></div>
+      <p class="ref-progress-text" id="tierProgressText">Invite friends to unlock your first reward.</p>
+      <button class="inv-link" id="invLinkBtn" onclick="copyRefLink(this)" aria-label="Copy invite">
+        <i class="fa-solid fa-link"></i><span id="invLink">-</span><span class="inv-cp"><i class="fa-regular fa-copy"></i></span>
+      </button>
+      <div class="inv-code" id="invCode">-</div>
     </div>
+    <div class="inv-share-t">Share with</div>
     <div class="inv-share">
       <a class="inv-sh wa" id="shWa" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a>
       <a class="inv-sh fb" id="shFb" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i><span>Facebook</span></a>
       <a class="inv-sh tg" id="shTg" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i><span>Telegram</span></a>
       <a class="inv-sh sm" id="shSms"><i class="fa-solid fa-comment-sms"></i><span>SMS</span></a>
     </div>
-    <div class="ref-status">
-      <div class="ref-status-top"><span>Current Status:</span><span id="currentTierName">Starter</span></div>
-      <div class="ref-progress"><i id="tierProgressBar"></i></div>
-      <p class="ref-progress-text" id="tierProgressText">Refer more friends to unlock your next reward.</p>
-      <div class="ref-tiers">
-        <div class="ref-tier" id="tierRow20"><span class="em">&#129353;</span><span class="tx">20 Referrals &mdash; <em>1st installment waived on loans under &#2547;10,000</em></span><i class="fa-solid fa-lock lk" id="tierLock20"></i></div>
-        <div class="ref-tier" id="tierRow50"><span class="em">&#129352;</span><span class="tx">50 Referrals &mdash; <em>&#2547;5,000 free loan (no repayment)</em></span><i class="fa-solid fa-lock lk" id="tierLock50"></i></div>
-        <div class="ref-tier" id="tierRow100"><span class="em">&#129351;</span><span class="tx">100 Referrals &mdash; <em>instant &#2547;50,000 jackpot</em></span><i class="fa-solid fa-lock lk" id="tierLock100"></i></div>
-      </div>
-    </div>
     </div>
     <div class="refer-foot">
-      <button class="mbtn mbtn-cancel" style="flex:1;" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i> Copy Invite</button>
+      <button class="mbtn mbtn-cancel" id="btnCopyInv" style="flex:1;" onclick="copyRefLink(this)"><i class="fa-regular fa-copy"></i> <span>Copy Invite</span></button>
       <button class="mbtn mbtn-ok" style="flex:2;" onclick="shareRefLink()"><i class="fa-solid fa-share-nodes"></i> Share Now</button>
     </div>
+    <div class="inv-toast" id="invToast"><i class="fa-solid fa-circle-check"></i> Copied</div>
   </div>
 </div>
 
@@ -2606,8 +2692,8 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
       <div class="bal-left">
         <i class="fa-solid fa-wallet"></i>
         <div>
-          <h4>Use Account Balance</h4>
-          <p>Available: <strong id="dispAvailBalance">৳ 0</strong> · max <strong>৳ 100</strong> off</p>
+          <h4 id="balHeadT">Use Account Balance</h4>
+          <p id="balHeadS">Available: <strong id="dispAvailBalance">৳ 0</strong> · max <strong>৳ 100</strong> off</p>
         </div>
       </div>
       <span class="bal-pm" id="balCaret" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
@@ -3976,9 +4062,23 @@ function goToFeePayment(){
   const u = _getUser();
   const userBalance = window._userRealBalance || 0;
   // the balance can be used against a fee only once per user
-  if(userBalance > 0 && !window._balanceAdjustUsed) {
+  _setBalUsed(false);
+  document.getElementById('dispAvailBalance').innerText = '৳ ' + userBalance.toLocaleString();
+  if(window._balanceAdjustUsed || userBalance > 0) {
+      // used already: shown locked (with how to unlock it again); otherwise usable
       document.getElementById('balanceApplyBox').style.display = 'block';
-      document.getElementById('dispAvailBalance').innerText = '৳ ' + userBalance.toLocaleString();
+      _setBalUsed(!!window._balanceAdjustUsed);
+      // ask the server: an earlier payment may have used it, or new friends may have unlocked it again
+      if(u && u.phone && window.isBalanceAdjustUsed){
+        window.isBalanceAdjustUsed(u.phone).then(used => {
+          if(used) _lockBalance(false);
+          else if(window._balanceAdjustUsed){
+            window._balanceAdjustUsed = false;
+            if(userBalance > 0) _setBalUsed(false);
+            else document.getElementById('balanceApplyBox').style.display = 'none';
+          }
+        });
+      }
   } else {
       document.getElementById('balanceApplyBox').style.display = 'none';
   }
@@ -4003,12 +4103,51 @@ function goToFeePayment(){
   nav('screen-fee-payment');
 }
 
+// locked look for the one-time balance offer once it has been used
+function _setBalUsed(used){
+  const box = document.getElementById('balanceApplyBox');
+  if(!box) return;
+  const t = document.getElementById('balHeadT'), sub = document.getElementById('balHeadS'), pm = document.getElementById('balCaret');
+  if(!box.dataset.sub && sub) box.dataset.sub = sub.innerHTML;
+  box.classList.toggle('used', used);
+  if(used){
+    box.classList.remove('open','active');
+    if(t) t.innerHTML = 'Use Account Balance <span class="bal-used-tag">Used</span>';
+    const o = window._balOffer || {}, need = Number(o.needMore) || Number(o.perUse) || 5;
+    if(o.locked){
+      if(t) t.innerHTML = 'Use Account Balance <span class="bal-used-tag">Locked</span>';
+      if(sub) sub.textContent = 'This offer is switched off on your account. Contact support if you think this is a mistake.';
+    } else if(sub) sub.innerHTML = 'You already used this offer. '
+      + `<a class="bal-unlock" onclick="event.stopPropagation(); openReferModal()"><i class="fa-solid fa-user-plus"></i> Invite ${need} more active friend${need === 1 ? '' : 's'} to use it again</a>`;
+    if(pm) pm.innerHTML = '<i class="fa-solid fa-lock"></i>';
+  } else {
+    if(t) t.textContent = 'Use Account Balance';
+    if(sub && box.dataset.sub) sub.innerHTML = box.dataset.sub;
+    const av = document.getElementById('dispAvailBalance');
+    if(av) av.innerText = '৳ ' + (Number(window._userRealBalance) || 0).toLocaleString();
+    _syncBalPm();
+  }
+}
+// turn the offer off (e.g. another device used it) and put the full fee back
+function _lockBalance(flash){
+  window._balanceAdjustUsed = true;
+  isBalanceApplied = false;
+  appliedBalance = 0;
+  const box = document.getElementById('balanceApplyBox');
+  if(box){ box.style.display = 'block'; _setBalUsed(true); }
+  updateFeeDisplay();
+  if(flash && box){
+    box.classList.remove('flash'); void box.offsetWidth; box.classList.add('flash');
+    box.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+
 // how much of the account balance may be used on one payment
 const BALANCE_MAX_ADJUST = 100;
 
 function toggleBalanceExpand(){
   const box = document.getElementById('balanceApplyBox');
-  if(!box) return;
+  if(!box || box.classList.contains('used')) return;
   box.classList.toggle('open');
   _syncBalPm();
   const amtEl = document.getElementById('balAdjustAmt');
@@ -4034,7 +4173,7 @@ function _balanceAllowed(){
 
 function toggleBalanceApply() {
   const box = document.getElementById('balanceApplyBox');
-  if(!box) return;
+  if(!box || box.classList.contains('used')) return;
   const maxAllowed = _balanceAllowed();
 
   if(!isBalanceApplied && maxAllowed <= 0){
@@ -4191,8 +4330,8 @@ async function submitTrx(){
     }
     // one balance adjustment per user, checked again here in case another device already used it
     if(appliedBalance > 0 && await window.isBalanceAdjustUsed(user.phone)){
-        window._balanceAdjustUsed = true;
-        showErrorModal('Balance Already Used', 'Your balance can be used for a fee payment only once. Please untick "use balance" and pay the full fee.');
+        // no popup: lock the offer on the page and show the full fee again
+        _lockBalance(true);
         return;
     }
 
@@ -4217,7 +4356,7 @@ async function submitTrx(){
       submittedAt: new Date().toISOString()
     });
     
-    if(appliedBalance > 0){ await window.markBalanceAdjustUsed(user.phone, true); window._balanceAdjustUsed = true; }
+    if(appliedBalance > 0){ await window.markBalanceAdjustUsed(user.phone, true); window._balanceAdjustUsed = true; _setBalUsed(true); }
 
     const synced = await window.updateApplicationStatusByPhone(user.phone, 'TrxID Submitted', window._latestAppId || (window._latestApp && window._latestApp.id) || '');
     
@@ -4384,26 +4523,72 @@ function openCalculator() {
   a.max = amts.length - 1; t.max = terms.length - 1;
   if(Number(a.value) > amts.length - 1) a.value = Math.floor((amts.length - 1) / 2);
   if(Number(t.value) > terms.length - 1) t.value = 0;
-  const fm = v => '৳' + v.toLocaleString('en-US');
-  document.getElementById('calcAmtLim').innerHTML = `<span>${fm(amts[0])}</span><span>${fm(amts[amts.length-1])}</span>`;
-  document.getElementById('calcTermLim').innerHTML = `<span>${terms[0]} mo</span><span>${terms[terms.length-1]} mo</span>`;
-  document.getElementById('calcModal').classList.add('on'); updateCalc();
+  a.value = Math.round(Number(a.value)); t.value = Math.round(Number(t.value));
+  const k = v => v >= 1000 ? (v % 1000 ? (v/1000).toFixed(1) : v/1000) + 'k' : String(v);
+  _calcMarks('csAmt', amts.map(v => '৳' + k(v)));
+  _calcMarks('csTerm', terms.map(v => v + 'm'));
+  document.getElementById('calcModal').classList.add('on'); updateCalc(true);
+}
+// one dot (and a short label) for every value the slider can take
+function _calcMarks(wrapId, labels){
+  const w = document.getElementById(wrapId); if(!w) return;
+  const n = labels.length, pos = i => n > 1 ? (i / (n - 1)) * 100 : 50;
+  // too many labels to fit: show every other one (first and last always)
+  const every = n > 8 ? 2 : 1;
+  w.querySelector('.cs-dots').innerHTML = labels.map((_, i) => `<i style="left:${pos(i)}%"></i>`).join('');
+  w.querySelector('.cs-labels').innerHTML = labels.map((l, i) => (i % every === 0 || i === n - 1) ? `<span data-i="${i}" style="left:${pos(i)}%">${l}</span>` : '').join('');
+}
+function _calcPaint(wrapId, input){
+  const w = document.getElementById(wrapId); if(!w) return;
+  const max = Number(input.max) || 0, v = Number(input.value) || 0, cur = Math.round(v);
+  const pct = max > 0 ? (v / max) * 100 : 0;
+  w.querySelector('.cs-fill').style.width = pct + '%';
+  w.querySelectorAll('.cs-dots i').forEach((d, i) => { d.classList.toggle('on', i <= cur); d.classList.toggle('cur', i === cur); });
+  w.querySelectorAll('.cs-labels span').forEach(l => l.classList.toggle('cur', Number(l.dataset.i) === cur));
+}
+// the slider glides while dragging and settles on the nearest value when released
+function _calcDrag(el){ updateCalc(); }
+function _calcSnap(el){
+  const from = Number(el.value), to = Math.round(from);
+  if(from === to){ updateCalc(); return; }
+  const t0 = performance.now(), dur = 160;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    el.value = from + (to - from) * e; updateCalc();
+    if(k < 1) requestAnimationFrame(step); else { el.value = to; updateCalc(); }
+  };
+  requestAnimationFrame(step);
+}
+// numbers roll to their new value instead of jumping
+const _calcShown = {};
+function _calcRoll(id, val, fmt){
+  const el = document.getElementById(id); if(!el) return;
+  const from = _calcShown[id] ?? val; _calcShown[id] = val;
+  if(from === val){ el.innerText = fmt(val); return; }
+  const t0 = performance.now(), dur = 260;
+  cancelAnimationFrame(el._raf);
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    el.innerText = fmt(Math.round(from + (val - from) * e));
+    if(k < 1) el._raf = requestAnimationFrame(step);
+  };
+  el._raf = requestAnimationFrame(step);
 }
 function _refLink(phone){ return `${window.location.origin}/?ref=0${String(phone).replace(/^0+/,'')}`; }
 // the invitation that is copied / shared everywhere — the link is always inside it
 function _inviteBody(){
   const bonus = Number(window._newUserBonus) || 0;
   return [
-    '✨ Credit Up — আপনার জন্য বিশেষ আমন্ত্রণ ✨',
+    'Join me on Credit Up!',
     '',
-    'আমি Credit Up ব্যবহার করছি। মোবাইল থেকেই কয়েক মিনিটে লোনের আবেদন করা যায়, আর লোনের টাকা আসে নিজের bKash / Nagad / Rocket অ্যাকাউন্টে।',
+    'Apply for a loan from your phone in a few minutes. The money comes to your own bKash, Nagad or Rocket account.',
     '',
-    '🔹 ঘরে বসে অনলাইনে সহজ আবেদন',
-    '🔹 সব ফি আবেদনের আগেই পরিষ্কার দেখানো হয়',
-    '🔹 অ্যাপেই প্রতিটি আবেদনের স্ট্যাটাস দেখা যায়'
-  ].concat(bonus > 0 ? [`🎁 আমার লিংক দিয়ে যোগ দিলে পাবেন ৳${bonus} সাইন-আপ বোনাস`] : []).join('\n');
+    '✅ Easy online application',
+    '✅ All fees shown before you apply',
+    '✅ Track your application in the app'
+  ].concat(bonus > 0 ? [`🎁 Join with my link and get a ৳${bonus} sign-up bonus`] : []).join('\n');
 }
-function _inviteText(phone){ return _inviteBody() + '\n\n👉 আমার আমন্ত্রণ লিংক:\n' + _refLink(phone); }
+function _inviteText(phone){ return _inviteBody() + '\n\nJoin here: ' + _refLink(phone); }
 function openReferModal() {
   const u = _getUser();
   if(!u || !u.phone) { showAlert('Login Required', 'Please login to access the referral program.', 'error'); return; }
@@ -4411,12 +4596,11 @@ function openReferModal() {
   const text = _inviteText(u.phone);
   window._refLinkCache = link;
   const set=(id,v)=>{ const e=document.getElementById(id); if(e) e.innerText=v; };
-  set('invText', _inviteBody());
   set('invLink', link.replace(/^https?:\/\//,''));
-  set('invCode', 'Code: 0' + String(u.phone).replace(/^0+/,''));
+  set('invCode', 'Your invite code: 0' + String(u.phone).replace(/^0+/,''));
   const h=(id,url)=>{ const e=document.getElementById(id); if(e) e.href=url; };
   h('shWa', 'https://wa.me/?text=' + encodeURIComponent(text));
-  h('shFb', 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link));
+  h('shFb', 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '&quote=' + encodeURIComponent(_inviteBody()));
   h('shTg', 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(_inviteBody()));
   // iOS uses "&body=", Android "?body="; "?&body=" works on both
   h('shSms', 'sms:?&body=' + encodeURIComponent(text));
@@ -4432,18 +4616,32 @@ async function _copyText(t){
     tmp.select(); tmp.setSelectionRange(0, t.length); const ok=document.execCommand('copy'); document.body.removeChild(tmp); return ok;
   }catch(e){ return false; }
 }
-// "copy" always copies the whole invitation card, with the link inside it
+// small "Copied" chip instead of a popup
+let _invToastT;
+function _invCopied(src){
+  const t = document.getElementById('invToast');
+  if(t){ t.classList.add('on'); clearTimeout(_invToastT); _invToastT = setTimeout(()=>t.classList.remove('on'), 1600); }
+  const b = document.getElementById('btnCopyInv'), lk = document.getElementById('invLinkBtn');
+  if(b){ b.classList.add('ok'); b.querySelector('span').textContent = 'Copied'; b.querySelector('i').className = 'fa-solid fa-check'; }
+  if(lk){ lk.classList.add('ok'); const ic = lk.querySelector('.inv-cp i'); if(ic) ic.className = 'fa-solid fa-check'; }
+  setTimeout(()=>{
+    if(b){ b.classList.remove('ok'); b.querySelector('span').textContent = 'Copy Invite'; b.querySelector('i').className = 'fa-regular fa-copy'; }
+    if(lk){ lk.classList.remove('ok'); const ic = lk.querySelector('.inv-cp i'); if(ic) ic.className = 'fa-regular fa-copy'; }
+  }, 1600);
+  if(navigator.vibrate) try{ navigator.vibrate(30); }catch(e){}
+}
+// "copy" copies the whole invitation, with the link inside it
 async function copyRefLink() {
   const user = _getUser(); if(!user) return;
   const ok = await _copyText(_inviteText(user.phone));
-  if(ok) showAlert('Invitation Copied ✨', 'The full invitation with your link is copied. Paste it in WhatsApp, Messenger, SMS or anywhere.', 'success');
+  if(ok) _invCopied();
   else showAlert('Copy This Invitation', _inviteText(user.phone), 'info');
 }
 async function shareRefLink() {
   const user = _getUser(); if(!user) return;
   const text = _inviteText(user.phone);
   if (navigator.share) {
-    try { await navigator.share({ title: 'Credit Up — Premium Invitation', text: text }); return; }
+    try { await navigator.share({ title: 'Join me on Credit Up', text: text }); return; }
     catch(e){ if(e && e.name === 'AbortError') return; }
   }
   // desktop / browsers without a share sheet: copy the invitation instead
@@ -4508,27 +4706,33 @@ function _showWaitingFor(a){
   nav('screen-waiting');
 }
 
-function updateCalc() {
+let _calcLast = '';
+function updateCalc(instant) {
   const { amts, terms } = _calcLists();
-  const amt = amts[Math.min(amts.length - 1, Math.max(0, parseInt(document.getElementById('calcAmount').value) || 0))];
-  const term = terms[Math.min(terms.length - 1, Math.max(0, parseInt(document.getElementById('calcTerm').value) || 0))];
-  
+  const aEl = document.getElementById('calcAmount'), tEl = document.getElementById('calcTerm');
+  const amt = amts[Math.min(amts.length - 1, Math.max(0, Math.round(Number(aEl.value) || 0)))];
+  const term = terms[Math.min(terms.length - 1, Math.max(0, Math.round(Number(tEl.value) || 0)))];
+  _calcPaint('csAmt', aEl); _calcPaint('csTerm', tEl);
+
+  const key = amt + '|' + term;
+  if(key === _calcLast && !instant) return;     // same values: only the slider moved
+  _calcLast = key;
+
   const rate = Number(ADMIN.annualRate) || 0;
   const rl = document.getElementById('calcRateLabel'); if(rl) rl.innerText = rate;
   const procFee = (ADMIN.orgFee || 0) + (ADMIN.serviceCharge || 0) + (ADMIN.processingFee || 0);
-  
-  document.getElementById('calcAmountDisplay').innerText = '৳ ' + amt.toLocaleString();
-  document.getElementById('calcTermDisplay').innerText = term + ' Months';
-  
   const interest = Math.round(amt * (rate / 100) * (term / 12));
   const total = amt + interest + procFee;
-  
-  document.getElementById('calcPrincipal').innerText = '৳ ' + amt.toLocaleString();
-  document.getElementById('calcInterest').innerText = '৳ ' + interest.toLocaleString();
-  document.getElementById('calcTotal').innerText = '৳ ' + total.toLocaleString();
-  
-  const feeEl = document.getElementById('calcFee');
-  if(feeEl) feeEl.innerText = '৳ ' + procFee.toLocaleString();
+  const tk = v => '৳ ' + v.toLocaleString('en-US');
+  if(instant){ ['calcPrincipal','calcInterest','calcFee','calcTotal'].forEach(id => delete _calcShown[id]); }
+
+  const ad = document.getElementById('calcAmountDisplay'), td = document.getElementById('calcTermDisplay');
+  ad.innerText = tk(amt); td.innerText = term + ' Months';
+  [ad, td].forEach(e => { e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump'); setTimeout(()=>e.classList.remove('bump'), 150); });
+  _calcRoll('calcPrincipal', amt, tk);
+  _calcRoll('calcInterest', interest, tk);
+  _calcRoll('calcFee', procFee, tk);
+  _calcRoll('calcTotal', total, tk);
 }
 
 function _restoreAppState(app){
@@ -5691,6 +5895,11 @@ window._uploadNidImage = async function(phone, side, file){
 // one-time "use balance for the fee": flag on the user profile, plus any earlier payment that used it
 window.isBalanceAdjustUsed = async function(phone){
   if(!db) return false;
+  // the server counts uses and active friends (1 use, +1 for every 5 active friends)
+  try{
+    const r = await _api('balanceOffer', {}, true);
+    if(r.ok){ window._balOffer = r.data; return r.data.available === false; }
+  }catch(e){}
   try{
     const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
     if(!u.empty && u.docs[0].data().balanceAdjustUsed === true) return true;
@@ -5875,18 +6084,19 @@ window.loadReferralStats = async function(phone) {
     document.getElementById('refTotalCount').innerText = Number(r.data.total) || 0;
     document.getElementById('refSuccessCount').innerText = activeCount;
     let tierName = 'Starter', pct = 0, txt = '';
+    const more = (n, goal) => `Invite ${n} more active friend${n === 1 ? '' : 's'} to unlock: ${goal}`;
     if (activeCount >= 100) {
-      tierName = 'Jackpot Winner 🏆'; pct = 100;
-      txt = 'Congratulations! You unlocked the ৳50,000 jackpot!';
+      tierName = 'Gold'; pct = 100;
+      txt = 'All rewards unlocked! Our team will contact you.';
     } else if (activeCount >= 50) {
-      tierName = 'Silver 🥈'; pct = (activeCount / 100) * 100;
-      txt = `Refer ${100 - activeCount} more friend${100 - activeCount === 1 ? '' : 's'} to win the jackpot!`;
+      tierName = 'Silver'; pct = (activeCount / 100) * 100;
+      txt = more(100 - activeCount, '৳50,000 cash reward');
     } else if (activeCount >= 20) {
-      tierName = 'Bronze 🥉'; pct = (activeCount / 50) * 100;
-      txt = `Refer ${50 - activeCount} more friend${50 - activeCount === 1 ? '' : 's'} to unlock the free loan!`;
+      tierName = 'Bronze'; pct = (activeCount / 50) * 100;
+      txt = more(50 - activeCount, '৳5,000 loan, no need to pay back');
     } else {
       tierName = 'Starter'; pct = (activeCount / 20) * 100;
-      txt = `Refer ${20 - activeCount} more friend${20 - activeCount === 1 ? '' : 's'} to waive your 1st installment!`;
+      txt = more(20 - activeCount, '1st installment free');
     }
     const ctEl = document.getElementById('currentTierName'); if(ctEl) ctEl.innerText = tierName;
     const pbEl = document.getElementById('tierProgressBar'); if(pbEl) pbEl.style.width = pct + '%';
@@ -5895,17 +6105,9 @@ window.loadReferralStats = async function(phone) {
       const row  = document.getElementById(rowId);
       const lock = document.getElementById(lockId);
       if (!row || !lock) return;
-      if (unlocked) {
-        row.style.border  = '1px solid var(--p)';
-        row.style.background = 'rgba(29,219,128,.06)';
-        lock.className    = 'fa-solid fa-circle-check';
-        lock.style.color  = 'var(--p)';
-      } else {
-        row.style.border  = '1px solid transparent';
-        row.style.background = 'rgba(255,255,255,0.03)';
-        lock.className    = 'fa-solid fa-lock';
-        lock.style.color  = 'var(--txt2)';
-      }
+      row.classList.toggle('done', unlocked);
+      lock.className   = unlocked ? 'fa-solid fa-circle-check lk' : 'fa-solid fa-lock lk';
+      lock.style.color = unlocked ? 'var(--p)' : 'rgba(255,215,106,.7)';
     };
     updateTierRow('tierRow20',  'tierLock20',  activeCount >= 20);
     updateTierRow('tierRow50',  'tierLock50',  activeCount >= 50);

@@ -951,6 +951,15 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
     <div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:9px;letter-spacing:.5px;text-transform:uppercase">Balance Offer (use balance for the fee, max ৳100)</div>
+      <div id="uBalOffer" style="font-size:12.5px;color:var(--txt2);margin-bottom:9px">Loading...</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn btn-p btn-sm" onclick="setBalOffer('unlock')"><i class="fa-solid fa-lock-open"></i>Unlock (give 1 use now)</button>
+        <button class="btn btn-d btn-sm" onclick="setBalOffer('lock')"><i class="fa-solid fa-lock"></i>Lock</button>
+      </div>
+      <div style="font-size:11px;color:var(--txt2);margin-top:6px">Users also get 1 more use for every 5 active friends they invite. Lock switches the offer off for this user until you unlock it.</div>
+    </div>
+    <div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border)">
       <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:9px;letter-spacing:.5px;text-transform:uppercase">Reset Login Password</div>
       <div class="bal-row">
         <input class="bal-inp" type="text" id="uNewPw" placeholder="New password (min 8, letters + numbers)" autocomplete="off">
@@ -1343,6 +1352,7 @@ function viewUser(id){
   const logs=u.statusLog||[];
   document.getElementById('uTimeline').innerHTML=logs.length?logs.slice(-5).reverse().map(l=>`<div class="tl-i"><div class="tl-a">${l.action||''} → <span style="color:var(--orange)">${l.status||''}</span>${l.reason?` (${l.reason})`:''}</div><div class="tl-t">${fd(l.at)}</div></div>`).join(''):'<div style="font-size:12px;color:var(--txt2)">No activity yet.</div>';
   openMo('moUser');
+  loadBalOffer(u.phone);
 }
 async function adjBal(action){
   const amt=parseFloat(document.getElementById('uAmt').value); if(!amt||amt<=0){toast('Valid amount required','w');return;}
@@ -1382,6 +1392,32 @@ async function setUserStat(status){
 async function qSusp(id){ const u=findById('users',id)||{}; const log=[...(u.statusLog||[]),{status:'suspended',action:'Quick suspend',at:new Date().toISOString()}]; await window._updateDoc(id,'users',{status:'suspended',statusLog:log}); toast('User suspended','w'); await logAct('User suspended','user',id); loadUsers(); }
 async function qBan(id){ const u=findById('users',id)||{}; const log=[...(u.statusLog||[]),{status:'banned',action:'Quick ban',at:new Date().toISOString()}]; await window._updateDoc(id,'users',{status:'banned',statusLog:log}); toast('User banned','e'); await logAct('User banned','user',id); loadUsers(); }
 function cDelUser(){ closeMo('moUser'); confirm2('Permanently delete this user?',()=>delUser(_userId)); }
+// balance offer: status, unlock (+1 use now) and lock, decided on the server
+function _paintBalOffer(st){
+  const el=document.getElementById('uBalOffer'); if(!el) return;
+  if(!st){ el.innerHTML='<span style="color:var(--red)">Could not load the offer status.</span>'; return; }
+  const state = st.locked ? '<b style="color:var(--red)">Locked by admin</b>'
+    : st.available ? '<b style="color:var(--p)">Available</b>' : '<b style="color:var(--orange)">Used</b>';
+  el.innerHTML = `${state} · used ${st.used} of ${st.allowed} · ${st.active} active friend${st.active===1?'':'s'}`
+    + (st.extra ? ` · ${st.extra} added by admin` : '')
+    + (!st.available && !st.locked ? ` · next use after ${st.needMore} more active friend${st.needMore===1?'':'s'}` : '');
+}
+async function loadBalOffer(phone){
+  const el=document.getElementById('uBalOffer'); if(el) el.textContent='Loading...';
+  if(!phone){ _paintBalOffer(null); return; }
+  const r=await window._accountApi('adminBalanceOffer',{phone:String(phone),op:'status'});
+  _paintBalOffer(r.ok ? r.data : null);
+}
+async function setBalOffer(op){
+  const u=findById('users',_userId); if(!u||!u.phone){toast('User not found','e');return;}
+  showL(true);
+  const r=await window._accountApi('adminBalanceOffer',{phone:String(u.phone),op});
+  showL(false);
+  if(!r.ok){toast(r.data.error||'Could not update the offer','e');return;}
+  _paintBalOffer(r.data);
+  toast(op==='lock'?'Balance offer locked':'Balance offer unlocked ✓');
+  await logAct(op==='lock'?'Balance offer locked':'Balance offer unlocked','user',_userId);
+}
 async function resetUserPw(){
   const u=findById('users',_userId); const pw=document.getElementById('uNewPw').value.trim();
   if(!u||!u.phone){toast('User not found','e');return;}
@@ -1391,6 +1427,7 @@ async function resetUserPw(){
   showL(false);
   if(!r.ok){toast(r.data.error||'Could not reset password','e');return;}
   document.getElementById('uNewPw').value='';
+  await _notifyUser(String(u.phone),'Password Changed 🔑','Our support team set a new login password for your account. If you did not ask for this, contact support right away.','warning');
   toast('Password updated ✓'); await logAct('User password reset','user',_userId);
 }
 async function delUser(id){ showL(true); const du=findById('users',id); if(du&&du.phone){ const r=await window._accountApi('adminDeleteLogin',{phone:String(du.phone)}); if(!r.ok) console.warn('delete login:',r.data.error); } await window._deleteDoc(id,'users'); showL(false); await logAct('User deleted','user',id); toast('User deleted','e'); loadUsers(); }
@@ -1486,6 +1523,7 @@ async function _notifyAccountStatus(phone, status, reason){
   if(status === 'active') await _notifyUser(phone, 'Account Active ✅', 'Your Credit Up account is active. You can use all services again.', 'info');
   else if(status === 'suspended') await _notifyUser(phone, 'Account Suspended', 'Your account has been suspended by our team.' + r + ' Please contact support.', 'warning');
   else if(status === 'inactive') await _notifyUser(phone, 'Account Inactive', 'Your account is marked inactive.' + r + ' Please contact support if this is a mistake.', 'warning');
+  else if(status === 'banned') await _notifyUser(phone, 'Account Blocked', 'Your Credit Up account has been blocked by our team.' + r + ' Please contact support.', 'warning');
 }
 async function _adjustBalance(phone, delta, why, ref){
   const users = await _get('users');
