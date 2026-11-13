@@ -496,6 +496,36 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .calc-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--p);cursor:pointer;box-shadow:var(--glow);border:2px solid #fff}
 .calc-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--bord);font-size:14px;color:var(--txt2)}
 .calc-row:last-child{border:none}
+.cs-wrap{position:relative;height:30px;margin:0 2px 26px}
+.cs-wrap .calc-slider{position:absolute;inset:0;width:100%;height:30px;margin:0;background:transparent;z-index:3;cursor:pointer;touch-action:pan-y}
+.cs-wrap .calc-slider::-webkit-slider-runnable-track{height:30px;background:transparent}
+.cs-wrap .calc-slider::-moz-range-track{height:30px;background:transparent}
+.cs-wrap .calc-slider::-webkit-slider-thumb{margin-top:4px;transition:transform .15s}
+.cs-wrap .calc-slider:active::-webkit-slider-thumb{transform:scale(1.18)}
+.cs-wrap .calc-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--p);border:2px solid #fff;box-shadow:var(--glow)}
+.cs-track{position:absolute;left:11px;right:11px;top:12px;height:6px;border-radius:5px;background:var(--surf2);overflow:hidden}
+.cs-fill{display:block;height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,var(--p2),var(--p))}
+.cs-dots{position:absolute;left:11px;right:11px;top:11px;height:8px;z-index:2;pointer-events:none}
+.cs-dots i{position:absolute;top:0;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#2a3d58;border:1.5px solid var(--bg2);transition:background .2s,transform .2s}
+.cs-dots i.on{background:#bff5d8}
+.cs-dots i.cur{transform:scale(0)}
+.cs-labels{position:absolute;left:11px;right:11px;top:30px;height:14px;pointer-events:none}
+.cs-labels span{position:absolute;transform:translateX(-50%);font-size:9.5px;font-weight:600;color:var(--txt3);white-space:nowrap;transition:color .2s}
+.cs-labels span.cur{color:var(--p);font-weight:800}
+.calc-val{transition:transform .15s}
+.calc-val.bump{transform:scale(1.06)}
+.calc-offer{margin-top:14px;padding:12px;border-radius:14px;background:linear-gradient(145deg,#0b3b22,#0a2a1a 60%,#1a1405);border:1px solid rgba(255,207,92,.35)}
+.co-top{display:flex;gap:10px;align-items:center;margin-bottom:9px}
+.co-top>i{width:32px;height:32px;flex:0 0 32px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffd76a,#f5b72f);color:#1a1405;font-size:14px}
+.co-top b{display:block;font-size:13px;color:#fff}
+.co-top span{display:block;font-size:11px;color:#cfe9da}
+.co-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.co-tiers div{background:rgba(0,0,0,.28);border:1px solid rgba(255,215,106,.18);border-radius:10px;padding:7px 5px;text-align:center}
+.co-tiers b{display:block;font-size:14px;font-weight:900;color:#ffd76a;line-height:1.1}
+.co-tiers span{display:block;font-size:10px;color:#e9f6ee;line-height:1.3;margin-top:2px}
+.co-acts{display:flex;gap:8px}
+.co-btn{flex:2;height:38px;border:0;border-radius:11px;font-weight:800;font-size:13px;font-family:inherit;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;gap:7px}
+.co-btn.ghost{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#ffd76a}
 .calc-row span:last-child{color:var(--txt);font-weight:700}
 .notif-list{display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:5px}
 #notifModal .nc-card{max-width:400px;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;max-height:86vh}
@@ -1718,12 +1748,14 @@ input.pf-filled{padding-left:8px;padding-right:8px}
 .bal-box.open .bal-caret{transform:rotate(180deg)}
 .bal-body{display:none;padding:0 14px 13px}
 .bal-box.open .bal-body{display:block}
-.bal-box.used{opacity:.6;background:rgba(255,255,255,.02);border-style:dashed}
+.bal-box.used{background:rgba(255,255,255,.02);border-style:dashed}
+.bal-box.used .bal-left h4,.bal-box.used .bal-left>i,.bal-box.used .bal-pm{opacity:.55}
 .bal-box.used .bal-head{cursor:not-allowed}
 .bal-box.used .bal-body{display:none!important}
 .bal-box.used .bal-left i{color:var(--txt3)}
 .bal-box.used .bal-left p strong{color:var(--txt2)}
 .bal-box.used .bal-pm{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--txt2)}
+.bal-unlock{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:4px 9px;border-radius:20px;background:rgba(255,215,106,.12);border:1px solid rgba(255,215,106,.35);color:#ffd76a;font-weight:700;font-size:10.5px;cursor:pointer}
 .bal-used-tag{display:inline-block;margin-left:6px;font-size:9.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--txt2);background:rgba(255,255,255,.08);padding:2px 7px;border-radius:20px;vertical-align:middle}
 .bal-box.used.flash{animation:balFlash .9s}
 @keyframes balFlash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 2px var(--orange)}}
@@ -2089,16 +2121,36 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
     <p class="m-msg">Estimate your monthly repayment easily.</p>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Loan Amount (BDT)</label>
     <div class="calc-val" id="calcAmountDisplay">৳ 10,000</div>
-    <input type="range" class="calc-slider" id="calcAmount" min="0" max="6" step="1" value="3" oninput="updateCalc()">
-    <div class="calc-lim" id="calcAmtLim"></div>
+    <div class="cs-wrap" id="csAmt">
+      <div class="cs-track"><i class="cs-fill"></i></div>
+      <div class="cs-dots"></div>
+      <input type="range" class="calc-slider" id="calcAmount" min="0" max="6" step="any" value="3" oninput="_calcDrag(this)" onchange="_calcSnap(this)">
+      <div class="cs-labels"></div>
+    </div>
     <label style="font-size:12px; color:var(--txt2); font-weight:600;">Term (Months)</label>
     <div class="calc-val" id="calcTermDisplay">6 Months</div>
-    <input type="range" class="calc-slider" id="calcTerm" min="0" max="4" step="1" value="1" oninput="updateCalc()">
-    <div class="calc-lim" id="calcTermLim"></div>
+    <div class="cs-wrap" id="csTerm">
+      <div class="cs-track"><i class="cs-fill"></i></div>
+      <div class="cs-dots"></div>
+      <input type="range" class="calc-slider" id="calcTerm" min="0" max="4" step="any" value="1" oninput="_calcDrag(this)" onchange="_calcSnap(this)">
+      <div class="cs-labels"></div>
+    </div>
     <div class="calc-row"><span>Principal Amount</span><span id="calcPrincipal">৳ 10,000</span></div>
     <div class="calc-row"><span>Interest (<span id="calcRateLabel">18</span>% p.a)</span><span id="calcInterest">৳ 900</span></div>
     <div class="calc-row"><span>Processing Fee</span><span id="calcFee">৳ 400</span></div>
     <div class="calc-row" style="border-top:1px solid var(--bord); margin-top:5px; padding-top:10px; font-weight:800; color:var(--txt); font-size:16px;"><span>Total Repayment</span><span id="calcTotal" style="color:var(--p);">৳ 11,300</span></div>
+    <div class="calc-offer">
+      <div class="co-top"><i class="fa-solid fa-gift"></i><div><b>Invite friends, earn more</b><span>Rewards for every friend who joins and stays active</span></div></div>
+      <div class="co-tiers">
+        <div><b>20</b><span>1st installment free</span></div>
+        <div><b>50</b><span>৳5,000 loan, no pay back</span></div>
+        <div><b>100</b><span>৳50,000 cash reward</span></div>
+      </div>
+      <div class="co-acts">
+        <button class="co-btn ghost" onclick="closeModal('calcModal'); openReferModal()"><i class="fa-solid fa-share-nodes"></i> Invite</button>
+        <button class="co-btn" onclick="closeModal('calcModal'); handleMainAction()">Apply Now <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -4011,16 +4063,21 @@ function goToFeePayment(){
   const userBalance = window._userRealBalance || 0;
   // the balance can be used against a fee only once per user
   _setBalUsed(false);
-  if(window._balanceAdjustUsed) {
-      // already used once: show the offer, locked
+  document.getElementById('dispAvailBalance').innerText = '৳ ' + userBalance.toLocaleString();
+  if(window._balanceAdjustUsed || userBalance > 0) {
+      // used already: shown locked (with how to unlock it again); otherwise usable
       document.getElementById('balanceApplyBox').style.display = 'block';
-      _setBalUsed(true);
-  } else if(userBalance > 0) {
-      document.getElementById('balanceApplyBox').style.display = 'block';
-      document.getElementById('dispAvailBalance').innerText = '৳ ' + userBalance.toLocaleString();
-      // double-check in the background (an earlier payment may have used it)
+      _setBalUsed(!!window._balanceAdjustUsed);
+      // ask the server: an earlier payment may have used it, or new friends may have unlocked it again
       if(u && u.phone && window.isBalanceAdjustUsed){
-        window.isBalanceAdjustUsed(u.phone).then(used => { if(used) _lockBalance(false); });
+        window.isBalanceAdjustUsed(u.phone).then(used => {
+          if(used) _lockBalance(false);
+          else if(window._balanceAdjustUsed){
+            window._balanceAdjustUsed = false;
+            if(userBalance > 0) _setBalUsed(false);
+            else document.getElementById('balanceApplyBox').style.display = 'none';
+          }
+        });
       }
   } else {
       document.getElementById('balanceApplyBox').style.display = 'none';
@@ -4056,11 +4113,15 @@ function _setBalUsed(used){
   if(used){
     box.classList.remove('open','active');
     if(t) t.innerHTML = 'Use Account Balance <span class="bal-used-tag">Used</span>';
-    if(sub) sub.textContent = 'You already used this offer on an earlier fee. It works only once.';
+    const o = window._balOffer || {}, need = Number(o.needMore) || Number(o.perUse) || 5;
+    if(sub) sub.innerHTML = 'You already used this offer. '
+      + `<a class="bal-unlock" onclick="event.stopPropagation(); openReferModal()"><i class="fa-solid fa-user-plus"></i> Invite ${need} more active friend${need === 1 ? '' : 's'} to use it again</a>`;
     if(pm) pm.innerHTML = '<i class="fa-solid fa-lock"></i>';
   } else {
     if(t) t.textContent = 'Use Account Balance';
     if(sub && box.dataset.sub) sub.innerHTML = box.dataset.sub;
+    const av = document.getElementById('dispAvailBalance');
+    if(av) av.innerText = '৳ ' + (Number(window._userRealBalance) || 0).toLocaleString();
     _syncBalPm();
   }
 }
@@ -4459,10 +4520,56 @@ function openCalculator() {
   a.max = amts.length - 1; t.max = terms.length - 1;
   if(Number(a.value) > amts.length - 1) a.value = Math.floor((amts.length - 1) / 2);
   if(Number(t.value) > terms.length - 1) t.value = 0;
-  const fm = v => '৳' + v.toLocaleString('en-US');
-  document.getElementById('calcAmtLim').innerHTML = `<span>${fm(amts[0])}</span><span>${fm(amts[amts.length-1])}</span>`;
-  document.getElementById('calcTermLim').innerHTML = `<span>${terms[0]} mo</span><span>${terms[terms.length-1]} mo</span>`;
-  document.getElementById('calcModal').classList.add('on'); updateCalc();
+  a.value = Math.round(Number(a.value)); t.value = Math.round(Number(t.value));
+  const k = v => v >= 1000 ? (v % 1000 ? (v/1000).toFixed(1) : v/1000) + 'k' : String(v);
+  _calcMarks('csAmt', amts.map(v => '৳' + k(v)));
+  _calcMarks('csTerm', terms.map(v => v + 'm'));
+  document.getElementById('calcModal').classList.add('on'); updateCalc(true);
+}
+// one dot (and a short label) for every value the slider can take
+function _calcMarks(wrapId, labels){
+  const w = document.getElementById(wrapId); if(!w) return;
+  const n = labels.length, pos = i => n > 1 ? (i / (n - 1)) * 100 : 50;
+  // too many labels to fit: show every other one (first and last always)
+  const every = n > 8 ? 2 : 1;
+  w.querySelector('.cs-dots').innerHTML = labels.map((_, i) => `<i style="left:${pos(i)}%"></i>`).join('');
+  w.querySelector('.cs-labels').innerHTML = labels.map((l, i) => (i % every === 0 || i === n - 1) ? `<span data-i="${i}" style="left:${pos(i)}%">${l}</span>` : '').join('');
+}
+function _calcPaint(wrapId, input){
+  const w = document.getElementById(wrapId); if(!w) return;
+  const max = Number(input.max) || 0, v = Number(input.value) || 0, cur = Math.round(v);
+  const pct = max > 0 ? (v / max) * 100 : 0;
+  w.querySelector('.cs-fill').style.width = pct + '%';
+  w.querySelectorAll('.cs-dots i').forEach((d, i) => { d.classList.toggle('on', i <= cur); d.classList.toggle('cur', i === cur); });
+  w.querySelectorAll('.cs-labels span').forEach(l => l.classList.toggle('cur', Number(l.dataset.i) === cur));
+}
+// the slider glides while dragging and settles on the nearest value when released
+function _calcDrag(el){ updateCalc(); }
+function _calcSnap(el){
+  const from = Number(el.value), to = Math.round(from);
+  if(from === to){ updateCalc(); return; }
+  const t0 = performance.now(), dur = 160;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    el.value = from + (to - from) * e; updateCalc();
+    if(k < 1) requestAnimationFrame(step); else { el.value = to; updateCalc(); }
+  };
+  requestAnimationFrame(step);
+}
+// numbers roll to their new value instead of jumping
+const _calcShown = {};
+function _calcRoll(id, val, fmt){
+  const el = document.getElementById(id); if(!el) return;
+  const from = _calcShown[id] ?? val; _calcShown[id] = val;
+  if(from === val){ el.innerText = fmt(val); return; }
+  const t0 = performance.now(), dur = 260;
+  cancelAnimationFrame(el._raf);
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    el.innerText = fmt(Math.round(from + (val - from) * e));
+    if(k < 1) el._raf = requestAnimationFrame(step);
+  };
+  el._raf = requestAnimationFrame(step);
 }
 function _refLink(phone){ return `${window.location.origin}/?ref=0${String(phone).replace(/^0+/,'')}`; }
 // the invitation that is copied / shared everywhere — the link is always inside it
@@ -4596,27 +4703,33 @@ function _showWaitingFor(a){
   nav('screen-waiting');
 }
 
-function updateCalc() {
+let _calcLast = '';
+function updateCalc(instant) {
   const { amts, terms } = _calcLists();
-  const amt = amts[Math.min(amts.length - 1, Math.max(0, parseInt(document.getElementById('calcAmount').value) || 0))];
-  const term = terms[Math.min(terms.length - 1, Math.max(0, parseInt(document.getElementById('calcTerm').value) || 0))];
-  
+  const aEl = document.getElementById('calcAmount'), tEl = document.getElementById('calcTerm');
+  const amt = amts[Math.min(amts.length - 1, Math.max(0, Math.round(Number(aEl.value) || 0)))];
+  const term = terms[Math.min(terms.length - 1, Math.max(0, Math.round(Number(tEl.value) || 0)))];
+  _calcPaint('csAmt', aEl); _calcPaint('csTerm', tEl);
+
+  const key = amt + '|' + term;
+  if(key === _calcLast && !instant) return;     // same values: only the slider moved
+  _calcLast = key;
+
   const rate = Number(ADMIN.annualRate) || 0;
   const rl = document.getElementById('calcRateLabel'); if(rl) rl.innerText = rate;
   const procFee = (ADMIN.orgFee || 0) + (ADMIN.serviceCharge || 0) + (ADMIN.processingFee || 0);
-  
-  document.getElementById('calcAmountDisplay').innerText = '৳ ' + amt.toLocaleString();
-  document.getElementById('calcTermDisplay').innerText = term + ' Months';
-  
   const interest = Math.round(amt * (rate / 100) * (term / 12));
   const total = amt + interest + procFee;
-  
-  document.getElementById('calcPrincipal').innerText = '৳ ' + amt.toLocaleString();
-  document.getElementById('calcInterest').innerText = '৳ ' + interest.toLocaleString();
-  document.getElementById('calcTotal').innerText = '৳ ' + total.toLocaleString();
-  
-  const feeEl = document.getElementById('calcFee');
-  if(feeEl) feeEl.innerText = '৳ ' + procFee.toLocaleString();
+  const tk = v => '৳ ' + v.toLocaleString('en-US');
+  if(instant){ ['calcPrincipal','calcInterest','calcFee','calcTotal'].forEach(id => delete _calcShown[id]); }
+
+  const ad = document.getElementById('calcAmountDisplay'), td = document.getElementById('calcTermDisplay');
+  ad.innerText = tk(amt); td.innerText = term + ' Months';
+  [ad, td].forEach(e => { e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump'); setTimeout(()=>e.classList.remove('bump'), 150); });
+  _calcRoll('calcPrincipal', amt, tk);
+  _calcRoll('calcInterest', interest, tk);
+  _calcRoll('calcFee', procFee, tk);
+  _calcRoll('calcTotal', total, tk);
 }
 
 function _restoreAppState(app){
@@ -5779,6 +5892,11 @@ window._uploadNidImage = async function(phone, side, file){
 // one-time "use balance for the fee": flag on the user profile, plus any earlier payment that used it
 window.isBalanceAdjustUsed = async function(phone){
   if(!db) return false;
+  // the server counts uses and active friends (1 use, +1 for every 5 active friends)
+  try{
+    const r = await _api('balanceOffer', {}, true);
+    if(r.ok){ window._balOffer = r.data; return r.data.available === false; }
+  }catch(e){}
   try{
     const u = await getDocs(query(collection(db,'users'), where('phone','==',phone)));
     if(!u.empty && u.docs[0].data().balanceAdjustUsed === true) return true;

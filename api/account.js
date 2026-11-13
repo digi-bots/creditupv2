@@ -7,6 +7,7 @@
 //   offerCount    {}                        → how many users took the "first 50" offer
 //   claimOffer    {}            (signed in) → 'ok' | 'already' | 'full'
 //   referrals     {}            (signed in) → { total, active }
+//   balanceOffer  {}            (signed in) → { available, used, allowed, active, needMore } (one-time balance use; +1 use per 5 active friends)
 //   adminResetPassword { phone, password } (admin) → sets a user's new password
 //   adminDeleteLogin   { phone }           (admin) → removes a deleted user's login
 // Needs FIREBASE_SERVICE_ACCOUNT in Vercel → Settings → Environment Variables.
@@ -15,6 +16,8 @@ const { readBody } = require('./_lib/pay');
 const { admin, db, auth, caller, isAdmin, findUserDoc, phoneEmail, isPhone } = require('./_lib/auth');
 
 const OFFER_LIMIT = 50;
+// the "use balance for the fee" offer: 1 use, plus 1 more for every this many active friends
+const BAL_FRIENDS_PER_USE = 5;
 const strong = (pw) => typeof pw === 'string' && pw.length >= 8 && pw.length <= 128 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw);
 const sameText = (a, b) => {
   const x = crypto.createHash('sha256').update(String(a)).digest();
@@ -132,6 +135,25 @@ const actions = {
     if (!me) return [401, { error: 'Please login again.' }];
     const s = await db().collection('users').where('referredBy', '==', me.uid).get();
     return [200, { total: s.size, active: s.docs.filter(x => x.data().status === 'active').length }];
+  },
+
+  async balanceOffer(b, me) {
+    if (!me) return [401, { error: 'Please login again.' }];
+    const d = await findUserDoc(me.uid);
+    if (!d) return [404, { error: 'Account not found.' }];
+    const [refs, trx] = await Promise.all([
+      db().collection('users').where('referredBy', '==', me.uid).get(),
+      db().collection('transactions').where('uid', '==', me.uid).get()
+    ]);
+    const active = refs.docs.filter(x => x.data().status === 'active').length;
+    const used = trx.docs.filter(x => Number(x.data().appliedBalance) > 0 && x.data().status !== 'Rejected').length;
+    const allowed = 1 + Math.floor(active / BAL_FRIENDS_PER_USE);
+    const available = used < allowed;
+    // friends still needed for the next use
+    const needMore = available ? 0 : (used + 1 - allowed) * BAL_FRIENDS_PER_USE - (active % BAL_FRIENDS_PER_USE);
+    // keep the profile flag in step: the online payment reads it
+    if ((d.data().balanceAdjustUsed === true) === available) await d.ref.update({ balanceAdjustUsed: !available });
+    return [200, { available, used, allowed, active, needMore, perUse: BAL_FRIENDS_PER_USE }];
   },
 
   async adminResetPassword(b, me) {
