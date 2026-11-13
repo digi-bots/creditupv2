@@ -474,6 +474,18 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .wc-extra{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt2);margin-top:6px}
 .wc-tags small,.wchips small{font-weight:500;opacity:.75;font-size:10px}
 @media(max-width:520px){.wtabs button{padding:10px}.wblk-h{flex-wrap:wrap}}
+
+/* ── save button + floating unsaved-changes bar ── */
+.sv-btn[disabled]{background:rgba(29,219,128,.08)!important;color:var(--p)!important;border:1px solid rgba(29,219,128,.25)!important;box-shadow:none!important;cursor:default;opacity:1}
+.sv-btn.dirty{animation:svPulse 1.8s ease-in-out infinite}
+@keyframes svPulse{0%,100%{box-shadow:0 0 0 0 rgba(29,219,128,.45)}50%{box-shadow:0 0 0 7px rgba(29,219,128,0)}}
+.savebar{position:fixed;left:50%;bottom:18px;transform:translate(-50%,140%);z-index:900;display:flex;align-items:center;gap:10px;padding:10px 12px 10px 16px;border-radius:14px;
+  background:rgba(12,21,37,.96);border:1px solid rgba(255,190,60,.45);box-shadow:0 14px 40px rgba(0,0,0,.55);backdrop-filter:blur(12px);transition:transform .3s cubic-bezier(.22,1,.36,1);max-width:calc(100vw - 24px)}
+.savebar.on{transform:translate(-50%,0)}
+.savebar-t{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--txt);white-space:nowrap}
+.savebar-t i{color:#ffbe3c}
+@media(min-width:901px){.savebar{left:calc(50% + 125px)}}
+@media(max-width:520px){.savebar-t span{display:none}}
 </style>
 </head>
 <body>
@@ -648,7 +660,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
 <!-- WALLETS -->
 <div class="sec" id="sec-wallets">
-  <div class="sec-head"><h2>Payment Methods</h2></div>
+  <div class="sec-head"><h2>Payment Methods</h2><button class="btn btn-p btn-lg sv-btn" id="svBtn-wallets" onclick="saveTab('wallets')" disabled><i class="fa-solid fa-floppy-disk"></i><span>All saved</span></button></div>
   <div class="wtabs" id="wTabs">
     <button class="on" data-t="manual" onclick="setWTab('manual')"><i class="fa-solid fa-hand-holding-dollar"></i>Manual<em>you check the TrxID / send yourself</em></button>
     <button data-t="auto" onclick="setWTab('auto')"><i class="fa-solid fa-bolt"></i>Auto (API)<em>done by the payment gateway</em></button>
@@ -686,7 +698,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="wblk-h">
         <div class="wblk-ic in"><i class="fa-solid fa-arrow-down"></i></div>
         <div class="wblk-t"><strong>1 · Fee receive from users (online)</strong><span>ইউজার SSLCommerz পেজে পে করবে, ফি নিজে থেকেই verify হবে, TrxID লাগবে না</span></div>
-        <label class="tog" title="Show online payment to users"><input type="checkbox" id="gwEn" onchange="saveGateway()"><span class="tog-sl"></span></label>
+        <label class="tog" title="Show online payment to users"><input type="checkbox" id="gwEn" onchange="markDirty('wallets','gw')"><span class="tog-sl"></span></label>
       </div>
       <div id="gwStatus" class="gw-st"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking the server…</div>
       <div class="wsub">Methods users can pay with on the gateway page</div>
@@ -695,11 +707,10 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <details class="wdet">
         <summary><i class="fa-solid fa-pen"></i>Name, note and logo users see</summary>
         <div class="fgrid" style="margin-top:10px">
-          <div class="fg"><label>Name shown to users</label><input id="gwName" placeholder="Pay Online"></div>
-          <div class="fg"><label>Logo URL (optional)</label><input id="gwLogo" placeholder="https://..."></div>
-          <div class="fg full"><label>Short note</label><input id="gwNote" maxlength="160" placeholder="e.g. Instant verification. bKash, Nagad, Rocket, Visa and Mastercard accepted."></div>
+          <div class="fg"><label>Name shown to users</label><input id="gwName" oninput="markDirty('wallets','gw')" placeholder="Pay Online"></div>
+          <div class="fg"><label>Logo URL (optional)</label><input id="gwLogo" oninput="markDirty('wallets','gw')" placeholder="https://..."></div>
+          <div class="fg full"><label>Short note</label><input id="gwNote" oninput="markDirty('wallets','gw')" maxlength="160" placeholder="e.g. Instant verification. bKash, Nagad, Rocket, Visa and Mastercard accepted."></div>
         </div>
-        <button class="btn btn-sm btn-p" style="margin-top:10px" onclick="saveGateway()"><i class="fa-solid fa-floppy-disk"></i>Save</button>
       </details>
       <details class="wdet">
         <summary><i class="fa-solid fa-screwdriver-wrench"></i>একবার সেটআপ করতে হবে (Setup guide)</summary>
@@ -733,9 +744,15 @@ tr:hover td{background:rgba(255,255,255,.015)}
   </div>
 </div>
 
+<div class="savebar" id="saveBar">
+  <div class="savebar-t"><i class="fa-solid fa-circle-exclamation"></i><span>You have unsaved changes</span></div>
+  <button class="btn btn-s btn-sm" onclick="discardTab()">Discard</button>
+  <button class="btn btn-p btn-sm" onclick="saveTab()"><i class="fa-solid fa-floppy-disk"></i>Save changes</button>
+</div>
+
 <!-- SITE CONFIG -->
 <div class="sec" id="sec-config">
-  <div class="sec-head"><h2>Site Configuration</h2><button class="btn btn-p btn-lg" onclick="saveConfig()"><i class="fa-solid fa-floppy-disk"></i>Save All</button></div>
+  <div class="sec-head"><h2>Site Configuration</h2><button class="btn btn-p btn-lg sv-btn" id="svBtn-config" onclick="saveTab('config')" disabled><i class="fa-solid fa-floppy-disk"></i><span>All saved</span></button></div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-percent"></i>Loan & Fee Settings</div>
     <div class="fgrid fgrid3">
       <div class="fg"><label>Max Borrow Display (BDT)</label><input id="c-mb" placeholder="60,000.00"><div class="hint">Shown on home screen</div></div>
@@ -802,7 +819,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label style="display:flex;align-items:center;gap:9px"><label class="tog"><input type="checkbox" id="c-mn"><span class="tog-sl"></span></label>Maintenance Mode</label></div>
     </div>
   </div>
-  <button class="btn btn-p btn-lg" onclick="saveConfig()"><i class="fa-solid fa-floppy-disk"></i>Save All Configuration</button>
+  <button class="btn btn-p btn-lg" onclick="saveTab('config')"><i class="fa-solid fa-floppy-disk"></i>Save All Configuration</button>
 </div>
 
 <!-- BROADCAST -->
@@ -1120,7 +1137,7 @@ async function loadGateway(){
   g('gwNote').value = gw.note || '';
   g('gwLogo').value = gw.logoUrl || '';
   const on = Array.isArray(gw.methods) ? gw.methods : GW_GROUPS.map(x=>x.k);
-  g('gwMethods').innerHTML = GW_GROUPS.map(x=>`<label class="gwm-i"><input type="checkbox" value="${x.k}" ${on.includes(x.k)?'checked':''} onchange="saveGateway()"><span><b>${x.t}</b>${x.s}</span></label>`).join('');
+  g('gwMethods').innerHTML = GW_GROUPS.map(x=>`<label class="gwm-i"><input type="checkbox" value="${x.k}" ${on.includes(x.k)?'checked':''} onchange="markDirty('wallets','gw')"><span><b>${x.t}</b>${x.s}</span></label>`).join('');
   const st = g('gwStatus');
   try{
     const r = await fetch('/api/pay/status', {cache:'no-store'});
@@ -1140,14 +1157,14 @@ const GW_GROUPS = [
   {k:'amexcard', t:'American Express', s:'credit card'},
   {k:'internetbank', t:'Internet banking', s:'bank accounts'}
 ];
-async function saveGateway(){
+async function saveGateway(quiet){
   const g=id=>document.getElementById(id);
   const methods=[...document.querySelectorAll('#gwMethods input:checked')].map(c=>c.value);
-  if(!methods.length){ toast('Keep at least one method on','w'); loadGateway(); return; }
+  if(!methods.length) throw new Error('keep at least one online payment method ticked');
   const gw = { enabled:g('gwEn').checked, name:g('gwName').value.trim()||'Pay Online', note:g('gwNote').value.trim(), logoUrl:g('gwLogo').value.trim(), methods, updatedAt:new Date().toISOString() };
-  showL(true); await window._setDoc('siteConfig','main',{gateway:gw}); showL(false);
+  if(!quiet) showL(true); await window._setDoc('siteConfig','main',{gateway:gw}); if(!quiet) showL(false);
   await logAct(`Online payment ${gw.enabled?'enabled':'disabled'}`,'config','gateway');
-  toast('Online payment saved ✓');
+  if(!quiet) toast('Online payment saved ✓');
 }
 
 // ══ CONFIG ══════════════════════════════════════════
@@ -1183,6 +1200,11 @@ function closeSB(){ document.getElementById('sidebar').classList.remove('open');
 
 // ══ NAV ══════════════════════════════════════════════
 function gS(id,el){
+  if(_sec!==id && typeof _isDirty==='function' && _isDirty(_sec)){
+    if(!confirm('You have unsaved changes on this page. Leave without saving?')) return;
+    if(_sec==='wallets'){ _wPend={}; _wDel=new Set(); }
+    _dirty[_sec]=new Set();
+  }
   _sec=id;
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
   document.getElementById('sec-'+id).classList.add('on');
@@ -1922,6 +1944,7 @@ async function loadWallets(){
   let t='manual'; try{ t=localStorage.getItem('wTab')||'manual'; }catch(e){}
   setWTab(t==='auto'?'auto':'manual');
   _D.wallets = await _get('wallets','order','asc');
+  _wApplyPending();
   renderWallets();
   loadGateway();
   renderLegacyMigration();
@@ -2227,35 +2250,93 @@ async function saveWallet(){
   }catch(err){ toast(err.message,'e'); }
   b.innerHTML='<i class="fa-solid fa-floppy-disk"></i>Save'; b.disabled=false;
 }
-async function togW(id,sec,on){
+// ── list changes (show/hide, order, remove) wait for "Save changes" ──
+let _wPend={}, _wDel=new Set();
+function _wPatch(id,d){ const wl=findById('wallets',id); if(wl) Object.assign(wl,d); _wPend[id]={...(_wPend[id]||{}),...d}; renderWallets(); markDirty('wallets','list'); }
+function _wApplyPending(){
+  _D.wallets=(_D.wallets||[]).filter(w=>!_wDel.has(w._id));
+  _D.wallets.forEach(w=>{ if(_wPend[w._id]) Object.assign(w,_wPend[w._id]); });
+  _D.wallets.sort((a,b)=>(a.order||0)-(b.order||0));
+}
+function togW(id,sec,on){
   const wl=findById('wallets',id)||{};
   const d = sec==='fee' ? {feeOff:!on} : {payoutOff:!on};
   if(on && wl.enabled===false){ d.enabled=true; if(sec==='fee') d.payoutOff=true; else d.feeOff=true; }
-  await window._updateDoc(id,'wallets',d); toast(on?'Visible to users':'Hidden'); loadWallets();
+  _wPatch(id,d);
 }
-async function mvW(sec,i,dir){
+function mvW(sec,i,dir){
   const list=_wList(sec), j=i+dir; if(j<0||j>=list.length) return;
   const all=[..._D.wallets]; const a=all.indexOf(list[i]), b=all.indexOf(list[j]);
   [all[a],all[b]]=[all[b],all[a]];
-  await Promise.all(all.map((x,k)=>window._updateDoc(x._id,'wallets',{order:k+1}))); loadWallets(); toast('Order updated');
+  all.forEach((x,k)=>{ if(x.order!==k+1){ x.order=k+1; _wPend[x._id]={...(_wPend[x._id]||{}),order:k+1}; } });
+  _D.wallets=all; renderWallets(); markDirty('wallets','list');
 }
 // remove from one side; the method is deleted only when no side uses it any more
 function rmW(id,sec){
   const wl=findById('wallets',id); if(!wl) return;
   const other = sec==='fee' ? _wInPay(wl) : _wInFee(wl);
   const what = sec==='fee' ? 'fee receiving' : 'loan sending';
-  confirm2(other ? `Remove "${_escA(wl.name)}" from ${what}? It stays in the other list.` : `Delete "${_escA(wl.name)}"?`, async ()=>{
-    if(!other) return delW(id);
-    showL(true); await window._updateDoc(id,'wallets', sec==='fee' ? {useForFee:false} : {useForPayout:false}); showL(false);
-    await logAct(`Removed ${wl.name} from ${what}`,'wallet',id); toast('Removed'); loadWallets();
+  confirm2(other ? `Remove "${_escA(wl.name)}" from ${what}? It stays in the other list.` : `Delete "${_escA(wl.name)}"?`, ()=>{
+    if(other){ _wPatch(id, sec==='fee' ? {useForFee:false} : {useForPayout:false}); return; }
+    _wDel.add(id); delete _wPend[id]; _D.wallets=_D.wallets.filter(w=>w._id!==id); renderWallets(); markDirty('wallets','list');
+    toast('Removed — press Save changes to keep it','w');
   });
 }
+async function _saveWalletsTab(){
+  const ops=[];
+  _wDel.forEach(id=>ops.push(window._deleteDoc(id,'wallets')));
+  Object.entries(_wPend).forEach(([id,d])=>{ if(!_wDel.has(id)) ops.push(window._updateDoc(id,'wallets',{...d,updatedAt:new Date().toISOString()})); });
+  await Promise.all(ops);
+  if(ops.length) await logAct(`Payment methods updated (${ops.length} change${ops.length>1?'s':''})`,'wallet','list');
+  if(_dirty.wallets && _dirty.wallets.has('gw')) await saveGateway(true);
+  _wPend={}; _wDel=new Set();
+}
+// ── one save system for every settings tab ──
+const _dirty={};
+function markDirty(tab,part){ (_dirty[tab]=_dirty[tab]||new Set()).add(part||'x'); _paintSave(); }
+function _isDirty(tab){ return !!(_dirty[tab] && _dirty[tab].size); }
+function _paintSave(){
+  ['wallets','config'].forEach(t=>{
+    const b=document.getElementById('svBtn-'+t); if(!b) return;
+    const d=_isDirty(t); b.disabled=!d; b.classList.toggle('dirty',d);
+    b.querySelector('span').textContent = d ? 'Save changes' : 'All saved';
+    b.querySelector('i').className = 'fa-solid ' + (d ? 'fa-floppy-disk' : 'fa-circle-check');
+  });
+  const bar=document.getElementById('saveBar'); if(bar) bar.classList.toggle('on', _isDirty(_sec));
+}
+async function saveTab(tab){
+  tab = tab || _sec;
+  showL(true);
+  try{
+    if(tab==='wallets') await _saveWalletsTab();
+    else if(tab==='config') await saveConfig(true);
+    _dirty[tab]=new Set(); _paintSave();
+    toast('All changes saved ✓');
+    if(tab==='wallets') loadWallets();
+  }catch(e){ toast('Save failed: '+(e.message||e),'e'); }
+  showL(false);
+}
+function discardTab(){
+  const tab=_sec;
+  confirm2('Discard your unsaved changes?', ()=>{
+    _dirty[tab]=new Set();
+    if(tab==='wallets'){ _wPend={}; _wDel=new Set(); loadWallets(); }
+    if(tab==='config') loadConfig();
+    _paintSave();
+  });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const c=document.getElementById('sec-config');
+  if(c){ c.addEventListener('input',()=>markDirty('config')); c.addEventListener('change',()=>markDirty('config')); }
+});
+window.addEventListener('beforeunload', e=>{ if(Object.keys(_dirty).some(_isDirty)){ e.preventDefault(); e.returnValue=''; } });
 async function delW(id){ showL(true); await window._deleteDoc(id,'wallets'); showL(false); await logAct('Wallet deleted','wallet',id); toast('Wallet deleted','e'); loadWallets(); }
 
 // ══ CONFIG ═══════════════════════════════════════════
 async function loadConfig(){
   showL(true); const cfg=await window._getDoc('siteConfig','main'); showL(false); if(!cfg)return;
   window._cfgLoaded = cfg;   // keep a copy so saving preserves fields we no longer edit here
+  if(typeof _dirty!=='undefined'){ _dirty.config=new Set(); setTimeout(_paintSave,0); }
   const s=(id,v)=>{ const el=document.getElementById(id); if(el&&v!=null)el.value=v; };
   const cb=(id,v)=>{ const el=document.getElementById(id); if(el)el.checked=!!v; };
   s('c-mb',cfg.maxBorrowAmount);s('c-ir',cfg.annualInterestRate);s('c-of',cfg.orgFee);s('c-sc',cfg.serviceCharge);s('c-pf',cfg.processingFee);s('c-nb',cfg.newUserBonus);
@@ -2266,13 +2347,13 @@ async function loadConfig(){
   s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
   cb('c-ro',cfg.flags?.registrationOpen!==false);cb('c-lo',cfg.flags?.loansOpen!==false);cb('c-mn',cfg.flags?.maintenance);
 }
-async function saveConfig(){
+async function saveConfig(quiet){
   const g=id=>document.getElementById(id)?.value.trim();
   const sl=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
   const cb=id=>document.getElementById(id)?.checked;
   const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:(g('c-nb')===''||isNaN(parseFloat(g('c-nb'))))?100:Math.max(0,parseFloat(g('c-nb'))),loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',refundPolicy:g('c-rfp')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
-  showL(true); await window._setDoc('siteConfig','main',cfg); showL(false);
-  await logAct('Site config saved','config','main'); toast('Configuration saved ✓');
+  if(!quiet) showL(true); await window._setDoc('siteConfig','main',cfg); if(!quiet) showL(false);
+  await logAct('Site config saved','config','main'); if(!quiet) toast('Configuration saved ✓');
 }
 
 // ══ BROADCAST ════════════════════════════════════════
