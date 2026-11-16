@@ -13,7 +13,7 @@
 <meta property="og:description" content="Apply for a personal loan online in minutes and receive it in your bKash, Nagad or Rocket account. All fees are shown before you apply.">
 <meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
 :root{--p:#1ddb80;--p2:#0fbb65;--pdark:#0a8a48;--bg:#060d1a;--bg2:#0b1628;--surf:#111f35;--surf2:#18293e;--glass:rgba(255,255,255,0.04);--gbord:rgba(255,255,255,0.08);--txt:#e2eeff;--txt2:#7b90b4;--txt3:#5a6b85;--orange:#ff8c42;--red:#ff4d6a;--blue:#4d8fff;--purple:#a855f7;--bord:rgba(255,255,255,0.07);--sh:0 20px 60px rgba(0,0,0,.7);--glow:0 0 24px rgba(29,219,128,.25)}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
@@ -238,6 +238,10 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .sx-card.c-blue{--c1:#4d8fff;--c2:#2457c5;--glow:rgba(77,143,255,.35)}
 .sx-card.c-gold{--c1:#ffc94d;--c2:#c98a0b;--glow:rgba(255,201,77,.32)}
 .sx-card.c-pink{--c1:#ff6b9a;--c2:#c42d63;--glow:rgba(255,107,154,.32)}
+.sx-card.c-purple{--c1:#a855f7;--c2:#6d28d9;--glow:rgba(168,85,247,.32)}
+.sx-card.c-teal{--c1:#2dd4bf;--c2:#0f9488;--glow:rgba(45,212,191,.3)}
+.sx-card.c-orange{--c1:#ff8c42;--c2:#c2560f;--glow:rgba(255,140,66,.32)}
+.sx-grid>.sx-card:last-child:nth-child(odd){grid-column:1/-1}
 .sx-orb{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;margin-bottom:10px;transform:translateZ(30px);
   background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.55),transparent 38%),linear-gradient(145deg,var(--c1),var(--c2));
   box-shadow:0 10px 18px -6px var(--glow),0 -3px 0 rgba(0,0,0,.25) inset,0 2px 0 rgba(255,255,255,.35) inset;animation:sxFloat 4s ease-in-out infinite}
@@ -271,7 +275,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .wx-advice .wa-t b{color:#ffd76a}
 .wx-advice .wa-me{display:block;font-size:11px;color:var(--p);font-weight:700;margin-top:3px}
 .wx-advice button{flex:none;height:34px;padding:0 12px;border:0;border-radius:10px;font-weight:800;font-size:12px;font-family:inherit;color:#fff;background:linear-gradient(135deg,var(--p),var(--p2));cursor:pointer;white-space:nowrap}
-.wx-targets{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.wx-targets{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin-bottom:14px}
 .wx-tg{border-radius:14px;padding:10px 8px;text-align:center;background:linear-gradient(170deg,#13233c,#0b1628);border:1px solid var(--bord);position:relative;overflow:hidden}
 .wx-tg::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#1ddb80,#ffd76a)}
 .wx-tg .tg-l{font-size:9.5px;font-weight:800;color:#ffd76a;text-transform:uppercase;letter-spacing:.5px}
@@ -289,6 +293,9 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .wx-it.k-target .wi-ic{background:linear-gradient(135deg,#1ddb80,#0a8a48);color:#fff}
 .wx-it.k-balance .wi-ic{background:linear-gradient(135deg,#4d8fff,#2457c5);color:#fff}
 .wx-it.k-bonus .wi-ic{background:linear-gradient(135deg,#ff6b9a,#c42d63);color:#fff}
+.wx-it.k-announce .wi-ic{background:linear-gradient(135deg,#a855f7,#6d28d9);color:#fff}
+.wa-tip{display:block;transition:opacity .3s,transform .3s}
+.wa-tip.out{opacity:0;transform:translateY(-4px)}
 .wx-it .wi-m{flex:1;min-width:0}
 .wx-it .wi-m b{display:block;font-size:12.5px;color:var(--txt)}
 .wx-it .wi-m span{display:block;font-size:11px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -303,6 +310,69 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .live-info p{font-size:10px;color:var(--txt2)}
 .live-amount{font-size:14px;font-weight:800;color:var(--p)}
 .partner-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--surf);border-radius:16px;border:1px solid var(--bord);padding:15px 10px}
+/* premium partners card */
+.pt-card{margin-top:26px;position:relative;border-radius:20px;padding:14px;overflow:hidden;background:linear-gradient(155deg,rgba(255,215,106,.09),rgba(29,219,128,.05) 40%,rgba(255,255,255,.015)),#0d1a2e;border:1px solid rgba(255,215,106,.22);box-shadow:0 18px 34px -18px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.06)}
+.pt-card::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,#ffd76a,#1ddb80,transparent)}
+.pt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+.pt-title{font-size:15px;font-weight:800;color:var(--txt)}
+.pt-sub{font-size:11px;color:var(--txt2);margin-top:2px}
+.pt-sub:empty{display:none}
+.pt-chip{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;color:#ffd76a;background:rgba(255,215,106,.1);border:1px solid rgba(255,215,106,.3);padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+.pt-card .partner-grid{background:none;border:0;padding:0;border-radius:0}
+.partner-grid.pg-sm{grid-template-columns:repeat(4,1fr);gap:8px}
+.partner-grid.pg-sm .partner-item{height:38px;border-radius:10px;padding:6px 8px;box-shadow:0 4px 10px -4px rgba(0,0,0,.5);transition:transform .2s}
+.partner-grid.pg-sm .partner-item:active{transform:scale(.96)}
+.pt-card .partner-item{position:relative;overflow:hidden}
+.pt-card .partner-item::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);background-size:250% 100%;animation:sxGloss 7s ease-in-out infinite;pointer-events:none}
+.partner-grid.pg-scroll{display:block;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.pg-scroll .pt-track{display:flex;gap:8px;width:max-content;animation:ptScroll var(--pt-dur,24s) linear infinite}
+.pg-scroll .partner-item{width:78px;height:38px;flex:none;border-radius:10px;padding:6px 8px}
+@keyframes ptScroll{to{transform:translateX(-50%)}}
+/* footer */
+.ft{margin:30px -16px -32px;padding:24px 18px calc(20px + env(safe-area-inset-bottom));background:radial-gradient(120% 70% at 50% 0%,rgba(29,219,128,.09),transparent 60%),linear-gradient(180deg,#0a1526,#050b16);border-top:1px solid rgba(255,215,106,.18);position:relative}
+.ft::before{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,#ffd76a,#1ddb80,transparent);opacity:.7}
+.ft-brand{display:flex;align-items:center;gap:12px}
+.ft-vip{position:relative;width:62px;height:62px;flex:none;filter:drop-shadow(0 8px 14px rgba(245,197,66,.35))}
+.ft-vip svg{width:100%;height:100%}
+.ft-vip .ft-rot{transform-box:view-box;transform-origin:32px 32px;animation:ftSpin 24s linear infinite}
+.ft-vip b{position:absolute;left:0;right:0;bottom:16px;text-align:center;font-size:9px;font-weight:900;letter-spacing:1.2px;color:#ffe9a3}
+@keyframes ftSpin{to{transform:rotate(360deg)}}
+.ft-name{font-size:21px;font-weight:900;letter-spacing:-.4px;background:linear-gradient(90deg,#fff,#ffd76a 55%,#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.ft-rank{display:inline-flex;align-items:center;gap:6px;margin-top:3px;font-size:10.5px;font-weight:800;color:#1a1405;background:linear-gradient(135deg,#ffe28a,#e0a21b);padding:3px 9px;border-radius:20px;box-shadow:0 4px 10px -3px rgba(224,162,27,.5)}
+.ft-rank i{font-size:10px}
+.ft-tag{font-size:12px;color:var(--txt2);line-height:1.6;margin:12px 0 4px}
+.ft-tag:empty{display:none}
+.ft-trust{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin:16px 0;padding:14px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+.ft-trust:empty{display:none}
+.ft-ti{display:flex;gap:9px;align-items:flex-start}
+.ft-ti i{color:var(--p);font-size:15px;margin-top:2px;width:18px;text-align:center;flex:none}
+.ft-ti b{display:block;font-size:12px;color:var(--txt);line-height:1.25}
+.ft-ti span{display:block;font-size:10.5px;color:var(--txt2);line-height:1.4;margin-top:1px}
+.ft-tnote{grid-column:1/-1;font-size:10.5px;color:var(--txt3);text-align:center}
+.ft-links{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:12px}
+.ft-links:empty{display:none}
+.ft-links a{font-size:12px;font-weight:700;color:var(--txt);text-decoration:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.ft-links a i{color:var(--p);font-size:11px}
+.ft-contact{display:flex;flex-direction:column;gap:6px;font-size:11.5px;color:var(--txt2);margin-bottom:14px}
+.ft-contact:empty{display:none}
+.ft-contact a{color:var(--txt2);text-decoration:none}
+.ft-contact i{color:var(--p);width:16px;text-align:center;margin-right:6px}
+.ft-sign{display:flex;align-items:center;gap:14px;padding:13px 14px;border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(29,219,128,.04));border:1px dashed rgba(255,215,106,.3)}
+.fs-l{flex:1;min-width:0}
+.fs-cap{font-size:9.5px;font-weight:800;color:#ffd76a;text-transform:uppercase;letter-spacing:1px}
+.fs-sig{font-family:'Great Vibes',cursive;font-size:30px;line-height:1.15;color:#eaf6ff;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs-sig img{height:40px;max-width:100%;object-fit:contain;filter:invert(1) brightness(1.6)}
+.fs-line{height:1px;background:linear-gradient(90deg,rgba(255,255,255,.4),transparent);margin:2px 0 5px}
+.fs-who b{display:block;font-size:11.5px;color:var(--txt)}
+.fs-who span{display:block;font-size:10.5px;color:var(--txt2)}
+.fs-seal{position:relative;width:70px;height:70px;flex:none}
+.fs-seal svg{width:100%;height:100%}
+.fs-seal span{position:absolute;left:0;right:0;bottom:-2px;text-align:center;font-size:8px;font-weight:900;letter-spacing:1px;color:var(--p)}
+.ft-note{font-size:10.5px;color:var(--txt3);text-align:center;margin:8px 0 0}
+.ft-note:empty{display:none}
+.ft-bottom{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);font-size:10.5px;color:var(--txt3);text-align:center}
+.ft-bottom span:empty{display:none}
+@media (prefers-reduced-motion:reduce){.ft-vip .ft-rot,.pg-scroll .pt-track,.pt-card .partner-item::after{animation:none}}
 .partner-grid.pg-md{grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 12px}
 .partner-grid.pg-md .partner-item{height:58px;border-radius:12px;padding:8px}
 .partner-grid.pg-lg{grid-template-columns:repeat(2,1fr);gap:12px;padding:14px}
@@ -2456,7 +2526,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
     </div>
     <div class="calc-offer">
       <div class="co-top"><i class="fa-solid fa-gift"></i><div><b>Invite friends, earn more</b><span>Rewards for every friend who joins and stays active</span></div></div>
-      <div class="co-tiers">
+      <div class="co-tiers" id="coTiers">
         <div><b>20</b><span>1st installment free</span></div>
         <div><b>50</b><span>৳5,000 loan, no pay back</span></div>
         <div><b>100</b><span>৳50,000 cash reward</span></div>
@@ -2483,7 +2553,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
     </div>
     <div class="inv-card" id="invCard">
       <div class="inv-top"><span class="inv-badge"><i class="fa-solid fa-crown"></i> Premium Rewards</span><span class="inv-lvl" id="currentTierName">Starter</span></div>
-      <div class="ref-tiers">
+      <div class="ref-tiers" id="refTiers">
         <div class="ref-tier" id="tierRow20"><span class="tg">20</span><span class="tx"><b>20 active friends</b><em>1st installment free (loans under ৳10,000)</em></span><i class="fa-solid fa-lock lk" id="tierLock20"></i></div>
         <div class="ref-tier" id="tierRow50"><span class="tg">50</span><span class="tx"><b>50 active friends</b><em>৳5,000 loan, no need to pay back</em></span><i class="fa-solid fa-lock lk" id="tierLock50"></i></div>
         <div class="ref-tier" id="tierRow100"><span class="tg">100</span><span class="tx"><b>100 active friends</b><em>৳50,000 cash reward</em></span><i class="fa-solid fa-lock lk" id="tierLock100"></i></div>
@@ -2895,9 +2965,9 @@ document.addEventListener('DOMContentLoaded', function(){
         <div class="wx-targets" id="wxTargets"></div>
         <div id="wxFeedWrap"><div class="wx-ft" id="wxFeedTitle">Live Offer Winners</div><div class="wx-feed" id="wxFeed"></div></div>
       </div>
-      <div id="partnerBlock">
-        <div class="live-title" style="margin-top:20px;" id="partnerTitle">Our Partners</div>
-        <div class="partner-grid pg-lg" id="partnerGrid">
+      <div id="partnerBlock" class="pt-card">
+        <div class="pt-head"><div><div class="pt-title" id="partnerTitle">Our Partners</div><div class="pt-sub" id="partnerSub">Trusted payment &amp; banking network</div></div><span class="pt-chip"><i class="fa-solid fa-circle-check"></i>Verified</span></div>
+        <div class="partner-grid pg-sm" id="partnerGrid">
         <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BKash_Logo_New.svg/250px-BKash_Logo_New.svg.png" alt="bKash" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Bkash</span>'"></div>
         <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nagad_Logo.svg/250px-Nagad_Logo.svg.png" alt="Nagad" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Nagad</span>'"></div>
         <div class="partner-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Rocket_Logo.svg/512px-Rocket_Logo.svg.png" alt="Rocket" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=color:#555;font-size:10px;font-weight:bold>Rocket</span>'"></div>
@@ -2913,6 +2983,22 @@ document.addEventListener('DOMContentLoaded', function(){
         <div class="trust-note" id="trustNote"></div>
       </div>
     </div>
+    <footer class="ft" id="siteFooter" style="display:none">
+      <div class="ft-brand">
+        <div class="ft-vip" id="ftVip"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="ftG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1b8"/><stop offset=".45" stop-color="#f5c542"/><stop offset="1" stop-color="#a86f07"/></linearGradient><linearGradient id="ftG2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d3b24"/><stop offset="1" stop-color="#06190f"/></linearGradient></defs><path class="ft-rot" d="M32 2l7 6 9-1 3 8 8 4-1 9 6 7-6 7 1 9-8 4-3 8-9-1-7 6-7-6-9 1-3-8-8-4 1-9-6-7 6-7-1-9 8-4 3-8 9 1z" fill="url(#ftG)"/><circle cx="32" cy="32" r="20" fill="url(#ftG2)" stroke="#f5c542" stroke-width="1.5"/><path d="M20 24l6.5 5L32 19l5.5 10L44 24l-2.6 12H22.6z" fill="url(#ftG)"/><rect x="22.6" y="37.2" width="18.8" height="3" rx="1.2" fill="url(#ftG)"/><circle cx="20" cy="23.5" r="1.8" fill="#fff1b8"/><circle cx="32" cy="18.5" r="1.8" fill="#fff1b8"/><circle cx="44" cy="23.5" r="1.8" fill="#fff1b8"/></svg><b id="ftVipTxt">VIP</b></div>
+        <div class="ft-bt"><div class="ft-name" id="ftName">Credit Up</div><div class="ft-rank" id="ftRank"><i class="fa-solid fa-crown"></i><span id="ftRankTxt">Premium Digital Lending</span></div></div>
+      </div>
+      <p class="ft-tag" id="ftTag"></p>
+      <div class="ft-trust" id="ftTrust"></div>
+      <div class="ft-links" id="ftLinks"></div>
+      <div class="ft-contact" id="ftContact"></div>
+      <div class="ft-sign" id="ftSign">
+        <div class="fs-l"><div class="fs-cap">Digital Signature</div><div class="fs-sig" id="ftSig">Credit Up</div><div class="fs-line"></div><div class="fs-who"><b id="ftSigName">Authorized Signatory</b><span id="ftSigTitle"></span></div></div>
+        <div class="fs-seal"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="37" fill="none" stroke="rgba(29,219,128,.55)" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="40" cy="40" r="30" fill="rgba(29,219,128,.08)" stroke="rgba(29,219,128,.6)" stroke-width="1.5"/><path d="M28 41l8 8 16-17" fill="none" stroke="#1ddb80" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="ftSeal">VERIFIED</span></div>
+      </div>
+      <div class="ft-note" id="ftSignNote"></div>
+      <div class="ft-bottom"><span id="ftCopy"></span><span id="ftLegal"></span><span id="ftBottom"></span></div>
+    </footer>
   </div>
 </div>
 
@@ -5134,11 +5220,31 @@ function _pfStats(){
       <span class="pf-st ${col}">${_escH(st)}</span></div>`;
   } else box.style.display = 'none';
 }
+// invite targets (Admin → Home Page → Winners → Invite targets); defaults 20 / 50 / 100
+const REF_TARGETS_DEF = [ { need:20, prize:'1st installment free (loans under ৳10,000)', short:'1st installment free', name:'Bronze' },
+  { need:50, prize:'৳5,000 loan, no need to pay back', short:'৳5,000 loan, no pay back', name:'Silver' }, { need:100, prize:'৳50,000 cash reward', short:'৳50,000 cash reward', name:'Gold' } ];
+async function _refTargets(){
+  let T = null;
+  try{ const h = window.loadHomeCfg ? await window.loadHomeCfg() : {}; T = h && h.winners && Array.isArray(h.winners.targets) ? h.winners.targets : null; }catch(e){}
+  const list = (T && T.length ? T : REF_TARGETS_DEF).map((t, i) => ({ need: Math.round(Number(t.need) || 0), prize: String(t.prize || ''), short: String(t.short || t.prize || ''), name: String(t.name || ['Bronze','Silver','Gold','Platinum','Diamond'][i] || 'Level ' + (i + 1)) }))
+    .filter(t => t.need > 0 && t.prize).sort((a, b) => a.need - b.need);
+  return list.length ? list : REF_TARGETS_DEF;
+}
+// paint the reward tiers in the calculator offer box and in the invite popup
+async function _paintRefTiers(){
+  const T = await _refTargets();
+  const co = document.getElementById('coTiers');
+  if(co){ co.style.gridTemplateColumns = `repeat(${Math.min(T.length, 4)},1fr)`; co.innerHTML = T.slice(0, 4).map(t => `<div><b>${t.need}</b><span>${_escF(t.short)}</span></div>`).join(''); }
+  const rt = document.getElementById('refTiers');
+  if(rt) rt.innerHTML = T.map((t, i) => `<div class="ref-tier" id="tierRowT${i}"><span class="tg">${t.need}</span><span class="tx"><b>${t.need} active friends</b><em>${_escF(t.prize)}</em></span><i class="fa-solid fa-lock lk" id="tierLockT${i}"></i></div>`).join('');
+  return T;
+}
+window._paintRefTiers = _paintRefTiers;
 async function _pfInvites(){
   const r = await _api('referrals', {}, true);
   if(!r.ok) return;
   const total = Number(r.data.total) || 0, active = Number(r.data.active) || 0;
-  const goal = [20, 50, 100].find(g => active < g);
+  const goal = ((await _refTargets()).find(t => active < t.need) || {}).need;
   document.getElementById('pfInv').innerText = active;
   document.getElementById('pfInvTotal').innerText = total;
   document.getElementById('pfInvActive').innerText = active;
@@ -5677,7 +5783,15 @@ async function startNewSupportChat() {
 
 <script type="module">
 import{initializeApp} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import{getFirestore,collection,query,where,getDocs,getDoc,addDoc,updateDoc,setDoc,doc,orderBy,onSnapshot} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+import{getFirestore,collection,query,where,getDocs as _getDocsAll,getDoc,addDoc,updateDoc,setDoc,doc,orderBy,onSnapshot} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+// records an admin "removed from the site" stay in the database for review but are never shown here
+// (profiles are not filtered: a removed account is signed out with a message instead)
+async function getDocs(q){
+  const s = await _getDocsAll(q);
+  const docs = s.docs.filter(d => d.ref.parent.id === 'users' || d.data().removed !== true);
+  if(docs.length === s.docs.length) return s;
+  return { docs, empty: !docs.length, size: docs.length, forEach: f => docs.forEach(f) };
+}
 import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,EmailAuthProvider,reauthenticateWithCredential,updatePassword} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
@@ -6243,6 +6357,9 @@ async function loadDynamicConfig() {
         const polEm = document.getElementById('policyEmailLink');
         if(polEm) { polEm.href = 'mailto:' + cfg.policyEmail; polEm.innerText = cfg.policyEmail; }
       }
+      // contact details for the footer
+      window._siteContact = { whatsapp: waNum, telegram: tgUser, email: cfg.contact?.email || '', address: cfg.companyAddress || '' };
+      if(window.renderFooter && window.loadHomeCfg) window.loadHomeCfg().then(h => window.renderFooter(h)).catch(() => {});
       if(cfg.companyAddress) {
         const polAd = document.getElementById('policyAddressText');
         if(polAd) polAd.innerText = 'Address: ' + cfg.companyAddress;
@@ -6538,7 +6655,7 @@ window._startNotifListener = async function(phone){
   _notifUnsubs.push(onSnapshot(query(collection(db,'user_notifications'), where('uid','==',phone)),
     snap => _onNotifSnap('personal', snap.docs), err => console.warn('notif listener:', err)));
   _notifUnsubs.push(onSnapshot(query(collection(db,'broadcasts'), orderBy('createdAt','desc')),
-    snap => _onNotifSnap('broadcast', snap.docs), err => console.warn('broadcast listener:', err)));
+    snap => _onNotifSnap('broadcast', snap.docs.filter(d => d.data().removed !== true)), err => console.warn('broadcast listener:', err)));
 };
 window._markNotifsSeen = async function(){
   if(!_notifPhone) return;
@@ -6596,6 +6713,7 @@ window.submitLoginPassword=async function(){
     const snap = await getDocs(query(collection(db,'users'), where('phone','==',ph)));
     const prof = snap.empty ? { phone: ph } : { ...snap.docs[0].data(), id: snap.docs[0].id };
     if(prof.status === 'banned'){ await signOut(fbAuth); showLoader(false); showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.'); return; }
+    if(prof.removed === true){ await signOut(fbAuth); showLoader(false); showErrorModal('Account Not Available', 'This account is no longer available. Please contact support if you think this is a mistake.'); return; }
     delete prof.password;
     localStorage.setItem('creditUpUser', JSON.stringify(prof));
     if(window.loadTicker) window.loadTicker();
@@ -6777,8 +6895,10 @@ window.renderHomeBlocks = async function(){
     const items = (Array.isArray(P.items) ? P.items : []).filter(x => x && x.on !== false && x.logo);
     pb.style.display = (P.on === false || !items.length) ? 'none' : '';
     document.getElementById('partnerTitle').innerText = P.title || 'Our Partners';
-    pg.className = 'partner-grid ' + (P.size === 'md' ? 'pg-md' : 'pg-lg');
-    pg.innerHTML = items.map(x => `<div class="partner-item" title="${_escT(x.name)}"><img src="${_escT(x.logo)}" alt="${_escT(x.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.alt,style:'color:#555;font-size:11px;font-weight:800'}))"></div>`).join('');
+    const lay = P.layout || 'small';
+    pg.className = 'partner-grid ' + (lay === 'scroll' ? 'pg-scroll' : lay === 'large' ? 'pg-md' : 'pg-sm');
+    const ps = document.getElementById('partnerSub'); if(ps) ps.textContent = P.sub ?? 'Trusted payment & banking network';
+    pg.innerHTML = (lay === 'scroll' ? '<div class="pt-track" style="--pt-dur:' + Math.max(12, items.length * 3) + 's">' : '') + [...items, ...(lay === 'scroll' ? items : [])].map(x => `<div class="partner-item" title="${_escT(x.name)}"><img src="${_escT(x.logo)}" alt="${_escT(x.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.alt,style:'color:#555;font-size:11px;font-weight:800'}))"></div>`).join('') + (lay === 'scroll' ? '</div>' : '');
   }
   // trust badges
   const T = cfg.trust || {};
@@ -6786,11 +6906,62 @@ window.renderHomeBlocks = async function(){
   const titems = (Array.isArray(T.items) ? T.items : DEF.map(([icon,title,text]) => ({icon,title,text,on:true}))).filter(x => x && x.on !== false && x.title);
   const tb = document.getElementById('trustBlock');
   if(tb){
-    tb.style.display = (T.on === false || !titems.length) ? 'none' : 'block';
+    tb.style.display = 'none';   // trust badges are shown flat in the footer now
+    window._ftTrust = { on: T.on !== false, items: titems, note: T.note || '' };
+    if(window.renderFooter) window.renderFooter(cfg);
     document.getElementById('trustGrid').innerHTML = titems.map(x => `<div class="trust-item"><i class="fa-solid fa-${_escT(x.icon || 'shield-halved')}"></i><div><b>${_escT(x.title)}</b>${x.text ? `<span>${_escT(x.text)}</span>` : ''}</div></div>`).join('');
     document.getElementById('trustNote').innerText = T.note || '';
   }
   const lt = document.getElementById('liveTitleTxt'); if(lt) lt.innerText = (cfg.live && cfg.live.title) || 'Live Transactions';
+};
+
+// site footer (Admin → Home Page → Footer): brand + VIP badge, flat trust row, links, contact, digital signature
+window.renderFooter = function(cfg){
+  const el = document.getElementById('siteFooter'); if(!el) return;
+  const F = { on:true, name:'', tagline:'Smart credit, made simple — fast, transparent and secure loans from your phone.', vip:true, vipText:'VIP', vipSub:'Premium Digital Lending',
+    trust:true, links:null, contact:true, address:true, sign:true, signName:'Authorized Signatory', signTitle:'', signText:'', signImg:'', seal:'VERIFIED',
+    signNote:'This website is operated and signed by its management.', copyright:'', legal:'', bottom:'', ...((cfg || {}).footer || {}) };
+  if(F.on === false){ el.style.display = 'none'; return; }
+  const brand = F.name || (typeof _bt === 'function' ? _bt('name', 'Credit Up') : 'Credit Up');
+  const set = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v || ''; };
+  set('ftName', brand); set('ftTag', F.tagline);
+  document.getElementById('ftVip').style.display = F.vip === false ? 'none' : '';
+  set('ftVipTxt', F.vipText || 'VIP'); set('ftRankTxt', F.vipSub);
+  document.getElementById('ftRank').style.display = F.vipSub ? '' : 'none';
+  const T = window._ftTrust || { on:true, items:[], note:'' };
+  document.getElementById('ftTrust').innerHTML = F.trust !== false && T.on && T.items.length
+    ? T.items.map(x => `<div class="ft-ti"><i class="fa-solid fa-${_escT(x.icon || 'shield-halved')}"></i><div><b>${_escT(x.title)}</b>${x.text ? `<span>${_escT(x.text)}</span>` : ''}</div></div>`).join('') + (T.note ? `<div class="ft-tnote">${_escT(T.note)}</div>` : '') : '';
+  const LINKS = Array.isArray(F.links) ? F.links : [ { label:'Loan Calculator', icon:'calculator', action:'calculator' }, { label:'Invite & Earn', icon:'gift', action:'refer' }, { label:'Privacy & Fees', icon:'shield-halved', action:'policy' }, { label:'Support', icon:'headset', action:'support' } ];
+  const C = window._siteContact || {};
+  document.getElementById('ftLinks').innerHTML = LINKS.filter(l => l && l.on !== false && l.label).map((l, i) => {
+    const u = String(l.url || '');
+    const href = l.action === 'url' && /^https?:\/\//i.test(u) ? u : l.action === 'whatsapp' && C.whatsapp ? 'https://wa.me/' + String(C.whatsapp).replace(/\D/g, '') : l.action === 'telegram' && C.telegram ? 'https://t.me/' + String(C.telegram).replace(/^@/, '') : l.action === 'email' && C.email ? 'mailto:' + C.email : '';
+    return href ? `<a href="${_escT(href)}" target="_blank" rel="noopener"><i class="fa-solid fa-${_escT(l.icon || 'link')}"></i>${_escT(l.label)}</a>` : `<a role="button" onclick="_ftGo('${_escT(l.action || '')}')"><i class="fa-solid fa-${_escT(l.icon || 'link')}"></i>${_escT(l.label)}</a>`;
+  }).join('');
+  const ct = [];
+  if(F.contact !== false){
+    if(C.whatsapp) ct.push(`<a href="https://wa.me/${_escT(String(C.whatsapp).replace(/\D/g, ''))}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i>+${_escT(String(C.whatsapp).replace(/\D/g, ''))}</a>`);
+    if(C.email) ct.push(`<a href="mailto:${_escT(C.email)}"><i class="fa-solid fa-envelope"></i>${_escT(C.email)}</a>`);
+    if(C.telegram) ct.push(`<a href="https://t.me/${_escT(String(C.telegram).replace(/^@/, ''))}" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i>@${_escT(String(C.telegram).replace(/^@/, ''))}</a>`);
+  }
+  if(F.address !== false && C.address) ct.push(`<span><i class="fa-solid fa-location-dot"></i>${_escT(C.address)}</span>`);
+  document.getElementById('ftContact').innerHTML = ct.join('');
+  document.getElementById('ftSign').style.display = F.sign === false ? 'none' : '';
+  const sig = document.getElementById('ftSig');
+  if(/^https:\/\//i.test(F.signImg || '')) sig.innerHTML = `<img src="${_escT(F.signImg)}" alt="Signature">`; else sig.textContent = F.signText || brand;
+  set('ftSigName', F.signName || 'Authorized Signatory'); set('ftSigTitle', F.signTitle || ('For ' + brand)); set('ftSeal', F.seal || 'VERIFIED');
+  set('ftSignNote', F.sign === false ? '' : F.signNote);
+  set('ftCopy', F.copyright || `© ${new Date().getFullYear()} ${brand}. All rights reserved.`); set('ftLegal', F.legal); set('ftBottom', F.bottom);
+  el.style.display = '';
+};
+window._ftGo = function(a){
+  if(a === 'calculator') return openCalculator();
+  if(a === 'refer') return openReferModal();
+  if(a === 'history') return (_getUser() ? openHistoryModal() : nav('screen-login'));
+  if(a === 'support') return toggleCS();
+  if(a === 'policy') return nav('screen-policy');
+  if(a === 'apply') return handleMainAction();
+  if(a === 'profile') return openProfileModal();
 };
 
 // top bar (Admin → Home Page → Top Bar)
@@ -6965,6 +7136,11 @@ window.loadUserDashboardData = async function() {
       if(typeof forceLogoutBanned === 'function') forceLogoutBanned();
       return;
     }
+    if(!uSnap.empty && uSnap.docs[0].data().removed === true) {
+      logoutUser(true);
+      showErrorModal('Account Not Available', 'This account is no longer available. Please contact support if you think this is a mistake.');
+      return;
+    }
     if(!uSnap.empty) {
       // NID kept on the profile so it survives every new application
       try {
@@ -7051,35 +7227,24 @@ window.loadReferralStats = async function(phone) {
     const activeCount = Number(r.data.active) || 0;
     document.getElementById('refTotalCount').innerText = Number(r.data.total) || 0;
     document.getElementById('refSuccessCount').innerText = activeCount;
-    let tierName = 'Starter', pct = 0, txt = '';
-    const more = (n, goal) => `Invite ${n} more active friend${n === 1 ? '' : 's'} to unlock: ${goal}`;
-    if (activeCount >= 100) {
-      tierName = 'Gold'; pct = 100;
-      txt = 'All rewards unlocked! Our team will contact you.';
-    } else if (activeCount >= 50) {
-      tierName = 'Silver'; pct = (activeCount / 100) * 100;
-      txt = more(100 - activeCount, '৳50,000 cash reward');
-    } else if (activeCount >= 20) {
-      tierName = 'Bronze'; pct = (activeCount / 50) * 100;
-      txt = more(50 - activeCount, '৳5,000 loan, no need to pay back');
-    } else {
-      tierName = 'Starter'; pct = (activeCount / 20) * 100;
-      txt = more(20 - activeCount, '1st installment free');
-    }
+    const T = await _paintRefTiers();
+    const next = T.find(t => activeCount < t.need), done = T.filter(t => activeCount >= t.need);
+    const prev = done.length ? done[done.length - 1].need : 0;
+    const tierName = done.length ? done[done.length - 1].name : 'Starter';
+    const pct = next ? Math.min(100, (activeCount / next.need) * 100) : 100;
+    const n = next ? next.need - activeCount : 0;
+    const txt = next ? `Invite ${n} more active friend${n === 1 ? '' : 's'} to unlock: ${next.short || next.prize}` : 'All rewards unlocked! Our team will contact you.';
     const ctEl = document.getElementById('currentTierName'); if(ctEl) ctEl.innerText = tierName;
     const pbEl = document.getElementById('tierProgressBar'); if(pbEl) pbEl.style.width = pct + '%';
     const ptEl = document.getElementById('tierProgressText'); if(ptEl) ptEl.innerText = txt;
-    const updateTierRow = (rowId, lockId, unlocked) => {
-      const row  = document.getElementById(rowId);
-      const lock = document.getElementById(lockId);
-      if (!row || !lock) return;
+    T.forEach((t, i) => {
+      const row = document.getElementById('tierRowT' + i), lock = document.getElementById('tierLockT' + i);
+      if(!row || !lock) return;
+      const unlocked = activeCount >= t.need;
       row.classList.toggle('done', unlocked);
       lock.className   = unlocked ? 'fa-solid fa-circle-check lk' : 'fa-solid fa-lock lk';
       lock.style.color = unlocked ? 'var(--p)' : 'rgba(255,215,106,.7)';
-    };
-    updateTierRow('tierRow20',  'tierLock20',  activeCount >= 20);
-    updateTierRow('tierRow50',  'tierLock50',  activeCount >= 50);
-    updateTierRow('tierRow100', 'tierLock100', activeCount >= 100);
+    });
   } catch(e) { console.log('Referral stats error:', e); }
 };
 
@@ -7195,23 +7360,23 @@ window.loadShowcase = async function(){
   const count = v => S.format === 'full' ? Number(v).toLocaleString('en-US') : _sxShort(v) + (v >= 1000 ? '+' : '');
   // stats
   if(S.on !== false && d.stats){
-    const C = S.cards || {}, st = d.stats;
-    const cards = [
-      ['users', 'c-green', 'fa-face-smile', S.usersMode === 'borrowers' ? st.borrowers : st.users, 'Satisfied Users', count, ''],
-      ['granted', 'c-blue', 'fa-file-circle-check', st.granted, 'Loans Granted', count, ''],
-      ['distributed', 'c-gold', 'fa-sack-dollar', st.distributed, 'Total Disbursed', money, ''],
-      ['today', 'c-pink', 'fa-bolt', st.today, "Today's Disbursed", money, st.todayCount ? st.todayCount + ' today' : 'Today']
-    ].filter(c => (C[c[0]] || {}).on !== false);
+    const st = d.stats;
+    const MONEY = { distributed:1, today:1, week:1, avgLoan:1 };
+    const DEF = [ { metric:'users', label:'Satisfied Users', icon:'fa-face-smile', color:'green' }, { metric:'granted', label:'Loans Granted', icon:'fa-file-circle-check', color:'blue' },
+      { metric:'distributed', label:'Total Disbursed', icon:'fa-sack-dollar', color:'gold' }, { metric:'today', label:"Today's Disbursed", icon:'fa-bolt', color:'pink' } ];
+    let items = Array.isArray(S.items) ? S.items : DEF.map((x, i) => { const o = (S.cards || {})[['users','granted','distributed','today'][i]] || {}; return { ...x, ...o, metric: i === 0 && S.usersMode === 'borrowers' ? 'borrowers' : x.metric }; });
+    items = items.filter(c => c && c.on !== false && (c.metric === 'text' ? String(c.value || '').trim() : c.metric in st));
     document.getElementById('sxTitle').textContent = S.title || 'Our Impact';
     document.getElementById('sxSub').textContent = S.sub || '';
     document.getElementById('sxNote').textContent = S.note || '';
     const g = document.getElementById('sxGrid');
-    if(!g.dataset.keys || g.dataset.keys !== cards.map(c => c[0]).join()){
-      g.dataset.keys = cards.map(c => c[0]).join();
-      g.innerHTML = cards.map(c => `<div class="sx-card ${c[1]}"><span class="sx-tag">${_escT((C[c[0]] || {}).tag || c[6] || 'Live')}</span><div class="sx-orb"><i class="fa-solid ${_escT((C[c[0]] || {}).icon || c[2])}"></i></div><div class="sx-val" data-k="${c[0]}">0</div><div class="sx-lbl">${_escT((C[c[0]] || {}).label || c[4])}</div></div>`).join('');
+    const sig = JSON.stringify(items.map(c => [c.metric, c.label, c.icon, c.color, c.tag, c.value]));
+    if(g.dataset.sig !== sig){
+      g.dataset.sig = sig;
+      g.innerHTML = items.map((c, i) => `<div class="sx-card c-${_escT(c.color || 'green')}"><span class="sx-tag">${_escT(c.tag || (c.metric === 'today' && st.todayCount ? st.todayCount + ' today' : 'Live'))}</span><div class="sx-orb"><i class="fa-solid ${_escT(c.icon || 'fa-star')}"></i></div><div class="sx-val" data-i="${i}">${c.metric === 'text' ? _escT(c.value) : '0'}</div><div class="sx-lbl">${_escT(c.label || '')}</div></div>`).join('');
     }
-    cards.forEach(c => { const el = g.querySelector(`.sx-val[data-k="${c[0]}"]`); if(el) _sxCount(el, Number(c[3]) || 0, c[5]); });
-    SB.style.display = cards.length ? '' : 'none';
+    items.forEach((c, i) => { if(c.metric === 'text') return; const el = g.querySelector(`.sx-val[data-i="${i}"]`); if(el) _sxCount(el, Number(st[c.metric]) || 0, MONEY[c.metric] ? money : count); });
+    SB.style.display = items.length ? '' : 'none';
   } else SB.style.display = 'none';
   // invite champions
   if(W.on !== false && (d.leaders || d.targets || d.feed)){
@@ -7223,11 +7388,14 @@ window.loadShowcase = async function(){
     pod.style.display = W.showLeader === false ? 'none' : '';
     pod.innerHTML = pl(L[1], 2) + pl(L[0], 1) + pl(L[2], 3);
     const adv = document.getElementById('wxAdvice');
-    adv.innerHTML = `<i class="fa-solid fa-gift"></i><div class="wa-t">${_escT(W.advice || '')}<span class="wa-me" id="wxMe"></span></div><button onclick="openReferModal()">${_escT(W.cta || 'Invite Friends')}</button>`;
-    adv.style.display = W.advice || W.cta ? '' : 'none';
+    const tips = (Array.isArray(W.tips) && W.tips.length ? W.tips : [W.advice]).map(x => String((x && typeof x === 'object' ? (x.on === false ? '' : x.text) : x) || '').trim()).filter(Boolean);
+    adv.innerHTML = `<i class="fa-solid fa-gift"></i><div class="wa-t"><span class="wa-tip" id="wxTip">${_escT(tips[0] || '')}</span><span class="wa-me" id="wxMe"></span></div><button onclick="openReferModal()">${_escT(W.cta || 'Invite Friends')}</button>`;
+    adv.style.display = tips.length || W.cta ? '' : 'none';
+    clearInterval(window._wxTipT);
+    if(tips.length > 1){ let ti = 0; window._wxTipT = setInterval(() => { const e = document.getElementById('wxTip'); if(!e) return; ti = (ti + 1) % tips.length; e.classList.add('out'); setTimeout(() => { e.textContent = tips[ti]; e.classList.remove('out'); }, 300); }, Math.max(3, Number(W.tipSec) || 6) * 1000); }
     const T = d.targets || [], tg = document.getElementById('wxTargets');
     tg.style.display = W.showTargets === false || !T.length ? 'none' : '';
-    const lvl = ['1st', '2nd', '3rd'];
+    const lvl = ['1st', '2nd', '3rd', '4th', '5th', '6th'];
     tg.innerHTML = T.map(t => `<div class="wx-tg"><div class="tg-l">${lvl[t.level - 1] || t.level + 'th'} target</div><div class="tg-n">${t.need} <small>friends</small></div><div class="tg-p">${_escT(t.prize)}</div><div class="tg-w">🏆 ${t.total} winner${t.total === 1 ? '' : 's'}</div><div class="tg-names">${t.winners.map(w => _escT(w.name)).join(', ') || '<span style="color:var(--txt3)">Be the first!</span>'}</div></div>`).join('');
     // how far the signed-in user is from the next target
     if(_getUser() && T.length){
@@ -7241,8 +7409,8 @@ window.loadShowcase = async function(){
     fw.style.display = W.showFeed === false || !F.length ? 'none' : '';
     document.getElementById('wxFeedTitle').textContent = W.feedTitle || 'Live Offer Winners';
     const ago = at => { const m = Math.max(0, Math.floor((Date.now() - new Date(at || Date.now())) / 60000)); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.floor(m/60) + ' hr ago' : Math.floor(m/1440) + 'd ago'; };
-    const ic = { hot:'fa-fire', target:'fa-trophy', balance:'fa-wallet', bonus:'fa-gift' };
-    const what = e => e.kind === 'hot' ? 'won the Hot Offer' : e.kind === 'target' ? `reached the ${lvl[e.target - 1] || ''} invite target` : e.kind === 'balance' ? 'used the Balance Offer' : 'joined & got a bonus';
+    const ic = { hot:'fa-fire', target:'fa-trophy', balance:'fa-wallet', bonus:'fa-gift', announce:'fa-award' };
+    const what = e => e.kind === 'hot' ? 'won the Hot Offer' : e.kind === 'target' ? `reached the ${lvl[e.target - 1] || e.target + 'th'} invite target` : e.kind === 'balance' ? 'used the Balance Offer' : e.kind === 'announce' ? `won ${_escT(e.offer || 'an offer')}` : 'joined & got a bonus';
     const html = F.map(e => `<div class="wx-it k-${e.kind}"><div class="wi-ic"><i class="fa-solid ${ic[e.kind] || 'fa-star'}"></i></div><div class="wi-m"><b>${_escT(e.name)} ${what(e)}</b><span>${_escT(e.prize)}</span></div><div class="wi-t">${ago(e.at)}</div></div>`).join('');
     if(W.scroll !== false && F.length > 4){ fe.classList.add('scrolling'); fe.innerHTML = `<div class="lf-track" style="--lf-dur:${F.length * 3}s">${html}${html}</div>`; }
     else { fe.classList.remove('scrolling'); fe.innerHTML = html; }
@@ -7268,6 +7436,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if(typeof window.loadTicker === 'function') window.loadTicker();
   if(typeof window.loadLiveFeed === 'function')    window.loadLiveFeed();
   if(typeof window.loadShowcase === 'function')    window.loadShowcase();
+  if(typeof window._paintRefTiers === 'function')  window._paintRefTiers();
   if(typeof initHotOffer === 'function')           initHotOffer();
 });
 

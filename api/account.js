@@ -40,7 +40,7 @@ async function balanceState(d, phone, syncFlag) {
     db().collection('transactions').where('uid', '==', phone).get()
   ]);
   const active = refs.docs.filter(x => x.data().status === 'active').length;
-  const used = trx.docs.filter(x => Number(x.data().appliedBalance) > 0 && x.data().status !== 'Rejected').length;
+  const used = trx.docs.filter(x => Number(x.data().appliedBalance) > 0 && x.data().status !== 'Rejected' && x.data().removed !== true).length;
   const extra = Math.max(0, Number(data.balanceExtraUses) || 0);
   const locked = data.balanceLocked === true;
   const allowed = 1 + Math.floor(active / BAL_FRIENDS_PER_USE) + extra;
@@ -64,16 +64,24 @@ async function notifyUser(uid, title, message, type) {
 
 // a friend joined with this user's link: tell them, plus any reward or balance-offer use it unlocked
 const REF_MILESTONES = { 20: '1st installment free (loans under ৳10,000)', 50: '৳5,000 loan, no need to pay back', 100: '৳50,000 cash reward' };
+// invite targets: Admin → Home Page → Winners → Invite targets (falls back to 20 / 50 / 100)
+function refTargetsFrom(home) {
+  const T = Array.isArray(home?.winners?.targets) ? home.winners.targets : null;
+  const list = T && T.length ? T.map(t => ({ need: Math.round(Number(t.need) || 0), prize: String(t.prize || '').slice(0, 120) })).filter(t => t.need > 0 && t.prize)
+    : Object.entries(REF_MILESTONES).map(([n, p]) => ({ need: Number(n), prize: p }));
+  return list.sort((a, b) => a.need - b.need);
+}
 async function notifyReferrer(ref) {
   try {
     const d = await findUserDoc(ref);
     if (!d) return;
     const refs = await db().collection('users').where('referredBy', '==', ref).get();
     const active = refs.docs.filter(x => x.data().status === 'active').length;
-    const next = [20, 50, 100].find(n => n > active);
+    const targets = refTargetsFrom(await homeCfg());
+    const next = targets.find(t => t.need > active), hit = targets.find(t => t.need === active);
     await notifyUser(ref, 'A Friend Joined! 👋', `A friend joined Credit Up with your invite link. You now have ${active} active friend${active === 1 ? '' : 's'}.`
-      + (next ? ` ${next - active} more to unlock: ${REF_MILESTONES[next]}.` : ''), 'bonus');
-    if (REF_MILESTONES[active]) await notifyUser(ref, 'Reward Unlocked! 🏆', `You reached ${active} active friends and unlocked: ${REF_MILESTONES[active]}. Contact support to claim it.`, 'bonus');
+      + (next ? ` ${next.need - active} more to unlock: ${next.prize}.` : ''), 'bonus');
+    if (hit) await notifyUser(ref, 'Reward Unlocked! 🏆', `You reached ${active} active friends and unlocked: ${hit.prize}. Contact support to claim it.`, 'bonus');
     await balanceState(d, ref, true);   // sends "Balance Offer Unlocked" if 5 more friends freed it again
   } catch (e) { console.warn('referrer notify', e); }
 }
@@ -113,13 +121,15 @@ async function showcaseData() {
   if (_showcaseCache.data && Date.now() - _showcaseCache.at < 60e3) return _showcaseCache.data;
   const store = db();
   const [uSnap, aSnap, tSnap, mainSnap] = await Promise.all([
-    store.collection('users').select('phone', 'name', 'status', 'referredBy', 'createdAt', 'createdBy', 'promoClaimed', 'promoClaimedAt', 'promo').get(),
-    store.collection('applications').where('status', 'in', GRANTED).select('uid', 'name', 'loanAmount', 'approvedAt', 'disbursedAt', 'creditedAt', 'statusUpdatedAt', 'submittedAt').get(),
-    store.collection('transactions').where('status', '==', 'Verified').select('uid', 'appliedBalance', 'verifiedAt', 'submittedAt').get(),
+    store.collection('users').select('phone', 'name', 'status', 'referredBy', 'createdAt', 'createdBy', 'promoClaimed', 'promoClaimedAt', 'promo', 'removed').get(),
+    store.collection('applications').select('uid', 'name', 'status', 'loanAmount', 'approvedAt', 'disbursedAt', 'creditedAt', 'statusUpdatedAt', 'submittedAt', 'removed').get(),
+    store.collection('transactions').where('status', '==', 'Verified').select('uid', 'appliedBalance', 'verifiedAt', 'submittedAt', 'removed').get(),
     store.collection('siteConfig').doc('main').get()
   ]);
-  const users = uSnap.docs.map(d => d.data());
-  const apps = aSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const users = uSnap.docs.map(d => d.data()).filter(u => u.removed !== true);
+  const allApps = aSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(a => a.removed !== true);
+  const apps = allApps.filter(a => GRANTED.includes(a.status));
+  const verified = tSnap.docs.filter(d => d.data().removed !== true);
   const names = {};
   apps.forEach(a => { if (a.name && a.uid) names[a.uid] = a.name; });
   users.forEach(u => { if (u.name) names[u.phone] = u.name; });
@@ -131,7 +141,14 @@ async function showcaseData() {
     granted: apps.length,
     distributed: apps.reduce((t, a) => t + num(a.loanAmount), 0),
     today: apps.filter(a => at(a) && dhakaDay(at(a)) === today).reduce((t, a) => t + num(a.loanAmount), 0),
-    todayCount: apps.filter(a => at(a) && dhakaDay(at(a)) === today).length
+    todayCount: apps.filter(a => at(a) && dhakaDay(at(a)) === today).length,
+    applications: allApps.length,
+    activeLoans: apps.filter(a => ['Approved', 'Disbursed', 'Active', 'Overdue'].includes(a.status)).length,
+    repaid: apps.filter(a => a.status === 'Repaid').length,
+    verified: verified.length,
+    invites: users.filter(u => u.referredBy).length,
+    avgLoan: apps.length ? Math.round(apps.reduce((t, a) => t + num(a.loanAmount), 0) / apps.length) : 0,
+    week: apps.filter(a => at(a) && Date.now() - new Date(at(a)).getTime() < 7 * 864e5).reduce((t, a) => t + num(a.loanAmount), 0)
   };
   // invite champions: active friends per inviter, and when each target was reached
   const byRef = {};
@@ -140,15 +157,13 @@ async function showcaseData() {
   refs.sort((a, b) => b.count - a.count || String(a.joined[a.joined.length - 1]).localeCompare(String(b.joined[b.joined.length - 1])));
   const events = [];
   users.forEach(u => { if (u.promoClaimed && u.promoClaimedAt) events.push({ id: 'h_' + u.phone, kind: 'hot', phone: u.phone, at: u.promoClaimedAt, prize: u.promo || 'Hot offer' }); });
-  refs.forEach(r => Object.keys(REF_MILESTONES).map(Number).forEach((t, i) => {
-    if (r.count >= t) events.push({ id: `t${i + 1}_` + r.phone, kind: 'target', target: i + 1, phone: r.phone, at: r.joined[t - 1] || '', prize: REF_MILESTONES[t] });
-  }));
-  tSnap.docs.forEach(d => { const t = d.data(); if (Number(t.appliedBalance) > 0) events.push({ id: 'b_' + d.id, kind: 'balance', phone: t.uid, at: t.verifiedAt || t.submittedAt || '', prize: `Saved ৳${Math.round(Number(t.appliedBalance))} on the fee` }); });
+  tSnap.docs.forEach(d => { const t = d.data(); if (t.removed !== true && Number(t.appliedBalance) > 0) events.push({ id: 'b_' + d.id, kind: 'balance', phone: t.uid, at: t.verifiedAt || t.submittedAt || '', prize: `Saved ৳${Math.round(Number(t.appliedBalance))} on the fee` }); });
   const cfg = mainSnap.exists ? mainSnap.data() : {};
   const bonus = cfg.newUserBonus === undefined || cfg.newUserBonus === null || cfg.newUserBonus === '' ? 100 : Number(cfg.newUserBonus) || 0;
   if (bonus > 0) users.forEach(u => { if (u.createdAt && u.createdBy !== 'admin') events.push({ id: 'j_' + u.phone, kind: 'bonus', phone: u.phone, at: u.createdAt, prize: `৳${bonus} sign-up bonus` }); });
   events.sort((a, b) => String(b.at).localeCompare(String(a.at)));
-  const data = { stats, refs, events, names, targets: Object.keys(REF_MILESTONES).map(Number), prizes: REF_MILESTONES };
+  const known = new Set(users.map(u => u.phone));
+  const data = { stats, refs, events, names, known };
   _showcaseCache = { at: Date.now(), data };
   return data;
 }
@@ -260,6 +275,7 @@ const actions = {
       const at = (a) => a.disbursedAt || a.creditedAt || a.approvedAt || a.statusUpdatedAt || a.submittedAt || '';
       snap.docs.forEach(x => {
         const a = x.data();
+        if (a.removed === true) return;   // removed from the site by an admin (kept for review)
         items.push({ id: 'a_' + x.id, kind: 'loan', name: maskName(a.name), amount: Number(String(a.loanAmount || 0).replace(/,/g, '')) || 0, at: at(a) });
       });
     }
@@ -267,6 +283,7 @@ const actions = {
       const snap = await db().collection('transactions').where('status', '==', 'Verified').limit(300).get();
       snap.docs.forEach(x => {
         const t = x.data();
+        if (t.removed === true) return;
         const amt = Number(t.amount) || 0;
         if (amt <= 0) return;
         items.push({ id: 't_' + x.id, kind: 'fee', name: maskPhone(t.uid), amount: maskFee(amt), at: t.verifiedAt || t.submittedAt || t.createdAt || '' });
@@ -313,6 +330,15 @@ const actions = {
     const admin = !!(b && b.admin && me && await isAdmin(me.uid));
     if (S.on === false && W.on === false && !admin) return [200, { off: true }];
     const d = await showcaseData();
+    const targets = refTargetsFrom(home);
+    // target events depend on the admin's targets; announced winners must be real, registered users
+    const events = [...d.events];
+    d.refs.forEach(r => targets.forEach((t, i) => { if (r.count >= t.need) events.push({ id: `t${i + 1}_` + r.phone, kind: 'target', target: i + 1, phone: r.phone, at: r.joined[t.need - 1] || '', prize: t.prize }); }));
+    (Array.isArray(W.announced) ? W.announced : []).forEach(a => {
+      const ph = String(a.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+      if (a.on !== false && d.known.has(ph) && a.prize) events.push({ id: 'a_' + (a.id || ph), kind: 'announce', phone: ph, at: a.at || '', prize: String(a.prize).slice(0, 120), offer: String(a.offer || 'Special offer').slice(0, 60) });
+    });
+    events.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     const hidden = new Set(Array.isArray(W.hidden) ? W.hidden : []);
     const person = (phone, extra) => ({ id: 'u_' + phone, name: shortName(d.names[phone], phone), ...(admin ? { phone, hidden: hidden.has('u_' + phone) } : {}), ...extra });
     const keep = x => admin || !hidden.has(x.id);
@@ -322,14 +348,14 @@ const actions = {
       const top = Math.min(10, Math.max(1, Number(W.leaderCount) || 3));
       out.leaders = d.refs.filter(r => keep({ id: 'u_' + r.phone })).slice(0, top).map((r, i) => person(r.phone, { rank: i + 1, count: r.count }));
       const perTarget = Math.min(20, Math.max(1, Number(W.targetCount) || 5));
-      out.targets = d.targets.map((t, i) => {
-        const all = d.refs.filter(r => r.count >= t && keep({ id: 'u_' + r.phone }));
-        return { level: i + 1, need: t, prize: d.prizes[t], total: all.length, winners: all.slice(0, perTarget).map(r => person(r.phone, { count: r.count })) };
+      out.targets = targets.map((t, i) => {
+        const all = d.refs.filter(r => r.count >= t.need && keep({ id: 'u_' + r.phone }));
+        return { level: i + 1, need: t.need, prize: t.prize, total: all.length, winners: all.slice(0, perTarget).map(r => person(r.phone, { count: r.count })) };
       });
-      const kinds = { hot: true, target: true, balance: true, bonus: false, ...(W.kinds || {}) };
+      const kinds = { hot: true, target: true, balance: true, bonus: false, announce: true, ...(W.kinds || {}) };
       const feedN = Math.min(40, Math.max(1, Number(W.feedCount) || 10));
-      out.feed = d.events.filter(e => kinds[e.kind] && keep(e) && keep({ id: 'u_' + e.phone })).slice(0, admin ? 40 : feedN)
-        .map(e => ({ id: e.id, kind: e.kind, target: e.target || 0, prize: e.prize, at: e.at, name: shortName(d.names[e.phone], e.phone), ...(admin ? { hidden: hidden.has(e.id) } : {}) }));
+      out.feed = events.filter(e => kinds[e.kind] && keep(e) && keep({ id: 'u_' + e.phone })).slice(0, admin ? 40 : feedN)
+        .map(e => ({ id: e.id, kind: e.kind, target: e.target || 0, prize: e.prize, offer: e.offer || '', at: e.at, name: shortName(d.names[e.phone], e.phone), ...(admin ? { hidden: hidden.has(e.id) } : {}) }));
     }
     return [200, out];
   },
