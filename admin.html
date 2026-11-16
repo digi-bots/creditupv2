@@ -137,6 +137,11 @@ input,select,textarea{font-family:'Inter',sans-serif;-webkit-user-select:auto;us
 @media(max-width:620px){.cf-row{grid-template-columns:auto 1fr 1fr 34px;grid-template-areas:"t n n d" "s s v v"}.cf-row>:nth-child(1){grid-area:t}.cf-row>:nth-child(2){grid-area:n}.cf-row>:nth-child(3){grid-area:s}.cf-row>:nth-child(4){grid-area:v}.cf-row>:nth-child(5){grid-area:d}}
 .br-sub{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--p);text-transform:uppercase;letter-spacing:.6px;margin:16px 0 9px;padding-top:12px;border-top:1px solid var(--border)}
 .br-col{display:flex;gap:6px}.br-col input[type=color]{width:44px;height:38px;padding:2px;border-radius:8px;flex:none;cursor:pointer;background:transparent}.br-col input:not([type=color]){flex:1;min-width:0}
+.lv-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border)}
+.lv-all{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--txt);cursor:pointer}
+.lv-n{font-size:11.5px;color:var(--txt2)}
+.lv-ck{width:17px;height:17px;flex:none;accent-color:var(--p);cursor:pointer}
+.hp-row.sel{border-color:rgba(29,219,128,.55);background:rgba(29,219,128,.06)}
 .ls-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--txt2);margin-right:5px;vertical-align:1px;opacity:.6}
 .ls-dot.on{background:var(--p);opacity:1;box-shadow:0 0 0 3px rgba(29,219,128,.2)}
 .cred{margin-top:12px;padding:13px;border-radius:12px;background:rgba(29,219,128,.06);border:1px solid rgba(29,219,128,.25)}
@@ -241,7 +246,19 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .fg input::placeholder,.fg textarea::placeholder{color:var(--txt3)}
 .fg .hint{font-size:10px;color:var(--txt2);margin-top:2px}
 #sec-home .hint{font-size:11.5px;color:var(--txt2);line-height:1.5}
-.hp-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
+.hp-tabs{display:flex;flex-direction:column;gap:8px;margin-bottom:13px}
+.hp-tg{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#sec-config[data-g]:not([data-g="all"]) .cfg-blk[data-cg]{display:none}
+#sec-config[data-g="loan"] .cfg-blk[data-cg="loan"],#sec-config[data-g="pay"] .cfg-blk[data-cg="pay"],#sec-config[data-g="contact"] .cfg-blk[data-cg="contact"],#sec-config[data-g="brand"] .cfg-blk[data-cg="brand"],#sec-config[data-g="flags"] .cfg-blk[data-cg="flags"]{display:block!important}
+.hp-tgl{width:100%;font-size:10.5px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.6px;margin:2px 2px 0}
+.sxp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.sxp{padding:11px;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid var(--border)}
+.sxp b{display:block;font-size:17px;font-weight:900;color:var(--p)}
+.sxp span{font-size:11px;color:var(--txt2)}
+.sx-crd{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:8px;align-items:center;padding:9px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.02);margin-bottom:7px}
+.sx-crd input{height:34px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;outline:none;min-width:0;font-family:inherit}
+.sx-crd .sx-k{font-size:12px;font-weight:800;color:var(--txt);min-width:110px;display:flex;align-items:center;gap:8px}
+@media(max-width:700px){.sxp-grid{grid-template-columns:1fr 1fr}.sx-crd{grid-template-columns:1fr 1fr}.sx-crd .sx-k{grid-column:1/-1}}
 .hp-tabs button{display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:11px;border:1px solid var(--border);background:var(--card);color:var(--txt2);font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
 .hp-tabs button.on{background:rgba(29,219,128,.12);border-color:rgba(29,219,128,.45);color:var(--p)}
 .hp-pane{display:none}.hp-pane.on{display:block}
@@ -855,15 +872,21 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div class="sec" id="sec-home">
   <div class="sec-head"><h2>Home Page</h2><button class="btn btn-p btn-lg sv-btn" id="svBtn-home" onclick="saveTab('home')" disabled><i class="fa-solid fa-floppy-disk"></i><span>All saved</span></button></div>
   <div class="hp-tabs" id="hpTabs">
-    <button class="on" data-p="live" onclick="hpTab('live')"><i class="fa-solid fa-bolt"></i>Live Transactions</button>
-    <button data-p="notice" onclick="hpTab('notice')"><i class="fa-solid fa-bullhorn"></i>Notice Bar</button>
-    <button data-p="partners" onclick="hpTab('partners')"><i class="fa-solid fa-handshake"></i>Partners</button>
-    <button data-p="trust" onclick="hpTab('trust')"><i class="fa-solid fa-shield-halved"></i>Trust Badges</button>
-    <button data-p="ref" onclick="hpTab('ref')"><i class="fa-solid fa-user-plus"></i>Invite Code</button>
-    <button data-p="offers" onclick="hpTab('offers')"><i class="fa-solid fa-gift"></i>Offers</button>
-    <button data-p="fomo" onclick="hpTab('fomo')"><i class="fa-solid fa-fire"></i>Hot Offer</button>
-    <button data-p="topbar" onclick="hpTab('topbar')"><i class="fa-solid fa-window-maximize"></i>Top Bar</button>
-    <button data-p="splash" onclick="hpTab('splash')"><i class="fa-solid fa-mobile-screen"></i>Loading Screen</button>
+    <div class="hp-tg"><span class="hp-tgl">Home page · top to bottom</span>
+      <button data-p="topbar" onclick="hpTab('topbar')"><i class="fa-solid fa-window-maximize"></i>Top Bar</button>
+      <button data-p="notice" onclick="hpTab('notice')"><i class="fa-solid fa-bullhorn"></i>Notice Bar</button>
+      <button data-p="offers" onclick="hpTab('offers')"><i class="fa-solid fa-gift"></i>Offers</button>
+      <button data-p="fomo" onclick="hpTab('fomo')"><i class="fa-solid fa-fire"></i>Hot Offer</button>
+      <button class="on" data-p="live" onclick="hpTab('live')"><i class="fa-solid fa-bolt"></i>Live Transactions</button>
+      <button data-p="stats" onclick="hpTab('stats')"><i class="fa-solid fa-chart-column"></i>Stats</button>
+      <button data-p="winners" onclick="hpTab('winners')"><i class="fa-solid fa-trophy"></i>Winners</button>
+      <button data-p="partners" onclick="hpTab('partners')"><i class="fa-solid fa-handshake"></i>Partners</button>
+      <button data-p="trust" onclick="hpTab('trust')"><i class="fa-solid fa-shield-halved"></i>Trust Badges</button>
+    </div>
+    <div class="hp-tg"><span class="hp-tgl">Other screens</span>
+      <button data-p="splash" onclick="hpTab('splash')"><i class="fa-solid fa-mobile-screen"></i>Loading Screen</button>
+      <button data-p="ref" onclick="hpTab('ref')"><i class="fa-solid fa-user-plus"></i>Invite Code (Profile)</button>
+    </div>
   </div>
 
   <!-- LIVE -->
@@ -881,9 +904,17 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
       <div class="hint" style="margin-top:10px">Only real records are shown: approved or sent loans, and fee payments you verified. Fees always show only the first 2 digits (for example ৳13**.00). Names are shortened and phone numbers are hidden.</div>
     </div>
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-eye"></i>Preview &amp; hide entries <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadFeed()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-eye"></i>Preview: hide or delete entries <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadFeed()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+      <div class="lv-bar" id="lvBar">
+        <label class="lv-all"><input type="checkbox" id="lvAll" onchange="lvSelAll(this.checked)"> Select all</label>
+        <span class="lv-n" id="lvN">0 selected</span>
+        <span style="flex:1"></span>
+        <button class="btn btn-sm btn-s" onclick="lvBulk('hide')" disabled><i class="fa-solid fa-eye-slash"></i>Hide</button>
+        <button class="btn btn-sm btn-s" onclick="lvBulk('show')" disabled><i class="fa-solid fa-eye"></i>Show</button>
+        <button class="btn btn-sm btn-d" onclick="lvBulk('delete')" disabled><i class="fa-solid fa-trash"></i>Delete</button>
+      </div>
       <div id="lvPreview" class="hp-list"><div class="hint">Loading...</div></div>
-      <div class="hint" style="margin-top:8px">Hide any entry you do not want on the home page (for example a test record). Hidden entries stay in your records.</div>
+      <div class="hint" style="margin-top:8px">Hide any entry you do not want on the home page (for example a test record); hidden entries stay in your records. Delete removes the record itself for good.</div>
     </div>
   </div>
 
@@ -925,6 +956,65 @@ tr:hover td{background:rgba(255,255,255,.015)}
   </div>
 
   <!-- PARTNERS -->
+  <!-- STATS -->
+  <div class="hp-pane" id="hp-stats">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-chart-column"></i>Stats section (below Live Transactions)</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sx-on" checked><span class="tog-sl"></span></label>Show stats section</label></div>
+        <div class="fg"><label>Title</label><input id="sx-title" maxlength="40" placeholder="Our Impact"></div>
+        <div class="fg"><label>Subtitle</label><input id="sx-sub" maxlength="90" placeholder="Real numbers from Credit Up, updated live"></div>
+        <div class="fg"><label>“Satisfied users” counts</label><select id="sx-mode"><option value="all">All registered users (not banned)</option><option value="borrowers">Only users who received a loan</option></select></div>
+        <div class="fg"><label>Number style</label><select id="sx-format"><option value="short">Short (13K+, ৳2.9 Cr)</option><option value="full">Full (12,840 · ৳28,650,000)</option></select></div>
+        <div class="fg"><label>Refresh (seconds, 0 = off)</label><input id="sx-refresh" type="number" min="0" placeholder="120"></div>
+        <div class="fg full"><label>Small note under the cards</label><input id="sx-note" maxlength="120" placeholder="Optional, e.g. Figures since January 2026"></div>
+      </div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-layer-group"></i>Cards</div>
+      <div id="sxCards"></div>
+      <div class="hint" style="margin-top:6px">Icon = a Font Awesome name, e.g. <b>fa-face-smile</b>, <b>fa-sack-dollar</b>. Tag = the small label in the corner (empty = “Live”).</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-eye"></i>Live numbers now <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadShowcase()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+      <div id="sxPrev" class="sxp-grid"><div class="hint">Loading...</div></div>
+      <div class="hint" style="margin-top:8px">These come straight from your records: users, approved / sent loans (Approved, Disbursed, Active, Repaid, Overdue) and their amounts. “Today” uses Bangladesh time. They cannot be typed in by hand, so users always see real figures.</div>
+    </div>
+  </div>
+
+  <!-- WINNERS -->
+  <div class="hp-pane" id="hp-winners">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-trophy"></i>Invite Champions &amp; Winners (below Stats)</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-on" checked><span class="tog-sl"></span></label>Show winners section</label></div>
+        <div class="fg"><label>Title</label><input id="wx-title" maxlength="40" placeholder="Invite Champions"></div>
+        <div class="fg"><label>Subtitle</label><input id="wx-sub" maxlength="90" placeholder="Invite friends, climb the board and win real rewards"></div>
+        <div class="fg full"><label>Advice to users (encourage inviting)</label><textarea id="wx-advice" rows="2" maxlength="240" placeholder="Every friend who joins with your link brings you closer to the next reward. Share your link today — the more friends, the bigger the prize!"></textarea></div>
+        <div class="fg"><label>Button text</label><input id="wx-cta" maxlength="24" placeholder="Invite Friends"></div>
+      </div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-ranking-star"></i>What to show</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-leader" checked><span class="tog-sl"></span></label>Top inviters podium (1st, 2nd, 3rd)</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-targets" checked><span class="tog-sl"></span></label>Target winners (1st, 2nd, 3rd target)</label></div>
+        <div class="fg"><label>Names per target</label><input id="wx-tcount" type="number" min="1" max="20" placeholder="5"></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-feed" checked><span class="tog-sl"></span></label>Live offer winners list</label></div>
+        <div class="fg"><label>List title</label><input id="wx-ftitle" maxlength="40" placeholder="Live Offer Winners"></div>
+        <div class="fg"><label>How many in the list</label><input id="wx-fcount" type="number" min="1" max="40" placeholder="10"></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-scroll" checked><span class="tog-sl"></span></label>Auto-scroll the list</label></div>
+      </div>
+      <div class="man-sub">Offers in the winners list</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-k-hot" checked><span class="tog-sl"></span></label>Hot Offer claims</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-k-target" checked><span class="tog-sl"></span></label>Invite targets reached</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-k-balance" checked><span class="tog-sl"></span></label>Balance Offer used</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-k-bonus"><span class="tog-sl"></span></label>Sign-up bonus received</label></div>
+      </div>
+      <div class="hint" style="margin-top:8px">Targets and prizes are the invite rewards (20 / 50 / 100 active friends). Names are always shortened and phone numbers hidden.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-eye"></i>Preview: hide people or entries <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadShowcase()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+      <div id="wxPrev" class="hp-list"><div class="hint">Loading...</div></div>
+      <div class="hint" style="margin-top:8px">Hiding a person removes them from the podium, the targets and the list (for example a test account). Press Save to publish.</div>
+    </div>
+  </div>
+
   <div class="hp-pane" id="hp-partners">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Partner Section</div>
       <div class="fgrid fgrid3">
@@ -1103,9 +1193,17 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 
 <!-- SITE CONFIG -->
-<div class="sec" id="sec-config">
+<div class="sec" id="sec-config" data-g="loan">
   <div class="sec-head"><h2>Site Configuration</h2><button class="btn btn-p btn-lg sv-btn" id="svBtn-config" onclick="saveTab('config')" disabled><i class="fa-solid fa-floppy-disk"></i><span>All saved</span></button></div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-percent"></i>Loan & Fee Settings</div>
+  <div class="hp-tabs cfg-tabs" id="cfgTabs"><div class="hp-tg">
+    <button class="on" data-g="loan" onclick="cfgTab('loan')"><i class="fa-solid fa-percent"></i>Loans &amp; Fees</button>
+    <button data-g="pay" onclick="cfgTab('pay')"><i class="fa-solid fa-receipt"></i>Payment &amp; Refund</button>
+    <button data-g="contact" onclick="cfgTab('contact')"><i class="fa-solid fa-headset"></i>Contact</button>
+    <button data-g="brand" onclick="cfgTab('brand')"><i class="fa-solid fa-palette"></i>Text &amp; Branding</button>
+    <button data-g="flags" onclick="cfgTab('flags')"><i class="fa-solid fa-toggle-on"></i>Switches</button>
+    <button data-g="all" onclick="cfgTab('all')"><i class="fa-solid fa-list"></i>Show all</button>
+  </div></div>
+  <div class="cfg-blk" data-cg="loan"><div class="cfg-t"><i class="fa-solid fa-percent"></i>Loan & Fee Settings</div>
     <div class="fgrid fgrid3">
       <div class="fg"><label>Max Borrow Display (BDT)</label><input id="c-mb" placeholder="60,000.00"><div class="hint">Shown on the home screen and used as the highest amount in the user Loan Calculator</div></div>
       <div class="fg"><label>Annual Interest Rate (%)</label><input type="number" id="c-ir" placeholder="18"></div>
@@ -1115,7 +1213,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label>New User Sign-up Bonus (BDT)</label><input type="number" id="c-nb" placeholder="100"><div class="hint">Credited on registration</div></div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Custom Fees &amp; Additional Interest<button class="btn btn-sm btn-p" style="margin-left:auto" onclick="cfAdd()"><i class="fa-solid fa-plus"></i>Add fee</button></div>
+  <div class="cfg-blk" data-cg="loan"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Custom Fees &amp; Additional Interest<button class="btn btn-sm btn-p" style="margin-left:auto" onclick="cfAdd()"><i class="fa-solid fa-plus"></i>Add fee</button></div>
     <div class="hint" style="margin:-4px 0 10px">Extra fees are added to the upfront fee users pay, on top of the fees above. A fee can be a fixed amount (৳) or a % of the loan amount.</div>
     <div id="cfList" class="cf-list"></div>
     <div class="cf-xi">
@@ -1129,7 +1227,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div>
     <div class="cf-prev" id="cfPrev"></div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list"></i>Loan Options</div>
+  <div class="cfg-blk" data-cg="loan"><div class="cfg-t"><i class="fa-solid fa-list"></i>Loan Options</div>
     <div class="fgrid">
       <div class="fg"><label>Loan Amounts (comma-separated)</label><textarea id="c-la" rows="2" placeholder="1,000, 2,500, 5,000, 10,000, 25,000, 50,000, 60,000"></textarea></div>
       <div class="fg"><label>Loan Terms in Months (comma-separated)</label><textarea id="c-lt" rows="2" placeholder="3, 6, 12, 24, 36"></textarea></div>
@@ -1137,7 +1235,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg full"><label>Occupation Options (comma-separated)</label><input id="c-oc" placeholder="Salaried, Business Owner, Student, Freelancer, Unemployed"></div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-wallet"></i>Payment Numbers</div>
+  <div class="cfg-blk" data-cg="pay"><div class="cfg-t"><i class="fa-solid fa-wallet"></i>Payment Numbers</div>
     <div style="font-size:12px;color:var(--txt2);line-height:1.7">
       Payment and payout numbers are now managed in the <strong style="color:var(--p)">Wallets</strong> section — that is the only place users read them from.<br>
       Each wallet has a <strong style="color:var(--orange)">collection number</strong> (where users send the fee) and a <strong style="color:var(--p)">receiving number</strong> (where the loan is paid out).
@@ -1146,7 +1244,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <i class="fa-solid fa-arrow-right"></i> Manage wallets
     </button>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-thumbtack"></i>Fee Payment Note (shown to users)</div>
+  <div class="cfg-blk" data-cg="pay"><div class="cfg-t"><i class="fa-solid fa-thumbtack"></i>Fee Payment Note (shown to users)</div>
     <div class="fgrid">
       <div class="fg"><label>Note Title</label><input id="c-pnt" placeholder="Note" maxlength="40"></div>
       <div class="fg full"><label>Note Text (appears below Payment Instructions)</label>
@@ -1154,7 +1252,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-rotate-left"></i>Fee Refund Policy (shown before applying)</div>
+  <div class="cfg-blk" data-cg="pay"><div class="cfg-t"><i class="fa-solid fa-rotate-left"></i>Fee Refund Policy (shown before applying)</div>
     <div class="fgrid">
       <div class="fg full"><label>Refund policy text</label>
         <textarea id="c-rfp" rows="3" maxlength="600" placeholder="If your application is rejected, the full fee you paid is refunded to the number you paid from."></textarea>
@@ -1162,7 +1260,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-headset"></i>Contact & Support</div>
+  <div class="cfg-blk" data-cg="contact"><div class="cfg-t"><i class="fa-solid fa-headset"></i>Contact & Support</div>
     <div class="fgrid">
       <div class="fg"><label>WhatsApp Number (e.g. 88017...)</label><input id="c-wa" placeholder="88017XXXXXXXX"></div>
       <div class="fg"><label>Telegram Username (e.g. yourusername)</label><input id="c-tg" placeholder="username"></div>
@@ -1171,7 +1269,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg full"><label>Company Address</label><input id="c-ad" placeholder="Company address..."></div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-pen-to-square"></i>Site Text & Branding</div>
+  <div class="cfg-blk" data-cg="brand"><div class="cfg-t"><i class="fa-solid fa-pen-to-square"></i>Site Text & Branding</div>
     <div class="fgrid">
       <div class="fg"><label>Policy Last Updated</label><input id="c-pd" placeholder="2026/10/09"></div>
       <div class="fg"><label>Home Tagline (info card)</label><input id="c-tag" placeholder="Your Loan, Simplified"></div>
@@ -1211,7 +1309,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div>
     <div class="hint" style="margin-top:8px">Empty fields keep the default text shown in grey.</div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-toggle-on"></i>Feature Flags</div>
+  <div class="cfg-blk" data-cg="flags"><div class="cfg-t"><i class="fa-solid fa-toggle-on"></i>Feature Flags</div>
     <div class="fgrid fgrid3">
       <div class="fg"><label style="display:flex;align-items:center;gap:9px"><label class="tog"><input type="checkbox" id="c-ro" checked><span class="tog-sl"></span></label>Allow Registration</label></div>
       <div class="fg"><label style="display:flex;align-items:center;gap:9px"><label class="tog"><input type="checkbox" id="c-lo" checked><span class="tog-sl"></span></label>Accept Loan Applications</label></div>
@@ -3132,7 +3230,7 @@ function _fGroup(e){
 }
 function _snapData(tab){
   if(tab==='home' && _H) return {'Notice Bar › Notices':_H.notice.items,'Partners › Partner logos':_H.partners.items,'Trust Badges › Badges':_H.trust.items,
-    'Loading Screen › Payment logos':_H.splash.pays,'Offers › Offer cards':_H.offers.items,'Live Transactions › Hidden entries':_H.live.hidden,'Hot Offer › Offer round':_H.fomo.round};
+    'Loading Screen › Payment logos':_H.splash.pays,'Offers › Offer cards':_H.offers.items,'Live Transactions › Hidden entries':_H.live.hidden,'Winners › Hidden people / entries':_H.winners?_H.winners.hidden:[],'Hot Offer › Offer round':_H.fomo.round};
   if(tab==='config') return {'Custom Fees & Additional Interest › Fee list':window._cfFees||[]};
   return {};
 }
@@ -3152,6 +3250,12 @@ function _listChange(a,b){
   A.forEach((x,k)=>{ if(!B.has(k)) rem.push(nm(x)); });
   const list=arr=>arr.slice(0,3).map(x=>'“'+_short(x).slice(0,30)+'”').join(', ')+(arr.length>3?` +${arr.length-3} more`:'');
   const out=[];
+  // lists of hidden ids: say how many were hidden / shown again, not the ids
+  if([...a,...b].every(x=>typeof x==='string')){
+    if(add.length) out.push(`<em>${add.length} hidden</em>`);
+    if(rem.length) out.push(`${rem.length} shown again`);
+    return out.join(' · ');
+  }
   if(add.length) out.push(`<em>${add.length} added</em> (${list(add)})`);
   if(rem.length) out.push(`<s>${rem.length} removed</s> (${list(rem)})`);
   if(chg.length) out.push(`${chg.length} edited (${list(chg)})`);
@@ -3282,6 +3386,13 @@ async function loadConfig(){
   _snapTake('config'); _paintSave();
   cb('c-ro',cfg.flags?.registrationOpen!==false);cb('c-lo',cfg.flags?.loansOpen!==false);cb('c-mn',cfg.flags?.maintenance);
 }
+// Site Config is split into tabs (the save button still saves every tab)
+function cfgTab(g){
+  document.getElementById('sec-config').dataset.g=g;
+  document.querySelectorAll('#cfgTabs button').forEach(b=>b.classList.toggle('on',b.dataset.g===g));
+  try{ localStorage.setItem('cfgTab',g); }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',()=>{ let g='loan'; try{ g=localStorage.getItem('cfgTab')||'loan'; }catch(e){} if(document.querySelector(`#cfgTabs [data-g="${g}"]`)) cfgTab(g); });
 // Site Text & Branding
 const BR_KEYS={name:'br-name',title:'br-title',icon:'br-icon',borrowLabel:'br-blbl',btn:'br-btn',btnBn:'br-btnbn',f1:'br-f1',f2:'br-f2',f3:'br-f3',quick:'br-qs',welcome:'br-welcome',again:'br-again',s1t:'br-s1t',s1d:'br-s1d',s2t:'br-s2t',s2d:'br-s2d',s3t:'br-s3t',s3d:'br-s3d',polTitle:'br-polt',polSub:'br-pols',wait:'br-wait'};
 const BR_DEF={c1:'#1ddb80',c2:'#0fbb65'};
@@ -3365,6 +3476,7 @@ function hpTab(p){
   document.querySelectorAll('#hpTabs button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
   document.querySelectorAll('.hp-pane').forEach(x => x.classList.toggle('on', x.id === 'hp-' + p));
   if(p === 'live') hpLoadFeed();
+  if(p === 'stats' || p === 'winners') hpLoadShowcase();
   if(p === 'splash') hpSplashPreview();
   if(p === 'fomo'){ hpFomoPreview(); hpFomoStat(); }
   if(p === 'topbar') hpTopPreview();
@@ -3383,7 +3495,9 @@ async function loadHome(){
     splash: { ...SL_DEF, ...(d.splash||{}) },
     offers: { on:true, rotate:4, items:null, ...(d.offers||{}) },
     fomo: { ...FO_DEF, ...(d.fomo||{}) },
-    topbar: { ...TB_DEF, ...(d.topbar||{}) }
+    topbar: { ...TB_DEF, ...(d.topbar||{}) },
+    stats: { ...SX_DEF, ...(d.stats||{}), cards: { ...JSON.parse(JSON.stringify(SX_DEF.cards)), ...((d.stats||{}).cards||{}) } },
+    winners: { ...WX_DEF, ...(d.winners||{}), kinds: { ...WX_DEF.kinds, ...((d.winners||{}).kinds||{}) }, hidden: Array.isArray((d.winners||{}).hidden) ? [...d.winners.hidden] : [] }
   };
   if(!Array.isArray(_H.offers.items)) _H.offers.items = [ { ...OF_DEF } ];
   _H.offers.items = _H.offers.items.map(x => ({ ...OF_DEF, id:_hid(), ...x }));
@@ -3415,11 +3529,52 @@ async function loadHome(){
   const B=_H.topbar;
   set('tb-theme',B.theme); set('tb-clear',B.clear); set('tb-glass',B.glass); set('tb-compact',B.compact); set('tb-hide',B.hideOnScroll); set('tb-avatar',B.avatar); set('tb-hi',B.greet);
   set('tb-balance',B.balance); set('tb-notif',B.notif); set('tb-support',B.support); set('tb-logout',B.logout); set('tb-alert',B.alert); set('tb-name',B.title); set('tb-vtext',B.visitorText);
-  hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers();
+  const X=_H.stats, Y=_H.winners;
+  set('sx-on',X.on); set('sx-title',X.title); set('sx-sub',X.sub); set('sx-mode',X.usersMode); set('sx-format',X.format); set('sx-refresh',X.refresh); set('sx-note',X.note);
+  set('wx-on',Y.on); set('wx-title',Y.title); set('wx-sub',Y.sub); set('wx-advice',Y.advice); set('wx-cta',Y.cta); set('wx-leader',Y.showLeader); set('wx-targets',Y.showTargets);
+  set('wx-tcount',Y.targetCount); set('wx-feed',Y.showFeed); set('wx-ftitle',Y.feedTitle); set('wx-fcount',Y.feedCount); set('wx-scroll',Y.scroll);
+  ['hot','target','balance','bonus'].forEach(k=>set('wx-k-'+k,Y.kinds[k]));
+  hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers(); sxRenderCards();
   _snapTake('home');
   _dirty.home = new Set(); _paintSave();
   if(document.getElementById('hp-live').classList.contains('on')) hpLoadFeed();
 }
+// Stats + Winners sections (home page, below Live Transactions)
+const SX_DEF = { on:true, title:'Our Impact', sub:'Real numbers from Credit Up, updated live', usersMode:'all', format:'short', refresh:120, note:'',
+  cards:{ users:{on:true,label:'Satisfied Users',icon:'fa-face-smile',tag:''}, granted:{on:true,label:'Loans Granted',icon:'fa-file-circle-check',tag:''},
+          distributed:{on:true,label:'Total Disbursed',icon:'fa-sack-dollar',tag:''}, today:{on:true,label:"Today's Disbursed",icon:'fa-bolt',tag:''} } };
+const WX_DEF = { on:true, title:'Invite Champions', sub:'Invite friends, climb the board and win real rewards',
+  advice:'Every friend who joins with your link brings you closer to the next reward. Share your link today — the more friends, the bigger the prize!', cta:'Invite Friends',
+  showLeader:true, leaderCount:3, showTargets:true, targetCount:5, showFeed:true, feedTitle:'Live Offer Winners', feedCount:10, scroll:true,
+  kinds:{ hot:true, target:true, balance:true, bonus:false }, hidden:[] };
+const SX_NAMES = { users:'Satisfied users', granted:'Loans granted', distributed:'Total disbursed', today:"Today's disbursed" };
+function sxRenderCards(){
+  const el=document.getElementById('sxCards'); if(!el||!_H) return;
+  el.innerHTML=Object.keys(SX_DEF.cards).map(k=>{ const c={...SX_DEF.cards[k],...(_H.stats.cards[k]||{})}; return `<div class="sx-crd">
+    <div class="sx-k"><label class="tog"><input type="checkbox" id="sx-c-${k}-on" ${c.on!==false?'checked':''}><span class="tog-sl"></span></label>${SX_NAMES[k]}</div>
+    <input id="sx-c-${k}-label" value="${_he(c.label||'')}" placeholder="Label" maxlength="30" aria-label="${SX_NAMES[k]} label">
+    <input id="sx-c-${k}-icon" value="${_he(c.icon||'')}" placeholder="${SX_DEF.cards[k].icon}" maxlength="40" aria-label="${SX_NAMES[k]} icon">
+    <input id="sx-c-${k}-tag" value="${_he(c.tag||'')}" placeholder="Tag (Live)" maxlength="14" aria-label="${SX_NAMES[k]} tag"></div>`; }).join('');
+}
+async function hpLoadShowcase(){
+  const sp=document.getElementById('sxPrev'), wp=document.getElementById('wxPrev');
+  const r=await window._accountApi('showcase',{admin:true});
+  if(!r.ok){ const m=`<div class="hint" style="color:var(--red)">${_he(r.data.error||'Could not load the numbers.')}</div>`; if(sp) sp.innerHTML=m; if(wp) wp.innerHTML=m; return; }
+  const d=r.data||{}, st=d.stats||{};
+  if(sp) sp.innerHTML=[['Registered users',fa(st.users)],['Users who got a loan',fa(st.borrowers)],['Loans granted',fa(st.granted)],['Total disbursed','৳'+fa(st.distributed)],["Today's disbursed",'৳'+fa(st.today)+` <small style="font-size:11px;color:var(--txt2)">(${st.todayCount||0})</small>`]]
+    .map(([l,v])=>`<div class="sxp"><b>${v}</b><span>${l}</span></div>`).join('');
+  if(!wp||!_H) return;
+  const H=new Set(_H.winners.hidden);
+  const row=(id,ic,title,sub)=>{ const h=H.has(id); return `<div class="hp-row ${h?'off':''}"><div class="hp-ic"><i class="fa-solid fa-${ic}"></i></div><div class="hp-main"><div class="hp-t">${title}${h?'<span class="hp-badge off">Hidden</span>':''}</div><div class="hp-s">${sub}</div></div><button class="btn btn-sm ${h?'btn-p':'btn-s'}" onclick="wxHide('${_he(id)}')"><i class="fa-solid fa-${h?'eye':'eye-slash'}"></i>${h?'Show':'Hide'}</button></div>`; };
+  const people=new Map();
+  (d.leaders||[]).forEach(p=>people.set(p.id,{...p,why:`#${p.rank} inviter · ${p.count} active friends`}));
+  (d.targets||[]).forEach(t=>t.winners.forEach(p=>{ if(!people.has(p.id)) people.set(p.id,{...p,why:`Reached target ${t.level} (${t.need} friends)`}); }));
+  const kindTxt={hot:'Hot Offer',target:'Invite target',balance:'Balance Offer',bonus:'Sign-up bonus'};
+  let h='<div class="man-sub" style="margin-top:0">People</div>'+([...people.values()].map(p=>row(p.id,'user',`${_he(p.name)} <span style="color:var(--txt2);font-weight:600">· 0${_he(p.phone||'')}</span>`,_he(p.why))).join('')||'<div class="hint">No inviters yet.</div>');
+  h+='<div class="man-sub">Winners list entries</div>'+((d.feed||[]).map(e=>row(e.id,e.kind==='target'?'trophy':e.kind==='hot'?'fire':e.kind==='balance'?'wallet':'gift',`${_he(e.name)} · ${kindTxt[e.kind]||e.kind}`,`${_he(e.prize)} · ${fd(e.at)}`)).join('')||'<div class="hint">No winners yet.</div>');
+  wp.innerHTML=h;
+}
+function wxHide(id){ if(!_H) return; const L=_H.winners.hidden, i=L.indexOf(id); if(i>=0) L.splice(i,1); else L.push(id); markDirty('home','wx'); hpLoadShowcase(); }
 function _hpRead(){
   const v=id=>document.getElementById(id), c=id=>!!v(id)?.checked, t=id=>(v(id)?.value||'').trim(), n=(id,d)=>{ const x=parseInt(t(id)); return isNaN(x)?d:x; };
   Object.assign(_H.live, { on:c('lv-on'), loans:c('lv-loans'), fees:c('lv-fees'), title:t('lv-title')||'Live Transactions', count:Math.min(30,Math.max(1,n('lv-count',8))), days:Math.max(0,n('lv-days',30)), refresh:Math.max(0,n('lv-refresh',60)), scroll:c('lv-scroll') });
@@ -3434,6 +3589,11 @@ function _hpRead(){
     delay:Math.min(30,Math.max(0,f('fo-delay',3.5))), start:t('fo-start'), end:t('fo-end'), icon:t('fo-icon')||'🔥', promo:t('fo-promo')||FO_DEF.promo,
     bannerTitle:t('fo-btitle'), bannerText:t('fo-btext'), popupTitle:t('fo-ptitle'), button:t('fo-button')||FO_DEF.button, popupText:t('fo-ptext'), popupNote:t('fo-pnote'),
     counterLabel:t('fo-clabel')||FO_DEF.counterLabel, endedText:t('fo-ended')||FO_DEF.endedText, successTitle:t('fo-stitle')||FO_DEF.successTitle, successText:t('fo-stext')||FO_DEF.successText });
+  Object.assign(_H.stats, { on:c('sx-on'), title:t('sx-title')||SX_DEF.title, sub:t('sx-sub'), usersMode:t('sx-mode')||'all', format:t('sx-format')||'short', refresh:Math.max(0,n('sx-refresh',120)), note:t('sx-note') });
+  Object.keys(SX_DEF.cards).forEach(k=>{ _H.stats.cards[k]={ on:c('sx-c-'+k+'-on'), label:t('sx-c-'+k+'-label')||SX_DEF.cards[k].label, icon:t('sx-c-'+k+'-icon')||SX_DEF.cards[k].icon, tag:t('sx-c-'+k+'-tag') }; });
+  Object.assign(_H.winners, { on:c('wx-on'), title:t('wx-title')||WX_DEF.title, sub:t('wx-sub'), advice:t('wx-advice'), cta:t('wx-cta')||WX_DEF.cta, showLeader:c('wx-leader'), showTargets:c('wx-targets'),
+    targetCount:Math.min(20,Math.max(1,n('wx-tcount',5))), showFeed:c('wx-feed'), feedTitle:t('wx-ftitle')||WX_DEF.feedTitle, feedCount:Math.min(40,Math.max(1,n('wx-fcount',10))), scroll:c('wx-scroll'),
+    kinds:{ hot:c('wx-k-hot'), target:c('wx-k-target'), balance:c('wx-k-balance'), bonus:c('wx-k-bonus') } });
   Object.assign(_H.topbar, { theme:t('tb-theme')||'green', clear:Math.min(80,Math.max(0,n('tb-clear',35))), glass:c('tb-glass'), compact:c('tb-compact'), hideOnScroll:c('tb-hide'),
     avatar:c('tb-avatar'), greet:c('tb-hi'), balance:c('tb-balance'), notif:c('tb-notif'), support:c('tb-support'), logout:c('tb-logout'), alert:c('tb-alert'), title:t('tb-name')||'phone', visitorText:t('tb-vtext') });
   const mn=Math.min(10,Math.max(0,f('sl-min',1.5)));
@@ -3657,12 +3817,50 @@ async function hpLoadFeed(){
   const r=await window._accountApi('feed',{admin:true});
   if(!r.ok){ el.innerHTML=`<div class="hint" style="color:var(--red)">${_he(r.data.error||'Could not load the live feed.')}</div>`; return; }
   const items=r.data.items||[];
+  window._lvItems=items; _lvSel=new Set([..._lvSel].filter(id=>items.some(x=>x.id===id)));
   const hid=new Set(_H?_H.live.hidden:[]);
-  el.innerHTML = items.length ? items.map(x=>{ const h=hid.has(x.id); return `<div class="hp-row ${h?'off':''}">
+  el.innerHTML = items.length ? items.map(x=>{ const h=hid.has(x.id), sel=_lvSel.has(x.id); return `<div class="hp-row ${h?'off':''} ${sel?'sel':''}" data-id="${_he(x.id)}">
+    <input type="checkbox" class="lv-ck" ${sel?'checked':''} onchange="lvSel('${_he(x.id)}',this.checked)" aria-label="Select">
     <div class="hp-ic" style="${x.kind==='fee'?'background:rgba(77,143,255,.14);color:#7aa8ff':''}"><i class="fa-solid fa-${x.kind==='fee'?'receipt':'check'}"></i></div>
     <div class="hp-main"><div class="hp-t">${_he(x.name)} · ${x.kind==='fee'?'Fee paid ৳'+_he(x.amount):'Loan approved ৳'+fa(x.amount)}${h?'<span class="hp-badge off">Hidden</span>':''}</div><div class="hp-s">${fd(x.at)}</div></div>
     <button class="btn btn-sm ${h?'btn-p':'btn-s'}" onclick="hpHide('${x.id}')"><i class="fa-solid fa-${h?'eye':'eye-slash'}"></i>${h?'Show':'Hide'}</button>
   </div>`; }).join('') : '<div class="hint">No approved loans or verified fees yet.</div>';
+  lvPaint();
+}
+// select entries in the preview, then hide / show / delete them together
+let _lvSel=new Set();
+function lvSel(id,on){ if(on) _lvSel.add(id); else _lvSel.delete(id); document.querySelector(`#lvPreview .hp-row[data-id="${CSS.escape(id)}"]`)?.classList.toggle('sel',on); lvPaint(); }
+function lvSelAll(on){ _lvSel=new Set(on?(window._lvItems||[]).map(x=>x.id):[]); document.querySelectorAll('#lvPreview .hp-row').forEach(r=>{ const c=r.querySelector('.lv-ck'); if(c) c.checked=on; r.classList.toggle('sel',on); }); lvPaint(); }
+function lvPaint(){
+  const n=_lvSel.size, all=(window._lvItems||[]).length;
+  const t=document.getElementById('lvN'); if(t) t.textContent=n?`${n} selected`:'Tick entries to hide, show or delete them';
+  const a=document.getElementById('lvAll'); if(a){ a.checked=!!all&&n===all; a.indeterminate=n>0&&n<all; }
+  document.querySelectorAll('#lvBar button').forEach(b=>b.disabled=!n);
+}
+function lvBulk(op){
+  if(!_H||!_lvSel.size) return;
+  const ids=[..._lvSel], L=_H.live.hidden;
+  if(op==='hide'||op==='show'){
+    ids.forEach(id=>{ const i=L.indexOf(id); if(op==='hide'&&i<0) L.push(id); if(op==='show'&&i>=0) L.splice(i,1); });
+    _lvSel=new Set(); markDirty('home','live'); hpLoadFeed();
+    toast(`${ids.length} entr${ids.length>1?'ies':'y'} ${op==='hide'?'hidden':'shown'} — press Save to publish`,'i');
+    return;
+  }
+  const items=(window._lvItems||[]).filter(x=>_lvSel.has(x.id));
+  const fees=items.filter(x=>x.kind==='fee'), loans=items.filter(x=>x.kind!=='fee');
+  const parts=[]; if(fees.length) parts.push(`${fees.length} fee payment${fees.length>1?'s':''} (transaction records)`); if(loans.length) parts.push(`${loans.length} approved loan${loans.length>1?'s':''} (application records)`);
+  confirm2(`Permanently delete ${parts.join(' and ')}? They disappear from the live feed and from Transactions / Applications. This cannot be undone. User balances are not changed.`, async()=>{
+    showL(true);
+    let ok=0, bad=0;
+    for(const x of items){
+      const id=String(x.id).slice(2), col=x.kind==='fee'?'transactions':'applications';
+      try{ await window._deleteDoc(id,col); ok++; const i=L.indexOf(x.id); if(i>=0) L.splice(i,1); }catch(e){ bad++; console.error('delete',x.id,e); }
+    }
+    await logAct(`Live feed: ${ok} record${ok!==1?'s':''} deleted (${fees.length} fee, ${loans.length} loan)`,'transaction','live');
+    _lvSel=new Set(); showL(false);
+    toast(bad?`${ok} deleted, ${bad} failed`:`${ok} deleted ✓`, bad?'w':'e');
+    hpLoadFeed();
+  });
 }
 function hpHide(id){
   if(!_H) return; const L=_H.live.hidden; const i=L.indexOf(id);
@@ -3672,7 +3870,7 @@ function hpHide(id){
 document.addEventListener('DOMContentLoaded',()=>{
   const sec=document.getElementById('sec-home');
   // the static setting fields (not the list rows, which mark themselves)
-  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl|of|fo|tb)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); if(/^fo-/.test(e.target.id)) hpFomoPreview(); if(/^tb-/.test(e.target.id)) hpTopPreview(); } }));
+  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl|of|fo|tb|sx|wx)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); if(/^fo-/.test(e.target.id)) hpFomoPreview(); if(/^tb-/.test(e.target.id)) hpTopPreview(); } }));
 });
 
 // ══ BROADCAST ════════════════════════════════════════

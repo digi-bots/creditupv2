@@ -105,6 +105,28 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #appBar .balance-pill span{font-size:12.5px}
 #appBar .balance-pill .bp-lbl{font-size:11px;color:var(--p)}
 #appBar .balance-pill i{font-size:12px;padding:2px}
+/* premium balance card */
+#appBar .bp-pro{position:relative;display:inline-flex;align-items:center;gap:8px;margin-top:5px;padding:3px 6px 3px 3px;border-radius:14px;cursor:pointer;
+  background:linear-gradient(135deg,rgba(255,215,106,.14),rgba(29,219,128,.08) 45%,rgba(0,0,0,0)) padding-box,linear-gradient(160deg,#0d2f1f,#071a11) padding-box,linear-gradient(120deg,#ffd76a,#1ddb80 55%,#0fbb65) border-box;
+  border:1px solid transparent;box-shadow:0 6px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12);overflow:visible;isolation:isolate}
+#appBar .bp-pro::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.18) 50%,transparent 65%);background-size:250% 100%;animation:bpShine 4.5s ease-in-out infinite;pointer-events:none;z-index:-1}
+@keyframes bpShine{0%,60%{background-position:120% 0}100%{background-position:-120% 0}}
+#appBar .bp-ic{width:24px;height:24px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffd76a,#f5b72f);box-shadow:0 2px 8px rgba(245,183,47,.4);flex:none}
+#appBar .bp-ic i{color:#3b2a00;font-size:11px;padding:0;cursor:inherit}
+#appBar .bp-txt{display:flex;flex-direction:column;line-height:1.05}
+#appBar .bp-pro .bp-lbl{font-size:8.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#ffd76a;opacity:.9}
+#appBar .bp-pro #headerBalance{font-size:13.5px;font-weight:900;color:#fff;letter-spacing:.2px;font-variant-numeric:tabular-nums;transition:transform .25s}
+#appBar .bp-pro.bump #headerBalance{transform:scale(1.12)}
+#appBar .bp-eye{width:22px;height:22px;border-radius:50%;display:flex!important;align-items:center;justify-content:center;background:rgba(255,255,255,.1);color:#fff!important;font-size:10.5px!important;padding:0!important}
+#appBar .bp-dot{position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:#ff3b5c;border:2px solid #0a3a20;display:none}
+#appBar .bp-dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(255,59,92,.6);animation:bpPing 1.6s ease-out infinite}
+@keyframes bpPing{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.6);opacity:0}}
+#appBar .bp-pro.new .bp-dot{display:block}
+#appBar .bp-delta{position:absolute;left:50%;top:100%;transform:translate(-50%,0);font-size:10.5px;font-weight:900;color:#4ade80;background:rgba(6,30,18,.92);border:1px solid rgba(74,222,128,.45);padding:1px 7px;border-radius:9px;white-space:nowrap;opacity:0;pointer-events:none}
+#appBar .bp-delta.minus{color:#ff8a9c;border-color:rgba(255,77,106,.45)}
+#appBar .bp-delta.show{animation:bpDelta 2.6s ease forwards}
+@keyframes bpDelta{0%{opacity:0;transform:translate(-50%,-4px)}12%,75%{opacity:1;transform:translate(-50%,4px)}100%{opacity:0;transform:translate(-50%,10px)}}
+@media (prefers-reduced-motion:reduce){#appBar .bp-pro::after,#appBar .bp-dot::after{animation:none}}
 #appBar .ab-acts{display:flex;gap:7px;flex-shrink:0}
 #appBar .notif-btn{width:36px;height:36px;font-size:16px}
 #appBar .notif-badge{width:auto;min-width:17px;height:17px;border-radius:10px;top:-5px;right:-5px;font-size:9.5px;font-weight:800;color:#fff;align-items:center;justify-content:center;padding:0 4px;line-height:1}
@@ -116,7 +138,13 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #appBar.tb-gold h3{background:linear-gradient(90deg,#fff,#ffd76a,#fff);-webkit-background-clip:text;background-clip:text}
 #appBar.ab-scrolled{box-shadow:0 8px 24px rgba(0,0,0,.28);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%)}
 #appBar.ab-scrolled.tb-compact{padding-top:6px;padding-bottom:6px}
-#appBar.ab-scrolled.tb-compact .balance-pill,#appBar.ab-scrolled.tb-compact .ab-hi{display:none!important}
+/* compact: the greeting and balance fold away smoothly (no jump, no flicker) */
+#appBar .ab-hi,#appBar .balance-pill{transition:max-height .32s cubic-bezier(.4,0,.2,1),opacity .22s ease,margin .32s cubic-bezier(.4,0,.2,1),padding .32s cubic-bezier(.4,0,.2,1),transform .32s cubic-bezier(.4,0,.2,1);will-change:max-height,opacity}
+#appBar .ab-hi{max-height:16px;overflow:hidden}
+#appBar .balance-pill{max-height:44px}
+#appBar.ab-scrolled.tb-compact .ab-hi{max-height:0;opacity:0;margin-bottom:0}
+#appBar.ab-scrolled.tb-compact .balance-pill{max-height:0;opacity:0;margin-top:0;padding-top:0;padding-bottom:0;border-width:0;transform:translateY(-4px);pointer-events:none}
+#app{overflow-anchor:none}
 #appBar.ab-hidden{transform:translateY(-110%)}
 #appBar .ab-av{width:38px;height:38px;flex:none;border-radius:50%;border:2px solid var(--p);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.22),rgba(255,255,255,.06));color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 3px rgba(29,219,128,.15);padding:0}
 #appBar.tb-gold .ab-av{border-color:#ffd76a;box-shadow:0 0 0 3px rgba(255,215,106,.15)}
@@ -187,6 +215,85 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .step-desc{font-size:12px;color:var(--txt2);line-height:1.5}
 .live-section{margin-bottom:25px; padding-bottom:20px;}
 .live-title{font-size:15px;font-weight:800;color:var(--txt);margin-bottom:12px;padding-left:5px}
+/* ── showcase: stats (3D cards) ── */
+.sx,.wx{margin-top:26px}
+.sx-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sx-head .live-title{margin-bottom:4px}
+.sx-live{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;color:var(--p);background:rgba(29,219,128,.1);border:1px solid rgba(29,219,128,.3);padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px}
+.sx-live.gold{color:#ffd76a;background:rgba(255,215,106,.1);border-color:rgba(255,215,106,.3)}
+.sx-live i{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 0 0 currentColor;animation:sxPulse 1.6s infinite}
+@keyframes sxPulse{0%{box-shadow:0 0 0 0 rgba(29,219,128,.55)}100%{box-shadow:0 0 0 8px rgba(29,219,128,0)}}
+.sx-sub{font-size:12px;color:var(--txt2);margin:0 5px 14px;line-height:1.5}
+.sx-sub:empty{display:none}
+.sx-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;perspective:900px}
+.sx-card{--c1:#1ddb80;--c2:#0a8a48;--glow:rgba(29,219,128,.35);position:relative;border-radius:20px;padding:14px 13px 13px;min-height:122px;overflow:hidden;transform-style:preserve-3d;
+  background:radial-gradient(120% 90% at 100% 0%,color-mix(in srgb,var(--c1) 30%,transparent),transparent 60%),linear-gradient(160deg,#13233c,#0b1628 70%);
+  border:1px solid color-mix(in srgb,var(--c1) 35%,transparent);box-shadow:0 18px 30px -14px var(--glow),0 2px 0 rgba(255,255,255,.06) inset,0 -10px 24px rgba(0,0,0,.25) inset;
+  transform:rotateX(6deg) translateZ(0);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;animation:sxIn .6s cubic-bezier(.2,.8,.2,1) both}
+.sx-card:nth-child(2){animation-delay:.08s}.sx-card:nth-child(3){animation-delay:.16s}.sx-card:nth-child(4){animation-delay:.24s}
+@keyframes sxIn{from{opacity:0;transform:rotateX(28deg) translateY(16px)}to{opacity:1;transform:rotateX(6deg)}}
+.sx-card:active,.sx-card:hover{transform:rotateX(0) translateY(-3px) scale(1.015);box-shadow:0 24px 36px -14px var(--glow),0 2px 0 rgba(255,255,255,.08) inset}
+.sx-card::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.09) 45%,transparent 60%);background-size:250% 100%;animation:sxGloss 6s ease-in-out infinite;pointer-events:none}
+@keyframes sxGloss{0%,55%{background-position:130% 0}100%{background-position:-130% 0}}
+.sx-card.c-blue{--c1:#4d8fff;--c2:#2457c5;--glow:rgba(77,143,255,.35)}
+.sx-card.c-gold{--c1:#ffc94d;--c2:#c98a0b;--glow:rgba(255,201,77,.32)}
+.sx-card.c-pink{--c1:#ff6b9a;--c2:#c42d63;--glow:rgba(255,107,154,.32)}
+.sx-orb{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;margin-bottom:10px;transform:translateZ(30px);
+  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.55),transparent 38%),linear-gradient(145deg,var(--c1),var(--c2));
+  box-shadow:0 10px 18px -6px var(--glow),0 -3px 0 rgba(0,0,0,.25) inset,0 2px 0 rgba(255,255,255,.35) inset;animation:sxFloat 4s ease-in-out infinite}
+@keyframes sxFloat{0%,100%{transform:translateZ(30px) translateY(0)}50%{transform:translateZ(30px) translateY(-3px)}}
+.sx-val{font-size:clamp(19px,6vw,23px);font-weight:900;color:#fff;letter-spacing:-.4px;line-height:1.1;font-variant-numeric:tabular-nums;text-shadow:0 2px 12px var(--glow)}
+.sx-lbl{font-size:11.5px;font-weight:700;color:var(--txt2);margin-top:3px}
+.sx-tag{position:absolute;top:12px;right:12px;font-size:9.5px;font-weight:800;color:var(--c1);background:color-mix(in srgb,var(--c1) 14%,transparent);padding:2px 7px;border-radius:8px}
+.sx-note{font-size:10.5px;color:var(--txt3);margin:10px 5px 0;text-align:center}
+.sx-note:empty{display:none}
+/* ── showcase: invite champions ── */
+.wx-podium{display:grid;grid-template-columns:1fr 1.12fr 1fr;align-items:end;gap:8px;margin:6px 0 14px;perspective:800px}
+.wx-pl{text-align:center;animation:sxIn .7s cubic-bezier(.2,.8,.2,1) both}
+.wx-pl.r1{animation-delay:.1s}.wx-pl.r3{animation-delay:.2s}
+.wx-av{width:52px;height:52px;margin:0 auto 6px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#1a1405;position:relative;
+  background:radial-gradient(circle at 30% 25%,#fff8,transparent 40%),linear-gradient(145deg,#d9dee6,#8f98a6);box-shadow:0 8px 16px -6px rgba(0,0,0,.6),0 -3px 0 rgba(0,0,0,.2) inset}
+.wx-pl.r1 .wx-av{width:62px;height:62px;font-size:24px;background:radial-gradient(circle at 30% 25%,#fff9,transparent 40%),linear-gradient(145deg,#ffe28a,#e0a21b);box-shadow:0 10px 22px -6px rgba(255,201,77,.6),0 -3px 0 rgba(0,0,0,.2) inset}
+.wx-pl.r3 .wx-av{background:radial-gradient(circle at 30% 25%,#fff7,transparent 40%),linear-gradient(145deg,#f0b48a,#a8612f)}
+.wx-crown{position:absolute;top:-15px;left:50%;transform:translateX(-50%) rotate(-8deg);font-size:18px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.wx-nm{font-size:12px;font-weight:800;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wx-cnt{font-size:10.5px;color:var(--txt2);margin-bottom:6px}
+.wx-cnt b{color:#ffd76a}
+.wx-step{position:relative;border-radius:10px 10px 6px 6px;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;font-size:22px;font-weight:900;color:rgba(255,255,255,.92);
+  background:linear-gradient(180deg,#26405f,#14243a);box-shadow:0 -6px 0 #33557d inset,0 14px 24px -12px rgba(0,0,0,.8);transform:rotateX(10deg);transform-origin:bottom}
+.wx-pl.r1 .wx-step{height:78px;background:linear-gradient(180deg,#e7a91f,#9b6a07);box-shadow:0 -6px 0 #ffd76a inset,0 16px 28px -12px rgba(255,201,77,.55)}
+.wx-pl.r2 .wx-step{height:58px}
+.wx-pl.r3 .wx-step{height:44px;background:linear-gradient(180deg,#a8612f,#6d3a17);box-shadow:0 -6px 0 #d98e58 inset,0 14px 24px -12px rgba(0,0,0,.8)}
+.wx-pl.empty .wx-av{opacity:.35}.wx-pl.empty .wx-nm{color:var(--txt3)}
+.wx-advice{display:flex;gap:11px;align-items:center;padding:12px;border-radius:16px;margin-bottom:14px;background:linear-gradient(135deg,rgba(255,215,106,.14),rgba(29,219,128,.08));border:1px solid rgba(255,215,106,.3)}
+.wx-advice>i{width:38px;height:38px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffd76a,#f5b72f);color:#1a1405;font-size:16px;box-shadow:0 6px 14px -4px rgba(245,183,47,.6)}
+.wx-advice .wa-t{flex:1;min-width:0;font-size:12px;color:#e9f6ee;line-height:1.5}
+.wx-advice .wa-t b{color:#ffd76a}
+.wx-advice .wa-me{display:block;font-size:11px;color:var(--p);font-weight:700;margin-top:3px}
+.wx-advice button{flex:none;height:34px;padding:0 12px;border:0;border-radius:10px;font-weight:800;font-size:12px;font-family:inherit;color:#fff;background:linear-gradient(135deg,var(--p),var(--p2));cursor:pointer;white-space:nowrap}
+.wx-targets{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.wx-tg{border-radius:14px;padding:10px 8px;text-align:center;background:linear-gradient(170deg,#13233c,#0b1628);border:1px solid var(--bord);position:relative;overflow:hidden}
+.wx-tg::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#1ddb80,#ffd76a)}
+.wx-tg .tg-l{font-size:9.5px;font-weight:800;color:#ffd76a;text-transform:uppercase;letter-spacing:.5px}
+.wx-tg .tg-n{font-size:18px;font-weight:900;color:#fff;margin:2px 0}
+.wx-tg .tg-n small{font-size:10px;color:var(--txt2);font-weight:700}
+.wx-tg .tg-p{font-size:9.5px;color:var(--txt2);line-height:1.3;min-height:25px}
+.wx-tg .tg-w{margin-top:6px;font-size:10px;font-weight:800;color:var(--p)}
+.wx-tg .tg-names{font-size:9.5px;color:var(--txt);margin-top:3px;line-height:1.4;overflow-wrap:anywhere}
+.wx-ft{font-size:13px;font-weight:800;color:var(--txt);margin:0 5px 8px}
+.wx-feed{display:flex;flex-direction:column;gap:7px;max-height:236px;overflow:hidden;position:relative}
+.wx-feed.scrolling{mask-image:linear-gradient(transparent,#000 10%,#000 90%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 10%,#000 90%,transparent)}
+.wx-feed .lf-track{display:flex;flex-direction:column;gap:7px;animation:lfScroll var(--lf-dur,30s) linear infinite}
+.wx-it{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--bord)}
+.wx-it .wi-ic{width:34px;height:34px;flex:none;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#1a1405;background:linear-gradient(135deg,#ffd76a,#f5b72f)}
+.wx-it.k-target .wi-ic{background:linear-gradient(135deg,#1ddb80,#0a8a48);color:#fff}
+.wx-it.k-balance .wi-ic{background:linear-gradient(135deg,#4d8fff,#2457c5);color:#fff}
+.wx-it.k-bonus .wi-ic{background:linear-gradient(135deg,#ff6b9a,#c42d63);color:#fff}
+.wx-it .wi-m{flex:1;min-width:0}
+.wx-it .wi-m b{display:block;font-size:12.5px;color:var(--txt)}
+.wx-it .wi-m span{display:block;font-size:11px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wx-it .wi-t{font-size:10px;color:var(--txt3);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.sx-card,.sx-orb,.sx-card::before,.wx-pl,.wx-feed .lf-track{animation:none!important}}
 .live-feed{background:var(--surf);border-radius:16px;border:1px solid var(--bord);padding:10px 15px;max-height:180px;overflow-y:auto}
 .live-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--bord)}
 .live-item:last-child{border-bottom:none}
@@ -2725,7 +2832,7 @@ document.addEventListener('DOMContentLoaded', function(){
   <div class="ab-mid">
     <small class="ab-hi" id="abHi"></small>
     <h3 id="userGreeting">Welcome to Credit Up</h3>
-    <div class="balance-pill" id="balanceContainer" style="display:none;"><span class="bp-lbl"><i class="fa-solid fa-wallet"></i> Balance:</span><span id="headerBalance">৳ ••••</span><i class="fa-solid fa-eye-slash" id="balanceToggleBtn" onclick="toggleBalanceVisibility()"></i></div>
+    <div class="balance-pill bp-pro" id="balanceContainer" style="display:none;" onclick="_balSeen()"><span class="bp-ic"><i class="fa-solid fa-wallet"></i></span><span class="bp-txt"><span class="bp-lbl">Balance</span><span id="headerBalance">৳ ••••</span></span><i class="fa-solid fa-eye-slash bp-eye" id="balanceToggleBtn" onclick="event.stopPropagation();toggleBalanceVisibility();_balSeen()"></i><span class="bp-dot" id="balDot" aria-label="Balance updated"></span><span class="bp-delta" id="balDelta"></span></div>
   </div>
   <div class="ab-acts">
     <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;" aria-label="Notifications"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
@@ -2773,6 +2880,20 @@ document.addEventListener('DOMContentLoaded', function(){
       <div id="liveBlock">
         <div class="live-title" id="liveFeedTitle"><span id="liveTitleTxt">Live Transactions</span> <span class="live-dot"><i class="fa-solid fa-circle"></i> Live</span></div>
         <div class="live-feed" id="liveFeedContainer"><div style="text-align:center; color:var(--txt2); font-size:12px; padding:15px;">Loading recent activity...</div></div>
+      </div>
+      <div id="statsBlock" class="sx" style="display:none">
+        <div class="sx-head"><div class="live-title" id="sxTitle">Our Impact</div><span class="sx-live"><i></i>Live</span></div>
+        <div class="sx-sub" id="sxSub"></div>
+        <div class="sx-grid" id="sxGrid"></div>
+        <div class="sx-note" id="sxNote"></div>
+      </div>
+      <div id="winBlock" class="wx" style="display:none">
+        <div class="sx-head"><div class="live-title" id="wxTitle">Invite Champions</div><span class="sx-live gold"><i></i>Live</span></div>
+        <div class="sx-sub" id="wxSub"></div>
+        <div class="wx-podium" id="wxPodium"></div>
+        <div class="wx-advice" id="wxAdvice"></div>
+        <div class="wx-targets" id="wxTargets"></div>
+        <div id="wxFeedWrap"><div class="wx-ft" id="wxFeedTitle">Live Offer Winners</div><div class="wx-feed" id="wxFeed"></div></div>
       </div>
       <div id="partnerBlock">
         <div class="live-title" style="margin-top:20px;" id="partnerTitle">Our Partners</div>
@@ -3582,6 +3703,30 @@ document.querySelectorAll('input[type="text"], input[type="email"], input[type="
   }
 });
 
+// balance shown in the top bar; a red dot (and +৳/-৳ chip) appears when it changed since the user last looked
+function _balKey(){ const u = _getUser(); return u ? 'cu_bal_seen_' + u.phone : ''; }
+function _setBalance(v){
+  v = Number(v) || 0;
+  const prev = window._balKnown ? window._userRealBalance : null;
+  window._userRealBalance = v; window._balKnown = true;
+  const el = document.getElementById('headerBalance');
+  if(el) el.innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + v.toLocaleString();
+  const k = _balKey(); let seen = null;
+  try{ seen = localStorage.getItem(k); }catch(e){}
+  if(seen === null){ try{ localStorage.setItem(k, String(v)); }catch(e){} return; }   // first visit on this device: nothing to flag
+  const box = document.getElementById('balanceContainer');
+  if(box) box.classList.toggle('new', Number(seen) !== v);
+  if(prev !== null && prev !== v && box){
+    const d = document.getElementById('balDelta'), diff = v - prev;
+    if(d){ d.textContent = (diff > 0 ? '+৳' : '-৳') + Math.abs(diff).toLocaleString(); d.classList.toggle('minus', diff < 0); d.classList.remove('show'); void d.offsetWidth; d.classList.add('show'); }
+    box.classList.add('bump'); setTimeout(() => box.classList.remove('bump'), 260);
+  }
+}
+window._setBalance = _setBalance;
+function _balSeen(){
+  try{ localStorage.setItem(_balKey(), String(window._userRealBalance || 0)); }catch(e){}
+  document.getElementById('balanceContainer')?.classList.remove('new');
+}
 function toggleBalanceVisibility() {
   const balEl = document.getElementById('headerBalance');
   const icon  = document.getElementById('balanceToggleBtn');
@@ -5035,7 +5180,9 @@ function _clearUserSession(){
   nidFrontUrl = ''; nidBackUrl = ''; nidFrontOk = false; nidBackOk = false;
   pendingLoginUser = null;
   window._latestApp = null; window._latestAppId = null; window._pendingFeeApp = null; window._allApps = []; window._trxByApp = {}; window._userDocId = null;
-  window._userRealBalance = 0; window._promoClaimed = false; window._balanceAdjustUsed = false;
+  window._userRealBalance = 0; window._balKnown = false; window._promoClaimed = false; window._balanceAdjustUsed = false;
+  if(window._balUnsub){ try{ window._balUnsub(); }catch(e){} window._balUnsub = null; }
+  document.getElementById('balanceContainer')?.classList.remove('new');
   const hb = document.getElementById('headerBalance'); if(hb) hb.innerText = '৳ ••••';
   const nl = document.getElementById('notifListContainer'); if(nl) nl.innerHTML = '';
   const nb = document.getElementById('notifBadge'); if(nb) nb.style.display = 'none';
@@ -5588,6 +5735,13 @@ async function _api(action, data, withToken){
   return { ok: r.ok, status: r.status, data: j };
 }
 window._api = _api;
+// live balance: the profile document is watched while the user is signed in
+window._watchBalance = function(docId){
+  if(!db || !docId || window._balDocId === docId && window._balUnsub) return;
+  if(window._balUnsub){ try{ window._balUnsub(); }catch(e){} }
+  window._balDocId = docId;
+  window._balUnsub = onSnapshot(doc(db, 'users', docId), s => { if(s.exists() && typeof _setBalance === 'function') _setBalance(s.data().balance || 0); }, () => {});
+};
 // "last seen" for Admin → Users → Active users: at most once every 4 minutes while the app is open
 let _pingAt = 0;
 function _ping(){
@@ -6684,14 +6838,18 @@ let _tbLast = 0;
 function _tbScroll(){
   const app = document.getElementById('app'), bar = document.getElementById('appBar'), B = window._tb || {};
   if(!app || !bar) return;
-  const y = app.scrollTop, sc = y > 8;
-  bar.classList.toggle('ab-scrolled', sc);
+  const y = app.scrollTop;
+  // two thresholds: folding the bar makes it shorter, so one threshold would flip it back and forth (shaking)
+  const was = bar.classList.contains('ab-scrolled');
+  const sc = was ? y > 6 : y > 56;
+  if(sc !== was) bar.classList.toggle('ab-scrolled', sc);
   bar.style.setProperty('--tb-a', sc && B.glass !== false ? (1 - Math.min(80, Math.max(0, Number(B.clear ?? 35))) / 100).toFixed(2) : '.94');
-  if(B.hideOnScroll) bar.classList.toggle('ab-hidden', y > 80 && y > _tbLast + 4 ? true : (y < _tbLast - 4 || y <= 80) ? false : bar.classList.contains('ab-hidden'));
+  if(B.hideOnScroll) bar.classList.toggle('ab-hidden', y > 120 && y > _tbLast + 6 ? true : (y < _tbLast - 10 || y <= 80) ? false : bar.classList.contains('ab-hidden'));
   else bar.classList.remove('ab-hidden');
   _tbLast = y;
 }
-document.getElementById('app')?.addEventListener('scroll', () => requestAnimationFrame(_tbScroll), { passive:true });
+let _tbRaf = 0;
+document.getElementById('app')?.addEventListener('scroll', () => { if(!_tbRaf) _tbRaf = requestAnimationFrame(() => { _tbRaf = 0; _tbScroll(); }); }, { passive:true });
 
 // offer banner at the top of the home screen (Admin → Home Page → Offers)
 let _osTimer = null;
@@ -6818,8 +6976,8 @@ window.loadUserDashboardData = async function() {
         window._promoClaimed = uDoc.data().promoClaimed === true;
         window._promoLabel = uDoc.data().promo || '';
       } catch(e) {}
-      window._userRealBalance = uSnap.docs[0].data().balance || 0;
-      document.getElementById('headerBalance').innerText = window._isBalanceHidden ? '৳ ••••' : '৳ ' + window._userRealBalance.toLocaleString();
+      _setBalance(uSnap.docs[0].data().balance || 0);
+      if(window._watchBalance) window._watchBalance(uSnap.docs[0].id);
     }
   } catch(e) {}
 
@@ -7016,6 +7174,85 @@ window.loadLiveFeed = async function() {
   if(sec > 0) _lfTimer = setTimeout(window.loadLiveFeed, Math.max(15, sec) * 1000);
 };
 
+// home showcase: real totals + invite champions + offer winners (Admin → Home Page → Stats / Winners)
+let _sxTimer = null;
+const _sxShort = n => n >= 1e7 ? (n/1e7).toFixed(n >= 1e8 ? 0 : 1).replace(/\.0$/,'') + ' Cr' : n >= 1e5 ? (n/1e5).toFixed(n >= 1e6 ? 0 : 1).replace(/\.0$/,'') + ' Lakh' : n >= 1e3 ? (n/1e3).toFixed(n >= 1e4 ? 0 : 1).replace(/\.0$/,'') + 'K' : String(n);
+function _sxCount(el, to, fmt){
+  const t0 = performance.now(), dur = 1200, from = Number(el.dataset.v || 0); el.dataset.v = to;
+  const step = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(Math.round(from + (to - from) * e)); if(k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+window.loadShowcase = async function(){
+  const SB = document.getElementById('statsBlock'), WB = document.getElementById('winBlock');
+  if(!SB || !WB) return;
+  const home = await window.loadHomeCfg();
+  const S = { on:true, title:'Our Impact', sub:'Real numbers from Credit Up, updated live', usersMode:'all', format:'short', refresh:120, note:'', ...(home.stats || {}) };
+  const W = { on:true, title:'Invite Champions', sub:'Invite friends, climb the board and win real rewards', advice:'Every friend who joins with your link brings you closer to the next reward. Share your link today — the more friends, the bigger the prize!', cta:'Invite Friends', showLeader:true, showTargets:true, showFeed:true, feedTitle:'Live Offer Winners', scroll:true, ...(home.winners || {}) };
+  if(S.on === false && W.on === false){ SB.style.display = WB.style.display = 'none'; return; }
+  let d = {};
+  try{ const r = await _api('showcase'); if(!r.ok) throw new Error(r.data.error || 'showcase'); d = r.data || {}; }catch(e){ SB.style.display = WB.style.display = 'none'; return; }
+  const money = v => S.format === 'full' ? '৳' + Number(v).toLocaleString('en-US') : '৳' + _sxShort(v);
+  const count = v => S.format === 'full' ? Number(v).toLocaleString('en-US') : _sxShort(v) + (v >= 1000 ? '+' : '');
+  // stats
+  if(S.on !== false && d.stats){
+    const C = S.cards || {}, st = d.stats;
+    const cards = [
+      ['users', 'c-green', 'fa-face-smile', S.usersMode === 'borrowers' ? st.borrowers : st.users, 'Satisfied Users', count, ''],
+      ['granted', 'c-blue', 'fa-file-circle-check', st.granted, 'Loans Granted', count, ''],
+      ['distributed', 'c-gold', 'fa-sack-dollar', st.distributed, 'Total Disbursed', money, ''],
+      ['today', 'c-pink', 'fa-bolt', st.today, "Today's Disbursed", money, st.todayCount ? st.todayCount + ' today' : 'Today']
+    ].filter(c => (C[c[0]] || {}).on !== false);
+    document.getElementById('sxTitle').textContent = S.title || 'Our Impact';
+    document.getElementById('sxSub').textContent = S.sub || '';
+    document.getElementById('sxNote').textContent = S.note || '';
+    const g = document.getElementById('sxGrid');
+    if(!g.dataset.keys || g.dataset.keys !== cards.map(c => c[0]).join()){
+      g.dataset.keys = cards.map(c => c[0]).join();
+      g.innerHTML = cards.map(c => `<div class="sx-card ${c[1]}"><span class="sx-tag">${_escT((C[c[0]] || {}).tag || c[6] || 'Live')}</span><div class="sx-orb"><i class="fa-solid ${_escT((C[c[0]] || {}).icon || c[2])}"></i></div><div class="sx-val" data-k="${c[0]}">0</div><div class="sx-lbl">${_escT((C[c[0]] || {}).label || c[4])}</div></div>`).join('');
+    }
+    cards.forEach(c => { const el = g.querySelector(`.sx-val[data-k="${c[0]}"]`); if(el) _sxCount(el, Number(c[3]) || 0, c[5]); });
+    SB.style.display = cards.length ? '' : 'none';
+  } else SB.style.display = 'none';
+  // invite champions
+  if(W.on !== false && (d.leaders || d.targets || d.feed)){
+    document.getElementById('wxTitle').textContent = W.title || 'Invite Champions';
+    document.getElementById('wxSub').textContent = W.sub || '';
+    const L = d.leaders || [], pod = document.getElementById('wxPodium');
+    const pl = (p, r) => p ? `<div class="wx-pl r${r}"><div class="wx-av">${r === 1 ? '<span class="wx-crown">👑</span>' : ''}${_escT(String(p.name || '?').charAt(0).toUpperCase())}</div><div class="wx-nm">${_escT(p.name)}</div><div class="wx-cnt"><b>${p.count}</b> friends</div><div class="wx-step">${r}</div></div>`
+      : `<div class="wx-pl r${r} empty"><div class="wx-av">?</div><div class="wx-nm">Your name here</div><div class="wx-cnt">Invite to win</div><div class="wx-step">${r}</div></div>`;
+    pod.style.display = W.showLeader === false ? 'none' : '';
+    pod.innerHTML = pl(L[1], 2) + pl(L[0], 1) + pl(L[2], 3);
+    const adv = document.getElementById('wxAdvice');
+    adv.innerHTML = `<i class="fa-solid fa-gift"></i><div class="wa-t">${_escT(W.advice || '')}<span class="wa-me" id="wxMe"></span></div><button onclick="openReferModal()">${_escT(W.cta || 'Invite Friends')}</button>`;
+    adv.style.display = W.advice || W.cta ? '' : 'none';
+    const T = d.targets || [], tg = document.getElementById('wxTargets');
+    tg.style.display = W.showTargets === false || !T.length ? 'none' : '';
+    const lvl = ['1st', '2nd', '3rd'];
+    tg.innerHTML = T.map(t => `<div class="wx-tg"><div class="tg-l">${lvl[t.level - 1] || t.level + 'th'} target</div><div class="tg-n">${t.need} <small>friends</small></div><div class="tg-p">${_escT(t.prize)}</div><div class="tg-w">🏆 ${t.total} winner${t.total === 1 ? '' : 's'}</div><div class="tg-names">${t.winners.map(w => _escT(w.name)).join(', ') || '<span style="color:var(--txt3)">Be the first!</span>'}</div></div>`).join('');
+    // how far the signed-in user is from the next target
+    if(_getUser() && T.length){
+      _api('referrals', {}, true).then(r => {
+        const me = document.getElementById('wxMe'); if(!me || !r.ok) return;
+        const a = Number(r.data.active) || 0, next = T.find(t => t.need > a);
+        me.textContent = next ? `You have ${a} active friend${a === 1 ? '' : 's'} — only ${next.need - a} more to unlock “${next.prize}”` : `You have ${a} active friends — you reached every target! 🎉`;
+      }).catch(() => {});
+    }
+    const F = d.feed || [], fw = document.getElementById('wxFeedWrap'), fe = document.getElementById('wxFeed');
+    fw.style.display = W.showFeed === false || !F.length ? 'none' : '';
+    document.getElementById('wxFeedTitle').textContent = W.feedTitle || 'Live Offer Winners';
+    const ago = at => { const m = Math.max(0, Math.floor((Date.now() - new Date(at || Date.now())) / 60000)); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.floor(m/60) + ' hr ago' : Math.floor(m/1440) + 'd ago'; };
+    const ic = { hot:'fa-fire', target:'fa-trophy', balance:'fa-wallet', bonus:'fa-gift' };
+    const what = e => e.kind === 'hot' ? 'won the Hot Offer' : e.kind === 'target' ? `reached the ${lvl[e.target - 1] || ''} invite target` : e.kind === 'balance' ? 'used the Balance Offer' : 'joined & got a bonus';
+    const html = F.map(e => `<div class="wx-it k-${e.kind}"><div class="wi-ic"><i class="fa-solid ${ic[e.kind] || 'fa-star'}"></i></div><div class="wi-m"><b>${_escT(e.name)} ${what(e)}</b><span>${_escT(e.prize)}</span></div><div class="wi-t">${ago(e.at)}</div></div>`).join('');
+    if(W.scroll !== false && F.length > 4){ fe.classList.add('scrolling'); fe.innerHTML = `<div class="lf-track" style="--lf-dur:${F.length * 3}s">${html}${html}</div>`; }
+    else { fe.classList.remove('scrolling'); fe.innerHTML = html; }
+    WB.style.display = '';
+  } else WB.style.display = 'none';
+  clearTimeout(_sxTimer);
+  const sec = Number(S.refresh);
+  if(sec > 0) _sxTimer = setTimeout(window.loadShowcase, Math.max(30, sec) * 1000);
+};
+
 // functions defined in this module but called from the classic script or from inline
 // onclick/onerror attributes must be on window, or those calls throw ReferenceError
 Object.assign(window, { walletCollectionNumber, walletReceivingNumber, walletOptions, logoFallback, _clearPaySelection, _selPayDyn, _selPayOpt, _selGateway, _selWalletDyn, _selPayoutType, renderPayGrid, renderPaySteps, startOnlinePay, applyFeePaymentNote });
@@ -7030,6 +7267,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if(typeof window.applyTopBar === 'function') window.applyTopBar();
   if(typeof window.loadTicker === 'function') window.loadTicker();
   if(typeof window.loadLiveFeed === 'function')    window.loadLiveFeed();
+  if(typeof window.loadShowcase === 'function')    window.loadShowcase();
   if(typeof initHotOffer === 'function')           initHotOffer();
 });
 

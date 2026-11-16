@@ -16,6 +16,7 @@
 //   adminCreateUser    { phone, password, name?, balance?, status?, referrer?, note?, fixLogin? } (admin) → creates the login + profile by hand
 //   adminLoginStatus   { phone }           (admin) → { profile, login } so the admin can see why a user cannot sign in
 //   ping               {}            (signed in) → records when the user was last active (Admin → Users → Active users)
+//   showcase           { admin? }               → home page stats (users, granted loans, money sent, today) + invite champions + offer winners
 // Needs FIREBASE_SERVICE_ACCOUNT in Vercel → Settings → Environment Variables.
 const crypto = require('crypto');
 const { readBody } = require('./_lib/pay');
@@ -102,6 +103,56 @@ const maskName = (n) => { n = String(n || 'User').trim() || 'User'; return n.len
 const maskPhone = (p) => { p = String(p || '').replace(/\D/g, ''); return p.length >= 6 ? '0' + p.slice(0, 3) + '*****' + p.slice(-2) : 'User'; };
 // fees are never shown in full: first two digits, the rest hidden (৳1,300 → "13**.00")
 const maskFee = (n) => { const s = String(Math.round(Number(n) || 0)); return s.slice(0, 2) + '*'.repeat(Math.max(0, s.length - 2)) + '.00'; };
+
+// ── home page showcase: real totals, invite champions and offer winners (Admin → Home Page → Stats / Winners) ──
+const GRANTED = ['Approved', 'Disbursed', 'Active', 'Repaid', 'Overdue'];
+const num = (v) => Number(String(v ?? '').replace(/,/g, '')) || 0;
+const dhakaDay = (t) => new Date(new Date(t).getTime() + 6 * 3600e3).toISOString().slice(0, 10);   // Bangladesh time (UTC+6)
+let _showcaseCache = { at: 0, data: null };
+async function showcaseData() {
+  if (_showcaseCache.data && Date.now() - _showcaseCache.at < 60e3) return _showcaseCache.data;
+  const store = db();
+  const [uSnap, aSnap, tSnap, mainSnap] = await Promise.all([
+    store.collection('users').select('phone', 'name', 'status', 'referredBy', 'createdAt', 'createdBy', 'promoClaimed', 'promoClaimedAt', 'promo').get(),
+    store.collection('applications').where('status', 'in', GRANTED).select('uid', 'name', 'loanAmount', 'approvedAt', 'disbursedAt', 'creditedAt', 'statusUpdatedAt', 'submittedAt').get(),
+    store.collection('transactions').where('status', '==', 'Verified').select('uid', 'appliedBalance', 'verifiedAt', 'submittedAt').get(),
+    store.collection('siteConfig').doc('main').get()
+  ]);
+  const users = uSnap.docs.map(d => d.data());
+  const apps = aSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const names = {};
+  apps.forEach(a => { if (a.name && a.uid) names[a.uid] = a.name; });
+  users.forEach(u => { if (u.name) names[u.phone] = u.name; });
+  const today = dhakaDay(Date.now());
+  const at = a => a.disbursedAt || a.creditedAt || a.approvedAt || a.statusUpdatedAt || a.submittedAt || '';
+  const stats = {
+    users: users.filter(u => u.status !== 'banned').length,
+    borrowers: new Set(apps.map(a => a.uid).filter(Boolean)).size,
+    granted: apps.length,
+    distributed: apps.reduce((t, a) => t + num(a.loanAmount), 0),
+    today: apps.filter(a => at(a) && dhakaDay(at(a)) === today).reduce((t, a) => t + num(a.loanAmount), 0),
+    todayCount: apps.filter(a => at(a) && dhakaDay(at(a)) === today).length
+  };
+  // invite champions: active friends per inviter, and when each target was reached
+  const byRef = {};
+  users.forEach(u => { if (u.referredBy && u.status === 'active') (byRef[u.referredBy] = byRef[u.referredBy] || []).push(u.createdAt || ''); });
+  const refs = Object.entries(byRef).map(([phone, joined]) => ({ phone, count: joined.length, joined: joined.sort() }));
+  refs.sort((a, b) => b.count - a.count || String(a.joined[a.joined.length - 1]).localeCompare(String(b.joined[b.joined.length - 1])));
+  const events = [];
+  users.forEach(u => { if (u.promoClaimed && u.promoClaimedAt) events.push({ id: 'h_' + u.phone, kind: 'hot', phone: u.phone, at: u.promoClaimedAt, prize: u.promo || 'Hot offer' }); });
+  refs.forEach(r => Object.keys(REF_MILESTONES).map(Number).forEach((t, i) => {
+    if (r.count >= t) events.push({ id: `t${i + 1}_` + r.phone, kind: 'target', target: i + 1, phone: r.phone, at: r.joined[t - 1] || '', prize: REF_MILESTONES[t] });
+  }));
+  tSnap.docs.forEach(d => { const t = d.data(); if (Number(t.appliedBalance) > 0) events.push({ id: 'b_' + d.id, kind: 'balance', phone: t.uid, at: t.verifiedAt || t.submittedAt || '', prize: `Saved ৳${Math.round(Number(t.appliedBalance))} on the fee` }); });
+  const cfg = mainSnap.exists ? mainSnap.data() : {};
+  const bonus = cfg.newUserBonus === undefined || cfg.newUserBonus === null || cfg.newUserBonus === '' ? 100 : Number(cfg.newUserBonus) || 0;
+  if (bonus > 0) users.forEach(u => { if (u.createdAt && u.createdBy !== 'admin') events.push({ id: 'j_' + u.phone, kind: 'bonus', phone: u.phone, at: u.createdAt, prize: `৳${bonus} sign-up bonus` }); });
+  events.sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  const data = { stats, refs, events, names, targets: Object.keys(REF_MILESTONES).map(Number), prizes: REF_MILESTONES };
+  _showcaseCache = { at: Date.now(), data };
+  return data;
+}
+const shortName = (n, phone) => n ? maskName(String(n).split(' ')[0]) : maskPhone(phone);
 
 async function referralEntryState(d) {
   const data = d.data() || {};
@@ -254,6 +305,33 @@ const actions = {
     await notifyUser(me.uid, 'Invite Code Added ✅', 'Your invite code was added. Your friend will get credit for inviting you.', 'info');
     await notifyReferrer(ref);
     return [200, { ok: true }];
+  },
+
+  async showcase(b, me) {
+    const home = await homeCfg();
+    const S = home.stats || {}, W = home.winners || {};
+    const admin = !!(b && b.admin && me && await isAdmin(me.uid));
+    if (S.on === false && W.on === false && !admin) return [200, { off: true }];
+    const d = await showcaseData();
+    const hidden = new Set(Array.isArray(W.hidden) ? W.hidden : []);
+    const person = (phone, extra) => ({ id: 'u_' + phone, name: shortName(d.names[phone], phone), ...(admin ? { phone, hidden: hidden.has('u_' + phone) } : {}), ...extra });
+    const keep = x => admin || !hidden.has(x.id);
+    const out = {};
+    if (S.on !== false || admin) out.stats = { ...d.stats };
+    if (W.on !== false || admin) {
+      const top = Math.min(10, Math.max(1, Number(W.leaderCount) || 3));
+      out.leaders = d.refs.filter(r => keep({ id: 'u_' + r.phone })).slice(0, top).map((r, i) => person(r.phone, { rank: i + 1, count: r.count }));
+      const perTarget = Math.min(20, Math.max(1, Number(W.targetCount) || 5));
+      out.targets = d.targets.map((t, i) => {
+        const all = d.refs.filter(r => r.count >= t && keep({ id: 'u_' + r.phone }));
+        return { level: i + 1, need: t, prize: d.prizes[t], total: all.length, winners: all.slice(0, perTarget).map(r => person(r.phone, { count: r.count })) };
+      });
+      const kinds = { hot: true, target: true, balance: true, bonus: false, ...(W.kinds || {}) };
+      const feedN = Math.min(40, Math.max(1, Number(W.feedCount) || 10));
+      out.feed = d.events.filter(e => kinds[e.kind] && keep(e) && keep({ id: 'u_' + e.phone })).slice(0, admin ? 40 : feedN)
+        .map(e => ({ id: e.id, kind: e.kind, target: e.target || 0, prize: e.prize, at: e.at, name: shortName(d.names[e.phone], e.phone), ...(admin ? { hidden: hidden.has(e.id) } : {}) }));
+    }
+    return [200, out];
   },
 
   async offerCount() {
