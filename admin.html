@@ -137,6 +137,20 @@ input,select,textarea{font-family:'Inter',sans-serif;-webkit-user-select:auto;us
 @media(max-width:620px){.cf-row{grid-template-columns:auto 1fr 1fr 34px;grid-template-areas:"t n n d" "s s v v"}.cf-row>:nth-child(1){grid-area:t}.cf-row>:nth-child(2){grid-area:n}.cf-row>:nth-child(3){grid-area:s}.cf-row>:nth-child(4){grid-area:v}.cf-row>:nth-child(5){grid-area:d}}
 .br-sub{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--p);text-transform:uppercase;letter-spacing:.6px;margin:16px 0 9px;padding-top:12px;border-top:1px solid var(--border)}
 .br-col{display:flex;gap:6px}.br-col input[type=color]{width:44px;height:38px;padding:2px;border-radius:8px;flex:none;cursor:pointer;background:transparent}.br-col input:not([type=color]){flex:1;min-width:0}
+.lv-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border)}
+.lv-all{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--txt);cursor:pointer}
+.lv-n{font-size:11.5px;color:var(--txt2)}
+.lv-ck{width:17px;height:17px;flex:none;accent-color:var(--p);cursor:pointer}
+.hp-row.sel{border-color:rgba(29,219,128,.55);background:rgba(29,219,128,.06)}
+.rm-opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:rgba(255,255,255,.03);color:var(--txt);cursor:pointer;font-family:inherit;margin-bottom:9px}
+.rm-opt>i{width:34px;height:34px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(29,219,128,.12);color:var(--p)}
+.rm-opt b{display:flex;align-items:center;gap:7px;font-size:13.5px;margin-bottom:3px}
+.rm-opt span{font-size:12px;color:var(--txt2);line-height:1.5}
+.rm-opt.rec:hover{border-color:var(--p)}
+.rm-opt.bad>i{background:rgba(255,77,106,.12);color:var(--red)}
+.rm-opt.bad:hover{border-color:var(--red)}
+.rm-tag{display:inline-block;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:6px;background:rgba(255,77,106,.14);color:#ff8a9c;margin-left:5px;vertical-align:1px}
+tr.is-removed td{opacity:.6}
 .ls-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--txt2);margin-right:5px;vertical-align:1px;opacity:.6}
 .ls-dot.on{background:var(--p);opacity:1;box-shadow:0 0 0 3px rgba(29,219,128,.2)}
 .cred{margin-top:12px;padding:13px;border-radius:12px;background:rgba(29,219,128,.06);border:1px solid rgba(29,219,128,.25)}
@@ -241,7 +255,35 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .fg input::placeholder,.fg textarea::placeholder{color:var(--txt3)}
 .fg .hint{font-size:10px;color:var(--txt2);margin-top:2px}
 #sec-home .hint{font-size:11.5px;color:var(--txt2);line-height:1.5}
-.hp-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
+.hp-tabs{display:flex;flex-direction:column;gap:8px;margin-bottom:13px}
+.hp-tg{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#sec-config[data-g]:not([data-g="all"]) .cfg-blk[data-cg]{display:none}
+#sec-config[data-g="loan"] .cfg-blk[data-cg="loan"],#sec-config[data-g="pay"] .cfg-blk[data-cg="pay"],#sec-config[data-g="contact"] .cfg-blk[data-cg="contact"],#sec-config[data-g="brand"] .cfg-blk[data-cg="brand"],#sec-config[data-g="flags"] .cfg-blk[data-cg="flags"]{display:block!important}
+.hp-tgl{width:100%;font-size:10.5px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.6px;margin:2px 2px 0}
+.sxp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.sxp{padding:11px;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid var(--border)}
+.sxp b{display:block;font-size:17px;font-weight:900;color:var(--p)}
+.sxp span{font-size:11px;color:var(--txt2)}
+.wx-ed{display:grid;gap:7px;align-items:center;padding:9px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.02)}
+.wx-ed.t-tips{grid-template-columns:auto 1fr auto}
+.wx-ed.t-links{grid-template-columns:auto 1fr .7fr 1.3fr 1.3fr auto}
+.wx-ed select{height:34px;padding:0 8px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;outline:none;min-width:0;font-family:inherit}
+.wx-ed select option{background:#0f1d35}
+.wx-ed.t-targets{grid-template-columns:90px 1.6fr 1.2fr .8fr auto}
+.wx-ed.t-announced{grid-template-columns:auto 1fr 1.2fr 1.2fr 150px auto}
+.wx-ed.off{opacity:.55}
+.wx-ed input{height:34px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;outline:none;min-width:0;font-family:inherit;width:100%;box-sizing:border-box}
+.wx-ed input.bad{border-color:var(--red)}
+@media(max-width:900px){.wx-ed.t-targets,.wx-ed.t-announced,.wx-ed.t-links{grid-template-columns:1fr 1fr}}
+.sx-crd{display:grid;grid-template-columns:auto 1.3fr 1.2fr 1fr .9fr .8fr auto;gap:7px;align-items:center;padding:9px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.02)}
+.sx-crd.off{opacity:.55}
+.sx-crd select{height:34px;padding:0 8px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;outline:none;min-width:0;font-family:inherit}
+.sx-crd select option{background:#0f1d35}
+.sx-crd .sx-acts{display:flex;gap:4px}
+.sx-sw{width:12px;height:12px;border-radius:4px;display:inline-block;vertical-align:-1px;margin-right:4px}
+@media(max-width:900px){.sx-crd{grid-template-columns:auto 1fr 1fr;}.sx-crd .sx-acts{grid-column:1/-1;justify-content:flex-end}}
+.sx-crd input{height:34px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;outline:none;min-width:0;font-family:inherit}
+@media(max-width:700px){.sxp-grid{grid-template-columns:1fr 1fr}}
 .hp-tabs button{display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:11px;border:1px solid var(--border);background:var(--card);color:var(--txt2);font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
 .hp-tabs button.on{background:rgba(29,219,128,.12);border-color:rgba(29,219,128,.45);color:var(--p)}
 .hp-pane{display:none}.hp-pane.on{display:block}
@@ -582,7 +624,26 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .savebar-t{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--txt);white-space:nowrap}
 .savebar-t i{color:#ffbe3c}
 @media(min-width:901px){.savebar{left:calc(50% + 125px)}}
-@media(max-width:520px){.savebar-t span{display:none}}
+.sb-view{background:transparent;border:0;cursor:pointer;font-family:inherit;padding:4px 6px;border-radius:8px}
+.sb-view:hover{background:rgba(255,255,255,.05)}
+.sb-car{font-size:10px;color:var(--txt2)!important;transition:transform .2s}
+.savebar.open .sb-car{transform:rotate(180deg)}
+.sb-panel{display:none;position:absolute;left:0;right:0;bottom:calc(100% + 8px);max-height:min(52vh,420px);overflow-y:auto;background:rgba(12,21,37,.98);border:1px solid rgba(255,190,60,.35);border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.55);padding:10px;min-width:min(420px,calc(100vw - 24px))}
+.savebar.open .sb-panel{display:block}
+.ch-list{display:flex;flex-direction:column;gap:6px}
+.ch-g{font-size:10.5px;font-weight:800;color:var(--p);text-transform:uppercase;letter-spacing:.5px;margin:6px 2px 0}
+.ch-g:first-child{margin-top:0}
+.ch-i{display:flex;align-items:flex-start;gap:9px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid var(--border);font-size:12px}
+.ch-i>i{margin-top:2px;color:#ffbe3c;font-size:11px;flex:none}
+.ch-m{flex:1;min-width:0}
+.ch-m b{display:block;color:var(--txt);font-weight:700;margin-bottom:2px}
+.ch-v{color:var(--txt2);line-height:1.5;overflow-wrap:anywhere}
+.ch-v s{color:#ff8a9c;text-decoration-color:rgba(255,77,106,.6)}
+.ch-v em{font-style:normal;color:var(--p);font-weight:600}
+.ch-undo{flex:none;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--txt2);border-radius:7px;font-size:11px;padding:4px 8px;cursor:pointer;font-family:inherit}
+.ch-undo:hover{color:var(--txt);border-color:var(--p)}
+.ch-none{font-size:12px;color:var(--txt2);padding:8px;text-align:center}
+@media(max-width:520px){.sb-save{display:none}.savebar{gap:6px;padding:8px;left:12px;right:12px;max-width:none;transform:translateY(140%);justify-content:space-between}.savebar.on{transform:none}.sb-panel{min-width:0}}
 </style>
 </head>
 <body>
@@ -674,7 +735,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="sec-head"><h2>User Management</h2><div class="sec-head-r"><button class="btn btn-sm btn-p" onclick="openNewUser()"><i class="fa-solid fa-user-plus"></i>Create User</button><button class="btn btn-sm btn-s" onclick="openLoginCheck()"><i class="fa-solid fa-stethoscope"></i>Login Check</button><button class="btn btn-sm btn-s" onclick="exportCSV('users')"><i class="fa-solid fa-download"></i>Export CSV</button></div></div>
   <div class="stats" id="uStats"></div>
   <div class="tc">
-    <div class="tc-hdr"><div class="tc-title">All Users</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search phone / name..." oninput="ftbl('utb',this.value,[0])"></div><select class="fsel" id="uAct" onchange="_pg.users=0;renderUP()" title="Find active users"><option value="">Any activity</option><option value="online">🟢 Online now (5 min)</option><option value="today">Active today</option><option value="7">Active in 7 days</option><option value="30">Active in 30 days</option><option value="idle">Not active 30+ days</option><option value="never">Never seen</option><option value="loan">Has an active loan</option><option value="admin">Created by admin</option></select><select class="fsel" onchange="fstat('utb',this.value,3)"><option value="">All Status</option><option>active</option><option>inactive</option><option>suspended</option><option>banned</option></select></div></div>
+    <div class="tc-hdr"><div class="tc-title">All Users</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search phone / name..." oninput="ftbl('utb',this.value,[0])"></div><select class="fsel" id="uAct" onchange="_pg.users=0;renderUP()" title="Find active users"><option value="">Any activity</option><option value="removed">🗑 Removed from site</option><option value="online">🟢 Online now (5 min)</option><option value="today">Active today</option><option value="7">Active in 7 days</option><option value="30">Active in 30 days</option><option value="idle">Not active 30+ days</option><option value="never">Never seen</option><option value="loan">Has an active loan</option><option value="admin">Created by admin</option></select><select class="fsel" onchange="fstat('utb',this.value,3)"><option value="">All Status</option><option>active</option><option>inactive</option><option>suspended</option><option>banned</option></select></div></div>
     <div class="tw"><table><thead><tr><th>Phone</th><th>Registered</th><th>Last seen</th><th>Status</th><th>Balance</th><th>Steps</th><th>Actions</th></tr></thead><tbody id="utb"></tbody></table></div>
     <div class="pgn"><button class="pg" onclick="prevP('users')">‹ Prev</button><button class="pg" onclick="nextP('users')">Next ›</button><div class="pgn-i" id="users-pi"></div></div>
   </div>
@@ -700,7 +761,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="cc"><div class="cc-title">Top Paying Users (৳)<span class="tch-sub">verified + pending</span></div><div class="cc-wrap"><canvas id="cTrxUsers"></canvas></div></div>
   </div>
   <div class="tc">
-    <div class="tc-hdr"><div class="tc-title">Payment TrxIDs</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="TrxID / phone..." oninput="ftbl('ttb',this.value,[0,1])"></div><select class="fsel" onchange="fstat('ttb',this.value,4)"><option value="">All</option><option>Pending</option><option>Verified</option><option>Rejected</option></select></div></div>
+    <div class="tc-hdr"><div class="tc-title">Payment TrxIDs</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="TrxID / phone..." oninput="ftbl('ttb',this.value,[0,1])"></div><select class="fsel" onchange="fstat('ttb',this.value,4)"><option value="">All</option><option>Pending</option><option>Verified</option><option>Rejected</option></select><select class="fsel" onchange="fstat('ttb',this.value,0)"><option value="">On site + removed</option><option value="REMOVED">Removed only</option></select></div></div>
     <div class="tw"><table><thead><tr><th>TrxID</th><th>Phone</th><th>Method</th><th>Amount</th><th>Status</th><th>Submitted</th><th>Verified</th><th>Actions</th></tr></thead><tbody id="ttb"></tbody></table></div>
     <div class="pgn"><button class="pg" onclick="prevP('transactions')">‹ Prev</button><button class="pg" onclick="nextP('transactions')">Next ›</button><div class="pgn-i" id="transactions-pi"></div></div>
   </div>
@@ -818,24 +879,52 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 
 <div class="savebar" id="saveBar">
-  <div class="savebar-t"><i class="fa-solid fa-circle-exclamation"></i><span>You have unsaved changes</span></div>
+  <div class="sb-panel" id="sbPanel"></div>
+  <button class="savebar-t sb-view" type="button" onclick="sbToggle()" title="See what changed"><i class="fa-solid fa-circle-exclamation"></i><span id="sbTxt">Unsaved changes</span><i class="fa-solid fa-chevron-up sb-car"></i></button>
   <button class="btn btn-s btn-sm" onclick="discardTab()">Discard</button>
-  <button class="btn btn-p btn-sm" onclick="saveTab()"><i class="fa-solid fa-floppy-disk"></i>Save changes</button>
+  <button class="btn btn-p btn-sm" onclick="saveTab()"><i class="fa-solid fa-floppy-disk"></i><span class="sb-save">Save changes</span></button>
+</div>
+
+<div class="mov" id="moRemove">
+<div class="mo mo-md">
+  <div class="mo-h"><h3><i class="fa-solid fa-trash-can" style="color:var(--red);margin-right:7px"></i><span id="rmTitle">Remove</span></h3><button class="mo-x" onclick="closeMo('moRemove')">✕</button></div>
+  <div class="mo-b">
+    <div class="hint" id="rmWhat" style="margin-bottom:12px"></div>
+    <button class="rm-opt rec" id="rmHide" type="button"><i class="fa-solid fa-eye-slash"></i><div><b>Remove from the user site <span class="wbadge">Recommended</span></b><span>Users no longer see it, but it stays in the admin panel with a “Removed” label so you can review it later or restore it.</span></div></button>
+    <button class="rm-opt bad" id="rmDel" type="button"><i class="fa-solid fa-fire"></i><div><b>Delete permanently</b><span>Erased from the database for good. You cannot review or restore it later.</span></div></button>
+  </div>
+  <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moRemove')">Cancel</button></div>
+</div>
+</div>
+
+<div class="mov" id="moDiscard">
+<div class="mo mo-md">
+  <div class="mo-h"><h3><i class="fa-solid fa-rotate-left" style="color:var(--red);margin-right:7px"></i>Discard these changes?</h3><button class="mo-x" onclick="closeMo('moDiscard')">✕</button></div>
+  <div class="mo-b"><div class="hint" id="dcHint" style="margin-bottom:10px"></div><div id="dcList" class="ch-list"></div></div>
+  <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moDiscard')">Keep editing</button><button class="btn btn-d" id="dcOk"><i class="fa-solid fa-trash-can-arrow-up"></i>Discard all</button></div>
+</div>
 </div>
 
 <!-- HOME PAGE -->
 <div class="sec" id="sec-home">
   <div class="sec-head"><h2>Home Page</h2><button class="btn btn-p btn-lg sv-btn" id="svBtn-home" onclick="saveTab('home')" disabled><i class="fa-solid fa-floppy-disk"></i><span>All saved</span></button></div>
   <div class="hp-tabs" id="hpTabs">
-    <button class="on" data-p="live" onclick="hpTab('live')"><i class="fa-solid fa-bolt"></i>Live Transactions</button>
-    <button data-p="notice" onclick="hpTab('notice')"><i class="fa-solid fa-bullhorn"></i>Notice Bar</button>
-    <button data-p="partners" onclick="hpTab('partners')"><i class="fa-solid fa-handshake"></i>Partners</button>
-    <button data-p="trust" onclick="hpTab('trust')"><i class="fa-solid fa-shield-halved"></i>Trust Badges</button>
-    <button data-p="ref" onclick="hpTab('ref')"><i class="fa-solid fa-user-plus"></i>Invite Code</button>
-    <button data-p="offers" onclick="hpTab('offers')"><i class="fa-solid fa-gift"></i>Offers</button>
-    <button data-p="fomo" onclick="hpTab('fomo')"><i class="fa-solid fa-fire"></i>Hot Offer</button>
-    <button data-p="topbar" onclick="hpTab('topbar')"><i class="fa-solid fa-window-maximize"></i>Top Bar</button>
-    <button data-p="splash" onclick="hpTab('splash')"><i class="fa-solid fa-mobile-screen"></i>Loading Screen</button>
+    <div class="hp-tg"><span class="hp-tgl">Home page · top to bottom</span>
+      <button data-p="topbar" onclick="hpTab('topbar')"><i class="fa-solid fa-window-maximize"></i>Top Bar</button>
+      <button data-p="notice" onclick="hpTab('notice')"><i class="fa-solid fa-bullhorn"></i>Notice Bar</button>
+      <button data-p="offers" onclick="hpTab('offers')"><i class="fa-solid fa-gift"></i>Offers</button>
+      <button data-p="fomo" onclick="hpTab('fomo')"><i class="fa-solid fa-fire"></i>Hot Offer</button>
+      <button class="on" data-p="live" onclick="hpTab('live')"><i class="fa-solid fa-bolt"></i>Live Transactions</button>
+      <button data-p="stats" onclick="hpTab('stats')"><i class="fa-solid fa-chart-column"></i>Stats</button>
+      <button data-p="winners" onclick="hpTab('winners')"><i class="fa-solid fa-trophy"></i>Winners</button>
+      <button data-p="partners" onclick="hpTab('partners')"><i class="fa-solid fa-handshake"></i>Partners</button>
+      <button data-p="trust" onclick="hpTab('trust')"><i class="fa-solid fa-shield-halved"></i>Trust Badges</button>
+      <button data-p="footer" onclick="hpTab('footer')"><i class="fa-solid fa-signature"></i>Footer</button>
+    </div>
+    <div class="hp-tg"><span class="hp-tgl">Other screens</span>
+      <button data-p="splash" onclick="hpTab('splash')"><i class="fa-solid fa-mobile-screen"></i>Loading Screen</button>
+      <button data-p="ref" onclick="hpTab('ref')"><i class="fa-solid fa-user-plus"></i>Invite Code (Profile)</button>
+    </div>
   </div>
 
   <!-- LIVE -->
@@ -853,9 +942,17 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
       <div class="hint" style="margin-top:10px">Only real records are shown: approved or sent loans, and fee payments you verified. Fees always show only the first 2 digits (for example ৳13**.00). Names are shortened and phone numbers are hidden.</div>
     </div>
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-eye"></i>Preview &amp; hide entries <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadFeed()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-eye"></i>Preview: hide or delete entries <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadFeed()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+      <div class="lv-bar" id="lvBar">
+        <label class="lv-all"><input type="checkbox" id="lvAll" onchange="lvSelAll(this.checked)"> Select all</label>
+        <span class="lv-n" id="lvN">0 selected</span>
+        <span style="flex:1"></span>
+        <button class="btn btn-sm btn-s" onclick="lvBulk('hide')" disabled><i class="fa-solid fa-eye-slash"></i>Hide</button>
+        <button class="btn btn-sm btn-s" onclick="lvBulk('show')" disabled><i class="fa-solid fa-eye"></i>Show</button>
+        <button class="btn btn-sm btn-d" onclick="lvBulk('delete')" disabled><i class="fa-solid fa-trash"></i>Delete</button>
+      </div>
       <div id="lvPreview" class="hp-list"><div class="hint">Loading...</div></div>
-      <div class="hint" style="margin-top:8px">Hide any entry you do not want on the home page (for example a test record). Hidden entries stay in your records.</div>
+      <div class="hint" style="margin-top:8px">Hide any entry you do not want on the home page (for example a test record); hidden entries stay in your records. Delete removes the record itself for good.</div>
     </div>
   </div>
 
@@ -897,12 +994,84 @@ tr:hover td{background:rgba(255,255,255,.015)}
   </div>
 
   <!-- PARTNERS -->
+  <!-- STATS -->
+  <div class="hp-pane" id="hp-stats">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-chart-column"></i>Stats section (below Live Transactions)</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sx-on" checked><span class="tog-sl"></span></label>Show stats section</label></div>
+        <div class="fg"><label>Title</label><input id="sx-title" maxlength="40" placeholder="Our Impact"></div>
+        <div class="fg"><label>Subtitle</label><input id="sx-sub" maxlength="90" placeholder="Real numbers from Credit Up, updated live"></div>
+        <div class="fg"><label>Number style</label><select id="sx-format"><option value="short">Short (13K+, ৳2.9 Cr)</option><option value="full">Full (12,840 · ৳28,650,000)</option></select></div>
+        <div class="fg"><label>Refresh (seconds, 0 = off)</label><input id="sx-refresh" type="number" min="0" placeholder="120"></div>
+        <div class="fg full"><label>Small note under the cards</label><input id="sx-note" maxlength="120" placeholder="Optional, e.g. Figures since January 2026"></div>
+      </div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-layer-group"></i>Cards <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="sxAdd()"><i class="fa-solid fa-plus"></i>Add card</button></div>
+      <div id="sxCards" class="hp-list"></div>
+      <div class="hint" style="margin-top:6px">Each card shows one real number from your records (pick it in “Shows”). “Your own text” is for promises such as <b>24/7</b> Support or <b>5 min</b> approval — not for made-up numbers. Icon = a Font Awesome name, e.g. <b>fa-face-smile</b>. Tag = the small label in the corner (empty = “Live”).</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-eye"></i>Live numbers now <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadShowcase()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+      <div id="sxPrev" class="sxp-grid"><div class="hint">Loading...</div></div>
+      <div class="hint" style="margin-top:8px">These come straight from your records: users, approved / sent loans (Approved, Disbursed, Active, Repaid, Overdue) and their amounts. “Today” uses Bangladesh time. They cannot be typed in by hand, so users always see real figures.</div>
+    </div>
+  </div>
+
+  <!-- WINNERS -->
+  <div class="hp-pane" id="hp-winners">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-trophy"></i>Invite Champions &amp; Winners (below Stats)</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-on" checked><span class="tog-sl"></span></label>Show winners section</label></div>
+        <div class="fg"><label>Title</label><input id="wx-title" maxlength="40" placeholder="Invite Champions"></div>
+        <div class="fg"><label>Subtitle</label><input id="wx-sub" maxlength="90" placeholder="Invite friends, climb the board and win real rewards"></div>
+        <div class="fg"><label>Button text</label><input id="wx-cta" maxlength="24" placeholder="Invite Friends"></div>
+        <div class="fg"><label>Change tip every (seconds)</label><input id="wx-tipsec" type="number" min="3" max="60" placeholder="6"></div>
+      </div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-lightbulb"></i>Invite tips (rotate in the advice card) <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="wxListAdd('tips')"><i class="fa-solid fa-plus"></i>Add tip</button></div>
+      <div id="wxTips" class="hp-list"></div>
+      <div class="hint" style="margin-top:6px">Short, positive tips that make people want to invite, e.g. “Share your link in family WhatsApp groups — each active friend counts!”</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-bullseye"></i>Invite targets &amp; rewards <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="wxListAdd('targets')"><i class="fa-solid fa-plus"></i>Add target</button></div>
+      <div id="wxTargetsEd" class="hp-list"></div>
+      <div class="hint" style="margin-top:6px">Used everywhere: the Winners section, the invite popup, the calculator offer box, the profile progress and the “Reward Unlocked” messages. Friends = active friends who joined with the user’s link.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-award"></i>Announce a winner <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="wxListAdd('announced')"><i class="fa-solid fa-plus"></i>Add winner</button></div>
+      <div id="wxAnn" class="hp-list"></div>
+      <div class="hint" style="margin-top:6px">For campaign or contest winners you choose yourself. The phone must belong to a registered user; the name is shortened automatically and the phone is never shown.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-ranking-star"></i>What to show</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-leader" checked><span class="tog-sl"></span></label>Top inviters podium (1st, 2nd, 3rd)</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-targets" checked><span class="tog-sl"></span></label>Target winners (1st, 2nd, 3rd target)</label></div>
+        <div class="fg"><label>Names per target</label><input id="wx-tcount" type="number" min="1" max="20" placeholder="5"></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-feed" checked><span class="tog-sl"></span></label>Live offer winners list</label></div>
+        <div class="fg"><label>List title</label><input id="wx-ftitle" maxlength="40" placeholder="Live Offer Winners"></div>
+        <div class="fg"><label>How many in the list</label><input id="wx-fcount" type="number" min="1" max="40" placeholder="10"></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-scroll" checked><span class="tog-sl"></span></label>Auto-scroll the list</label></div>
+      </div>
+      <div class="man-sub">Offers in the winners list</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-k-hot" checked><span class="tog-sl"></span></label>Hot Offer claims</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-k-target" checked><span class="tog-sl"></span></label>Invite targets reached</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-k-balance" checked><span class="tog-sl"></span></label>Balance Offer used</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-k-bonus"><span class="tog-sl"></span></label>Sign-up bonus received</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="wx-k-announce" checked><span class="tog-sl"></span></label>Announced winners</label></div>
+      </div>
+      <div class="hint" style="margin-top:8px">Names are always shortened and phone numbers hidden.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-eye"></i>Preview: hide people or entries <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadShowcase()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+      <div id="wxPrev" class="hp-list"><div class="hint">Loading...</div></div>
+      <div class="hint" style="margin-top:8px">Hiding a person removes them from the podium, the targets and the list (for example a test account). Press Save to publish.</div>
+    </div>
+  </div>
+
   <div class="hp-pane" id="hp-partners">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Partner Section</div>
       <div class="fgrid fgrid3">
         <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="pt-on" checked><span class="tog-sl"></span></label>Show partner section</label></div>
         <div class="fg"><label>Section title</label><input id="pt-title" placeholder="Our Partners"></div>
-        <div class="fg"><label>Logo size</label><select id="pt-size"><option value="md">Large</option><option value="lg" selected>Extra large</option></select></div>
+        <div class="fg"><label>Layout</label><select id="pt-layout"><option value="small" selected>Small logos (premium grid)</option><option value="scroll">Scrolling strip</option><option value="large">Larger logos</option></select></div>
+        <div class="fg full"><label>Subtitle</label><input id="pt-sub" maxlength="70" placeholder="Trusted payment &amp; banking network"></div>
       </div>
       <div class="hint" style="margin-top:10px">Only list companies you really work with. Showing a bank or wallet as a "partner" without an agreement can mislead users and misuse their brand.</div>
     </div>
@@ -911,11 +1080,53 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div>
   </div>
 
+  <!-- FOOTER -->
+  <div class="hp-pane" id="hp-footer">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-crown"></i>Brand &amp; VIP badge</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="ft-on" checked><span class="tog-sl"></span></label>Show footer</label></div>
+        <div class="fg"><label>Site name</label><input id="ft-name" maxlength="30" placeholder="Empty = brand name from Site Config"></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="ft-vip" checked><span class="tog-sl"></span></label>VIP premium logo</label></div>
+        <div class="fg"><label>Text inside the logo</label><input id="ft-viptext" maxlength="6" placeholder="VIP"></div>
+        <div class="fg"><label>Ribbon under the name</label><input id="ft-vipsub" maxlength="40" placeholder="Premium Digital Lending"></div>
+        <div class="fg full"><label>About line</label><textarea id="ft-tagline" rows="2" maxlength="200" placeholder="Smart credit, made simple — fast, transparent and secure loans from your phone."></textarea></div>
+      </div>
+      <div class="hint" style="margin-top:8px">Only write rankings or awards you can prove (for example “Top Ranked” needs a real ranking).</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-link"></i>Links <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="ftLinkAdd()"><i class="fa-solid fa-plus"></i>Add link</button></div>
+      <div id="ftLinksEd" class="hp-list"></div>
+      <div class="fgrid fgrid3" style="margin-top:10px">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="ft-trust" checked><span class="tog-sl"></span></label>Trust badges row (from Trust Badges)</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="ft-contact" checked><span class="tog-sl"></span></label>Contact (WhatsApp, email, Telegram)</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="ft-address" checked><span class="tog-sl"></span></label>Company address</label></div>
+      </div>
+      <div class="hint" style="margin-top:6px">Contact details and address come from Site Config → Contact.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-signature"></i>Digital signature</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="ft-sign" checked><span class="tog-sl"></span></label>Show signature</label></div>
+        <div class="fg"><label>Signature (handwriting style)</label><input id="ft-signtext" maxlength="30" placeholder="Empty = site name"></div>
+        <div class="fg"><label>Or signature image URL</label><input id="ft-signimg" placeholder="https://… (dark ink on transparent)"></div>
+        <div class="fg"><label>Signer name</label><input id="ft-signname" maxlength="40" placeholder="Authorized Signatory"></div>
+        <div class="fg"><label>Signer title</label><input id="ft-signtitle" maxlength="50" placeholder="Managing Director, Credit Up"></div>
+        <div class="fg"><label>Seal text</label><input id="ft-seal" maxlength="12" placeholder="VERIFIED"></div>
+        <div class="fg full"><label>Line under the signature</label><input id="ft-signnote" maxlength="140" placeholder="This website is operated and signed by its management."></div>
+      </div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-copyright"></i>Bottom lines</div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label>Copyright</label><input id="ft-copy" maxlength="80" placeholder="© 2026 Credit Up. All rights reserved."></div>
+        <div class="fg"><label>Legal / registration line</label><input id="ft-legal" maxlength="120" placeholder="e.g. Trade licence no. …"></div>
+        <div class="fg"><label>Last line</label><input id="ft-bottom" maxlength="80" placeholder="e.g. Made in Bangladesh"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- TRUST -->
   <div class="hp-pane" id="hp-trust">
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Trust Footer</div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sliders"></i>Trust Badges (flat, in the footer)</div>
       <div class="fgrid">
-        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tr-on" checked><span class="tog-sl"></span></label>Show trust badges under partners</label></div>
+        <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="tr-on" checked><span class="tog-sl"></span></label>Show trust badges in the footer</label></div>
         <div class="fg"><label>Footer note (optional)</label><input id="tr-note" maxlength="140" placeholder="e.g. Payments through bKash, Nagad and Rocket"></div>
       </div>
       <div class="hint" style="margin-top:10px">Keep every badge true. Do not claim a licence, certificate or bank approval you do not have.</div>
@@ -1049,7 +1260,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-font"></i>What to show</div>
           <div class="fgrid">
             <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showtitle" checked><span class="tog-sl"></span></label>Title</label><input id="sl-title" maxlength="50" placeholder="CreditUp – Smart Credit &amp; Loans"></div>
-            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showsub" checked><span class="tog-sl"></span></label>Subtitle</label><input id="sl-sub" maxlength="80" placeholder="Empty = the subtitle from Site Config"></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showsub" checked><span class="tog-sl"></span></label>Subtitle</label><input id="sl-sub" maxlength="80" placeholder="Smart credit, made simple"></div>
             <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showbadge" checked><span class="tog-sl"></span></label>Badge</label><input id="sl-badge" maxlength="40" placeholder="100% Authentic &amp; Verified"></div>
             <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showfoot" checked><span class="tog-sl"></span></label>Bottom line</label><input id="sl-foot" maxlength="60" placeholder="256-bit SSL Encrypted | Safe &amp; Secure"></div>
           </div>
@@ -1075,9 +1286,17 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 
 <!-- SITE CONFIG -->
-<div class="sec" id="sec-config">
+<div class="sec" id="sec-config" data-g="loan">
   <div class="sec-head"><h2>Site Configuration</h2><button class="btn btn-p btn-lg sv-btn" id="svBtn-config" onclick="saveTab('config')" disabled><i class="fa-solid fa-floppy-disk"></i><span>All saved</span></button></div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-percent"></i>Loan & Fee Settings</div>
+  <div class="hp-tabs cfg-tabs" id="cfgTabs"><div class="hp-tg">
+    <button class="on" data-g="loan" onclick="cfgTab('loan')"><i class="fa-solid fa-percent"></i>Loans &amp; Fees</button>
+    <button data-g="pay" onclick="cfgTab('pay')"><i class="fa-solid fa-receipt"></i>Payment &amp; Refund</button>
+    <button data-g="contact" onclick="cfgTab('contact')"><i class="fa-solid fa-headset"></i>Contact</button>
+    <button data-g="brand" onclick="cfgTab('brand')"><i class="fa-solid fa-palette"></i>Text &amp; Branding</button>
+    <button data-g="flags" onclick="cfgTab('flags')"><i class="fa-solid fa-toggle-on"></i>Switches</button>
+    <button data-g="all" onclick="cfgTab('all')"><i class="fa-solid fa-list"></i>Show all</button>
+  </div></div>
+  <div class="cfg-blk" data-cg="loan"><div class="cfg-t"><i class="fa-solid fa-percent"></i>Loan & Fee Settings</div>
     <div class="fgrid fgrid3">
       <div class="fg"><label>Max Borrow Display (BDT)</label><input id="c-mb" placeholder="60,000.00"><div class="hint">Shown on the home screen and used as the highest amount in the user Loan Calculator</div></div>
       <div class="fg"><label>Annual Interest Rate (%)</label><input type="number" id="c-ir" placeholder="18"></div>
@@ -1087,7 +1306,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label>New User Sign-up Bonus (BDT)</label><input type="number" id="c-nb" placeholder="100"><div class="hint">Credited on registration</div></div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Custom Fees &amp; Additional Interest<button class="btn btn-sm btn-p" style="margin-left:auto" onclick="cfAdd()"><i class="fa-solid fa-plus"></i>Add fee</button></div>
+  <div class="cfg-blk" data-cg="loan"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Custom Fees &amp; Additional Interest<button class="btn btn-sm btn-p" style="margin-left:auto" onclick="cfAdd()"><i class="fa-solid fa-plus"></i>Add fee</button></div>
     <div class="hint" style="margin:-4px 0 10px">Extra fees are added to the upfront fee users pay, on top of the fees above. A fee can be a fixed amount (৳) or a % of the loan amount.</div>
     <div id="cfList" class="cf-list"></div>
     <div class="cf-xi">
@@ -1101,7 +1320,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div>
     <div class="cf-prev" id="cfPrev"></div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list"></i>Loan Options</div>
+  <div class="cfg-blk" data-cg="loan"><div class="cfg-t"><i class="fa-solid fa-list"></i>Loan Options</div>
     <div class="fgrid">
       <div class="fg"><label>Loan Amounts (comma-separated)</label><textarea id="c-la" rows="2" placeholder="1,000, 2,500, 5,000, 10,000, 25,000, 50,000, 60,000"></textarea></div>
       <div class="fg"><label>Loan Terms in Months (comma-separated)</label><textarea id="c-lt" rows="2" placeholder="3, 6, 12, 24, 36"></textarea></div>
@@ -1109,7 +1328,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg full"><label>Occupation Options (comma-separated)</label><input id="c-oc" placeholder="Salaried, Business Owner, Student, Freelancer, Unemployed"></div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-wallet"></i>Payment Numbers</div>
+  <div class="cfg-blk" data-cg="pay"><div class="cfg-t"><i class="fa-solid fa-wallet"></i>Payment Numbers</div>
     <div style="font-size:12px;color:var(--txt2);line-height:1.7">
       Payment and payout numbers are now managed in the <strong style="color:var(--p)">Wallets</strong> section — that is the only place users read them from.<br>
       Each wallet has a <strong style="color:var(--orange)">collection number</strong> (where users send the fee) and a <strong style="color:var(--p)">receiving number</strong> (where the loan is paid out).
@@ -1118,7 +1337,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <i class="fa-solid fa-arrow-right"></i> Manage wallets
     </button>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-thumbtack"></i>Fee Payment Note (shown to users)</div>
+  <div class="cfg-blk" data-cg="pay"><div class="cfg-t"><i class="fa-solid fa-thumbtack"></i>Fee Payment Note (shown to users)</div>
     <div class="fgrid">
       <div class="fg"><label>Note Title</label><input id="c-pnt" placeholder="Note" maxlength="40"></div>
       <div class="fg full"><label>Note Text (appears below Payment Instructions)</label>
@@ -1126,7 +1345,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-rotate-left"></i>Fee Refund Policy (shown before applying)</div>
+  <div class="cfg-blk" data-cg="pay"><div class="cfg-t"><i class="fa-solid fa-rotate-left"></i>Fee Refund Policy (shown before applying)</div>
     <div class="fgrid">
       <div class="fg full"><label>Refund policy text</label>
         <textarea id="c-rfp" rows="3" maxlength="600" placeholder="If your application is rejected, the full fee you paid is refunded to the number you paid from."></textarea>
@@ -1134,7 +1353,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-headset"></i>Contact & Support</div>
+  <div class="cfg-blk" data-cg="contact"><div class="cfg-t"><i class="fa-solid fa-headset"></i>Contact & Support</div>
     <div class="fgrid">
       <div class="fg"><label>WhatsApp Number (e.g. 88017...)</label><input id="c-wa" placeholder="88017XXXXXXXX"></div>
       <div class="fg"><label>Telegram Username (e.g. yourusername)</label><input id="c-tg" placeholder="username"></div>
@@ -1143,9 +1362,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg full"><label>Company Address</label><input id="c-ad" placeholder="Company address..."></div>
     </div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-pen-to-square"></i>Site Text & Branding</div>
+  <div class="cfg-blk" data-cg="brand"><div class="cfg-t"><i class="fa-solid fa-pen-to-square"></i>Site Text & Branding</div>
     <div class="fgrid">
-      <div class="fg"><label>Splash Subtitle</label><input id="c-ss" placeholder="Build Credit. Move Up."></div>
       <div class="fg"><label>Policy Last Updated</label><input id="c-pd" placeholder="2026/10/09"></div>
       <div class="fg"><label>Home Tagline (info card)</label><input id="c-tag" placeholder="Your Loan, Simplified"></div>
     </div>
@@ -1184,7 +1402,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div>
     <div class="hint" style="margin-top:8px">Empty fields keep the default text shown in grey.</div>
   </div>
-  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-toggle-on"></i>Feature Flags</div>
+  <div class="cfg-blk" data-cg="flags"><div class="cfg-t"><i class="fa-solid fa-toggle-on"></i>Feature Flags</div>
     <div class="fgrid fgrid3">
       <div class="fg"><label style="display:flex;align-items:center;gap:9px"><label class="tog"><input type="checkbox" id="c-ro" checked><span class="tog-sl"></span></label>Allow Registration</label></div>
       <div class="fg"><label style="display:flex;align-items:center;gap:9px"><label class="tog"><input type="checkbox" id="c-lo" checked><span class="tog-sl"></span></label>Accept Loan Applications</label></div>
@@ -1414,7 +1632,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <button class="btn btn-p" onclick="trxAct('Verified')"><i class="fa-solid fa-circle-check"></i>Approve & Verify</button>
       <button class="btn btn-d" onclick="trxAct('Rejected')"><i class="fa-solid fa-circle-xmark"></i>Reject</button>
       <button class="btn btn-s" id="trxMatchBtn" style="display:none" onclick="autoMatchTrx(_docId)"><i class="fa-solid fa-link"></i>Match application</button>
-      <button class="btn btn-d" style="margin-left:auto" onclick="delTrx(_docId)"><i class="fa-solid fa-trash"></i>Delete permanently</button>
+      <button class="btn btn-d" style="margin-left:auto" onclick="delTrx(_docId)"><i class="fa-solid fa-trash"></i>Remove / delete</button>
     </div>
   </div>
   <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moTrx')">Close</button></div>
@@ -1620,6 +1838,7 @@ async function loadGateway(){
   g('gwLogo').value = gw.logoUrl || '';
   const on = Array.isArray(gw.methods) ? gw.methods : GW_GROUPS.map(x=>x.k);
   g('gwMethods').innerHTML = GW_GROUPS.map(x=>`<label class="gwm-i"><input type="checkbox" value="${x.k}" ${on.includes(x.k)?'checked':''} onchange="markDirty('wallets','gw')"><span><b>${x.t}</b>${x.s}</span></label>`).join('');
+  _snapTake('wallets'); _paintSave();
   const st = g('gwStatus');
   try{
     const r = await fetch('/api/pay/status', {cache:'no-store'});
@@ -1824,7 +2043,7 @@ function _usersFiltered(){
   if(!f) return L;
   const loanSt=['Approved','Disbursed','Active','Overdue'];
   const withLoan=new Set((_D.applications||[]).filter(a=>loanSt.includes(a.status)).map(a=>String(a.uid||a.phone||'')));
-  const keep={online:x=>ago(x)<3e5,today:x=>ago(x)<864e5,'7':x=>ago(x)<7*864e5,'30':x=>ago(x)<30*864e5,idle:x=>ago(x)>=30*864e5&&ago(x)!==Infinity,never:x=>ago(x)===Infinity,loan:x=>withLoan.has(String(x.phone||'')),admin:x=>x.createdBy==='admin'}[f];
+  const keep={online:x=>ago(x)<3e5,today:x=>ago(x)<864e5,'7':x=>ago(x)<7*864e5,'30':x=>ago(x)<30*864e5,idle:x=>ago(x)>=30*864e5&&ago(x)!==Infinity,never:x=>ago(x)===Infinity,loan:x=>withLoan.has(String(x.phone||'')),admin:x=>x.createdBy==='admin',removed:x=>x.removed===true}[f];
   L=keep?L.filter(keep):L;
   if(f!=='never') L=[...L].sort((a,b)=>ago(a)-ago(b));
   return L;
@@ -1832,7 +2051,7 @@ function _usersFiltered(){
 function renderUP(){
   const f=document.getElementById('uAct')?.value||'';
   renderPg('users',_usersFiltered(),rows=>{
-    document.getElementById('utb').innerHTML=rows.length?rows.map(r=>{ const a=new Date(r.lastSeenAt||0).getTime(), on=a&&Date.now()-a<3e5; return `<tr><td class="mono">${r.phone||'-'}${r.name?`<div style="font-family:inherit;font-size:10.5px;color:var(--txt2)">${_escA(r.name)}</div>`:''}${r.createdBy==='admin'?' <span class="wbadge" title="Created by an admin">ADMIN</span>':''}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.createdAt)}</td><td style="font-size:11px;white-space:nowrap">${a?`<span class="ls-dot${on?' on':''}"></span>${agoTxt(r.lastSeenAt)}${r.lastDevice?`<div style="font-size:9.5px;color:var(--txt2)">${_escA(r.lastDevice)}</div>`:''}`:'<span style="color:var(--txt2)">—</span>'}</td><td>${sb(r.status||'active')}</td><td style="color:var(--p);font-weight:700">৳${fa(r.balance||0)}</td><td style="font-size:11px;color:var(--p);font-weight:700">${r.appStatus||0}/5</td><td><div class="acts"><button class="ab ab-v" onclick="viewUser('${r._id}')" title="View"><i class="fa-solid fa-eye"></i></button><button class="ab ab-s" onclick="qSusp('${r._id}')" title="Suspend"><i class="fa-solid fa-pause"></i></button><button class="ab ab-d" onclick="qBan('${r._id}')" title="Ban"><i class="fa-solid fa-ban"></i></button><button class="ab ab-d" onclick="confirm2('Delete user ${r.phone||''}?',()=>delUser('${r._id}'))" title="Delete"><i class="fa-solid fa-trash"></i></button></div></td></tr>`; }).join(''):`<tr class="empty"><td colspan="7">${f?'No users match this activity filter':'No users found'}</td></tr>`;
+    document.getElementById('utb').innerHTML=rows.length?rows.map(r=>{ const a=new Date(r.lastSeenAt||0).getTime(), on=a&&Date.now()-a<3e5; return `<tr><td class="mono">${r.phone||'-'}${rmTag(r)}${r.name?`<div style="font-family:inherit;font-size:10.5px;color:var(--txt2)">${_escA(r.name)}</div>`:''}${r.createdBy==='admin'?' <span class="wbadge" title="Created by an admin">ADMIN</span>':''}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.createdAt)}</td><td style="font-size:11px;white-space:nowrap">${a?`<span class="ls-dot${on?' on':''}"></span>${agoTxt(r.lastSeenAt)}${r.lastDevice?`<div style="font-size:9.5px;color:var(--txt2)">${_escA(r.lastDevice)}</div>`:''}`:'<span style="color:var(--txt2)">—</span>'}</td><td>${sb(r.status||'active')}</td><td style="color:var(--p);font-weight:700">৳${fa(r.balance||0)}</td><td style="font-size:11px;color:var(--p);font-weight:700">${r.appStatus||0}/5</td><td><div class="acts"><button class="ab ab-v" onclick="viewUser('${r._id}')" title="View"><i class="fa-solid fa-eye"></i></button><button class="ab ab-s" onclick="qSusp('${r._id}')" title="Suspend"><i class="fa-solid fa-pause"></i></button><button class="ab ab-d" onclick="qBan('${r._id}')" title="Ban"><i class="fa-solid fa-ban"></i></button>${r.removed?`<button class="ab ab-ok" onclick="restoreDoc('users','${r._id}',loadUsers)" title="Restore account"><i class="fa-solid fa-rotate-left"></i></button>`:`<button class="ab ab-d" onclick="rmUser('${r._id}')" title="Remove / delete"><i class="fa-solid fa-trash"></i></button>`}</div></td></tr>`; }).join(''):`<tr class="empty"><td colspan="7">${f?'No users match this activity filter':'No users found'}</td></tr>`;
   });
 }
 function viewUser(id){
@@ -1934,6 +2153,12 @@ async function resetUserPw(){
   await _notifyUser(String(u.phone),'Password Changed 🔑','Our support team set a new login password for your account. If you did not ask for this, contact support right away.','warning');
   toast('Password updated ✓'); await logAct('User password reset','user',_userId);
 }
+function rmUser(id){
+  const u=findById('users',id); if(!u) return;
+  askRemove('Remove user', `Account <b>0${_escA(u.phone||'')}</b>${u.name?' · '+_escA(u.name):''}. Removing signs the user out and blocks the site for them; their applications and payments stay in the admin panel.`,
+    async()=>{ showL(true); try{ await softRemove('users',id); await logAct('User removed from the site (kept for review)','user',id); toast('User removed from the site','e'); }catch(e){ toast(e.message,'e'); } showL(false); loadUsers(); },
+    ()=>delUser(id));
+}
 async function delUser(id){ showL(true); const du=findById('users',id); if(du&&du.phone){ const r=await window._accountApi('adminDeleteLogin',{phone:String(du.phone)}); if(!r.ok) console.warn('delete login:',r.data.error); } await window._deleteDoc(id,'users'); showL(false); await logAct('User deleted','user',id); toast('User deleted','e'); loadUsers(); }
 
 // ══ APPLICATIONS ═════════════════════════════════════
@@ -1953,8 +2178,14 @@ async function loadApps(){
 function renderAP(){
   _selApps=new Set();
   renderPg('applications',_D.applications,rows=>{
-    document.getElementById('atb').innerHTML=rows.length?rows.map(r=>`<tr><td><input type="checkbox" class="ack" value="${r._id}" onchange="togAck(this)"></td><td class="mono">${r.uid||'-'}<div style="font-size:10px;color:var(--txt2)">CU-${String(r._id).slice(-6).toUpperCase()}</div></td><td>${r.name||'-'}</td><td style="color:var(--p);font-weight:700">৳${fa(r.loanAmount)}</td><td>${riskBadge(riskScore(r))}</td><td>${sb(r.status)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewApp('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qApproveApp('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRejectApp('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`).join(''):'<tr class="empty"><td colspan="8">No applications found</td></tr>';
+    document.getElementById('atb').innerHTML=rows.length?rows.map(r=>`<tr><td><input type="checkbox" class="ack" value="${r._id}" onchange="togAck(this)"></td><td class="mono">${r.uid||'-'}${rmTag(r)}<div style="font-size:10px;color:var(--txt2)">CU-${String(r._id).slice(-6).toUpperCase()}</div></td><td>${r.name||'-'}</td><td style="color:var(--p);font-weight:700">৳${fa(r.loanAmount)}</td><td>${riskBadge(riskScore(r))}</td><td>${sb(r.status)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewApp('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qApproveApp('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRejectApp('${r._id}')"><i class="fa-solid fa-xmark"></i></button>${r.removed?`<button class="ab ab-ok" title="Restore to the user site" onclick="restoreDoc('applications','${r._id}',loadApps)"><i class="fa-solid fa-rotate-left"></i></button>`:`<button class="ab ab-d" title="Remove / delete" onclick="rmApp('${r._id}')"><i class="fa-solid fa-trash"></i></button>`}</div></td></tr>`).join(''):'<tr class="empty"><td colspan="8">No applications found</td></tr>';
   });
+}
+function rmApp(id){
+  const a=findById('applications',id); if(!a) return;
+  askRemove('Remove application', `Application <b>CU-${String(id).slice(-6).toUpperCase()}</b> · ৳${fa(a.loanAmount)} · ${_escA(a.name||a.uid||'')} (${_escA(a.status||'')}). The user's balance is not changed.`,
+    async()=>{ showL(true); try{ await softRemove('applications',id); await logAct('Application removed from the user site (kept for review)','application',id); toast('Removed from the user site','e'); }catch(e){ toast(e.message,'e'); } showL(false); loadApps(); },
+    async()=>{ showL(true); try{ await window._deleteDoc(id,'applications'); await logAct('Application deleted permanently','application',id); toast('Application deleted permanently','e'); }catch(e){ toast(e.message,'e'); } showL(false); loadApps(); });
 }
 function toggleAll(cb){ document.querySelectorAll('.ack').forEach(c=>{c.checked=cb.checked; if(cb.checked)_selApps.add(c.value); else _selApps.delete(c.value);}); }
 function togAck(cb){ if(cb.checked)_selApps.add(cb.value); else _selApps.delete(cb.value); }
@@ -2223,6 +2454,24 @@ async function qApproveApp(id){
 async function qRejectApp(id){ await setAppStatus(id, 'Rejected'); await logAct('Quick-rejected','application',id); toast('Rejected','e'); loadApps(); }
 
 
+// ══ REMOVE: hide from the user site (kept for review) or delete for good ══
+function askRemove(title, what, onHide, onDelete){
+  document.getElementById('rmTitle').textContent=title;
+  document.getElementById('rmWhat').innerHTML=what;
+  document.getElementById('rmHide').onclick=()=>{ closeMo('moRemove'); onHide(); };
+  document.getElementById('rmDel').onclick=()=>{ closeMo('moRemove'); confirm2('Delete permanently? This cannot be undone.', onDelete); };
+  openMo('moRemove');
+}
+const _rmMark = () => ({ removed:true, removedAt:new Date().toISOString(), removedBy:'admin' });
+async function softRemove(col,id){ await window._updateDoc(id,col,_rmMark()); }
+async function restoreDoc(col,id,reload){
+  showL(true);
+  try{ await window._updateDoc(id,col,{removed:false,restoredAt:new Date().toISOString()}); await logAct(`Restored to the user site (${col} ${String(id).slice(-6)})`,col==='users'?'user':col==='broadcasts'?'broadcast':col==='applications'?'application':'transaction',id); toast('Restored ✓'); }
+  catch(e){ toast(e.message||'Could not restore','e'); }
+  showL(false); if(typeof reload==='function') reload();
+}
+const rmTag = r => r && r.removed===true ? `<span class="rm-tag" title="Removed from the user site ${fd(r.removedAt)} — kept for review">REMOVED</span>` : '';
+
 // ══ MANUAL ENTRY (users, applications, transactions) ══
 const _ph = v => String(v||'').replace(/\D/g,'').replace(/^(?:880|0)+/,'');
 const _okPh = p => /^1[0-9]{9}$/.test(p);
@@ -2488,15 +2737,20 @@ function renderTrxCharts(){
 // remove a transaction for good (the TrxID can then be submitted again)
 function delTrx(id){
   const t=findById('transactions',id); if(!t){toast('Not found','e');return;}
-  confirm2(`Permanently delete transaction ${t.trxId||''} (৳${fa(Number(t.amount||0)+Number(t.appliedBalance||0))} from ${t.uid||'-'})? This cannot be undone and the same TrxID can be submitted again.`, async ()=>{
+  const what=`Transaction <b>${_escA(t.trxId||'')}</b> · ৳${fa(Number(t.amount||0)+Number(t.appliedBalance||0))} from ${_escA(t.uid||'-')}`;
+  const after=async(msg)=>{ closeMo('moTrx'); toast(msg,'e'); await loadTrx(); };
+  askRemove('Remove transaction', what, async()=>{
+    showL(true);
+    try{ await softRemove('transactions',t._id); await logAct(`Transaction ${t.trxId||''} removed from the user site (kept for review)`,'transaction',t._id); await after('Removed from the user site'); }
+    catch(e){ toast(e.message||'Failed','e'); }
+    showL(false);
+  }, async()=>{
     showL(true);
     try{
       if((!t.status||t.status==='Pending')) await restoreBalanceAdjust(t);   // an unverified payment gives the balance offer back
       await window._deleteDoc(t._id,'transactions');
       await logAct(`Transaction ${t.trxId||''} deleted permanently (৳${fa(t.amount||0)}, ${t.uid||'-'})`,'transaction',t._id);
-      closeMo('moTrx');
-      toast('Transaction deleted','e');
-      await loadTrx();
+      await after('Transaction deleted permanently');
     }catch(e){ toast(e.message||'Delete failed','e'); }
     showL(false);
   });
@@ -2519,7 +2773,7 @@ function renderTP(){
       const times=(k && k!=='BALANCE_PAYMENT') ? (dup[k]||0) : 0;
       const dupBadge = times>1 ? `<span class="wbadge or" title="This TrxID was submitted ${times} times">DUP ×${times}</span>` : '';
       const appRef = r.appId ? `<span class="wbadge" title="Linked application">CU-${String(r.appId).slice(-6).toUpperCase()}</span>` : '';
-      return `<tr><td class="mono">${r.trxId||'-'} ${dupBadge}</td><td class="mono">${r.uid||'-'}</td><td><div class="tm">${_trxLogoHtml(r)}<div class="tm-txt">${r.payMethod||(String(r.trxId).toUpperCase()==='BALANCE_PAYMENT'?'Balance':'-')}${r.gateway?' <span class="wbadge">AUTO</span>':''}${r.payType?`<small>${r.payType}</small>`:''}${appRef}</div></div></td><td style="font-weight:800;white-space:nowrap">৳${fa(Number(r.amount||0)+Number(r.appliedBalance||0))}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button><button class="ab ab-d" title="Delete permanently" onclick="delTrx('${r._id}')"><i class="fa-solid fa-trash"></i></button></div></td></tr>`;
+      return `<tr class="${r.removed?'is-removed':''}"><td class="mono">${r.trxId||'-'} ${dupBadge}${rmTag(r)}</td><td class="mono">${r.uid||'-'}</td><td><div class="tm">${_trxLogoHtml(r)}<div class="tm-txt">${r.payMethod||(String(r.trxId).toUpperCase()==='BALANCE_PAYMENT'?'Balance':'-')}${r.gateway?' <span class="wbadge">AUTO</span>':''}${r.payType?`<small>${r.payType}</small>`:''}${appRef}</div></div></td><td style="font-weight:800;white-space:nowrap">৳${fa(Number(r.amount||0)+Number(r.appliedBalance||0))}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button>${r.removed?`<button class="ab ab-ok" title="Restore to the user site" onclick="restoreDoc('transactions','${r._id}',loadTrx)"><i class="fa-solid fa-rotate-left"></i></button>`:`<button class="ab ab-d" title="Remove / delete" onclick="delTrx('${r._id}')"><i class="fa-solid fa-trash"></i></button>`}</div></td></tr>`;
     }).join(''):'<tr class="empty"><td colspan="8">No transactions found</td></tr>';
   });
 }
@@ -3065,6 +3319,128 @@ async function _saveWalletsTab(){
 const _dirty={};
 function markDirty(tab,part){ (_dirty[tab]=_dirty[tab]||new Set()).add(part||'x'); _paintSave(); }
 function _isDirty(tab){ return !!(_dirty[tab] && _dirty[tab].size); }
+// ── what changed since the page was loaded (save bar list + Discard preview) ──
+const _snap={};            // tab → { f: {key:{v,label,group}}, d: {name:json} }
+const _TAB_NAME={config:'Site Config',home:'Home Page',wallets:'Payment Methods'};
+const _SNAP_SKIP=new Set(['cfRateTot']);
+function _fEls(tab){
+  const sec=document.getElementById('sec-'+tab); if(!sec) return [];
+  const out=[];
+  sec.querySelectorAll('input[id],select[id],textarea[id]').forEach(e=>{ if(!['file','color','button','submit','search'].includes(e.type) && !_SNAP_SKIP.has(e.id)) out.push([e.id,e]); });
+  if(tab==='wallets') sec.querySelectorAll('#gwMethods input[type=checkbox]').forEach(e=>out.push(['gwm:'+e.value,e]));
+  return out;
+}
+function _fVal(e){
+  if(e.type==='checkbox') return e.checked?'On':'Off';
+  if(e.tagName==='SELECT') return (e.selectedOptions[0]?.text||e.value||'').trim();
+  return String(e.value??'').trim();
+}
+function _fLabel(e){
+  if(e.type==='checkbox'){
+    const gw=e.closest('.gwm-i'); if(gw) return (gw.querySelector('b')?.textContent||gw.textContent).trim();
+    const sw=e.closest('.hp-sw'); if(sw){ const t=sw.textContent.trim(); const fg=e.closest('.fg'); return fg && fg.querySelector(':scope>input:not([type=checkbox]),:scope>textarea') ? t+' (show)' : t; }
+    const l=e.closest('label'); if(l && l.textContent.trim()) return l.textContent.trim();
+  }
+  const fg=e.closest('.fg');
+  if(fg){ const l=[...fg.children].find(x=>x.tagName==='LABEL'); if(l && l.textContent.trim()) return l.textContent.replace(/\s+/g,' ').trim(); }
+  return e.getAttribute('aria-label')||e.placeholder||e.id;
+}
+function _fGroup(e){
+  const parts=[];
+  const pane=e.closest('.hp-pane');
+  if(pane){ const b=document.querySelector(`#hpTabs [data-p="${pane.id.slice(3)}"]`); if(b) parts.push(b.textContent.trim()); }
+  const t=e.closest('.cfg-blk')?.querySelector('.cfg-t');
+  if(t){ const txt=[...t.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').trim(); if(txt && !parts.includes(txt)) parts.push(txt); }
+  // sub-heading inside a block (e.g. Site Text & Branding → Brand)
+  let p=e.closest('.fgrid'); while(p && p.previousElementSibling && !p.previousElementSibling.classList.contains('br-sub') && !p.previousElementSibling.classList.contains('cfg-t')) p=p.previousElementSibling;
+  if(p && p.previousElementSibling && p.previousElementSibling.classList.contains('br-sub')) parts.push(p.previousElementSibling.textContent.trim());
+  return parts.join(' › ') || _TAB_NAME[e.closest('.sec')?.id.slice(4)] || '';
+}
+function _snapData(tab){
+  if(tab==='home' && _H) return {'Notice Bar › Notices':_H.notice.items,'Partners › Partner logos':_H.partners.items,'Trust Badges › Badges':_H.trust.items,
+    'Loading Screen › Payment logos':_H.splash.pays,'Offers › Offer cards':_H.offers.items,'Live Transactions › Hidden entries':_H.live.hidden,'Winners › Hidden people / entries':_H.winners?_H.winners.hidden:[],'Stats › Cards':_H.stats?_H.stats.items:[],'Winners › Invite tips':_H.winners?_H.winners.tips:[],'Winners › Invite targets':_H.winners?_H.winners.targets:[],'Winners › Announced winners':_H.winners?_H.winners.announced:[],'Footer › Links':_H.footer?_H.footer.links:[],'Hot Offer › Offer round':_H.fomo.round};
+  if(tab==='config') return {'Custom Fees & Additional Interest › Fee list':window._cfFees||[]};
+  return {};
+}
+function _snapTake(tab){
+  const f={}; _fEls(tab).forEach(([k,e])=>{ f[k]={v:_fVal(e),label:_fLabel(e),group:_fGroup(e)}; });
+  const d={}; Object.entries(_snapData(tab)).forEach(([k,v])=>{ d[k]=JSON.stringify(v??null); });
+  _snap[tab]={f,d,w:tab==='wallets'?Object.fromEntries((_D.wallets||[]).map(w=>[w._id,w.name||'Method'])):null};
+}
+const _short=v=>{ v=String(v??''); return v===''?'(empty)':(v.length>70?v.slice(0,67)+'…':v); };
+function _listChange(a,b){
+  a=Array.isArray(a)?a:[]; b=Array.isArray(b)?b:[];
+  const key=(x,i)=>(x&&typeof x==='object'&&x.id)?x.id:(typeof x!=='object'?String(x):'#'+i);
+  const nm=x=>typeof x==='object'&&x?(x.name||x.title||x.text||x.label||'item'):String(x);
+  const A=new Map(a.map((x,i)=>[key(x,i),x])), B=new Map(b.map((x,i)=>[key(x,i),x]));
+  const add=[],rem=[],chg=[];
+  B.forEach((x,k)=>{ if(!A.has(k)) add.push(nm(x)); else if(JSON.stringify(A.get(k))!==JSON.stringify(x)) chg.push(nm(x)); });
+  A.forEach((x,k)=>{ if(!B.has(k)) rem.push(nm(x)); });
+  const list=arr=>arr.slice(0,3).map(x=>'“'+_short(x).slice(0,30)+'”').join(', ')+(arr.length>3?` +${arr.length-3} more`:'');
+  const out=[];
+  // lists of hidden ids: say how many were hidden / shown again, not the ids
+  if([...a,...b].every(x=>typeof x==='string')){
+    if(add.length) out.push(`<em>${add.length} hidden</em>`);
+    if(rem.length) out.push(`${rem.length} shown again`);
+    return out.join(' · ');
+  }
+  if(add.length) out.push(`<em>${add.length} added</em> (${list(add)})`);
+  if(rem.length) out.push(`<s>${rem.length} removed</s> (${list(rem)})`);
+  if(chg.length) out.push(`${chg.length} edited (${list(chg)})`);
+  if(!out.length && JSON.stringify([...A.keys()])!==JSON.stringify([...B.keys()])) out.push('order changed');
+  return out.join(' · ');
+}
+const _W_KEYS={feeOff:['Fee receiving',v=>v?'Off':'On'],payoutOff:['Loan sending',v=>v?'Off':'On'],enabled:['Method',v=>v?'On':'Off'],useForFee:['Fee receiving list',v=>v?'Added':'Removed'],useForPayout:['Loan sending list',v=>v?'Added':'Removed'],order:['Position',v=>'#'+v]};
+function _changes(tab){
+  const S=_snap[tab]; if(!S) return null;
+  const out=[];
+  _fEls(tab).forEach(([k,e])=>{ const o=S.f[k]; if(!o) return; const v=_fVal(e); if(v!==o.v) out.push({group:o.group,label:o.label,from:o.v,to:v,key:k}); });
+  const now=_snapData(tab);
+  Object.entries(S.d).forEach(([name,j])=>{
+    const cur=JSON.stringify(now[name]??null); if(cur===j) return;
+    const [group,label]=name.split(' › ');
+    const was=JSON.parse(j);
+    if(Array.isArray(was)||Array.isArray(now[name])) out.push({group,label,html:_listChange(was,now[name])});
+    else out.push({group,label,from:String(was??''),to:String(now[name]??'')});
+  });
+  if(tab==='wallets'){
+    _wDel.forEach(id=>out.push({group:'Payment methods',label:S.w[id]||'Method',html:'<s>Deleted</s>'}));
+    Object.entries(_wPend).forEach(([id,d])=>{ if(_wDel.has(id)) return;
+      const bits=Object.entries(d).map(([k,v])=>_W_KEYS[k]?`${_W_KEYS[k][0]}: <em>${_W_KEYS[k][1](v)}</em>`:k).filter((x,i,a)=>a.indexOf(x)===i);
+      const onlyOrder=Object.keys(d).every(k=>k==='order');
+      out.push({group:'Payment methods',label:S.w[id]||findById('wallets',id)?.name||'Method',html:onlyOrder?'Moved up / down':bits.join(' · ')});
+    });
+  }
+  // keep each section's changes together, in page order
+  const first={}; out.forEach((c,i)=>{ if(!(c.group in first)) first[c.group]=i; });
+  return out.map((c,i)=>[c,i]).sort((x,y)=>first[x[0].group]-first[y[0].group]||x[1]-y[1]).map(x=>x[0]);
+}
+function _changesHtml(list,canUndo){
+  if(!list) return '<div class="ch-none">Changes on this page are not tracked yet. Reload the page to start tracking.</div>';
+  if(!list.length) return '<div class="ch-none">No differences from the saved version — you changed something and then put it back.</div>';
+  let g=null, h='';
+  list.forEach(c=>{
+    if(c.group!==g){ g=c.group; h+=`<div class="ch-g">${_escA(g||'')}</div>`; }
+    const v=c.html!=null?c.html:`<s>${_escA(_short(c.from))}</s> → <em>${_escA(_short(c.to))}</em>`;
+    h+=`<div class="ch-i"><i class="fa-solid fa-pen"></i><div class="ch-m"><b>${_escA(c.label)}</b><div class="ch-v">${v}</div></div>${canUndo&&c.key?`<button class="ch-undo" type="button" onclick="undoField('${_escA(c.key)}')" title="Put the saved value back"><i class="fa-solid fa-rotate-left"></i> Undo</button>`:''}</div>`;
+  });
+  return h;
+}
+// put one field back to its saved value
+function undoField(key){
+  const tab=_sec, S=_snap[tab]; if(!S||!S.f[key]) return;
+  const e=(_fEls(tab).find(([k])=>k===key)||[])[1]; if(!e) return;
+  const v=S.f[key].v;
+  if(e.type==='checkbox') e.checked=v==='On';
+  else if(e.tagName==='SELECT'){ const o=[...e.options].find(o=>o.text.trim()===v); if(o) e.value=o.value; }
+  else e.value=v==='(empty)'?'':v;
+  e.dispatchEvent(new Event('input',{bubbles:true})); e.dispatchEvent(new Event('change',{bubbles:true}));
+  const left=_changes(tab);
+  if(left && !left.length){ _dirty[tab]=new Set(); }
+  _paintSave();
+}
+function sbToggle(){ const b=document.getElementById('saveBar'); b.classList.toggle('open'); _paintSave(); }
+document.addEventListener('click',e=>{ const b=document.getElementById('saveBar'); if(b && b.classList.contains('open') && !b.contains(e.target)) b.classList.remove('open'); });
 function _paintSave(){
   ['wallets','config','home'].forEach(t=>{
     const b=document.getElementById('svBtn-'+t); if(!b) return;
@@ -3072,7 +3448,13 @@ function _paintSave(){
     b.querySelector('span').textContent = d ? 'Save changes' : 'All saved';
     b.querySelector('i').className = 'fa-solid ' + (d ? 'fa-floppy-disk' : 'fa-circle-check');
   });
-  const bar=document.getElementById('saveBar'); if(bar) bar.classList.toggle('on', _isDirty(_sec));
+  const bar=document.getElementById('saveBar'); if(!bar) return;
+  const on=_isDirty(_sec); bar.classList.toggle('on', on);
+  if(!on){ bar.classList.remove('open'); return; }
+  const list=_changes(_sec), n=list?list.length:0;
+  const t=document.getElementById('sbTxt');
+  if(t) t.textContent = list ? (n ? `${n} unsaved change${n>1?'s':''}` : 'Unsaved changes') : 'You have unsaved changes';
+  if(bar.classList.contains('open')) document.getElementById('sbPanel').innerHTML=`<div class="ch-list">${_changesHtml(list,true)}</div>`;
 }
 async function saveTab(tab){
   tab = tab || _sec;
@@ -3088,14 +3470,22 @@ async function saveTab(tab){
   showL(false);
 }
 function discardTab(){
-  const tab=_sec;
-  confirm2('Discard your unsaved changes?', ()=>{
-    _dirty[tab]=new Set();
-    if(tab==='wallets'){ _wPend={}; _wDel=new Set(); loadWallets(); }
-    if(tab==='config') loadConfig();
-    if(tab==='home') loadHome();
-    _paintSave();
-  });
+  const tab=_sec, list=_changes(tab);
+  document.getElementById('saveBar').classList.remove('open');
+  document.getElementById('dcHint').innerHTML = list && list.length
+    ? `These ${list.length} change${list.length>1?'s':''} on <b>${_TAB_NAME[tab]||tab}</b> will be thrown away and the saved values come back:`
+    : `Unsaved edits on <b>${_TAB_NAME[tab]||tab}</b> will be thrown away.`;
+  document.getElementById('dcList').innerHTML=_changesHtml(list,false);
+  document.getElementById('dcOk').onclick=()=>{ closeMo('moDiscard'); _doDiscard(tab); };
+  openMo('moDiscard');
+}
+function _doDiscard(tab){
+  _dirty[tab]=new Set();
+  if(tab==='wallets'){ _wPend={}; _wDel=new Set(); loadWallets(); }
+  if(tab==='config') loadConfig();
+  if(tab==='home') loadHome();
+  _paintSave();
+  toast('Changes discarded','i');
 }
 document.addEventListener('DOMContentLoaded',()=>{
   const c=document.getElementById('sec-config');
@@ -3116,13 +3506,21 @@ async function loadConfig(){
   // payment numbers live in the Wallets section now (kept untouched in the saved config)
   s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');s('c-rfp',cfg.refundPolicy||'');
   s('c-wa',cfg.contact?.whatsapp);s('c-tg',cfg.contact?.telegram);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
-  s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
+  s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
   window._cfFees = (Array.isArray(cfg.customFees)?cfg.customFees:[]).map(f=>({name:f.name||'',type:f.type==='percent'?'percent':'fixed',value:Number(f.value)||0,on:f.on!==false}));
   const xi=cfg.extraInterest||{}; cb('c-xi-on',xi.on); s('c-xi-lbl',xi.label||''); s('c-xi-rate',xi.rate!=null?xi.rate:'');
   cfRender();
   _brandFill(cfg.branding||{});
+  _snapTake('config'); _paintSave();
   cb('c-ro',cfg.flags?.registrationOpen!==false);cb('c-lo',cfg.flags?.loansOpen!==false);cb('c-mn',cfg.flags?.maintenance);
 }
+// Site Config is split into tabs (the save button still saves every tab)
+function cfgTab(g){
+  document.getElementById('sec-config').dataset.g=g;
+  document.querySelectorAll('#cfgTabs button').forEach(b=>b.classList.toggle('on',b.dataset.g===g));
+  try{ localStorage.setItem('cfgTab',g); }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',()=>{ let g='loan'; try{ g=localStorage.getItem('cfgTab')||'loan'; }catch(e){} if(document.querySelector(`#cfgTabs [data-g="${g}"]`)) cfgTab(g); });
 // Site Text & Branding
 const BR_KEYS={name:'br-name',title:'br-title',icon:'br-icon',borrowLabel:'br-blbl',btn:'br-btn',btnBn:'br-btnbn',f1:'br-f1',f2:'br-f2',f3:'br-f3',quick:'br-qs',welcome:'br-welcome',again:'br-again',s1t:'br-s1t',s1d:'br-s1d',s2t:'br-s2t',s2d:'br-s2d',s3t:'br-s3t',s3d:'br-s3d',polTitle:'br-polt',polSub:'br-pols',wait:'br-wait'};
 const BR_DEF={c1:'#1ddb80',c2:'#0fbb65'};
@@ -3175,7 +3573,7 @@ async function saveConfig(quiet){
   const g=id=>document.getElementById(id)?.value.trim();
   const sl=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
   const cb=id=>document.getElementById(id)?.checked;
-  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:(g('c-nb')===''||isNaN(parseFloat(g('c-nb'))))?100:Math.max(0,parseFloat(g('c-nb'))),loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',refundPolicy:g('c-rfp')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
+  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:(g('c-nb')===''||isNaN(parseFloat(g('c-nb'))))?100:Math.max(0,parseFloat(g('c-nb'))),loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',refundPolicy:g('c-rfp')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:(window._cfgLoaded?.splashSubtitle)||'',policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
   cfg.customFees=(window._cfFees||[]).filter(f=>String(f.name||'').trim()&&Number(f.value)>0).map(f=>({name:String(f.name).trim().slice(0,40),type:f.type==='percent'?'percent':'fixed',value:Math.max(0,Number(f.value)||0),on:f.on!==false}));
   cfg.extraInterest={on:!!cb('c-xi-on'),label:(g('c-xi-lbl')||'Additional interest').slice(0,40),rate:Math.max(0,parseFloat(g('c-xi-rate'))||0)};
   cfg.branding=_brandRead();
@@ -3206,13 +3604,15 @@ function hpTab(p){
   document.querySelectorAll('#hpTabs button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
   document.querySelectorAll('.hp-pane').forEach(x => x.classList.toggle('on', x.id === 'hp-' + p));
   if(p === 'live') hpLoadFeed();
+  if(p === 'stats' || p === 'winners') hpLoadShowcase();
   if(p === 'splash') hpSplashPreview();
   if(p === 'fomo'){ hpFomoPreview(); hpFomoStat(); }
   if(p === 'topbar') hpTopPreview();
 }
 async function loadHome(){
   showL(true);
-  const d = (await window._getDoc('siteConfig','home')) || {};
+  const [d0, mainCfg] = await Promise.all([window._getDoc('siteConfig','home'), window._getDoc('siteConfig','main')]);
+  const d = d0 || {};
   showL(false);
   _H = {
     live: { on:true, loans:true, fees:true, title:'Live Transactions', count:8, days:30, refresh:60, scroll:true, hidden:[], ...(d.live||{}) },
@@ -3223,7 +3623,13 @@ async function loadHome(){
     splash: { ...SL_DEF, ...(d.splash||{}) },
     offers: { on:true, rotate:4, items:null, ...(d.offers||{}) },
     fomo: { ...FO_DEF, ...(d.fomo||{}) },
-    topbar: { ...TB_DEF, ...(d.topbar||{}) }
+    topbar: { ...TB_DEF, ...(d.topbar||{}) },
+    stats: { ...SX_DEF, ...(d.stats||{}), items: _sxItems(d.stats||{}) },
+    footer: { ...FT_DEF, ...(d.footer||{}), links: (Array.isArray((d.footer||{}).links) ? d.footer.links : FT_DEF.links).map(x => ({ id:_hid(), on:true, ...x })) },
+    winners: { ...WX_DEF, ...(d.winners||{}), kinds: { ...WX_DEF.kinds, ...((d.winners||{}).kinds||{}) }, hidden: Array.isArray((d.winners||{}).hidden) ? [...d.winners.hidden] : [],
+      tips: (Array.isArray((d.winners||{}).tips) && d.winners.tips.length ? d.winners.tips : [ (d.winners||{}).advice || WX_DEF.advice ]).map(x => ({ id:_hid(), on:true, ...(typeof x==='object'&&x ? x : { text:String(x||'') }) })),
+      targets: (Array.isArray((d.winners||{}).targets) && d.winners.targets.length ? d.winners.targets : WX_TARGETS_DEF).map(x => ({ id:_hid(), short:'', name:'', ...x })),
+      announced: (Array.isArray((d.winners||{}).announced) ? d.winners.announced : []).map(x => ({ id:_hid(), on:true, ...x })) }
   };
   if(!Array.isArray(_H.offers.items)) _H.offers.items = [ { ...OF_DEF } ];
   _H.offers.items = _H.offers.items.map(x => ({ ...OF_DEF, id:_hid(), ...x }));
@@ -3237,11 +3643,13 @@ async function loadHome(){
   if(typeof N.speed !== 'number') N.speed = ({slow:3,normal:5,fast:8})[N.speed] || 5;
   set('nt-on',N.on); set('nt-bc',N.broadcasts); set('nt-own',N.own); set('nt-label',N.label); set('nt-speed',N.speed); set('nt-max',N.max);
   set('nt-aud',N.audience); set('nt-dir',N.dir); set('nt-theme',N.theme); set('nt-size',N.size); set('nt-showlabel',N.showLabel); set('nt-pause',N.pause); set('nt-close',N.closable);
-  set('pt-on',P.on); set('pt-title',P.title); set('pt-size',P.size);
+  set('pt-on',P.on); set('pt-title',P.title); set('pt-layout',P.layout||'small'); set('pt-sub',P.sub ?? 'Trusted payment & banking network');
   set('tr-on',T.on); set('tr-note',T.note);
   set('rf-on',R.on); set('rf-days',R.days);
   const S=_H.splash;
   set('sl-on',S.on); set('sl-once',S.once); set('sl-min',S.minSec); set('sl-max',S.maxSec); set('sl-theme',S.theme); set('sl-loader',S.loader); set('sl-glow',S.glow);
+  // the subtitle used to live in Site Config → Site Text & Branding; it is edited here now
+  if(!S.sub && mainCfg && mainCfg.splashSubtitle) S.sub = mainCfg.splashSubtitle;
   set('sl-showtitle',S.showTitle); set('sl-title',S.title); set('sl-showsub',S.showSub); set('sl-sub',S.sub); set('sl-showbadge',S.showBadge); set('sl-badge',S.badge);
   set('sl-showfoot',S.showFoot); set('sl-foot',S.foot); set('sl-showpay',S.showPay); set('sl-paytitle',S.payTitle);
   set('of-on',_H.offers.on); set('of-rotate',_H.offers.rotate);
@@ -3253,16 +3661,123 @@ async function loadHome(){
   const B=_H.topbar;
   set('tb-theme',B.theme); set('tb-clear',B.clear); set('tb-glass',B.glass); set('tb-compact',B.compact); set('tb-hide',B.hideOnScroll); set('tb-avatar',B.avatar); set('tb-hi',B.greet);
   set('tb-balance',B.balance); set('tb-notif',B.notif); set('tb-support',B.support); set('tb-logout',B.logout); set('tb-alert',B.alert); set('tb-name',B.title); set('tb-vtext',B.visitorText);
-  hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers();
+  const X=_H.stats, Y=_H.winners;
+  set('sx-on',X.on); set('sx-title',X.title); set('sx-sub',X.sub); set('sx-format',X.format); set('sx-refresh',X.refresh); set('sx-note',X.note);
+  set('wx-on',Y.on); set('wx-title',Y.title); set('wx-sub',Y.sub); set('wx-cta',Y.cta); set('wx-tipsec',Y.tipSec); set('wx-leader',Y.showLeader); set('wx-targets',Y.showTargets);
+  set('wx-tcount',Y.targetCount); set('wx-feed',Y.showFeed); set('wx-ftitle',Y.feedTitle); set('wx-fcount',Y.feedCount); set('wx-scroll',Y.scroll);
+  ['hot','target','balance','bonus','announce'].forEach(k=>set('wx-k-'+k,Y.kinds[k]));
+  wxRenderLists();
+  const Z=_H.footer;
+  set('ft-on',Z.on); set('ft-name',Z.name); set('ft-vip',Z.vip); set('ft-viptext',Z.vipText); set('ft-vipsub',Z.vipSub); set('ft-tagline',Z.tagline); set('ft-trust',Z.trust); set('ft-contact',Z.contact); set('ft-address',Z.address);
+  set('ft-sign',Z.sign); set('ft-signtext',Z.signText); set('ft-signimg',Z.signImg); set('ft-signname',Z.signName); set('ft-signtitle',Z.signTitle); set('ft-seal',Z.seal); set('ft-signnote',Z.signNote);
+  set('ft-copy',Z.copyright); set('ft-legal',Z.legal); set('ft-bottom',Z.bottom);
+  ftRenderLinks();
+  hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers(); sxRenderCards();
+  _snapTake('home');
   _dirty.home = new Set(); _paintSave();
   if(document.getElementById('hp-live').classList.contains('on')) hpLoadFeed();
 }
+// Footer (home page bottom)
+const FT_DEF = { on:true, name:'', tagline:'Smart credit, made simple — fast, transparent and secure loans from your phone.', vip:true, vipText:'VIP', vipSub:'Premium Digital Lending',
+  trust:true, contact:true, address:true, sign:true, signName:'Authorized Signatory', signTitle:'', signText:'', signImg:'', seal:'VERIFIED', signNote:'This website is operated and signed by its management.', copyright:'', legal:'', bottom:'',
+  links:[ { label:'Loan Calculator', icon:'calculator', action:'calculator' }, { label:'Invite & Earn', icon:'gift', action:'refer' }, { label:'Privacy & Fees', icon:'shield-halved', action:'policy' }, { label:'Support', icon:'headset', action:'support' } ] };
+const FT_ACTIONS = { calculator:'Open Loan Calculator', refer:'Open Invite popup', apply:'Start an application', history:'Open History', profile:'Open Profile', support:'Open Support chat', policy:'Open Privacy & Fees page', whatsapp:'WhatsApp (Site Config number)', telegram:'Telegram (Site Config)', email:'Email (Site Config)', url:'Web link' };
+function ftRenderLinks(){
+  const el=document.getElementById('ftLinksEd'); if(!el||!_H) return;
+  const L=_H.footer.links;
+  el.innerHTML=L.length?L.map((x,i)=>`<div class="wx-ed t-links ${x.on===false?'off':''}">
+    <label class="tog" title="Show"><input type="checkbox" ${x.on!==false?'checked':''} onchange="ftLinkEdit(${i},'on',this.checked,1)"><span class="tog-sl"></span></label>
+    <input value="${_he(x.label||'')}" placeholder="Label" maxlength="30" oninput="ftLinkEdit(${i},'label',this.value)">
+    <input value="${_he(x.icon||'')}" placeholder="icon (e.g. link)" maxlength="30" oninput="ftLinkEdit(${i},'icon',this.value)">
+    <select onchange="ftLinkEdit(${i},'action',this.value,1)">${Object.entries(FT_ACTIONS).map(([k,v])=>`<option value="${k}" ${x.action===k?'selected':''}>${v}</option>`).join('')}</select>
+    ${x.action==='url'?`<input value="${_he(x.url||'')}" placeholder="https://…" oninput="ftLinkEdit(${i},'url',this.value)">`:'<span></span>'}
+    <div style="display:flex;gap:4px"><button class="ab ab-v" title="Move up" onclick="ftLinkMove(${i},-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="ab ab-v" title="Move down" onclick="ftLinkMove(${i},1)"><i class="fa-solid fa-arrow-down"></i></button><button class="ab ab-d" title="Remove" onclick="ftLinkDel(${i})"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`).join(''):'<div class="hint">No links.</div>';
+}
+function ftLinkEdit(i,k,v,re){ const x=_H.footer.links[i]; if(!x) return; x[k]=v; markDirty('home','ft'); if(re) ftRenderLinks(); }
+function ftLinkAdd(){ _H.footer.links.push({ id:_hid(), on:true, label:'', icon:'link', action:'url', url:'' }); markDirty('home','ft'); ftRenderLinks(); }
+function ftLinkDel(i){ _H.footer.links.splice(i,1); markDirty('home','ft'); ftRenderLinks(); }
+function ftLinkMove(i,d){ const L=_H.footer.links, j=i+d; if(j<0||j>=L.length) return; [L[i],L[j]]=[L[j],L[i]]; markDirty('home','ft'); ftRenderLinks(); }
+// Stats + Winners sections (home page, below Live Transactions)
+// every number a stats card can show — all counted from your records by the server
+const SX_METRICS = { users:['Registered users','count'], borrowers:['Users who got a loan','count'], granted:['Loans granted','count'], distributed:['Total disbursed','money'],
+  today:["Today's disbursed",'money'], todayCount:['Loans sent today','count'], week:['Disbursed in last 7 days','money'], applications:['Applications received','count'],
+  activeLoans:['Active loans','count'], repaid:['Loans repaid','count'], verified:['Verified fee payments','count'], invites:['Friends invited','count'], avgLoan:['Average loan','money'], text:['Your own text','text'] };
+const SX_COLORS = { green:'#1ddb80', blue:'#4d8fff', gold:'#ffc94d', pink:'#ff6b9a', purple:'#a855f7', teal:'#2dd4bf', orange:'#ff8c42' };
+const SX_ITEMS_DEF = [
+  { metric:'users', label:'Satisfied Users', icon:'fa-face-smile', color:'green' },
+  { metric:'granted', label:'Loans Granted', icon:'fa-file-circle-check', color:'blue' },
+  { metric:'distributed', label:'Total Disbursed', icon:'fa-sack-dollar', color:'gold' },
+  { metric:'today', label:"Today's Disbursed", icon:'fa-bolt', color:'pink' } ];
+const SX_DEF = { on:true, title:'Our Impact', sub:'Real numbers from Credit Up, updated live', format:'short', refresh:120, note:'' };
+// older settings had 4 fixed cards: turn them into the editable list
+function _sxItems(st){
+  if(Array.isArray(st.items)) return st.items.map(x=>({ id:_hid(), on:true, tag:'', value:'', ...x }));
+  const old=st.cards||{}, keys=['users','granted','distributed','today'];
+  return SX_ITEMS_DEF.map((d,i)=>{ const o=old[keys[i]]||{}; return { id:_hid(), on:o.on!==false, metric: i===0 && st.usersMode==='borrowers' ? 'borrowers' : d.metric, label:o.label||d.label, icon:o.icon||d.icon, color:d.color, tag:o.tag||'', value:'' }; });
+}
+const WX_DEF = { on:true, title:'Invite Champions', sub:'Invite friends, climb the board and win real rewards',
+  advice:'Every friend who joins with your link brings you closer to the next reward. Share your link today — the more friends, the bigger the prize!', cta:'Invite Friends',
+  showLeader:true, leaderCount:3, showTargets:true, targetCount:5, showFeed:true, feedTitle:'Live Offer Winners', feedCount:10, scroll:true,
+  kinds:{ hot:true, target:true, balance:true, bonus:false, announce:true }, hidden:[], tipSec:6 };
+const WX_TARGETS_DEF = [ { need:20, prize:'1st installment free (loans under ৳10,000)', short:'1st installment free', name:'Bronze' },
+  { need:50, prize:'৳5,000 loan, no need to pay back', short:'৳5,000 loan, no pay back', name:'Silver' }, { need:100, prize:'৳50,000 cash reward', short:'৳50,000 cash reward', name:'Gold' } ];
+function sxRenderCards(){
+  const el=document.getElementById('sxCards'); if(!el||!_H) return;
+  const L=_H.stats.items;
+  el.innerHTML=L.length?L.map((c,i)=>`<div class="sx-crd ${c.on===false?'off':''}">
+    <label class="tog" title="Show this card"><input type="checkbox" ${c.on!==false?'checked':''} onchange="sxEdit(${i},'on',this.checked)"><span class="tog-sl"></span></label>
+    <select onchange="sxEdit(${i},'metric',this.value)" aria-label="Shows">${Object.entries(SX_METRICS).map(([k,v])=>`<option value="${k}" ${c.metric===k?'selected':''}>${v[0]}</option>`).join('')}</select>
+    <input value="${_he(c.label||'')}" placeholder="Label" maxlength="30" oninput="sxEdit(${i},'label',this.value)" aria-label="Label">
+    ${c.metric==='text'?`<input value="${_he(c.value||'')}" placeholder="Value, e.g. 24/7" maxlength="14" oninput="sxEdit(${i},'value',this.value)" aria-label="Value">`:`<input value="${_he(c.icon||'')}" placeholder="fa-star (icon)" maxlength="40" oninput="sxEdit(${i},'icon',this.value)" aria-label="Icon">`}
+    <select onchange="sxEdit(${i},'color',this.value)" aria-label="Colour">${Object.keys(SX_COLORS).map(k=>`<option value="${k}" ${c.color===k?'selected':''}>${k}</option>`).join('')}</select>
+    <input value="${_he(c.tag||'')}" placeholder="Tag (Live)" maxlength="14" oninput="sxEdit(${i},'tag',this.value)" aria-label="Tag">
+    <div class="sx-acts"><button class="ab ab-v" title="Move up" onclick="sxMove(${i},-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="ab ab-v" title="Move down" onclick="sxMove(${i},1)"><i class="fa-solid fa-arrow-down"></i></button><button class="ab ab-d" title="Remove card" onclick="sxDel(${i})"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`).join(''):'<div class="hint">No cards. Tap “Add card”.</div>';
+}
+function sxEdit(i,k,v){ const c=_H.stats.items[i]; if(!c) return; c[k]=v; if(k==='metric'){ if(!c.label||Object.values(SX_METRICS).some(m=>m[0]===c.label)) c.label=SX_METRICS[v][0]; if(v==='text'&&!c.icon) c.icon='fa-star'; } markDirty('home','sx'); if(k==='on'||k==='metric') sxRenderCards(); }
+function sxAdd(){ const used=new Set(_H.stats.items.map(x=>x.metric)); const m=Object.keys(SX_METRICS).find(k=>!used.has(k)&&k!=='text')||'text'; _H.stats.items.push({ id:_hid(), on:true, metric:m, label:SX_METRICS[m][0], icon:'fa-chart-line', color:Object.keys(SX_COLORS)[_H.stats.items.length%7], tag:'', value:'' }); markDirty('home','sx'); sxRenderCards(); }
+function sxDel(i){ _H.stats.items.splice(i,1); markDirty('home','sx'); sxRenderCards(); }
+function sxMove(i,d){ const L=_H.stats.items, j=i+d; if(j<0||j>=L.length) return; [L[i],L[j]]=[L[j],L[i]]; markDirty('home','sx'); sxRenderCards(); }
+async function hpLoadShowcase(){
+  const sp=document.getElementById('sxPrev'), wp=document.getElementById('wxPrev');
+  const r=await window._accountApi('showcase',{admin:true});
+  if(!r.ok){ const m=`<div class="hint" style="color:var(--red)">${_he(r.data.error||'Could not load the numbers.')}</div>`; if(sp) sp.innerHTML=m; if(wp) wp.innerHTML=m; return; }
+  const d=r.data||{}, st=d.stats||{};
+  if(sp) sp.innerHTML=Object.entries(SX_METRICS).filter(([k])=>k!=='text').map(([k,[l,f]])=>`<div class="sxp"><b>${f==='money'?'৳':''}${fa(st[k]||0)}</b><span>${l}</span></div>`).join('');
+  if(!wp||!_H) return;
+  const H=new Set(_H.winners.hidden);
+  const row=(id,ic,title,sub)=>{ const h=H.has(id); return `<div class="hp-row ${h?'off':''}"><div class="hp-ic"><i class="fa-solid fa-${ic}"></i></div><div class="hp-main"><div class="hp-t">${title}${h?'<span class="hp-badge off">Hidden</span>':''}</div><div class="hp-s">${sub}</div></div><button class="btn btn-sm ${h?'btn-p':'btn-s'}" onclick="wxHide('${_he(id)}')"><i class="fa-solid fa-${h?'eye':'eye-slash'}"></i>${h?'Show':'Hide'}</button></div>`; };
+  const people=new Map();
+  (d.leaders||[]).forEach(p=>people.set(p.id,{...p,why:`#${p.rank} inviter · ${p.count} active friends`}));
+  (d.targets||[]).forEach(t=>t.winners.forEach(p=>{ if(!people.has(p.id)) people.set(p.id,{...p,why:`Reached target ${t.level} (${t.need} friends)`}); }));
+  const kindTxt={hot:'Hot Offer',target:'Invite target',balance:'Balance Offer',bonus:'Sign-up bonus',announce:'Announced'};
+  let h='<div class="man-sub" style="margin-top:0">People</div>'+([...people.values()].map(p=>row(p.id,'user',`${_he(p.name)} <span style="color:var(--txt2);font-weight:600">· 0${_he(p.phone||'')}</span>`,_he(p.why))).join('')||'<div class="hint">No inviters yet.</div>');
+  h+='<div class="man-sub">Winners list entries</div>'+((d.feed||[]).map(e=>row(e.id,e.kind==='target'?'trophy':e.kind==='hot'?'fire':e.kind==='balance'?'wallet':'gift',`${_he(e.name)} · ${kindTxt[e.kind]||e.kind}`,`${_he(e.prize)} · ${fd(e.at)}`)).join('')||'<div class="hint">No winners yet.</div>');
+  wp.innerHTML=h;
+}
+// Winners lists: tips, invite targets, announced winners
+function wxRenderLists(){
+  if(!_H) return; const W=_H.winners;
+  const act=(k,i)=>`<div class="sx-acts" style="display:flex;gap:4px"><button class="ab ab-v" title="Move up" onclick="wxListMove('${k}',${i},-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="ab ab-v" title="Move down" onclick="wxListMove('${k}',${i},1)"><i class="fa-solid fa-arrow-down"></i></button><button class="ab ab-d" title="Remove" onclick="wxListDel('${k}',${i})"><i class="fa-solid fa-trash"></i></button></div>`;
+  const tog=(k,i,on)=>`<label class="tog" title="Show"><input type="checkbox" ${on!==false?'checked':''} onchange="wxListEdit('${k}',${i},'on',this.checked,1)"><span class="tog-sl"></span></label>`;
+  const inp=(k,i,f,v,ph,extra='')=>`<input value="${_he(v??'')}" placeholder="${ph}" oninput="wxListEdit('${k}',${i},'${f}',this.value)" ${extra}>`;
+  const el=(id,html,empty)=>{ const e=document.getElementById(id); if(e) e.innerHTML=html||`<div class="hint">${empty}</div>`; };
+  el('wxTips',W.tips.map((x,i)=>`<div class="wx-ed t-tips ${x.on===false?'off':''}">${tog('tips',i,x.on)}${inp('tips',i,'text',x.text,'Tip text','maxlength="200"')}${act('tips',i)}</div>`).join(''),'No tips. Add one so the advice card has something to say.');
+  el('wxTargetsEd',W.targets.map((x,i)=>`<div class="wx-ed t-targets">${inp('targets',i,'need',x.need,'Friends','type="number" min="1" title="Active friends needed"')}${inp('targets',i,'prize',x.prize,'Reward (full text)','maxlength="120"')}${inp('targets',i,'short',x.short,'Short text for small tiles','maxlength="40"')}${inp('targets',i,'name',x.name,'Level name','maxlength="20"')}${act('targets',i)}</div>`).join(''),'No targets — the default 20 / 50 / 100 rewards are used.');
+  el('wxAnn',W.announced.map((x,i)=>`<div class="wx-ed t-announced ${x.on===false?'off':''}">${tog('announced',i,x.on)}${inp('announced',i,'phone',x.phone?('0'+String(x.phone).replace(/^0+/,'')):'','Winner phone (01…)','inputmode="numeric" maxlength="14"')}${inp('announced',i,'offer',x.offer,'Offer / contest name','maxlength="60"')}${inp('announced',i,'prize',x.prize,'Prize','maxlength="120"')}${inp('announced',i,'at',(x.at||'').slice(0,10),'','type="date"')}${act('announced',i)}</div>`).join(''),'No announced winners.');
+}
+function wxListEdit(k,i,f,v,re){ const it=_H.winners[k][i]; if(!it) return; it[f]= f==='at' && v ? new Date(v+'T12:00:00').toISOString() : v; markDirty('home','wx'+k); if(re) wxRenderLists(); }
+function wxListAdd(k){ const L=_H.winners[k]; L.push(k==='tips'?{id:_hid(),on:true,text:''}:k==='targets'?{id:_hid(),need:(Math.max(0,...L.map(x=>Number(x.need)||0))||0)+50,prize:'',short:'',name:''}:{id:_hid(),on:true,phone:'',offer:'',prize:'',at:new Date().toISOString()}); markDirty('home','wx'+k); wxRenderLists(); }
+function wxListDel(k,i){ _H.winners[k].splice(i,1); markDirty('home','wx'+k); wxRenderLists(); }
+function wxListMove(k,i,d){ const L=_H.winners[k], j=i+d; if(j<0||j>=L.length) return; [L[i],L[j]]=[L[j],L[i]]; markDirty('home','wx'+k); wxRenderLists(); }
+function wxHide(id){ if(!_H) return; const L=_H.winners.hidden, i=L.indexOf(id); if(i>=0) L.splice(i,1); else L.push(id); markDirty('home','wx'); hpLoadShowcase(); }
 function _hpRead(){
   const v=id=>document.getElementById(id), c=id=>!!v(id)?.checked, t=id=>(v(id)?.value||'').trim(), n=(id,d)=>{ const x=parseInt(t(id)); return isNaN(x)?d:x; };
   Object.assign(_H.live, { on:c('lv-on'), loans:c('lv-loans'), fees:c('lv-fees'), title:t('lv-title')||'Live Transactions', count:Math.min(30,Math.max(1,n('lv-count',8))), days:Math.max(0,n('lv-days',30)), refresh:Math.max(0,n('lv-refresh',60)), scroll:c('lv-scroll') });
   Object.assign(_H.notice, { on:c('nt-on'), broadcasts:c('nt-bc'), own:c('nt-own'), label:t('nt-label')||'Notice', speed:Math.min(10,Math.max(1,n('nt-speed',5))), max:Math.min(20,Math.max(1,n('nt-max',6))),
     audience:t('nt-aud')||'all', dir:t('nt-dir')||'left', theme:t('nt-theme')||'green', size:t('nt-size')||'md', showLabel:c('nt-showlabel'), pause:c('nt-pause'), closable:c('nt-close') });
-  Object.assign(_H.partners, { on:c('pt-on'), title:t('pt-title')||'Our Partners', size:t('pt-size')||'lg' });
+  Object.assign(_H.partners, { on:c('pt-on'), title:t('pt-title')||'Our Partners', layout:t('pt-layout')||'small', sub:t('pt-sub') });
   Object.assign(_H.trust, { on:c('tr-on'), note:t('tr-note') });
   Object.assign(_H.referralEntry, { on:c('rf-on'), days:Math.max(0,n('rf-days',7)) });
   const f=(id,d)=>{ const x=parseFloat(t(id)); return isNaN(x)?d:x; };
@@ -3271,6 +3786,16 @@ function _hpRead(){
     delay:Math.min(30,Math.max(0,f('fo-delay',3.5))), start:t('fo-start'), end:t('fo-end'), icon:t('fo-icon')||'🔥', promo:t('fo-promo')||FO_DEF.promo,
     bannerTitle:t('fo-btitle'), bannerText:t('fo-btext'), popupTitle:t('fo-ptitle'), button:t('fo-button')||FO_DEF.button, popupText:t('fo-ptext'), popupNote:t('fo-pnote'),
     counterLabel:t('fo-clabel')||FO_DEF.counterLabel, endedText:t('fo-ended')||FO_DEF.endedText, successTitle:t('fo-stitle')||FO_DEF.successTitle, successText:t('fo-stext')||FO_DEF.successText });
+  Object.assign(_H.stats, { on:c('sx-on'), title:t('sx-title')||SX_DEF.title, sub:t('sx-sub'), format:t('sx-format')||'short', refresh:Math.max(0,n('sx-refresh',120)), note:t('sx-note') });
+  delete _H.stats.cards; delete _H.stats.usersMode;
+  Object.assign(_H.winners, { on:c('wx-on'), title:t('wx-title')||WX_DEF.title, sub:t('wx-sub'), cta:t('wx-cta')||WX_DEF.cta, tipSec:Math.min(60,Math.max(3,n('wx-tipsec',6))), showLeader:c('wx-leader'), showTargets:c('wx-targets'),
+    targetCount:Math.min(20,Math.max(1,n('wx-tcount',5))), showFeed:c('wx-feed'), feedTitle:t('wx-ftitle')||WX_DEF.feedTitle, feedCount:Math.min(40,Math.max(1,n('wx-fcount',10))), scroll:c('wx-scroll'),
+    kinds:{ hot:c('wx-k-hot'), target:c('wx-k-target'), balance:c('wx-k-balance'), bonus:c('wx-k-bonus'), announce:c('wx-k-announce') } });
+  delete _H.winners.advice;
+  _H.winners.targets=_H.winners.targets.filter(x=>Number(x.need)>0&&String(x.prize||'').trim()).map(x=>({ ...x, need:Math.round(Number(x.need)) })).sort((a,b)=>a.need-b.need);
+  Object.assign(_H.footer, { on:c('ft-on'), name:t('ft-name'), vip:c('ft-vip'), vipText:t('ft-viptext')||'VIP', vipSub:t('ft-vipsub'), tagline:t('ft-tagline'), trust:c('ft-trust'), contact:c('ft-contact'), address:c('ft-address'),
+    sign:c('ft-sign'), signText:t('ft-signtext'), signImg:/^https:\/\//i.test(t('ft-signimg'))?t('ft-signimg'):'', signName:t('ft-signname')||'Authorized Signatory', signTitle:t('ft-signtitle'), seal:t('ft-seal')||'VERIFIED', signNote:t('ft-signnote'),
+    copyright:t('ft-copy'), legal:t('ft-legal'), bottom:t('ft-bottom') });
   Object.assign(_H.topbar, { theme:t('tb-theme')||'green', clear:Math.min(80,Math.max(0,n('tb-clear',35))), glass:c('tb-glass'), compact:c('tb-compact'), hideOnScroll:c('tb-hide'),
     avatar:c('tb-avatar'), greet:c('tb-hi'), balance:c('tb-balance'), notif:c('tb-notif'), support:c('tb-support'), logout:c('tb-logout'), alert:c('tb-alert'), title:t('tb-name')||'phone', visitorText:t('tb-vtext') });
   const mn=Math.min(10,Math.max(0,f('sl-min',1.5)));
@@ -3280,6 +3805,15 @@ function _hpRead(){
 }
 async function saveHome(){
   if(!_H) return;
+  // announced winners must be registered users
+  for(const a of (_H.winners?.announced||[])){
+    const ph=String(a.phone||'').replace(/\D/g,'').replace(/^(?:880|0)+/,'');
+    if(!/^1[0-9]{9}$/.test(ph)) throw new Error('Announced winner: enter a valid phone number');
+    if(!String(a.prize||'').trim()) throw new Error('Announced winner: enter the prize');
+    const u=(_D.users||[]).find(x=>String(x.phone)===ph) || await window._getDoc('users',ph);
+    if(!u) throw new Error(`Announced winner 0${ph} is not a registered user`);
+    a.phone=ph;
+  }
   _hpRead();
   const bad = _H.partners.items.find(x => !x.name || !x.logo);
   if(bad) throw new Error('Every partner needs a name and a logo');
@@ -3288,6 +3822,7 @@ async function saveHome(){
   if(_H.splash.pays.find(x => !x.name)) throw new Error('Every payment logo needs a name');
   if(_H.offers.items.find(x => !String(x.text||'').trim())) throw new Error('Every offer needs text');
   if(_H.offers.items.find(x => x.action==='link' && !/^https?:\/\//i.test(x.link||''))) throw new Error('An offer set to "Open link" needs a link starting with https://');
+  if(_H.footer.links.find(x => x.on!==false && x.action==='url' && !/^https?:\/\//i.test(x.url||''))) throw new Error('A footer link set to "Web link" needs an address starting with https://');
   await window._setDoc('siteConfig','home',{ ..._H, updatedAt:new Date().toISOString() });
   await logAct('Home page settings saved','config','home');
 }
@@ -3494,12 +4029,51 @@ async function hpLoadFeed(){
   const r=await window._accountApi('feed',{admin:true});
   if(!r.ok){ el.innerHTML=`<div class="hint" style="color:var(--red)">${_he(r.data.error||'Could not load the live feed.')}</div>`; return; }
   const items=r.data.items||[];
+  window._lvItems=items; _lvSel=new Set([..._lvSel].filter(id=>items.some(x=>x.id===id)));
   const hid=new Set(_H?_H.live.hidden:[]);
-  el.innerHTML = items.length ? items.map(x=>{ const h=hid.has(x.id); return `<div class="hp-row ${h?'off':''}">
+  el.innerHTML = items.length ? items.map(x=>{ const h=hid.has(x.id), sel=_lvSel.has(x.id); return `<div class="hp-row ${h?'off':''} ${sel?'sel':''}" data-id="${_he(x.id)}">
+    <input type="checkbox" class="lv-ck" ${sel?'checked':''} onchange="lvSel('${_he(x.id)}',this.checked)" aria-label="Select">
     <div class="hp-ic" style="${x.kind==='fee'?'background:rgba(77,143,255,.14);color:#7aa8ff':''}"><i class="fa-solid fa-${x.kind==='fee'?'receipt':'check'}"></i></div>
     <div class="hp-main"><div class="hp-t">${_he(x.name)} · ${x.kind==='fee'?'Fee paid ৳'+_he(x.amount):'Loan approved ৳'+fa(x.amount)}${h?'<span class="hp-badge off">Hidden</span>':''}</div><div class="hp-s">${fd(x.at)}</div></div>
     <button class="btn btn-sm ${h?'btn-p':'btn-s'}" onclick="hpHide('${x.id}')"><i class="fa-solid fa-${h?'eye':'eye-slash'}"></i>${h?'Show':'Hide'}</button>
   </div>`; }).join('') : '<div class="hint">No approved loans or verified fees yet.</div>';
+  lvPaint();
+}
+// select entries in the preview, then hide / show / delete them together
+let _lvSel=new Set();
+function lvSel(id,on){ if(on) _lvSel.add(id); else _lvSel.delete(id); document.querySelector(`#lvPreview .hp-row[data-id="${CSS.escape(id)}"]`)?.classList.toggle('sel',on); lvPaint(); }
+function lvSelAll(on){ _lvSel=new Set(on?(window._lvItems||[]).map(x=>x.id):[]); document.querySelectorAll('#lvPreview .hp-row').forEach(r=>{ const c=r.querySelector('.lv-ck'); if(c) c.checked=on; r.classList.toggle('sel',on); }); lvPaint(); }
+function lvPaint(){
+  const n=_lvSel.size, all=(window._lvItems||[]).length;
+  const t=document.getElementById('lvN'); if(t) t.textContent=n?`${n} selected`:'Tick entries to hide, show or delete them';
+  const a=document.getElementById('lvAll'); if(a){ a.checked=!!all&&n===all; a.indeterminate=n>0&&n<all; }
+  document.querySelectorAll('#lvBar button').forEach(b=>b.disabled=!n);
+}
+function lvBulk(op){
+  if(!_H||!_lvSel.size) return;
+  const ids=[..._lvSel], L=_H.live.hidden;
+  if(op==='hide'||op==='show'){
+    ids.forEach(id=>{ const i=L.indexOf(id); if(op==='hide'&&i<0) L.push(id); if(op==='show'&&i>=0) L.splice(i,1); });
+    _lvSel=new Set(); markDirty('home','live'); hpLoadFeed();
+    toast(`${ids.length} entr${ids.length>1?'ies':'y'} ${op==='hide'?'hidden':'shown'} — press Save to publish`,'i');
+    return;
+  }
+  const items=(window._lvItems||[]).filter(x=>_lvSel.has(x.id));
+  const fees=items.filter(x=>x.kind==='fee'), loans=items.filter(x=>x.kind!=='fee');
+  const parts=[]; if(fees.length) parts.push(`${fees.length} fee payment${fees.length>1?'s':''} (transaction records)`); if(loans.length) parts.push(`${loans.length} approved loan${loans.length>1?'s':''} (application records)`);
+  const run=async(perm)=>{
+    showL(true);
+    let ok=0, bad=0;
+    for(const x of items){
+      const id=String(x.id).slice(2), col=x.kind==='fee'?'transactions':'applications';
+      try{ if(perm) await window._deleteDoc(id,col); else await softRemove(col,id); ok++; const i=L.indexOf(x.id); if(i>=0) L.splice(i,1); }catch(e){ bad++; console.error('remove',x.id,e); }
+    }
+    await logAct(`Live feed: ${ok} record${ok!==1?'s':''} ${perm?'deleted permanently':'removed from the user site'} (${fees.length} fee, ${loans.length} loan)`,'transaction','live');
+    _lvSel=new Set(); showL(false);
+    toast(bad?`${ok} done, ${bad} failed`:(perm?`${ok} deleted permanently`:`${ok} removed from the user site`), bad?'w':'e');
+    hpLoadFeed();
+  };
+  askRemove('Remove selected entries', `${parts.join(' and ')}. User balances are not changed either way.`, ()=>run(false), ()=>run(true));
 }
 function hpHide(id){
   if(!_H) return; const L=_H.live.hidden; const i=L.indexOf(id);
@@ -3509,7 +4083,7 @@ function hpHide(id){
 document.addEventListener('DOMContentLoaded',()=>{
   const sec=document.getElementById('sec-home');
   // the static setting fields (not the list rows, which mark themselves)
-  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl|of|fo|tb)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); if(/^fo-/.test(e.target.id)) hpFomoPreview(); if(/^tb-/.test(e.target.id)) hpTopPreview(); } }));
+  if(sec) ['input','change'].forEach(ev=>sec.addEventListener(ev,e=>{ if(e.target.id && /^(lv|nt|pt|tr|rf|sl|of|fo|tb|sx|wx|ft)-/.test(e.target.id)){ markDirty('home','s'); if(/^sl-/.test(e.target.id)) hpSplashAuto(); if(/^fo-/.test(e.target.id)) hpFomoPreview(); if(/^tb-/.test(e.target.id)) hpTopPreview(); } }));
 });
 
 // ══ BROADCAST ════════════════════════════════════════
@@ -3520,7 +4094,7 @@ async function loadBC(){
   l.innerHTML=_D.broadcasts.length?_D.broadcasts.slice(0,30).map(b=>`<div class="bc-item">
     <div class="bc-hdr"><div class="bc-title">${_escB(b.title||'Broadcast')} <span class="wbadge">${_escB(b.type||'info')}</span></div>
       <div style="display:flex;gap:8px;align-items:center"><div class="bc-date">${fd(b.createdAt)}</div>
-      <button class="ab ab-d" title="Delete" onclick="confirm2('Delete this broadcast for all users?',()=>delBC('${b._id}'))"><i class="fa-solid fa-trash"></i></button></div></div>
+      ${b.removed?`${rmTag(b)}<button class="ab ab-ok" title="Show to users again" onclick="restoreDoc('broadcasts','${b._id}',loadBC)"><i class="fa-solid fa-rotate-left"></i></button>`:`<button class="ab ab-d" title="Remove / delete" onclick="askRemove('Remove broadcast','This message for all users.',()=>hideBC('${b._id}'),()=>delBC('${b._id}'))"><i class="fa-solid fa-trash"></i></button>`}</div></div>
     ${b.subject?`<div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px">${_escB(b.subject)}</div>`:''}
     <div class="bc-msg" style="white-space:pre-line">${_escB(b.message||'')}</div>
     ${b.attachmentUrl?`<div style="margin-top:6px;font-size:11px"><a href="${_escB(b.attachmentUrl)}" target="_blank" rel="noopener" style="color:var(--p)"><i class="fa-solid fa-paperclip"></i> ${_escB(b.attachmentName||'Attachment')}</a></div>`:''}
@@ -3569,6 +4143,7 @@ async function sendBC(){
   }catch(e){ toast(e.message,'e'); }
   showL(false); loadBC();
 }
+async function hideBC(id){ showL(true); try{ await softRemove('broadcasts',id); await logAct('Broadcast removed from the user site (kept for review)','broadcast',id); toast('Removed from the user site','e'); }catch(e){ toast(e.message,'e'); } showL(false); loadBC(); }
 async function delBC(id){ showL(true); await window._deleteDoc(id,'broadcasts'); showL(false); await logAct('Broadcast deleted','broadcast',id); toast('Broadcast deleted','e'); loadBC(); }
 
 // ══ SUPPORT CHAT (Admin) ══════════════════════════════
