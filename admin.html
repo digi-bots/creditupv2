@@ -93,6 +93,8 @@ input,select,textarea{font-family:'Inter',sans-serif;-webkit-user-select:auto;us
 
 /* STATS */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:20px}
+@media(min-width:901px){#tStats{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(min-width:901px) and (max-width:1250px){#tStats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .sc{background:var(--card);border-radius:15px;padding:18px;border:1px solid var(--border);position:relative;overflow:hidden;cursor:default;transition:.2s}
 .sc:hover{border-color:rgba(255,255,255,.12)}
 .sc-gl{position:absolute;top:-25px;right:-25px;width:75px;height:75px;border-radius:50%;opacity:.06}
@@ -120,6 +122,19 @@ input,select,textarea{font-family:'Inter',sans-serif;-webkit-user-select:auto;us
 .cc-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
 .cc-sub{font-size:10px;color:var(--txt2);font-weight:400}
 .cc-wrap{position:relative;height:195px}
+.tch-sub{font-size:10.5px;font-weight:600;color:var(--txt2)}
+.tm{display:flex;align-items:center;gap:8px;min-width:0}
+.tm-logo{width:30px;height:30px;flex:none;border-radius:8px;background:#fff;padding:3px;object-fit:contain;box-sizing:border-box}
+.tm-logo.ph{background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:12px;padding:0}
+.tm-txt{min-width:0;line-height:1.25}
+.tm-txt small{display:block;font-size:10px;color:var(--txt2)}
+.trx-hero{display:flex;align-items:center;gap:13px;padding:13px;margin-bottom:12px;border-radius:13px;background:linear-gradient(135deg,rgba(29,219,128,.08),rgba(255,255,255,.02));border:1px solid var(--border)}
+.trx-hero .tm-logo{width:58px;height:58px;border-radius:14px;padding:6px}
+.trx-hero .tm-logo.ph{font-size:22px}
+.th-m{flex:1;min-width:0}
+.th-m b{display:block;font-size:15px;font-weight:800}
+.th-m small{display:block;font-size:11.5px;color:var(--txt2);margin-top:2px;overflow-wrap:anywhere}
+.th-amt{font-size:20px;font-weight:900;color:var(--p);white-space:nowrap}
 
 /* TABLE */
 .tc{background:var(--card);border-radius:15px;border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
@@ -379,11 +394,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .alog-action{font-size:12px;font-weight:600;margin-bottom:2px}
 .alog-meta{font-size:10px;color:var(--txt2)}
 
-/* EMI */
-.emi-result{background:rgba(29,219,128,.05);border:1px solid rgba(29,219,128,.18);border-radius:11px;padding:14px;margin-top:13px}
-.emi-row{display:flex;justify-content:space-between;margin-bottom:7px;font-size:13px}
-.emi-row:last-child{margin-bottom:0;border-top:1px solid rgba(29,219,128,.15);padding-top:7px;font-weight:700}
-.emi-lbl{color:var(--txt2)}.emi-val{color:var(--txt);font-weight:600}
 
 /* BALANCE BOX */
 .bal-box{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:14px;margin-top:13px}
@@ -587,7 +597,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="nav" id="n-portfolio" onclick="gS('portfolio',this)"><i class="fa-solid fa-briefcase"></i>Loan Portfolio</div>
   <div class="sb-sec">Finance</div>
   <div class="nav" id="n-analytics" onclick="gS('analytics',this)"><i class="fa-solid fa-chart-line"></i>Analytics</div>
-  <div class="nav" id="n-emi" onclick="gS('emi',this)"><i class="fa-solid fa-calculator"></i>EMI Calculator</div>
   <div class="sb-sec">Configure</div>
   <div class="nav" id="n-wallets" onclick="gS('wallets',this)"><i class="fa-solid fa-wallet"></i>Wallets</div>
   <div class="nav" id="n-config" onclick="gS('config',this)"><i class="fa-solid fa-sliders"></i>Site Config</div>
@@ -627,7 +636,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="qa" onclick="gS('users',document.getElementById('n-users'))"><i class="fa-solid fa-users" style="color:var(--blue)"></i><div class="qa-lbl">Manage Users</div></div>
     <div class="qa" onclick="gS('config',document.getElementById('n-config'))"><i class="fa-solid fa-sliders" style="color:var(--purple)"></i><div class="qa-lbl">Site Config</div></div>
     <div class="qa" onclick="gS('broadcast',document.getElementById('n-broadcast'))"><i class="fa-solid fa-bullhorn" style="color:var(--gold)"></i><div class="qa-lbl">Broadcast</div></div>
-    <div class="qa" onclick="gS('emi',document.getElementById('n-emi'))"><i class="fa-solid fa-calculator" style="color:var(--red)"></i><div class="qa-lbl">EMI Calc</div></div>
   </div>
   <div class="chart-grid">
     <div class="cc"><div class="cc-title">User Registrations<span class="cc-sub">Last 7 days</span></div><div class="cc-wrap"><canvas id="cRegs"></canvas></div></div>
@@ -663,9 +671,13 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div class="sec" id="sec-transactions">
   <div class="sec-head"><h2>Transactions</h2></div>
   <div class="stats" id="tStats"></div>
+  <div class="chart-grid">
+    <div class="cc"><div class="cc-title">User Payments (৳)<select class="fsel" id="tChartDays" onchange="renderTrxCharts()" style="height:28px;font-size:11px"><option value="7">7 days</option><option value="14">14 days</option><option value="30" selected>30 days</option><option value="90">90 days</option></select></div><div class="cc-wrap"><canvas id="cTrxDay"></canvas></div></div>
+    <div class="cc"><div class="cc-title">Top Paying Users (৳)<span class="tch-sub">verified + pending</span></div><div class="cc-wrap"><canvas id="cTrxUsers"></canvas></div></div>
+  </div>
   <div class="tc">
-    <div class="tc-hdr"><div class="tc-title">Payment TrxIDs</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="TrxID / phone..." oninput="ftbl('ttb',this.value,[0,1])"></div><select class="fsel" onchange="fstat('ttb',this.value,3)"><option value="">All</option><option>Pending</option><option>Verified</option><option>Rejected</option></select></div></div>
-    <div class="tw"><table><thead><tr><th>TrxID</th><th>Phone</th><th>Method</th><th>Status</th><th>Submitted</th><th>Verified</th><th>Actions</th></tr></thead><tbody id="ttb"></tbody></table></div>
+    <div class="tc-hdr"><div class="tc-title">Payment TrxIDs</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="TrxID / phone..." oninput="ftbl('ttb',this.value,[0,1])"></div><select class="fsel" onchange="fstat('ttb',this.value,4)"><option value="">All</option><option>Pending</option><option>Verified</option><option>Rejected</option></select></div></div>
+    <div class="tw"><table><thead><tr><th>TrxID</th><th>Phone</th><th>Method</th><th>Amount</th><th>Status</th><th>Submitted</th><th>Verified</th><th>Actions</th></tr></thead><tbody id="ttb"></tbody></table></div>
     <div class="pgn"><button class="pg" onclick="prevP('transactions')">‹ Prev</button><button class="pg" onclick="nextP('transactions')">Next ›</button><div class="pgn-i" id="transactions-pi"></div></div>
   </div>
 </div>
@@ -692,33 +704,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="chart-grid">
     <div class="cc"><div class="cc-title">Approval Rate</div><div class="cc-wrap"><canvas id="cAppr"></canvas></div></div>
     <div class="cc"><div class="cc-title">Wallet Usage</div><div class="cc-wrap"><canvas id="cWals"></canvas></div></div>
-  </div>
-</div>
-
-<!-- EMI -->
-<div class="sec" id="sec-emi">
-  <div class="sec-head"><h2>EMI / Repayment Calculator</h2></div>
-  <div style="max-width:520px">
-    <div class="cfg-blk">
-      <div class="cfg-t"><i class="fa-solid fa-calculator"></i>Loan Parameters</div>
-      <div class="fgrid">
-        <div class="fg"><label>Principal (BDT)</label><input type="number" id="ep" placeholder="5000" oninput="calcEMI()"></div>
-        <div class="fg"><label>Annual Rate (%)</label><input type="number" id="er" placeholder="18" value="18" oninput="calcEMI()"></div>
-        <div class="fg"><label>Term (Months)</label><input type="number" id="em" placeholder="12" oninput="calcEMI()"></div>
-        <div class="fg"><label>Total Fees (BDT)</label><input type="number" id="ef" placeholder="400" oninput="calcEMI()"></div>
-      </div>
-      <div class="emi-result" id="emiRes" style="display:none">
-        <div class="emi-row"><span class="emi-lbl">Monthly EMI</span><span class="emi-val" id="er-emi" style="color:var(--p);font-size:17px;font-weight:900">-</span></div>
-        <div class="emi-row"><span class="emi-lbl">Total Interest</span><span class="emi-val" id="er-int">-</span></div>
-        <div class="emi-row"><span class="emi-lbl">Total Fees</span><span class="emi-val" id="er-fee">-</span></div>
-        <div class="emi-row"><span class="emi-lbl">Total Payment</span><span class="emi-val" id="er-total" style="color:var(--orange)">-</span></div>
-        <div class="emi-row"><span class="emi-lbl">Effective Annual Rate</span><span class="emi-val" id="er-ear">-</span></div>
-      </div>
-    </div>
-    <div class="cfg-blk" id="schedBlk" style="display:none">
-      <div class="cfg-t"><i class="fa-solid fa-calendar-days"></i>Repayment Schedule</div>
-      <div id="schedRows"></div>
-    </div>
   </div>
 </div>
 
@@ -1070,7 +1055,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="sec-head"><h2>Site Configuration</h2><button class="btn btn-p btn-lg sv-btn" id="svBtn-config" onclick="saveTab('config')" disabled><i class="fa-solid fa-floppy-disk"></i><span>All saved</span></button></div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-percent"></i>Loan & Fee Settings</div>
     <div class="fgrid fgrid3">
-      <div class="fg"><label>Max Borrow Display (BDT)</label><input id="c-mb" placeholder="60,000.00"><div class="hint">Shown on home screen</div></div>
+      <div class="fg"><label>Max Borrow Display (BDT)</label><input id="c-mb" placeholder="60,000.00"><div class="hint">Shown on the home screen and used as the highest amount in the user Loan Calculator</div></div>
       <div class="fg"><label>Annual Interest Rate (%)</label><input type="number" id="c-ir" placeholder="18"></div>
       <div class="fg"><label>Origination Fee (BDT)</label><input type="number" id="c-of" placeholder="200"></div>
       <div class="fg"><label>Service Charge (BDT)</label><input type="number" id="c-sc" placeholder="100"></div>
@@ -1343,11 +1328,13 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div class="mo mo-md">
   <div class="mo-h"><h3>Transaction Details</h3><button class="mo-x" onclick="closeMo('moTrx')">✕</button></div>
   <div class="mo-b">
+    <div class="trx-hero" id="tHero"></div>
     <div class="dg" id="tGrid"></div>
     <div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="trxAct('Verified')"><i class="fa-solid fa-circle-check"></i>Approve & Verify</button>
       <button class="btn btn-d" onclick="trxAct('Rejected')"><i class="fa-solid fa-circle-xmark"></i>Reject</button>
       <button class="btn btn-s" id="trxMatchBtn" style="display:none" onclick="autoMatchTrx(_docId)"><i class="fa-solid fa-link"></i>Match application</button>
+      <button class="btn btn-d" style="margin-left:auto" onclick="delTrx(_docId)"><i class="fa-solid fa-trash"></i>Delete permanently</button>
     </div>
   </div>
   <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moTrx')">Close</button></div>
@@ -1454,7 +1441,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 // ══ ONLINE GATEWAY (SSLCommerz) ══
 async function loadGateway(){
   const cfg = (await window._getDoc('siteConfig','main')) || {};
-  const gw = cfg.gateway || {};
+  const gw = cfg.gateway || {}; window._gwCfg = gw;
   const g=id=>document.getElementById(id);
   g('gwEn').checked = gw.enabled === true;
   g('gwName').value = gw.name || 'Pay Online';
@@ -1493,7 +1480,7 @@ async function saveGateway(quiet){
 
 // ══ CONFIG ══════════════════════════════════════════
 const PG = 20;
-const TITLES = {home:'Home Page',dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',emi:'EMI Calculator',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Admin Settings'};
+const TITLES = {home:'Home Page',dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Admin Settings'};
 const PIPE_STEPS = ['Applied','Fee Pending','Fee Submitted','Fee Verified','Approved','Disbursed','Active','Repaid'];
 const PIPE_MAP = {'Pending Fee Payment':1,'TrxID Submitted':2,'Fee Verified':3,'Approved':4,'Disbursement Rejected':4,'Disbursed':5,'Active':6,'Repaid':7};
 
@@ -1624,7 +1611,7 @@ async function loadDash(){
   const rA=[...a].sort((x,y)=>new Date(y.submittedAt||0)-new Date(x.submittedAt||0)).slice(0,8);
   document.getElementById('dApps').innerHTML=rA.length?rA.map(r=>`<tr><td class="mono">${r.uid||'-'}</td><td>${r.name||'-'}</td><td style="color:var(--p);font-weight:700">৳${fa(r.loanAmount)}</td><td>${riskBadge(riskScore(r))}</td><td>${sb(r.status)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td></tr>`).join(''):'<tr class="empty"><td colspan="6">No applications yet</td></tr>';
   const pT=t.filter(x=>!x.status||x.status==='Pending').slice(0,6);
-  document.getElementById('dTrx').innerHTML=pT.length?pT.map(r=>`<tr><td class="mono">${r.trxId||'-'}</td><td class="mono">${r.uid||'-'}</td><td>${r.payMethod||'-'}</td><td>${sb(r.status||'Pending')}</td><td><div class="acts"><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`).join(''):'<tr class="empty"><td colspan="5">No pending transactions</td></tr>';
+  document.getElementById('dTrx').innerHTML=pT.length?pT.map(r=>`<tr><td class="mono">${r.trxId||'-'}</td><td class="mono">${r.uid||'-'}</td><td><div class="tm">${_trxLogoHtml(r)}<div class="tm-txt">${r.payMethod||'-'}<small>৳${fa(Number(r.amount||0)+Number(r.appliedBalance||0))}</small></div></div></td><td>${sb(r.status||'Pending')}</td><td><div class="acts"><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`).join(''):'<tr class="empty"><td colspan="5">No pending transactions</td></tr>';
   const d7=[...Array(7)].map((_,i)=>{ const d=new Date(); d.setDate(d.getDate()-6+i); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}); });
   const rc=d7.map((_,i)=>{ const d=new Date(); d.setDate(d.getDate()-6+i); return u.filter(x=>sameDay(x.createdAt,d)).length; });
   mkChart('cRegs','line',d7,[{label:'Registrations',data:rc,borderColor:'#1ddb80',backgroundColor:'rgba(29,219,128,.07)',fill:true,tension:.4,pointBackgroundColor:'#1ddb80'}]);
@@ -2058,15 +2045,87 @@ async function syncAppOnTrx(trx,newStatus){
 }
 
 async function loadTrx(){
-  showL(true); _D.transactions=await _get('transactions','submittedAt'); _pg.transactions=0; showL(false);
+  showL(true);
+  const [tx, wl] = await Promise.all([_get('transactions','submittedAt'), (_D.wallets&&_D.wallets.length) ? Promise.resolve(_D.wallets) : _get('wallets','order','asc').catch(()=>[])]);
+  _D.transactions=tx; _D.wallets=wl||[]; _pg.transactions=0; showL(false);
   const t=_D.transactions;
+  const paid=x=>Number(x.amount||0)+Number(x.appliedBalance||0);
+  const sum=arr=>arr.reduce((a,x)=>a+paid(x),0);
   document.getElementById('tStats').innerHTML=[
     {ic:'clock',cl:'or',v:t.filter(x=>!x.status||x.status==='Pending').length,l:'Pending'},
     {ic:'circle-check',cl:'gn',v:t.filter(x=>x.status==='Verified').length,l:'Verified'},
     {ic:'circle-xmark',cl:'rd',v:t.filter(x=>x.status==='Rejected').length,l:'Rejected'},
     {ic:'money-bill',cl:'bl',v:t.length,l:'Total'},
+    {ic:'sack-dollar',cl:'gn',v:'৳'+fa(sum(t.filter(x=>x.status==='Verified'))),l:'Verified Amount'},
+    {ic:'hourglass-half',cl:'or',v:'৳'+fa(sum(t.filter(x=>!x.status||x.status==='Pending'))),l:'Pending Amount'},
   ].map(s=>`<div class="sc ${s.cl}"><div class="sc-ic ic-${s.cl}"><i class="fa-solid fa-${s.ic}"></i></div><div class="sc-val">${s.v}</div><div class="sc-lbl">${s.l}</div></div>`).join('');
   renderTP();
+  renderTrxCharts();
+}
+// the logo of the payment method a transaction used (wallet logo → known logo → gateway logo)
+function _trxLogo(t){
+  if(!t) return '';
+  const ws=_D.wallets||[], nm=String(t.payMethod||'').trim().toLowerCase();
+  let w = t.walletId ? ws.find(x=>x._id===t.walletId) : null;
+  if(!w && nm) w = ws.find(x=>String(x.name||'').trim().toLowerCase()===nm) || ws.find(x=>nm && String(x.name||'').toLowerCase() && nm.includes(String(x.name||'').toLowerCase()));
+  if(w && w.logoUrl) return w.logoUrl;
+  const k=Object.keys(LEGACY_LOGOS).find(k=>nm.includes(k.toLowerCase()));
+  if(k) return LEGACY_LOGOS[k];
+  const gw=window._gwCfg||window._cfgLoaded?.gateway;
+  if(t.gateway && gw && gw.logoUrl) return gw.logoUrl;
+  return '';
+}
+function _trxLogoHtml(t){
+  const u=_trxLogo(t);
+  const ph=`<div class="tm-logo ph"><i class="fa-solid fa-${t&&String(t.trxId).toUpperCase()==='BALANCE_PAYMENT'?'coins':'wallet'}"></i></div>`;
+  return u?`<img class="tm-logo" src="${_escA(u)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;tm-logo ph&quot;><i class=&quot;fa-solid fa-wallet&quot;></i></div>'">`:ph;
+}
+// chart: how much users paid per day, and who paid the most
+function renderTrxCharts(){
+  const t=_D.transactions||[];
+  const paid=x=>Number(x.amount||0)+Number(x.appliedBalance||0);
+  const days=Number(document.getElementById('tChartDays')?.value)||30;
+  const labels=[], ver=[], pen=[], rej=[], idx={};
+  const d0=new Date(); d0.setHours(0,0,0,0);
+  for(let i=days-1;i>=0;i--){
+    const d=new Date(d0); d.setDate(d0.getDate()-i);
+    const key=d.toISOString().slice(0,10); idx[key]=labels.length;
+    labels.push(d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})); ver.push(0); pen.push(0); rej.push(0);
+  }
+  t.forEach(x=>{
+    if(!x.submittedAt) return;
+    const d=new Date(x.submittedAt); if(isNaN(d)) return; d.setHours(0,0,0,0);
+    const i=idx[new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)];
+    if(i===undefined) return;
+    (x.status==='Verified'?ver:x.status==='Rejected'?rej:pen)[i]+=paid(x);
+  });
+  const tk={callbacks:{label:c=>`${c.dataset.label}: ৳${fa(c.raw)}`}};
+  mkChart('cTrxDay','bar',labels,[
+    {label:'Verified',data:ver,backgroundColor:'rgba(29,219,128,.75)',borderRadius:4,stack:'s'},
+    {label:'Pending',data:pen,backgroundColor:'rgba(255,140,66,.75)',borderRadius:4,stack:'s'},
+    {label:'Rejected',data:rej,backgroundColor:'rgba(255,77,106,.55)',borderRadius:4,stack:'s'},
+  ],{plugins:{legend:{labels:{color:'#7b90b4',font:{size:10},boxWidth:10}},tooltip:tk},scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#7b90b4',font:{size:9},maxRotation:0,autoSkip:true,maxTicksLimit:8}},y:{stacked:true,beginAtZero:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7b90b4',font:{size:10},callback:v=>'৳'+fa(v)}}}});
+  const by={};
+  t.filter(x=>x.status!=='Rejected').forEach(x=>{ const k=x.uid||'unknown'; by[k]=(by[k]||0)+paid(x); });
+  const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  mkChart('cTrxUsers','bar',top.map(e=>e[0]),[{label:'Paid',data:top.map(e=>e[1]),backgroundColor:'rgba(77,143,255,.75)',borderRadius:5}],
+    {indexAxis:'y',plugins:{legend:{display:false},tooltip:tk},scales:{x:{beginAtZero:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7b90b4',font:{size:10},callback:v=>'৳'+fa(v)}},y:{grid:{display:false},ticks:{color:'#7b90b4',font:{size:10}}}}});
+}
+// remove a transaction for good (the TrxID can then be submitted again)
+function delTrx(id){
+  const t=findById('transactions',id); if(!t){toast('Not found','e');return;}
+  confirm2(`Permanently delete transaction ${t.trxId||''} (৳${fa(Number(t.amount||0)+Number(t.appliedBalance||0))} from ${t.uid||'-'})? This cannot be undone and the same TrxID can be submitted again.`, async ()=>{
+    showL(true);
+    try{
+      if((!t.status||t.status==='Pending')) await restoreBalanceAdjust(t);   // an unverified payment gives the balance offer back
+      await window._deleteDoc(t._id,'transactions');
+      await logAct(`Transaction ${t.trxId||''} deleted permanently (৳${fa(t.amount||0)}, ${t.uid||'-'})`,'transaction',t._id);
+      closeMo('moTrx');
+      toast('Transaction deleted','e');
+      await loadTrx();
+    }catch(e){ toast(e.message||'Delete failed','e'); }
+    showL(false);
+  });
 }
 // how many times each TrxID was submitted (catches reuse / typos)
 function _trxDupMap(){
@@ -2086,8 +2145,8 @@ function renderTP(){
       const times=(k && k!=='BALANCE_PAYMENT') ? (dup[k]||0) : 0;
       const dupBadge = times>1 ? `<span class="wbadge or" title="This TrxID was submitted ${times} times">DUP ×${times}</span>` : '';
       const appRef = r.appId ? `<span class="wbadge" title="Linked application">CU-${String(r.appId).slice(-6).toUpperCase()}</span>` : '';
-      return `<tr><td class="mono">${r.trxId||'-'} ${dupBadge}</td><td class="mono">${r.uid||'-'}</td><td>${r.payMethod||'-'}${r.payType?` <span style="font-size:10px;color:var(--txt2)">(${r.payType})</span>`:''}${r.gateway?' <span class="wbadge">AUTO</span>':''}${appRef}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button></div></td></tr>`;
-    }).join(''):'<tr class="empty"><td colspan="7">No transactions found</td></tr>';
+      return `<tr><td class="mono">${r.trxId||'-'} ${dupBadge}</td><td class="mono">${r.uid||'-'}</td><td><div class="tm">${_trxLogoHtml(r)}<div class="tm-txt">${r.payMethod||(String(r.trxId).toUpperCase()==='BALANCE_PAYMENT'?'Balance':'-')}${r.gateway?' <span class="wbadge">AUTO</span>':''}${r.payType?`<small>${r.payType}</small>`:''}${appRef}</div></div></td><td style="font-weight:800;white-space:nowrap">৳${fa(Number(r.amount||0)+Number(r.appliedBalance||0))}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button><button class="ab ab-d" title="Delete permanently" onclick="delTrx('${r._id}')"><i class="fa-solid fa-trash"></i></button></div></td></tr>`;
+    }).join(''):'<tr class="empty"><td colspan="8">No transactions found</td></tr>';
   });
 }
 
@@ -2128,6 +2187,8 @@ async function autoMatchTrx(id){
 }
 function viewTrx(id){
   const t=findById('transactions',id); if(!t){toast('Not found','e');return;} _docId=t._id;
+  const isBal=String(t.trxId||'').toUpperCase()==='BALANCE_PAYMENT';
+  document.getElementById('tHero').innerHTML=`${_trxLogoHtml(t)}<div class="th-m"><b>${_escA(t.payMethod||(isBal?'Account Balance':'Payment'))}${t.gateway?' <span class="wbadge">AUTO</span>':''}</b><small>${_escA([t.payType,t.uid?('From '+t.uid):''].filter(Boolean).join(' · '))}</small></div><div class="th-amt">৳${fa(Number(t.amount||0)+Number(t.appliedBalance||0))}</div>`;
   document.getElementById('tGrid').innerHTML=[
     {l:'Transaction ID',v:t.trxId,c:'mono'},{l:'Phone / UID',v:t.uid,c:'mono'},
     {l:'Payment Method',v:[t.payMethod,t.payType].filter(Boolean).join(' · ')},{l:'Status',v:sb(t.status||'Pending')},
@@ -2266,24 +2327,6 @@ async function loadAnalytics(){
   mkChart('cAppr','doughnut',al,[{data:ac,backgroundColor:['#1ddb80','#ff8c42','#ff4d6a','#f59e0b']}]);
   const ws={};t.forEach(x=>{if(x.payMethod)ws[x.payMethod]=(ws[x.payMethod]||0)+1;});
   mkChart('cWals','doughnut',Object.keys(ws)||['None'],[{data:Object.values(ws)||[1],backgroundColor:['#ff4d6a','#1ddb80','#4d8fff','#a855f7']}]);
-}
-
-// ══ EMI ══════════════════════════════════════════════
-function calcEMI(){
-  const P=parseFloat(document.getElementById('ep').value)||0,r=parseFloat(document.getElementById('er').value)||18,n=parseInt(document.getElementById('em').value)||0,fee=parseFloat(document.getElementById('ef').value)||0;
-  if(!P||!n){document.getElementById('emiRes').style.display='none';document.getElementById('schedBlk').style.display='none';return;}
-  const mr=r/(100*12); const emi=mr>0?Math.round(P*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1)):Math.round(P/n);
-  const ti=emi*n-P, tp=emi*n+fee, ear=((Math.pow(1+r/1200,12)-1)*100).toFixed(2);
-  document.getElementById('er-emi').innerText='৳'+fa(emi)+'/mo';
-  document.getElementById('er-int').innerText='৳'+fa(Math.round(ti));
-  document.getElementById('er-fee').innerText='৳'+fa(fee);
-  document.getElementById('er-total').innerText='৳'+fa(Math.round(tp));
-  document.getElementById('er-ear').innerText=ear+'%';
-  document.getElementById('emiRes').style.display='block';
-  let bal=P; const rows=[];
-  for(let i=1;i<=Math.min(n,24);i++){const ip=Math.round(bal*mr),pp=emi-ip; bal=Math.max(0,bal-pp); rows.push(`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 13px;border-top:1px solid var(--border);font-size:12px"><div style="width:22px;height:22px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--txt2)">${i}</div><span style="color:var(--txt2)">EMI:<strong style="color:var(--txt)">৳${fa(emi)}</strong></span><span style="color:var(--txt2)">Prin:৳${fa(pp)}</span><span style="color:var(--txt2)">Int:৳${fa(ip)}</span><span style="color:var(--orange)">Bal:৳${fa(Math.round(bal))}</span></div>`);}
-  document.getElementById('schedRows').innerHTML=rows.join('');
-  document.getElementById('schedBlk').style.display='block';
 }
 
 // ══ WALLETS ══════════════════════════════════════════

@@ -27,8 +27,10 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .loader-ring{width:48px;height:48px;border:3px solid rgba(29,219,128,.15);border-top-color:var(--p);border-radius:50%;animation:spin .9s linear infinite}
 .loader-text{color:var(--txt2);font-size:13px;font-weight:500;letter-spacing:.5px}
 @keyframes spin{to{transform:rotate(360deg)}}
-#splash{--sp-bg:#fff;--sp-t:#0f172a;--sp-t2:#64748b;--sp-chip:#fff;--sp-line:#e2e8f0;--sp-acc:#16a34a;position:fixed;inset:0;background:var(--sp-bg);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:100001;transition:opacity .6s ease,visibility .6s ease;padding:24px 16px 60px;text-align:center;overflow:hidden}
-#splash::before{content:"";position:absolute;width:520px;height:520px;left:50%;top:38%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(34,197,94,.13),transparent 62%);pointer-events:none}
+#splash{--sp-bg:#fff;--sp-t:#0f172a;--sp-t2:#64748b;--sp-chip:#fff;--sp-line:#e2e8f0;--sp-acc:#16a34a;position:fixed;inset:0;background:var(--sp-bg);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:100001;transition:opacity .6s ease,visibility .6s ease;padding:24px 16px;text-align:center;overflow:hidden;box-sizing:border-box}
+#splash>*{max-width:100%;margin-left:auto;margin-right:auto}
+.sp-main{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:360px;margin:auto}
+#splash::before{content:"";position:absolute;width:520px;height:520px;left:50%;top:42%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(34,197,94,.13),transparent 62%);pointer-events:none}
 #splash.sp-dark{--sp-bg:#070e1b;--sp-t:#f1f5f9;--sp-t2:#94a3b8;--sp-chip:#fff;--sp-line:#1e293b;--sp-acc:#22c55e}
 #splash.sp-brand{--sp-bg:linear-gradient(160deg,#064e26,#0a6e35 55%,#0b8a43);--sp-t:#fff;--sp-t2:rgba(255,255,255,.78);--sp-chip:#fff;--sp-line:rgba(255,255,255,.22);--sp-acc:#86efac}
 #splash.sp-brand::before{background:radial-gradient(circle,rgba(255,255,255,.12),transparent 62%)}
@@ -42,8 +44,8 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .sp-logo::after{content:"";position:absolute;top:-20%;left:-60%;width:40%;height:140%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-18deg);animation:sp-shine 2.6s ease-in-out .8s infinite}
 @keyframes sp-in{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
 @keyframes sp-shine{0%{left:-60%}55%,100%{left:140%}}
-.sp-c{width:46px;height:46px;border:8px solid #fff;border-right-color:transparent;border-radius:50%;transform:rotate(-35deg)}
-.sp-bars{position:absolute;bottom:20px;display:flex;align-items:flex-end;gap:3px}
+.sp-c{width:46px;height:46px;border:8px solid #fff;border-right-color:transparent;border-radius:50%;transform:rotate(-35deg);flex:none;box-sizing:border-box}
+.sp-bars{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:flex-end;gap:3px}
 .sp-bar{width:6px;background:#4ade80;border-radius:2px;transform-origin:bottom;animation:sp-grow .6s ease-out both}
 .sp-bar:nth-child(1){height:10px;animation-delay:.35s}.sp-bar:nth-child(2){height:16px;animation-delay:.47s}.sp-bar:nth-child(3){height:24px;animation-delay:.59s}
 @keyframes sp-grow{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
@@ -52,8 +54,8 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .sp-curve-txt span{color:#22c55e}
 .sp-up{animation:sp-up .6s ease-out both}
 @keyframes sp-up{0%{transform:translateY(10px);opacity:0}100%{transform:none;opacity:1}}
-.sp-title{font-size:17px;font-weight:800;color:var(--sp-t);margin-bottom:4px;letter-spacing:.2px;animation-delay:.25s}
-.sp-sub{font-size:12.5px;color:var(--sp-t2);margin-bottom:22px;font-weight:500;max-width:300px;animation-delay:.35s}
+.sp-title{font-size:17px;font-weight:800;color:var(--sp-t);margin-bottom:4px;letter-spacing:.2px;animation-delay:.25s;width:100%;max-width:320px;line-height:1.35;overflow-wrap:anywhere}
+.sp-sub{font-size:12.5px;color:var(--sp-t2);margin-bottom:22px;font-weight:500;width:100%;max-width:300px;line-height:1.5;overflow-wrap:anywhere;animation-delay:.35s}
 .sp-pay-title{font-size:10px;color:var(--sp-t2);text-transform:uppercase;letter-spacing:1.8px;margin-bottom:10px;font-weight:700;display:flex;align-items:center;gap:8px;animation-delay:.45s}
 .sp-pay-title::before,.sp-pay-title::after{content:"";width:22px;height:1px;background:var(--sp-line)}
 .sp-pay-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:20px;max-width:340px}
@@ -72,8 +74,9 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .sp-dots i:nth-child(2){animation-delay:.15s}.sp-dots i:nth-child(3){animation-delay:.3s}
 @keyframes sp-dot{0%,80%,100%{transform:scale(.55);opacity:.4}40%{transform:scale(1);opacity:1}}
 .sp-spin{width:24px;height:24px;border-radius:50%;border:3px solid var(--sp-line);border-top-color:var(--sp-acc);animation:spin .8s linear infinite}
-.sp-foot{position:absolute;bottom:22px;left:0;right:0;font-size:10.5px;color:var(--sp-t2);display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;animation-delay:.8s}
+.sp-foot{position:absolute;bottom:calc(22px + env(safe-area-inset-bottom));left:16px;right:16px;font-size:10.5px;color:var(--sp-t2);display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;animation-delay:.8s}
 .sp-foot svg{color:var(--sp-acc)}
+@media (max-height:620px){#splash{justify-content:flex-start;overflow-y:auto}.sp-foot{position:static;margin-top:18px}.sp-stage{transform:scale(.85);margin-bottom:4px}}
 @media (prefers-reduced-motion:reduce){#splash *,#splash::before{animation:none!important}}
 .screen{display:none;padding:20px;min-height:100dvh;background:var(--bg);overflow-x:hidden}
 .screen.active{display:block;animation:screenIn .28s ease}
@@ -97,7 +100,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #appBar .ab-back{width:36px;height:36px;flex-shrink:0;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.1);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 #appBar .ab-back:active{transform:scale(.94)}
 #appBar .ab-mid{flex:1;min-width:0}
-#appBar h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:16px;font-weight:900;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#appBar h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:16px;font-weight:900;letter-spacing:-.2px;white-space:nowrap}
 #appBar .balance-pill{margin-top:4px;padding:3px 10px;gap:6px}
 #appBar .balance-pill span{font-size:12.5px}
 #appBar .balance-pill .bp-lbl{font-size:11px;color:var(--p)}
@@ -622,6 +625,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .modal-overlay.on{display:flex}
 .mc{background:linear-gradient(145deg,#0f1d35,#0d1829);border:1px solid rgba(255,255,255,.1);border-radius:26px;width:100%;max-width:340px;padding:28px 24px;box-shadow:0 30px 80px rgba(0,0,0,.9),0 0 0 1px rgba(29,219,128,.08);transform:scale(.88) translateY(8px);opacity:0;transition:all .32s cubic-bezier(.175,.885,.32,1.275);display:flex;flex-direction:column;margin:auto;max-height:88dvh;overflow-y:auto}
 .modal-overlay.on .mc{transform:scale(1) translateY(0);opacity:1}
+.mc>*{flex-shrink:0}  /* long popups scroll instead of squashing their rows together */
 .m-icon{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px}
 .m-ic-suc{background:rgba(29,219,128,.12);color:var(--p);border:1.5px solid rgba(29,219,128,.25);box-shadow:0 0 24px rgba(29,219,128,.15)}
 .m-ic-err{background:rgba(255,77,106,.12);color:var(--red);border:1.5px solid rgba(255,77,106,.25)}
@@ -705,7 +709,25 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .co-acts{display:flex;gap:8px}
 .co-btn{flex:2;height:38px;border:0;border-radius:11px;font-weight:800;font-size:13px;font-family:inherit;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;gap:7px}
 .co-btn.ghost{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#ffd76a}
-.calc-row span:last-child{color:var(--txt);font-weight:700}
+.calc-lbl{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--txt2);font-weight:600}
+.calc-max{font-size:10.5px;font-weight:700;color:var(--p);background:rgba(29,219,128,.1);border:1px solid rgba(29,219,128,.25);padding:2px 8px;border-radius:20px;white-space:nowrap}
+#calcModal .calc-val{font-size:clamp(22px,7vw,28px);line-height:1.15;margin:6px 0 14px;white-space:nowrap}
+#calcModal .mc>*{flex-shrink:0}
+#calcModal .cs-wrap{margin-bottom:30px}
+#calcModal .cs-labels span{font-size:9px}
+.calc-res{background:rgba(255,255,255,.03);border:1px solid var(--bord);border-radius:14px;padding:4px 12px 12px}
+#calcModal .calc-res .calc-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;font-size:13px;border-bottom:1px dashed var(--bord)}
+.calc-res .calc-row>span{min-width:0;overflow-wrap:anywhere;line-height:1.3}
+.calc-res .calc-row>b{flex:none;color:var(--txt);font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cr-rate{font-style:normal;font-size:10.5px;color:var(--txt3);margin-left:4px;white-space:nowrap}
+.calc-tot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.ct-l{min-width:0}
+.ct-l small{display:block;font-size:11px;color:var(--txt2);font-weight:600}
+.ct-l strong{display:block;font-size:clamp(17px,5.4vw,20px);font-weight:900;color:var(--p);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ct-apply{flex:none;height:42px;padding:0 16px;border:0;border-radius:12px;font-weight:800;font-size:13.5px;font-family:inherit;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;gap:7px;box-shadow:0 6px 18px rgba(29,219,128,.28);white-space:nowrap}
+.ct-apply:active{transform:scale(.97)}
+.calc-note{font-size:10.5px;color:var(--txt3);margin-top:8px;line-height:1.4}
+@media (max-width:340px){.calc-tot{flex-direction:column;align-items:stretch}.ct-apply{justify-content:center}}
 .notif-list{display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-right:5px}
 #notifModal .nc-card{max-width:400px;width:100%;padding:0 !important;overflow:hidden;display:flex;flex-direction:column;max-height:86vh}
 .nc-head{display:flex;align-items:center;gap:11px;padding:16px 16px 12px;background:linear-gradient(135deg,rgba(29,219,128,.14),rgba(77,143,255,.06));border-bottom:1px solid rgba(255,255,255,.07);position:relative}
@@ -740,8 +762,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .nc-toast.on{transform:translate(-50%,0)}
 .nc-toast-ic{width:34px;height:34px;flex-shrink:0;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:15px}
 .nc-toast-t{min-width:0}
-.nc-toast-t strong{display:block;font-size:13px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nc-toast-t span{display:block;font-size:11.5px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-toast-t strong{display:block;font-size:13px;color:var(--txt);white-space:nowrap}
+.nc-toast-t span{display:block;font-size:11.5px;color:var(--txt2);white-space:nowrap}
 
 .notif-item{background:var(--bg2);border-radius:14px;padding:16px;border:1px solid var(--bord);display:flex;gap:12px}
 .notif-item.unread{border-left:3px solid var(--p)}
@@ -2298,7 +2320,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
     <button class="popup-close" aria-label="Close" onclick="closeModal('calcModal')"><i class="fa-solid fa-xmark"></i></button>
     <div class="m-title">Loan Calculator</div>
     <p class="m-msg">Estimate your monthly repayment easily.</p>
-    <label style="font-size:12px; color:var(--txt2); font-weight:600;">Loan Amount (BDT)</label>
+    <div class="calc-lbl"><span>Loan Amount (BDT)</span><span class="calc-max" id="calcMaxLbl"></span></div>
     <div class="calc-val" id="calcAmountDisplay">৳ 10,000</div>
     <div class="cs-wrap" id="csAmt">
       <div class="cs-track"><i class="cs-fill"></i></div>
@@ -2306,7 +2328,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
       <input type="range" class="calc-slider" id="calcAmount" min="0" max="6" step="any" value="3" oninput="_calcDrag(this)" onchange="_calcSnap(this)">
       <div class="cs-labels"></div>
     </div>
-    <label style="font-size:12px; color:var(--txt2); font-weight:600;">Term (Months)</label>
+    <div class="calc-lbl"><span>Term (Months)</span></div>
     <div class="calc-val" id="calcTermDisplay">6 Months</div>
     <div class="cs-wrap" id="csTerm">
       <div class="cs-track"><i class="cs-fill"></i></div>
@@ -2314,10 +2336,16 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
       <input type="range" class="calc-slider" id="calcTerm" min="0" max="4" step="any" value="1" oninput="_calcDrag(this)" onchange="_calcSnap(this)">
       <div class="cs-labels"></div>
     </div>
-    <div class="calc-row"><span>Principal Amount</span><span id="calcPrincipal">৳ 10,000</span></div>
-    <div class="calc-row"><span>Interest (<span id="calcRateLabel">18</span>% p.a)</span><span id="calcInterest">৳ 900</span></div>
-    <div class="calc-row"><span>Processing Fee</span><span id="calcFee">৳ 400</span></div>
-    <div class="calc-row" style="border-top:1px solid var(--bord); margin-top:5px; padding-top:10px; font-weight:800; color:var(--txt); font-size:16px;"><span>Total Repayment</span><span id="calcTotal" style="color:var(--p);">৳ 11,300</span></div>
+    <div class="calc-res">
+      <div class="calc-row"><span>Principal Amount</span><b id="calcPrincipal">৳ 10,000</b></div>
+      <div class="calc-row"><span>Interest <em class="cr-rate"><span id="calcRateLabel">18</span>% p.a.</em></span><b id="calcInterest">৳ 900</b></div>
+      <div class="calc-row"><span>Monthly Installment</span><b id="calcMonthly">৳ 1,817</b></div>
+      <div class="calc-tot">
+        <div class="ct-l"><small>Total Repayment</small><strong id="calcTotal">৳ 10,900</strong></div>
+        <button class="ct-apply" onclick="applyFromCalc()">Apply Loan <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+      <div class="calc-note">Principal + interest only. Any fee is shown before you submit.</div>
+    </div>
     <div class="calc-offer">
       <div class="co-top"><i class="fa-solid fa-gift"></i><div><b>Invite friends, earn more</b><span>Rewards for every friend who joins and stays active</span></div></div>
       <div class="co-tiers">
@@ -2326,8 +2354,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
         <div><b>100</b><span>৳50,000 cash reward</span></div>
       </div>
       <div class="co-acts">
-        <button class="co-btn ghost" onclick="closeModal('calcModal'); openReferModal()"><i class="fa-solid fa-share-nodes"></i> Invite</button>
-        <button class="co-btn" onclick="closeModal('calcModal'); handleMainAction()">Apply Now <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="co-btn ghost" onclick="closeModal('calcModal'); openReferModal()"><i class="fa-solid fa-share-nodes"></i> Invite Friends</button>
       </div>
     </div>
   </div>
@@ -2557,12 +2584,14 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
 </div>
 
 <div id="splash">
+  <div class="sp-main">
   <div class="sp-stage"><div class="sp-ring"></div><div class="sp-ring r2"></div><div class="sp-logo"><div class="sp-c"></div><div class="sp-bars"><div class="sp-bar"></div><div class="sp-bar"></div><div class="sp-bar"></div></div><div class="sp-curve"><div class="sp-curve-txt">Credit <span>Up</span></div></div></div></div>
   <div class="sp-title sp-up" id="spTitle"></div>
   <div class="sp-sub sp-up" id="splashSubtitle"></div>
   <div id="spPay"></div>
   <div class="sp-badge sp-up" id="spBadge"></div>
   <div class="sp-load sp-up" id="spLoad"></div>
+  </div>
   <div class="sp-foot sp-up" id="spFoot"></div>
 </div>
 <script>
@@ -4994,18 +5023,35 @@ function openCalculator() {
   if(Number(t.value) > terms.length - 1) t.value = 0;
   a.value = Math.round(Number(a.value)); t.value = Math.round(Number(t.value));
   const k = v => v >= 1000 ? (v % 1000 ? (v/1000).toFixed(1) : v/1000) + 'k' : String(v);
+  document.getElementById('calcModal').classList.add('on');
   _calcMarks('csAmt', amts.map(v => '৳' + k(v)));
   _calcMarks('csTerm', terms.map(v => v + 'm'));
-  document.getElementById('calcModal').classList.add('on'); updateCalc(true);
+  const ml = document.getElementById('calcMaxLbl'); if(ml) ml.innerText = 'Max ৳ ' + amts[amts.length - 1].toLocaleString('en-US');
+  updateCalc(true);
+}
+// "Apply Loan" next to the result: start an application with the amount and term picked here
+function applyFromCalc(){
+  const { amts, terms } = _calcLists();
+  const aEl = document.getElementById('calcAmount'), tEl = document.getElementById('calcTerm');
+  const amt = amts[Math.min(amts.length - 1, Math.max(0, Math.round(Number(aEl.value) || 0)))];
+  const term = terms[Math.min(terms.length - 1, Math.max(0, Math.round(Number(tEl.value) || 0)))];
+  closeModal('calcModal');
+  if(!_getUser()){ handleMainAction(); return; }
+  startNewApplication();
+  if(!document.getElementById('screen-policy')?.classList.contains('active')) return;  // blocked (unpaid fee / paused)
+  selAmount = amt.toLocaleString('en-US'); selTerm = String(term);
+  [['dAmount', selAmount], ['dTerm', selTerm]].forEach(([id, v]) => { const el = document.getElementById(id); if(el){ const sp = el.querySelector('span'); if(sp) sp.innerText = v; el.classList.add('filled'); } });
+  if(typeof checkStep2 === 'function') checkStep2();
 }
 // one dot (and a short label) for every value the slider can take
 function _calcMarks(wrapId, labels){
   const w = document.getElementById(wrapId); if(!w) return;
   const n = labels.length, pos = i => n > 1 ? (i / (n - 1)) * 100 : 50;
-  // too many labels to fit: show every other one (first and last always)
-  const every = n > 8 ? 2 : 1;
+  // only as many labels as fit the slider width (about 36px apart), first and last always
+  const width = (w.clientWidth || 300) - 22, fit = Math.max(2, Math.floor(width / 36) + 1);
+  const every = n > fit ? Math.ceil((n - 1) / (fit - 1)) : 1;
   w.querySelector('.cs-dots').innerHTML = labels.map((_, i) => `<i style="left:${pos(i)}%"></i>`).join('');
-  w.querySelector('.cs-labels').innerHTML = labels.map((l, i) => (i % every === 0 || i === n - 1) ? `<span data-i="${i}" style="left:${pos(i)}%">${l}</span>` : '').join('');
+  w.querySelector('.cs-labels').innerHTML = labels.map((l, i) => (i % every === 0 || i === n - 1) ? `<span data-i="${i}" style="left:${pos(i)}%;${i === 0 ? 'transform:none' : i === n - 1 && n > 1 ? 'transform:translateX(-100%)' : ''}">${l}</span>` : '').join('');
 }
 function _calcPaint(wrapId, input){
   const w = document.getElementById(wrapId); if(!w) return;
@@ -5189,18 +5235,19 @@ function updateCalc(instant) {
 
   const rate = Number(ADMIN.annualRate) || 0;
   const rl = document.getElementById('calcRateLabel'); if(rl) rl.innerText = rate;
-  const procFee = (ADMIN.orgFee || 0) + (ADMIN.serviceCharge || 0) + (ADMIN.processingFee || 0);
+  // the calculator shows principal + interest only; fees are shown later in the application
   const interest = Math.round(amt * (rate / 100) * (term / 12));
-  const total = amt + interest + procFee;
+  const total = amt + interest;
+  const monthly = Math.ceil(total / Math.max(1, term));
   const tk = v => '৳ ' + v.toLocaleString('en-US');
-  if(instant){ ['calcPrincipal','calcInterest','calcFee','calcTotal'].forEach(id => delete _calcShown[id]); }
+  if(instant){ ['calcPrincipal','calcInterest','calcMonthly','calcTotal'].forEach(id => delete _calcShown[id]); }
 
   const ad = document.getElementById('calcAmountDisplay'), td = document.getElementById('calcTermDisplay');
   ad.innerText = tk(amt); td.innerText = term + ' Months';
   [ad, td].forEach(e => { e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump'); setTimeout(()=>e.classList.remove('bump'), 150); });
   _calcRoll('calcPrincipal', amt, tk);
   _calcRoll('calcInterest', interest, tk);
-  _calcRoll('calcFee', procFee, tk);
+  _calcRoll('calcMonthly', monthly, tk);
   _calcRoll('calcTotal', total, tk);
 }
 
