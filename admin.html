@@ -582,7 +582,26 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .savebar-t{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--txt);white-space:nowrap}
 .savebar-t i{color:#ffbe3c}
 @media(min-width:901px){.savebar{left:calc(50% + 125px)}}
-@media(max-width:520px){.savebar-t span{display:none}}
+.sb-view{background:transparent;border:0;cursor:pointer;font-family:inherit;padding:4px 6px;border-radius:8px}
+.sb-view:hover{background:rgba(255,255,255,.05)}
+.sb-car{font-size:10px;color:var(--txt2)!important;transition:transform .2s}
+.savebar.open .sb-car{transform:rotate(180deg)}
+.sb-panel{display:none;position:absolute;left:0;right:0;bottom:calc(100% + 8px);max-height:min(52vh,420px);overflow-y:auto;background:rgba(12,21,37,.98);border:1px solid rgba(255,190,60,.35);border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.55);padding:10px;min-width:min(420px,calc(100vw - 24px))}
+.savebar.open .sb-panel{display:block}
+.ch-list{display:flex;flex-direction:column;gap:6px}
+.ch-g{font-size:10.5px;font-weight:800;color:var(--p);text-transform:uppercase;letter-spacing:.5px;margin:6px 2px 0}
+.ch-g:first-child{margin-top:0}
+.ch-i{display:flex;align-items:flex-start;gap:9px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid var(--border);font-size:12px}
+.ch-i>i{margin-top:2px;color:#ffbe3c;font-size:11px;flex:none}
+.ch-m{flex:1;min-width:0}
+.ch-m b{display:block;color:var(--txt);font-weight:700;margin-bottom:2px}
+.ch-v{color:var(--txt2);line-height:1.5;overflow-wrap:anywhere}
+.ch-v s{color:#ff8a9c;text-decoration-color:rgba(255,77,106,.6)}
+.ch-v em{font-style:normal;color:var(--p);font-weight:600}
+.ch-undo{flex:none;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--txt2);border-radius:7px;font-size:11px;padding:4px 8px;cursor:pointer;font-family:inherit}
+.ch-undo:hover{color:var(--txt);border-color:var(--p)}
+.ch-none{font-size:12px;color:var(--txt2);padding:8px;text-align:center}
+@media(max-width:520px){.sb-save{display:none}.savebar{gap:6px;padding:8px;left:12px;right:12px;max-width:none;transform:translateY(140%);justify-content:space-between}.savebar.on{transform:none}.sb-panel{min-width:0}}
 </style>
 </head>
 <body>
@@ -818,9 +837,18 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 
 <div class="savebar" id="saveBar">
-  <div class="savebar-t"><i class="fa-solid fa-circle-exclamation"></i><span>You have unsaved changes</span></div>
+  <div class="sb-panel" id="sbPanel"></div>
+  <button class="savebar-t sb-view" type="button" onclick="sbToggle()" title="See what changed"><i class="fa-solid fa-circle-exclamation"></i><span id="sbTxt">Unsaved changes</span><i class="fa-solid fa-chevron-up sb-car"></i></button>
   <button class="btn btn-s btn-sm" onclick="discardTab()">Discard</button>
-  <button class="btn btn-p btn-sm" onclick="saveTab()"><i class="fa-solid fa-floppy-disk"></i>Save changes</button>
+  <button class="btn btn-p btn-sm" onclick="saveTab()"><i class="fa-solid fa-floppy-disk"></i><span class="sb-save">Save changes</span></button>
+</div>
+
+<div class="mov" id="moDiscard">
+<div class="mo mo-md">
+  <div class="mo-h"><h3><i class="fa-solid fa-rotate-left" style="color:var(--red);margin-right:7px"></i>Discard these changes?</h3><button class="mo-x" onclick="closeMo('moDiscard')">✕</button></div>
+  <div class="mo-b"><div class="hint" id="dcHint" style="margin-bottom:10px"></div><div id="dcList" class="ch-list"></div></div>
+  <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moDiscard')">Keep editing</button><button class="btn btn-d" id="dcOk"><i class="fa-solid fa-trash-can-arrow-up"></i>Discard all</button></div>
+</div>
 </div>
 
 <!-- HOME PAGE -->
@@ -1049,7 +1077,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-font"></i>What to show</div>
           <div class="fgrid">
             <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showtitle" checked><span class="tog-sl"></span></label>Title</label><input id="sl-title" maxlength="50" placeholder="CreditUp – Smart Credit &amp; Loans"></div>
-            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showsub" checked><span class="tog-sl"></span></label>Subtitle</label><input id="sl-sub" maxlength="80" placeholder="Empty = the subtitle from Site Config"></div>
+            <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showsub" checked><span class="tog-sl"></span></label>Subtitle</label><input id="sl-sub" maxlength="80" placeholder="Smart credit, made simple"></div>
             <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showbadge" checked><span class="tog-sl"></span></label>Badge</label><input id="sl-badge" maxlength="40" placeholder="100% Authentic &amp; Verified"></div>
             <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sl-showfoot" checked><span class="tog-sl"></span></label>Bottom line</label><input id="sl-foot" maxlength="60" placeholder="256-bit SSL Encrypted | Safe &amp; Secure"></div>
           </div>
@@ -1145,7 +1173,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
   </div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-pen-to-square"></i>Site Text & Branding</div>
     <div class="fgrid">
-      <div class="fg"><label>Splash Subtitle</label><input id="c-ss" placeholder="Build Credit. Move Up."></div>
       <div class="fg"><label>Policy Last Updated</label><input id="c-pd" placeholder="2026/10/09"></div>
       <div class="fg"><label>Home Tagline (info card)</label><input id="c-tag" placeholder="Your Loan, Simplified"></div>
     </div>
@@ -1620,6 +1647,7 @@ async function loadGateway(){
   g('gwLogo').value = gw.logoUrl || '';
   const on = Array.isArray(gw.methods) ? gw.methods : GW_GROUPS.map(x=>x.k);
   g('gwMethods').innerHTML = GW_GROUPS.map(x=>`<label class="gwm-i"><input type="checkbox" value="${x.k}" ${on.includes(x.k)?'checked':''} onchange="markDirty('wallets','gw')"><span><b>${x.t}</b>${x.s}</span></label>`).join('');
+  _snapTake('wallets'); _paintSave();
   const st = g('gwStatus');
   try{
     const r = await fetch('/api/pay/status', {cache:'no-store'});
@@ -3065,6 +3093,122 @@ async function _saveWalletsTab(){
 const _dirty={};
 function markDirty(tab,part){ (_dirty[tab]=_dirty[tab]||new Set()).add(part||'x'); _paintSave(); }
 function _isDirty(tab){ return !!(_dirty[tab] && _dirty[tab].size); }
+// ── what changed since the page was loaded (save bar list + Discard preview) ──
+const _snap={};            // tab → { f: {key:{v,label,group}}, d: {name:json} }
+const _TAB_NAME={config:'Site Config',home:'Home Page',wallets:'Payment Methods'};
+const _SNAP_SKIP=new Set(['cfRateTot']);
+function _fEls(tab){
+  const sec=document.getElementById('sec-'+tab); if(!sec) return [];
+  const out=[];
+  sec.querySelectorAll('input[id],select[id],textarea[id]').forEach(e=>{ if(!['file','color','button','submit','search'].includes(e.type) && !_SNAP_SKIP.has(e.id)) out.push([e.id,e]); });
+  if(tab==='wallets') sec.querySelectorAll('#gwMethods input[type=checkbox]').forEach(e=>out.push(['gwm:'+e.value,e]));
+  return out;
+}
+function _fVal(e){
+  if(e.type==='checkbox') return e.checked?'On':'Off';
+  if(e.tagName==='SELECT') return (e.selectedOptions[0]?.text||e.value||'').trim();
+  return String(e.value??'').trim();
+}
+function _fLabel(e){
+  if(e.type==='checkbox'){
+    const gw=e.closest('.gwm-i'); if(gw) return (gw.querySelector('b')?.textContent||gw.textContent).trim();
+    const sw=e.closest('.hp-sw'); if(sw){ const t=sw.textContent.trim(); const fg=e.closest('.fg'); return fg && fg.querySelector(':scope>input:not([type=checkbox]),:scope>textarea') ? t+' (show)' : t; }
+    const l=e.closest('label'); if(l && l.textContent.trim()) return l.textContent.trim();
+  }
+  const fg=e.closest('.fg');
+  if(fg){ const l=[...fg.children].find(x=>x.tagName==='LABEL'); if(l && l.textContent.trim()) return l.textContent.replace(/\s+/g,' ').trim(); }
+  return e.getAttribute('aria-label')||e.placeholder||e.id;
+}
+function _fGroup(e){
+  const parts=[];
+  const pane=e.closest('.hp-pane');
+  if(pane){ const b=document.querySelector(`#hpTabs [data-p="${pane.id.slice(3)}"]`); if(b) parts.push(b.textContent.trim()); }
+  const t=e.closest('.cfg-blk')?.querySelector('.cfg-t');
+  if(t){ const txt=[...t.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').trim(); if(txt && !parts.includes(txt)) parts.push(txt); }
+  // sub-heading inside a block (e.g. Site Text & Branding → Brand)
+  let p=e.closest('.fgrid'); while(p && p.previousElementSibling && !p.previousElementSibling.classList.contains('br-sub') && !p.previousElementSibling.classList.contains('cfg-t')) p=p.previousElementSibling;
+  if(p && p.previousElementSibling && p.previousElementSibling.classList.contains('br-sub')) parts.push(p.previousElementSibling.textContent.trim());
+  return parts.join(' › ') || _TAB_NAME[e.closest('.sec')?.id.slice(4)] || '';
+}
+function _snapData(tab){
+  if(tab==='home' && _H) return {'Notice Bar › Notices':_H.notice.items,'Partners › Partner logos':_H.partners.items,'Trust Badges › Badges':_H.trust.items,
+    'Loading Screen › Payment logos':_H.splash.pays,'Offers › Offer cards':_H.offers.items,'Live Transactions › Hidden entries':_H.live.hidden,'Hot Offer › Offer round':_H.fomo.round};
+  if(tab==='config') return {'Custom Fees & Additional Interest › Fee list':window._cfFees||[]};
+  return {};
+}
+function _snapTake(tab){
+  const f={}; _fEls(tab).forEach(([k,e])=>{ f[k]={v:_fVal(e),label:_fLabel(e),group:_fGroup(e)}; });
+  const d={}; Object.entries(_snapData(tab)).forEach(([k,v])=>{ d[k]=JSON.stringify(v??null); });
+  _snap[tab]={f,d,w:tab==='wallets'?Object.fromEntries((_D.wallets||[]).map(w=>[w._id,w.name||'Method'])):null};
+}
+const _short=v=>{ v=String(v??''); return v===''?'(empty)':(v.length>70?v.slice(0,67)+'…':v); };
+function _listChange(a,b){
+  a=Array.isArray(a)?a:[]; b=Array.isArray(b)?b:[];
+  const key=(x,i)=>(x&&typeof x==='object'&&x.id)?x.id:(typeof x!=='object'?String(x):'#'+i);
+  const nm=x=>typeof x==='object'&&x?(x.name||x.title||x.text||x.label||'item'):String(x);
+  const A=new Map(a.map((x,i)=>[key(x,i),x])), B=new Map(b.map((x,i)=>[key(x,i),x]));
+  const add=[],rem=[],chg=[];
+  B.forEach((x,k)=>{ if(!A.has(k)) add.push(nm(x)); else if(JSON.stringify(A.get(k))!==JSON.stringify(x)) chg.push(nm(x)); });
+  A.forEach((x,k)=>{ if(!B.has(k)) rem.push(nm(x)); });
+  const list=arr=>arr.slice(0,3).map(x=>'“'+_short(x).slice(0,30)+'”').join(', ')+(arr.length>3?` +${arr.length-3} more`:'');
+  const out=[];
+  if(add.length) out.push(`<em>${add.length} added</em> (${list(add)})`);
+  if(rem.length) out.push(`<s>${rem.length} removed</s> (${list(rem)})`);
+  if(chg.length) out.push(`${chg.length} edited (${list(chg)})`);
+  if(!out.length && JSON.stringify([...A.keys()])!==JSON.stringify([...B.keys()])) out.push('order changed');
+  return out.join(' · ');
+}
+const _W_KEYS={feeOff:['Fee receiving',v=>v?'Off':'On'],payoutOff:['Loan sending',v=>v?'Off':'On'],enabled:['Method',v=>v?'On':'Off'],useForFee:['Fee receiving list',v=>v?'Added':'Removed'],useForPayout:['Loan sending list',v=>v?'Added':'Removed'],order:['Position',v=>'#'+v]};
+function _changes(tab){
+  const S=_snap[tab]; if(!S) return null;
+  const out=[];
+  _fEls(tab).forEach(([k,e])=>{ const o=S.f[k]; if(!o) return; const v=_fVal(e); if(v!==o.v) out.push({group:o.group,label:o.label,from:o.v,to:v,key:k}); });
+  const now=_snapData(tab);
+  Object.entries(S.d).forEach(([name,j])=>{
+    const cur=JSON.stringify(now[name]??null); if(cur===j) return;
+    const [group,label]=name.split(' › ');
+    const was=JSON.parse(j);
+    if(Array.isArray(was)||Array.isArray(now[name])) out.push({group,label,html:_listChange(was,now[name])});
+    else out.push({group,label,from:String(was??''),to:String(now[name]??'')});
+  });
+  if(tab==='wallets'){
+    _wDel.forEach(id=>out.push({group:'Payment methods',label:S.w[id]||'Method',html:'<s>Deleted</s>'}));
+    Object.entries(_wPend).forEach(([id,d])=>{ if(_wDel.has(id)) return;
+      const bits=Object.entries(d).map(([k,v])=>_W_KEYS[k]?`${_W_KEYS[k][0]}: <em>${_W_KEYS[k][1](v)}</em>`:k).filter((x,i,a)=>a.indexOf(x)===i);
+      const onlyOrder=Object.keys(d).every(k=>k==='order');
+      out.push({group:'Payment methods',label:S.w[id]||findById('wallets',id)?.name||'Method',html:onlyOrder?'Moved up / down':bits.join(' · ')});
+    });
+  }
+  // keep each section's changes together, in page order
+  const first={}; out.forEach((c,i)=>{ if(!(c.group in first)) first[c.group]=i; });
+  return out.map((c,i)=>[c,i]).sort((x,y)=>first[x[0].group]-first[y[0].group]||x[1]-y[1]).map(x=>x[0]);
+}
+function _changesHtml(list,canUndo){
+  if(!list) return '<div class="ch-none">Changes on this page are not tracked yet. Reload the page to start tracking.</div>';
+  if(!list.length) return '<div class="ch-none">No differences from the saved version — you changed something and then put it back.</div>';
+  let g=null, h='';
+  list.forEach(c=>{
+    if(c.group!==g){ g=c.group; h+=`<div class="ch-g">${_escA(g||'')}</div>`; }
+    const v=c.html!=null?c.html:`<s>${_escA(_short(c.from))}</s> → <em>${_escA(_short(c.to))}</em>`;
+    h+=`<div class="ch-i"><i class="fa-solid fa-pen"></i><div class="ch-m"><b>${_escA(c.label)}</b><div class="ch-v">${v}</div></div>${canUndo&&c.key?`<button class="ch-undo" type="button" onclick="undoField('${_escA(c.key)}')" title="Put the saved value back"><i class="fa-solid fa-rotate-left"></i> Undo</button>`:''}</div>`;
+  });
+  return h;
+}
+// put one field back to its saved value
+function undoField(key){
+  const tab=_sec, S=_snap[tab]; if(!S||!S.f[key]) return;
+  const e=(_fEls(tab).find(([k])=>k===key)||[])[1]; if(!e) return;
+  const v=S.f[key].v;
+  if(e.type==='checkbox') e.checked=v==='On';
+  else if(e.tagName==='SELECT'){ const o=[...e.options].find(o=>o.text.trim()===v); if(o) e.value=o.value; }
+  else e.value=v==='(empty)'?'':v;
+  e.dispatchEvent(new Event('input',{bubbles:true})); e.dispatchEvent(new Event('change',{bubbles:true}));
+  const left=_changes(tab);
+  if(left && !left.length){ _dirty[tab]=new Set(); }
+  _paintSave();
+}
+function sbToggle(){ const b=document.getElementById('saveBar'); b.classList.toggle('open'); _paintSave(); }
+document.addEventListener('click',e=>{ const b=document.getElementById('saveBar'); if(b && b.classList.contains('open') && !b.contains(e.target)) b.classList.remove('open'); });
 function _paintSave(){
   ['wallets','config','home'].forEach(t=>{
     const b=document.getElementById('svBtn-'+t); if(!b) return;
@@ -3072,7 +3216,13 @@ function _paintSave(){
     b.querySelector('span').textContent = d ? 'Save changes' : 'All saved';
     b.querySelector('i').className = 'fa-solid ' + (d ? 'fa-floppy-disk' : 'fa-circle-check');
   });
-  const bar=document.getElementById('saveBar'); if(bar) bar.classList.toggle('on', _isDirty(_sec));
+  const bar=document.getElementById('saveBar'); if(!bar) return;
+  const on=_isDirty(_sec); bar.classList.toggle('on', on);
+  if(!on){ bar.classList.remove('open'); return; }
+  const list=_changes(_sec), n=list?list.length:0;
+  const t=document.getElementById('sbTxt');
+  if(t) t.textContent = list ? (n ? `${n} unsaved change${n>1?'s':''}` : 'Unsaved changes') : 'You have unsaved changes';
+  if(bar.classList.contains('open')) document.getElementById('sbPanel').innerHTML=`<div class="ch-list">${_changesHtml(list,true)}</div>`;
 }
 async function saveTab(tab){
   tab = tab || _sec;
@@ -3088,14 +3238,22 @@ async function saveTab(tab){
   showL(false);
 }
 function discardTab(){
-  const tab=_sec;
-  confirm2('Discard your unsaved changes?', ()=>{
-    _dirty[tab]=new Set();
-    if(tab==='wallets'){ _wPend={}; _wDel=new Set(); loadWallets(); }
-    if(tab==='config') loadConfig();
-    if(tab==='home') loadHome();
-    _paintSave();
-  });
+  const tab=_sec, list=_changes(tab);
+  document.getElementById('saveBar').classList.remove('open');
+  document.getElementById('dcHint').innerHTML = list && list.length
+    ? `These ${list.length} change${list.length>1?'s':''} on <b>${_TAB_NAME[tab]||tab}</b> will be thrown away and the saved values come back:`
+    : `Unsaved edits on <b>${_TAB_NAME[tab]||tab}</b> will be thrown away.`;
+  document.getElementById('dcList').innerHTML=_changesHtml(list,false);
+  document.getElementById('dcOk').onclick=()=>{ closeMo('moDiscard'); _doDiscard(tab); };
+  openMo('moDiscard');
+}
+function _doDiscard(tab){
+  _dirty[tab]=new Set();
+  if(tab==='wallets'){ _wPend={}; _wDel=new Set(); loadWallets(); }
+  if(tab==='config') loadConfig();
+  if(tab==='home') loadHome();
+  _paintSave();
+  toast('Changes discarded','i');
 }
 document.addEventListener('DOMContentLoaded',()=>{
   const c=document.getElementById('sec-config');
@@ -3116,11 +3274,12 @@ async function loadConfig(){
   // payment numbers live in the Wallets section now (kept untouched in the saved config)
   s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');s('c-rfp',cfg.refundPolicy||'');
   s('c-wa',cfg.contact?.whatsapp);s('c-tg',cfg.contact?.telegram);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
-  s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
+  s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
   window._cfFees = (Array.isArray(cfg.customFees)?cfg.customFees:[]).map(f=>({name:f.name||'',type:f.type==='percent'?'percent':'fixed',value:Number(f.value)||0,on:f.on!==false}));
   const xi=cfg.extraInterest||{}; cb('c-xi-on',xi.on); s('c-xi-lbl',xi.label||''); s('c-xi-rate',xi.rate!=null?xi.rate:'');
   cfRender();
   _brandFill(cfg.branding||{});
+  _snapTake('config'); _paintSave();
   cb('c-ro',cfg.flags?.registrationOpen!==false);cb('c-lo',cfg.flags?.loansOpen!==false);cb('c-mn',cfg.flags?.maintenance);
 }
 // Site Text & Branding
@@ -3175,7 +3334,7 @@ async function saveConfig(quiet){
   const g=id=>document.getElementById(id)?.value.trim();
   const sl=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
   const cb=id=>document.getElementById(id)?.checked;
-  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:(g('c-nb')===''||isNaN(parseFloat(g('c-nb'))))?100:Math.max(0,parseFloat(g('c-nb'))),loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',refundPolicy:g('c-rfp')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
+  const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:(g('c-nb')===''||isNaN(parseFloat(g('c-nb'))))?100:Math.max(0,parseFloat(g('c-nb'))),loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',refundPolicy:g('c-rfp')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:(window._cfgLoaded?.splashSubtitle)||'',policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
   cfg.customFees=(window._cfFees||[]).filter(f=>String(f.name||'').trim()&&Number(f.value)>0).map(f=>({name:String(f.name).trim().slice(0,40),type:f.type==='percent'?'percent':'fixed',value:Math.max(0,Number(f.value)||0),on:f.on!==false}));
   cfg.extraInterest={on:!!cb('c-xi-on'),label:(g('c-xi-lbl')||'Additional interest').slice(0,40),rate:Math.max(0,parseFloat(g('c-xi-rate'))||0)};
   cfg.branding=_brandRead();
@@ -3212,7 +3371,8 @@ function hpTab(p){
 }
 async function loadHome(){
   showL(true);
-  const d = (await window._getDoc('siteConfig','home')) || {};
+  const [d0, mainCfg] = await Promise.all([window._getDoc('siteConfig','home'), window._getDoc('siteConfig','main')]);
+  const d = d0 || {};
   showL(false);
   _H = {
     live: { on:true, loans:true, fees:true, title:'Live Transactions', count:8, days:30, refresh:60, scroll:true, hidden:[], ...(d.live||{}) },
@@ -3242,6 +3402,8 @@ async function loadHome(){
   set('rf-on',R.on); set('rf-days',R.days);
   const S=_H.splash;
   set('sl-on',S.on); set('sl-once',S.once); set('sl-min',S.minSec); set('sl-max',S.maxSec); set('sl-theme',S.theme); set('sl-loader',S.loader); set('sl-glow',S.glow);
+  // the subtitle used to live in Site Config → Site Text & Branding; it is edited here now
+  if(!S.sub && mainCfg && mainCfg.splashSubtitle) S.sub = mainCfg.splashSubtitle;
   set('sl-showtitle',S.showTitle); set('sl-title',S.title); set('sl-showsub',S.showSub); set('sl-sub',S.sub); set('sl-showbadge',S.showBadge); set('sl-badge',S.badge);
   set('sl-showfoot',S.showFoot); set('sl-foot',S.foot); set('sl-showpay',S.showPay); set('sl-paytitle',S.payTitle);
   set('of-on',_H.offers.on); set('of-rotate',_H.offers.rotate);
@@ -3254,6 +3416,7 @@ async function loadHome(){
   set('tb-theme',B.theme); set('tb-clear',B.clear); set('tb-glass',B.glass); set('tb-compact',B.compact); set('tb-hide',B.hideOnScroll); set('tb-avatar',B.avatar); set('tb-hi',B.greet);
   set('tb-balance',B.balance); set('tb-notif',B.notif); set('tb-support',B.support); set('tb-logout',B.logout); set('tb-alert',B.alert); set('tb-name',B.title); set('tb-vtext',B.visitorText);
   hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers();
+  _snapTake('home');
   _dirty.home = new Set(); _paintSave();
   if(document.getElementById('hp-live').classList.contains('on')) hpLoadFeed();
 }
