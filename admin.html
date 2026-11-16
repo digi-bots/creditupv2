@@ -93,8 +93,9 @@ input,select,textarea{font-family:'Inter',sans-serif;-webkit-user-select:auto;us
 
 /* STATS */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:20px}
-@media(min-width:901px){#tStats{grid-template-columns:repeat(6,minmax(0,1fr))}}
-@media(min-width:901px) and (max-width:1250px){#tStats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:901px){#tStats,#uStats{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(min-width:901px) and (max-width:1250px){#tStats,#uStats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.mo-b>.hint,.cfg-blk>.hint,.cfg-blk .cf-xi>.hint,.lc-res .hint,#sec-config .hint{font-size:12px;color:var(--txt2);line-height:1.55}
 .sc{background:var(--card);border-radius:15px;padding:18px;border:1px solid var(--border);position:relative;overflow:hidden;cursor:default;transition:.2s}
 .sc:hover{border-color:rgba(255,255,255,.12)}
 .sc-gl{position:absolute;top:-25px;right:-25px;width:75px;height:75px;border-radius:50%;opacity:.06}
@@ -122,6 +123,29 @@ input,select,textarea{font-family:'Inter',sans-serif;-webkit-user-select:auto;us
 .cc-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
 .cc-sub{font-size:10px;color:var(--txt2);font-weight:400}
 .cc-wrap{position:relative;height:195px}
+.cf-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.cf-row{display:grid;grid-template-columns:auto 1fr 120px 110px 34px;gap:8px;align-items:center;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:8px}
+.cf-row input,.cf-row select{height:36px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:13px;outline:none;min-width:0;width:100%;box-sizing:border-box;font-family:inherit}
+.cf-row input:focus,.cf-row select:focus{border-color:var(--p)}
+.cf-row select option{background:#0f1d35}
+#sec-config .hp-sw{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--txt);cursor:pointer}
+.cf-empty{font-size:12px;color:var(--txt2);padding:10px;border:1px dashed var(--border);border-radius:10px;text-align:center}
+.cf-xi{border-top:1px solid var(--border);padding-top:12px}
+.cf-tot{height:38px;display:flex;align-items:center;font-weight:800;color:var(--p)}
+.cf-prev{margin-top:12px;padding:11px 13px;border-radius:10px;background:rgba(29,219,128,.06);border:1px solid rgba(29,219,128,.2);font-size:12.5px;line-height:1.6;color:var(--txt2)}
+.cf-prev b{color:var(--txt)}
+@media(max-width:620px){.cf-row{grid-template-columns:auto 1fr 1fr 34px;grid-template-areas:"t n n d" "s s v v"}.cf-row>:nth-child(1){grid-area:t}.cf-row>:nth-child(2){grid-area:n}.cf-row>:nth-child(3){grid-area:s}.cf-row>:nth-child(4){grid-area:v}.cf-row>:nth-child(5){grid-area:d}}
+.br-sub{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--p);text-transform:uppercase;letter-spacing:.6px;margin:16px 0 9px;padding-top:12px;border-top:1px solid var(--border)}
+.br-col{display:flex;gap:6px}.br-col input[type=color]{width:44px;height:38px;padding:2px;border-radius:8px;flex:none;cursor:pointer;background:transparent}.br-col input:not([type=color]){flex:1;min-width:0}
+.ls-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--txt2);margin-right:5px;vertical-align:1px;opacity:.6}
+.ls-dot.on{background:var(--p);opacity:1;box-shadow:0 0 0 3px rgba(29,219,128,.2)}
+.cred{margin-top:12px;padding:13px;border-radius:12px;background:rgba(29,219,128,.06);border:1px solid rgba(29,219,128,.25)}
+.cred pre{white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6;color:var(--txt);margin:0 0 10px}
+.cred-acts{display:flex;gap:7px;flex-wrap:wrap}
+.lc-res{margin-top:12px;display:grid;gap:8px}
+.lc-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);font-size:13px}
+.lc-ok{color:var(--p);font-weight:800}.lc-no{color:var(--red);font-weight:800}
+.man-sub{font-size:11px;font-weight:700;color:var(--txt2);margin:14px 0 8px;letter-spacing:.5px;text-transform:uppercase}
 .tch-sub{font-size:10.5px;font-weight:600;color:var(--txt2)}
 .tm{display:flex;align-items:center;gap:8px;min-width:0}
 .tm-logo{width:30px;height:30px;flex:none;border-radius:8px;background:#fff;padding:3px;object-fit:contain;box-sizing:border-box}
@@ -647,18 +671,18 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
 <!-- USERS -->
 <div class="sec" id="sec-users">
-  <div class="sec-head"><h2>User Management</h2><div class="sec-head-r"><button class="btn btn-sm btn-s" onclick="exportCSV('users')"><i class="fa-solid fa-download"></i>Export CSV</button></div></div>
+  <div class="sec-head"><h2>User Management</h2><div class="sec-head-r"><button class="btn btn-sm btn-p" onclick="openNewUser()"><i class="fa-solid fa-user-plus"></i>Create User</button><button class="btn btn-sm btn-s" onclick="openLoginCheck()"><i class="fa-solid fa-stethoscope"></i>Login Check</button><button class="btn btn-sm btn-s" onclick="exportCSV('users')"><i class="fa-solid fa-download"></i>Export CSV</button></div></div>
   <div class="stats" id="uStats"></div>
   <div class="tc">
-    <div class="tc-hdr"><div class="tc-title">All Users</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search phone..." oninput="ftbl('utb',this.value,[0])"></div><select class="fsel" onchange="fstat('utb',this.value,2)"><option value="">All Status</option><option>active</option><option>inactive</option><option>suspended</option><option>banned</option></select></div></div>
-    <div class="tw"><table><thead><tr><th>Phone</th><th>Registered</th><th>Status</th><th>Balance</th><th>Steps</th><th>Actions</th></tr></thead><tbody id="utb"></tbody></table></div>
+    <div class="tc-hdr"><div class="tc-title">All Users</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search phone / name..." oninput="ftbl('utb',this.value,[0])"></div><select class="fsel" id="uAct" onchange="_pg.users=0;renderUP()" title="Find active users"><option value="">Any activity</option><option value="online">🟢 Online now (5 min)</option><option value="today">Active today</option><option value="7">Active in 7 days</option><option value="30">Active in 30 days</option><option value="idle">Not active 30+ days</option><option value="never">Never seen</option><option value="loan">Has an active loan</option><option value="admin">Created by admin</option></select><select class="fsel" onchange="fstat('utb',this.value,3)"><option value="">All Status</option><option>active</option><option>inactive</option><option>suspended</option><option>banned</option></select></div></div>
+    <div class="tw"><table><thead><tr><th>Phone</th><th>Registered</th><th>Last seen</th><th>Status</th><th>Balance</th><th>Steps</th><th>Actions</th></tr></thead><tbody id="utb"></tbody></table></div>
     <div class="pgn"><button class="pg" onclick="prevP('users')">‹ Prev</button><button class="pg" onclick="nextP('users')">Next ›</button><div class="pgn-i" id="users-pi"></div></div>
   </div>
 </div>
 
 <!-- APPLICATIONS -->
 <div class="sec" id="sec-applications">
-  <div class="sec-head"><h2>Loan Applications</h2><div class="sec-head-r"><button class="btn btn-sm btn-p" onclick="openBulk()"><i class="fa-solid fa-layer-group"></i>Bulk Action</button><button class="btn btn-sm btn-s" onclick="exportCSV('applications')"><i class="fa-solid fa-download"></i>Export</button></div></div>
+  <div class="sec-head"><h2>Loan Applications</h2><div class="sec-head-r"><button class="btn btn-sm btn-p" onclick="openManApp()"><i class="fa-solid fa-file-circle-plus"></i>New Application</button><button class="btn btn-sm btn-s" onclick="openBulk()"><i class="fa-solid fa-layer-group"></i>Bulk Action</button><button class="btn btn-sm btn-s" onclick="exportCSV('applications')"><i class="fa-solid fa-download"></i>Export</button></div></div>
   <div class="stats" id="aStats"></div>
   <div class="tc">
     <div class="tc-hdr"><div class="tc-title">All Applications</div><div class="tc-r"><div class="srch"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Phone / name..." oninput="ftbl('atb',this.value,[0,1])"></div><select class="fsel" onchange="fstat('atb',this.value,5)"><option value="">All Status</option><option>Pending Fee Payment</option><option>TrxID Submitted</option><option>Fee Verified</option><option>Approved</option><option>Disbursed</option><option>Disbursement Rejected</option><option>Active</option><option>Repaid</option><option>Overdue</option><option>Defaulted</option><option>Rejected</option></select></div></div>
@@ -669,7 +693,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
 <!-- TRANSACTIONS -->
 <div class="sec" id="sec-transactions">
-  <div class="sec-head"><h2>Transactions</h2></div>
+  <div class="sec-head"><h2>Transactions</h2><div class="sec-head-r"><button class="btn btn-sm btn-p" onclick="openManTrx()"><i class="fa-solid fa-plus"></i>Add Transaction</button></div></div>
   <div class="stats" id="tStats"></div>
   <div class="chart-grid">
     <div class="cc"><div class="cc-title">User Payments (৳)<select class="fsel" id="tChartDays" onchange="renderTrxCharts()" style="height:28px;font-size:11px"><option value="7">7 days</option><option value="14">14 days</option><option value="30" selected>30 days</option><option value="90">90 days</option></select></div><div class="cc-wrap"><canvas id="cTrxDay"></canvas></div></div>
@@ -1063,6 +1087,20 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label>New User Sign-up Bonus (BDT)</label><input type="number" id="c-nb" placeholder="100"><div class="hint">Credited on registration</div></div>
     </div>
   </div>
+  <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Custom Fees &amp; Additional Interest<button class="btn btn-sm btn-p" style="margin-left:auto" onclick="cfAdd()"><i class="fa-solid fa-plus"></i>Add fee</button></div>
+    <div class="hint" style="margin:-4px 0 10px">Extra fees are added to the upfront fee users pay, on top of the fees above. A fee can be a fixed amount (৳) or a % of the loan amount.</div>
+    <div id="cfList" class="cf-list"></div>
+    <div class="cf-xi">
+      <label class="hp-sw"><label class="tog"><input type="checkbox" id="c-xi-on" onchange="cfPreview()"><span class="tog-sl"></span></label>Additional interest</label>
+      <div class="fgrid fgrid3" style="margin-top:9px">
+        <div class="fg"><label>Name shown to users</label><input id="c-xi-lbl" placeholder="Additional interest" maxlength="40" oninput="cfPreview()"></div>
+        <div class="fg"><label>Rate (% per year)</label><input type="number" id="c-xi-rate" placeholder="6" step="0.1" min="0" oninput="cfPreview()"></div>
+        <div class="fg"><label>Total interest</label><div class="cf-tot" id="cfRateTot">-</div></div>
+      </div>
+      <div class="hint">Added on top of the Annual Interest Rate, for the whole term, paid in advance with the fee. The user Loan Calculator includes it in the interest.</div>
+    </div>
+    <div class="cf-prev" id="cfPrev"></div>
+  </div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list"></i>Loan Options</div>
     <div class="fgrid">
       <div class="fg"><label>Loan Amounts (comma-separated)</label><textarea id="c-la" rows="2" placeholder="1,000, 2,500, 5,000, 10,000, 25,000, 50,000, 60,000"></textarea></div>
@@ -1111,6 +1149,40 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label>Policy Last Updated</label><input id="c-pd" placeholder="2026/10/09"></div>
       <div class="fg"><label>Home Tagline (info card)</label><input id="c-tag" placeholder="Your Loan, Simplified"></div>
     </div>
+    <div class="br-sub"><i class="fa-solid fa-palette"></i>Brand</div>
+    <div class="fgrid fgrid3">
+      <div class="fg"><label>Brand name</label><input id="br-name" placeholder="Credit Up" maxlength="30"><div class="hint">Home logo text, greetings and messages. The last word is shown in the brand colour.</div></div>
+      <div class="fg"><label>Browser tab title</label><input id="br-title" placeholder="Credit Up - Smart Loans" maxlength="70"></div>
+      <div class="fg"><label>Favicon / app icon URL</label><input id="br-icon" placeholder="https://.../icon.png"></div>
+      <div class="fg"><label>Brand colour</label><div class="br-col"><input type="color" id="br-c1" value="#1ddb80"><input id="br-c1t" placeholder="#1ddb80" maxlength="7"></div></div>
+      <div class="fg"><label>Second colour (gradients)</label><div class="br-col"><input type="color" id="br-c2" value="#0fbb65"><input id="br-c2t" placeholder="#0fbb65" maxlength="7"></div></div>
+      <div class="fg"><label>&nbsp;</label><button class="btn btn-sm btn-s" type="button" onclick="brResetColors()"><i class="fa-solid fa-rotate-left"></i>Default colours</button></div>
+    </div>
+    <div class="br-sub"><i class="fa-solid fa-house"></i>Home screen text</div>
+    <div class="fgrid fgrid3">
+      <div class="fg"><label>Amount label</label><input id="br-blbl" placeholder="Borrow up to (BDT)" maxlength="40"></div>
+      <div class="fg"><label>Main button</label><input id="br-btn" placeholder="Borrow Now" maxlength="24"></div>
+      <div class="fg"><label>Main button (Bangla)</label><input id="br-btnbn" placeholder="লোন নিন" maxlength="24"><div class="hint">Leave empty to hide</div></div>
+      <div class="fg"><label>Feature 1</label><input id="br-f1" placeholder="Easy Approval" maxlength="22"></div>
+      <div class="fg"><label>Feature 2</label><input id="br-f2" placeholder="Fast Funding" maxlength="22"></div>
+      <div class="fg"><label>Feature 3</label><input id="br-f3" placeholder="Safe & Secure" maxlength="22"></div>
+      <div class="fg"><label>Quick services title</label><input id="br-qs" placeholder="Quick Services" maxlength="30"></div>
+      <div class="fg"><label>Visitor greeting</label><input id="br-welcome" placeholder="Welcome to Credit Up" maxlength="40"></div>
+      <div class="fg"><label>Second-loan button</label><input id="br-again" placeholder="Apply for Another" maxlength="24"></div>
+    </div>
+    <div class="br-sub"><i class="fa-solid fa-list-ol"></i>How it works (3 steps)</div>
+    <div class="fgrid fgrid3">
+      <div class="fg"><label>Step 1 title</label><input id="br-s1t" placeholder="Apply Online" maxlength="30"><textarea id="br-s1d" rows="2" maxlength="140" placeholder="Fill basic info in under a minute — no complex documents needed." style="margin-top:6px"></textarea></div>
+      <div class="fg"><label>Step 2 title</label><input id="br-s2t" placeholder="Review" maxlength="30"><textarea id="br-s2d" rows="2" maxlength="140" placeholder="Step 2 description" style="margin-top:6px"></textarea></div>
+      <div class="fg"><label>Step 3 title</label><input id="br-s3t" placeholder="Receive Funds" maxlength="30"><textarea id="br-s3d" rows="2" maxlength="140" placeholder="Step 3 description" style="margin-top:6px"></textarea></div>
+    </div>
+    <div class="br-sub"><i class="fa-solid fa-file-lines"></i>Other text</div>
+    <div class="fgrid">
+      <div class="fg"><label>Before-you-apply title</label><input id="br-polt" placeholder="Before you apply" maxlength="40"></div>
+      <div class="fg"><label>Before-you-apply subtitle</label><input id="br-pols" placeholder="Check the fees and our policy, then tick the box below to continue." maxlength="120"></div>
+      <div class="fg full"><label>Waiting screen message (after TrxID submit)</label><input id="br-wait" placeholder="Your Transaction ID has been submitted. Our team is verifying your payment. This usually takes 5–15 minutes." maxlength="200"></div>
+    </div>
+    <div class="hint" style="margin-top:8px">Empty fields keep the default text shown in grey.</div>
   </div>
   <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-toggle-on"></i>Feature Flags</div>
     <div class="fgrid fgrid3">
@@ -1263,8 +1335,16 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div style="font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:9px;letter-spacing:.5px;text-transform:uppercase">Reset Login Password</div>
       <div class="bal-row">
         <input class="bal-inp" type="text" id="uNewPw" placeholder="New password (min 8, letters + numbers)" autocomplete="off">
+        <button class="btn btn-s btn-sm" type="button" onclick="document.getElementById('uNewPw').value=genPw()" title="Make a password"><i class="fa-solid fa-dice"></i></button>
         <button class="btn btn-o btn-sm" onclick="resetUserPw()"><i class="fa-solid fa-key"></i>Set Password</button>
       </div>
+      <div id="uCred"></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn btn-s btn-sm" onclick="userLoginCheck()"><i class="fa-solid fa-stethoscope"></i>Check login</button>
+        <button class="btn btn-s btn-sm" onclick="closeMo('moUser');openManApp(findById('users',_userId)?.phone)"><i class="fa-solid fa-file-circle-plus"></i>New application</button>
+        <button class="btn btn-s btn-sm" onclick="closeMo('moUser');openManTrx(findById('users',_userId)?.phone)"><i class="fa-solid fa-receipt"></i>Add transaction</button>
+      </div>
+      <div id="uLoginRes"></div>
       <div style="font-size:11px;color:var(--txt2);margin-top:6px">Passwords are never shown or stored here. Tell the user the new password privately.</div>
     </div>
     <div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border)">
@@ -1338,6 +1418,97 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div>
   </div>
   <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moTrx')">Close</button></div>
+</div>
+</div>
+
+
+<!-- MANUAL: create user -->
+<div class="mov" id="moNewUser">
+<div class="mo mo-md">
+  <div class="mo-h"><h3><i class="fa-solid fa-user-plus" style="color:var(--p);margin-right:7px"></i>Create User Manually</h3><button class="mo-x" onclick="closeMo('moNewUser')">✕</button></div>
+  <div class="mo-b">
+    <div class="hint" style="margin-bottom:12px">Use this when a user could not register. They log in on the site with this phone number and password.</div>
+    <div class="fgrid">
+      <div class="fg"><label>Phone number *</label><input id="nuPhone" inputmode="numeric" placeholder="01711000000" maxlength="14"></div>
+      <div class="fg"><label>Password *</label><div style="display:flex;gap:6px"><input id="nuPw" placeholder="min 6 characters" style="flex:1;min-width:0" autocomplete="off"><button class="btn btn-s btn-sm" type="button" title="Make a password" onclick="document.getElementById('nuPw').value=genPw()"><i class="fa-solid fa-dice"></i></button></div></div>
+      <div class="fg"><label>Full name</label><input id="nuName" placeholder="Optional" maxlength="60"></div>
+      <div class="fg"><label>Starting balance (৳)</label><input id="nuBal" type="number" min="0" placeholder="0"></div>
+      <div class="fg"><label>Status</label><select id="nuStat"><option value="active">✅ Active</option><option value="inactive">⚫ Inactive</option><option value="suspended">🟠 Suspended</option></select></div>
+      <div class="fg"><label>Invited by (phone, optional)</label><input id="nuRef" inputmode="numeric" placeholder="01XXXXXXXXX"></div>
+      <div class="fg full"><label>Admin note</label><input id="nuNote" placeholder="e.g. Registered by support — OTP problem" maxlength="300"></div>
+      <div class="fg full"><label class="hp-sw"><label class="tog"><input type="checkbox" id="nuFix"><span class="tog-sl"></span></label>Repair login — the profile exists but the user cannot sign in</label></div>
+    </div>
+    <div id="nuRes"></div>
+  </div>
+  <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moNewUser')">Close</button><button class="btn btn-p" id="nuBtn" onclick="createUser()"><i class="fa-solid fa-user-check"></i>Create account</button></div>
+</div>
+</div>
+
+<!-- MANUAL: login check -->
+<div class="mov" id="moLoginCheck">
+<div class="mo mo-sm">
+  <div class="mo-h"><h3><i class="fa-solid fa-stethoscope" style="color:var(--p);margin-right:7px"></i>Login Check</h3><button class="mo-x" onclick="closeMo('moLoginCheck')">✕</button></div>
+  <div class="mo-b">
+    <div class="hint" style="margin-bottom:10px">Find out why a number cannot log in: is there a profile, and does it have a working login?</div>
+    <div style="display:flex;gap:7px"><input class="bal-inp" id="lcPhone" inputmode="numeric" placeholder="01711000000" style="flex:1" onkeydown="if(event.key==='Enter')runLoginCheck()"><button class="btn btn-p btn-sm" onclick="runLoginCheck()"><i class="fa-solid fa-magnifying-glass"></i>Check</button></div>
+    <div id="lcRes"></div>
+  </div>
+</div>
+</div>
+
+<!-- MANUAL: application -->
+<div class="mov" id="moManApp">
+<div class="mo mo-lg">
+  <div class="mo-h"><h3><i class="fa-solid fa-file-circle-plus" style="color:var(--p);margin-right:7px"></i>New Application (Manual)</h3><button class="mo-x" onclick="closeMo('moManApp')">✕</button></div>
+  <div class="mo-b">
+    <div class="man-sub" style="margin-top:0">Applicant</div>
+    <div class="fgrid fgrid3">
+      <div class="fg"><label>User phone *</label><input id="maPhone" inputmode="numeric" placeholder="01711000000" onchange="maUserHint()"><div class="hint" id="maUserHint"></div></div>
+      <div class="fg"><label>Full name *</label><input id="maName" maxlength="60"></div>
+      <div class="fg"><label>NID number</label><input id="maNid" maxlength="20"></div>
+      <div class="fg"><label>Email</label><input id="maEmail" type="email"></div>
+      <div class="fg"><label>Occupation</label><input id="maOcc" placeholder="e.g. Business Owner"></div>
+      <div class="fg"><label>Address</label><input id="maAddr"></div>
+    </div>
+    <div class="man-sub">Loan</div>
+    <div class="fgrid fgrid3">
+      <div class="fg"><label>Loan amount (৳) *</label><input id="maAmt" type="number" min="1" placeholder="10000" oninput="maFee()"></div>
+      <div class="fg"><label>Term (months) *</label><input id="maTerm" type="number" min="1" placeholder="6" oninput="maFee()"></div>
+      <div class="fg"><label>Purpose</label><input id="maPurpose" placeholder="Business"></div>
+      <div class="fg"><label>Payout wallet</label><select id="maWallet"></select></div>
+      <div class="fg"><label>Payout number</label><input id="maPayNo" inputmode="numeric" placeholder="01XXXXXXXXX"></div>
+      <div class="fg"><label>Status</label><select id="maStat"><option>Pending Fee Payment</option><option>Fee Verified</option><option>Approved</option></select><div class="hint">“Approved” credits the loan to the user’s balance, the same as approving it in Applications.</div></div>
+    </div>
+    <div class="man-sub">Extra fee for this application only (optional)</div>
+    <div class="fgrid fgrid3">
+      <div class="fg"><label>Fee name</label><input id="maXName" placeholder="Additional fee" maxlength="40" oninput="maFee()"></div>
+      <div class="fg"><label>Amount (৳)</label><input id="maXAmt" type="number" min="0" placeholder="0" oninput="maFee()"></div>
+      <div class="fg"><label>Total upfront fee</label><div class="cf-tot" id="maFeeTot">-</div></div>
+    </div>
+    <div class="fgrid" style="margin-top:12px"><div class="fg full"><label>Admin note</label><input id="maNote" maxlength="300" placeholder="Why this application was added by hand"></div></div>
+  </div>
+  <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moManApp')">Cancel</button><button class="btn btn-p" onclick="saveManApp()"><i class="fa-solid fa-floppy-disk"></i>Create application</button></div>
+</div>
+</div>
+
+<!-- MANUAL: transaction -->
+<div class="mov" id="moManTrx">
+<div class="mo mo-md">
+  <div class="mo-h"><h3><i class="fa-solid fa-receipt" style="color:var(--p);margin-right:7px"></i>Add Transaction (Manual)</h3><button class="mo-x" onclick="closeMo('moManTrx')">✕</button></div>
+  <div class="mo-b">
+    <div class="fgrid">
+      <div class="fg"><label>User phone *</label><input id="mtPhone" inputmode="numeric" placeholder="01711000000" onchange="mtLoadApps()"></div>
+      <div class="fg"><label>For application</label><select id="mtApp" onchange="mtAppPick()"><option value="">— not linked —</option></select></div>
+      <div class="fg"><label>Payment method *</label><select id="mtMethod"></select></div>
+      <div class="fg"><label>Type</label><select id="mtType"><option value="">-</option><option>Send Money</option><option>Cash Out</option><option>Payment</option><option>Bank Transfer</option><option>Cash</option></select></div>
+      <div class="fg"><label>Transaction ID</label><input id="mtTrx" placeholder="Leave empty to make one (MAN-…)" maxlength="40"></div>
+      <div class="fg"><label>Amount (৳) *</label><input id="mtAmt" type="number" min="0" placeholder="0"></div>
+      <div class="fg"><label>Sent from (number)</label><input id="mtFrom" inputmode="numeric" placeholder="01XXXXXXXXX"></div>
+      <div class="fg"><label>Status</label><select id="mtStat"><option>Pending</option><option selected>Verified</option></select><div class="hint">Verified also marks the linked application “Fee Verified”.</div></div>
+      <div class="fg full"><label>Admin note</label><input id="mtNote" maxlength="300" placeholder="e.g. Paid at office / user could not submit TrxID"></div>
+    </div>
+  </div>
+  <div class="mo-f"><button class="btn btn-s" onclick="closeMo('moManTrx')">Cancel</button><button class="btn btn-p" onclick="saveManTrx()"><i class="fa-solid fa-floppy-disk"></i>Save transaction</button></div>
 </div>
 </div>
 
@@ -1622,19 +1793,46 @@ async function loadDash(){
 
 // ══ USERS ════════════════════════════════════════════
 async function loadUsers(){
-  showL(true); _D.users=await _get('users'); _pg.users=0; showL(false);
+  showL(true);
+  const [uu, aa] = await Promise.all([_get('users'), (_D.applications&&_D.applications.length)?Promise.resolve(_D.applications):_get('applications','submittedAt')]);
+  _D.users=uu; _D.applications=aa||[]; _pg.users=0; showL(false);
   const u=_D.users;
+  const ago=x=>{ const t=new Date(x.lastSeenAt||0).getTime(); return t?Date.now()-t:Infinity; };
   document.getElementById('uStats').innerHTML=[
     {ic:'user-check',cl:'gn',v:u.filter(x=>!x.status||x.status==='active').length,l:'Active'},
     {ic:'user-slash',cl:'or',v:u.filter(x=>x.status==='suspended').length,l:'Suspended'},
     {ic:'user-xmark',cl:'rd',v:u.filter(x=>x.status==='banned').length,l:'Banned'},
     {ic:'user-minus',cl:'bl',v:u.filter(x=>x.status==='inactive').length,l:'Inactive'},
-  ].map(s=>`<div class="sc ${s.cl}"><div class="sc-ic ic-${s.cl}"><i class="fa-solid fa-${s.ic}"></i></div><div class="sc-val">${s.v}</div><div class="sc-lbl">${s.l}</div></div>`).join('');
+    {ic:'signal',cl:'gn',v:u.filter(x=>ago(x)<3e5).length,l:'Online Now',f:'online'},
+    {ic:'calendar-day',cl:'bl',v:u.filter(x=>ago(x)<864e5).length,l:'Active Today',f:'today'},
+  ].map(s=>`<div class="sc ${s.cl}"${s.f?` style="cursor:pointer" title="Show these users" onclick="document.getElementById('uAct').value='${s.f}';_pg.users=0;renderUP()"`:''}><div class="sc-ic ic-${s.cl}"><i class="fa-solid fa-${s.ic}"></i></div><div class="sc-val">${s.v}</div><div class="sc-lbl">${s.l}</div></div>`).join('');
   renderUP();
 }
+// how long ago, in words ("3 min ago")
+function agoTxt(ts){
+  const t=new Date(ts||0).getTime(); if(!t) return '';
+  const d=Math.max(0,Date.now()-t), m=Math.floor(d/6e4);
+  if(m<1) return 'just now'; if(m<60) return m+' min ago';
+  const h=Math.floor(m/60); if(h<24) return h+' h ago';
+  const dd=Math.floor(h/24); return dd<30? dd+' d ago' : fd(ts);
+}
+// the users the activity filter keeps (Users → Any activity / Online now / …)
+function _usersFiltered(){
+  const f=document.getElementById('uAct')?.value||'';
+  const ago=x=>{ const t=new Date(x.lastSeenAt||0).getTime(); return t?Date.now()-t:Infinity; };
+  let L=_D.users||[];
+  if(!f) return L;
+  const loanSt=['Approved','Disbursed','Active','Overdue'];
+  const withLoan=new Set((_D.applications||[]).filter(a=>loanSt.includes(a.status)).map(a=>String(a.uid||a.phone||'')));
+  const keep={online:x=>ago(x)<3e5,today:x=>ago(x)<864e5,'7':x=>ago(x)<7*864e5,'30':x=>ago(x)<30*864e5,idle:x=>ago(x)>=30*864e5&&ago(x)!==Infinity,never:x=>ago(x)===Infinity,loan:x=>withLoan.has(String(x.phone||'')),admin:x=>x.createdBy==='admin'}[f];
+  L=keep?L.filter(keep):L;
+  if(f!=='never') L=[...L].sort((a,b)=>ago(a)-ago(b));
+  return L;
+}
 function renderUP(){
-  renderPg('users',_D.users,rows=>{
-    document.getElementById('utb').innerHTML=rows.length?rows.map(r=>`<tr><td class="mono">${r.phone||'-'}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.createdAt)}</td><td>${sb(r.status||'active')}</td><td style="color:var(--p);font-weight:700">৳${fa(r.balance||0)}</td><td style="font-size:11px;color:var(--p);font-weight:700">${r.appStatus||0}/5</td><td><div class="acts"><button class="ab ab-v" onclick="viewUser('${r._id}')" title="View"><i class="fa-solid fa-eye"></i></button><button class="ab ab-s" onclick="qSusp('${r._id}')" title="Suspend"><i class="fa-solid fa-pause"></i></button><button class="ab ab-d" onclick="qBan('${r._id}')" title="Ban"><i class="fa-solid fa-ban"></i></button><button class="ab ab-d" onclick="confirm2('Delete user ${r.phone||''}?',()=>delUser('${r._id}'))" title="Delete"><i class="fa-solid fa-trash"></i></button></div></td></tr>`).join(''):'<tr class="empty"><td colspan="6">No users found</td></tr>';
+  const f=document.getElementById('uAct')?.value||'';
+  renderPg('users',_usersFiltered(),rows=>{
+    document.getElementById('utb').innerHTML=rows.length?rows.map(r=>{ const a=new Date(r.lastSeenAt||0).getTime(), on=a&&Date.now()-a<3e5; return `<tr><td class="mono">${r.phone||'-'}${r.name?`<div style="font-family:inherit;font-size:10.5px;color:var(--txt2)">${_escA(r.name)}</div>`:''}${r.createdBy==='admin'?' <span class="wbadge" title="Created by an admin">ADMIN</span>':''}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.createdAt)}</td><td style="font-size:11px;white-space:nowrap">${a?`<span class="ls-dot${on?' on':''}"></span>${agoTxt(r.lastSeenAt)}${r.lastDevice?`<div style="font-size:9.5px;color:var(--txt2)">${_escA(r.lastDevice)}</div>`:''}`:'<span style="color:var(--txt2)">—</span>'}</td><td>${sb(r.status||'active')}</td><td style="color:var(--p);font-weight:700">৳${fa(r.balance||0)}</td><td style="font-size:11px;color:var(--p);font-weight:700">${r.appStatus||0}/5</td><td><div class="acts"><button class="ab ab-v" onclick="viewUser('${r._id}')" title="View"><i class="fa-solid fa-eye"></i></button><button class="ab ab-s" onclick="qSusp('${r._id}')" title="Suspend"><i class="fa-solid fa-pause"></i></button><button class="ab ab-d" onclick="qBan('${r._id}')" title="Ban"><i class="fa-solid fa-ban"></i></button><button class="ab ab-d" onclick="confirm2('Delete user ${r.phone||''}?',()=>delUser('${r._id}'))" title="Delete"><i class="fa-solid fa-trash"></i></button></div></td></tr>`; }).join(''):`<tr class="empty"><td colspan="7">${f?'No users match this activity filter':'No users found'}</td></tr>`;
   });
 }
 function viewUser(id){
@@ -1644,6 +1842,8 @@ function viewUser(id){
     {l:'Status',v:sb(u.status||'active')},{l:'App Progress',v:`${u.appStatus||0}/5 steps`},
     {l:'Referral By',v:u.referredBy||'-'},{l:'Admin Note',v:u.adminNote||'-'},
     {l:'Total Loans',v:u.totalLoans||0},{l:'Doc ID',v:u._id,c:'mono'},
+    {l:'Name',v:u.name?_escA(u.name):'-'},{l:'Last seen',v:u.lastSeenAt?`${agoTxt(u.lastSeenAt)} <span style="color:var(--txt2);font-size:11px">(${fd(u.lastSeenAt)}${u.lastDevice?' · '+_escA(u.lastDevice):''})</span>`:'Never'},
+    {l:'Created by',v:u.createdBy==='admin'?'Admin (manual)':'User (self sign-up)'},
   ].map(f=>`<div class="dr"><div class="dl">${f.l}</div><div class="dv ${f.c||''}">${f.v||'-'}</div></div>`).join('');
   document.getElementById('uBal').innerText='৳ '+fa(u.balance||0);
   document.getElementById('uStat').value=u.status||'active';
@@ -1651,6 +1851,7 @@ function viewUser(id){
   document.getElementById('uReason').value='';
   document.getElementById('uAmt').value='';
   const npw=document.getElementById('uNewPw'); if(npw) npw.value='';
+  ['uCred','uLoginRes'].forEach(i=>{ const e=document.getElementById(i); if(e) e.innerHTML=''; });
   const logs=u.statusLog||[];
   document.getElementById('uTimeline').innerHTML=logs.length?logs.slice(-5).reverse().map(l=>`<div class="tl-i"><div class="tl-a">${l.action||''} → <span style="color:var(--orange)">${l.status||''}</span>${l.reason?` (${l.reason})`:''}</div><div class="tl-t">${fd(l.at)}</div></div>`).join(''):'<div style="font-size:12px;color:var(--txt2)">No activity yet.</div>';
   openMo('moUser');
@@ -1729,6 +1930,7 @@ async function resetUserPw(){
   showL(false);
   if(!r.ok){toast(r.data.error||'Could not reset password','e');return;}
   document.getElementById('uNewPw').value='';
+  document.getElementById('uCred').innerHTML=credHtml(String(u.phone),pw,'New login details');
   await _notifyUser(String(u.phone),'Password Changed 🔑','Our support team set a new login password for your account. If you did not ask for this, contact support right away.','warning');
   toast('Password updated ✓'); await logAct('User password reset','user',_userId);
 }
@@ -2019,6 +2221,178 @@ async function qApproveApp(id){
   loadApps();
 }
 async function qRejectApp(id){ await setAppStatus(id, 'Rejected'); await logAct('Quick-rejected','application',id); toast('Rejected','e'); loadApps(); }
+
+
+// ══ MANUAL ENTRY (users, applications, transactions) ══
+const _ph = v => String(v||'').replace(/\D/g,'').replace(/^(?:880|0)+/,'');
+const _okPh = p => /^1[0-9]{9}$/.test(p);
+function genPw(){ const a='abcdefghjkmnpqrstuvwxyz', d='23456789'; let p=''; for(let i=0;i<5;i++) p+=a[Math.floor(Math.random()*a.length)]; for(let i=0;i<3;i++) p+=d[Math.floor(Math.random()*d.length)]; return p[0].toUpperCase()+p.slice(1); }
+function _credText(phone,pw){ return `Credit Up login details\nWebsite: ${location.origin}/\nPhone: 0${phone}\nPassword: ${pw}\n\nPlease log in and change your password from Profile.`; }
+function credHtml(phone,pw,title){
+  const t=_credText(phone,pw);
+  return `<div class="cred"><div style="font-weight:800;margin-bottom:6px;color:var(--p)"><i class="fa-solid fa-circle-check"></i> ${_escA(title||'Account ready')}</div><pre>${_escA(t)}</pre><div class="cred-acts">
+    <button class="btn btn-p btn-sm" onclick="navigator.clipboard.writeText(this.closest('.cred').querySelector('pre').innerText).then(()=>toast('Copied ✓'))"><i class="fa-solid fa-copy"></i>Copy</button>
+    <a class="btn btn-s btn-sm" target="_blank" rel="noopener" href="https://wa.me/880${phone}?text=${encodeURIComponent(t)}"><i class="fa-brands fa-whatsapp"></i>Send on WhatsApp</a>
+    <a class="btn btn-s btn-sm" href="sms:+880${phone}?body=${encodeURIComponent(t)}"><i class="fa-solid fa-comment-sms"></i>SMS</a></div></div>`;
+}
+function openNewUser(phone){
+  ['nuPhone','nuName','nuBal','nuRef','nuNote'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('nuPhone').value=phone?('0'+_ph(phone)):'';
+  document.getElementById('nuPw').value=genPw(); document.getElementById('nuStat').value='active'; document.getElementById('nuFix').checked=false;
+  document.getElementById('nuRes').innerHTML=''; document.getElementById('nuBtn').disabled=false;
+  openMo('moNewUser');
+}
+async function createUser(){
+  const g=i=>document.getElementById(i).value.trim();
+  const phone=_ph(g('nuPhone')), pw=g('nuPw');
+  if(!_okPh(phone)){toast('Enter a valid 11-digit number (01XXXXXXXXX)','w');return;}
+  if(pw.length<6){toast('Password must be at least 6 characters','w');return;}
+  showL(true);
+  const r=await window._accountApi('adminCreateUser',{phone,password:pw,name:g('nuName'),balance:Number(g('nuBal'))||0,status:g('nuStat'),referrer:_ph(g('nuRef')),note:g('nuNote'),fixLogin:document.getElementById('nuFix').checked});
+  showL(false);
+  if(!r.ok){
+    if(r.data.code==='no_login'){ document.getElementById('nuFix').checked=true; }
+    document.getElementById('nuRes').innerHTML=`<div class="lc-row" style="margin-top:12px;border-color:rgba(255,77,106,.35)"><span class="lc-no"><i class="fa-solid fa-triangle-exclamation"></i> ${_escA(r.data.error||'Could not create the account')}</span></div>`;
+    return;
+  }
+  document.getElementById('nuRes').innerHTML=credHtml(phone,pw,r.data.repaired?'Login repaired — the user can sign in now':'Account created — send these details to the user');
+  document.getElementById('nuBtn').disabled=true;
+  await logAct(`${r.data.repaired?'Login repaired':'User created manually'}: ${phone}`,'user',phone);
+  toast(r.data.repaired?'Login repaired ✓':'User created ✓');
+  if(_sec==='users') loadUsers();
+}
+function openLoginCheck(phone){ document.getElementById('lcPhone').value=phone?('0'+_ph(phone)):''; document.getElementById('lcRes').innerHTML=''; openMo('moLoginCheck'); if(phone) runLoginCheck(); }
+async function _loginCheckHtml(phone){
+  const r=await window._accountApi('adminLoginStatus',{phone});
+  if(!r.ok) return `<div class="lc-row"><span class="lc-no">${_escA(r.data.error||'Check failed')}</span></div>`;
+  const d=r.data, row=(l,ok,t)=>`<div class="lc-row"><span>${l}</span><span class="${ok?'lc-ok':'lc-no'}">${t}</span></div>`;
+  let tip='';
+  if(!d.profile && !d.login) tip=`No account with this number. <a href="javascript:void(0)" onclick="closeMo('moLoginCheck');openNewUser('${phone}')" style="color:var(--p);font-weight:700">Create it now →</a>`;
+  else if(d.profile && !d.login) tip=`The profile has no login, so sign-in fails. <a href="javascript:void(0)" onclick="closeMo('moLoginCheck');openNewUser('${phone}');document.getElementById('nuFix').checked=true" style="color:var(--p);font-weight:700">Repair login →</a>`;
+  else if(!d.profile && d.login) tip=`A login exists without a profile. <a href="javascript:void(0)" onclick="closeMo('moLoginCheck');openNewUser('${phone}')" style="color:var(--p);font-weight:700">Create the profile →</a>`;
+  else if(d.disabled) tip='The login is disabled in Firebase Authentication.';
+  else if(['banned','suspended'].includes(d.status)) tip=`The account is <b>${d.status}</b>. Activate it in the user details to let them in.`;
+  else tip='Everything looks fine. If the user forgot the password, set a new one in the user details.';
+  return `<div class="lc-res">${row('Profile',d.profile,d.profile?'Found ✓':'Missing')}${row('Login',d.login&&!d.disabled,d.login?(d.disabled?'Disabled':'Working ✓'):'Missing')}${d.status?row('Status',!['banned','suspended'].includes(d.status),d.status):''}${d.lastSignIn?row('Last sign-in',true,fd(d.lastSignIn)):''}<div class="hint" style="font-size:12px;line-height:1.6">${tip}</div></div>`;
+}
+async function runLoginCheck(){
+  const phone=_ph(document.getElementById('lcPhone').value);
+  if(!_okPh(phone)){toast('Enter a valid number','w');return;}
+  document.getElementById('lcRes').innerHTML='<div class="hint" style="margin-top:10px">Checking...</div>';
+  document.getElementById('lcRes').innerHTML=await _loginCheckHtml(phone);
+}
+async function userLoginCheck(){
+  const u=findById('users',_userId); if(!u) return;
+  const el=document.getElementById('uLoginRes'); el.innerHTML='<div class="hint" style="margin-top:10px">Checking...</div>';
+  el.innerHTML=await _loginCheckHtml(_ph(u.phone));
+}
+// fee for one application, from the saved Site Config (same rules as the app)
+async function _cfgMain(){ if(!window._cfgLoaded) window._cfgLoaded=(await window._getDoc('siteConfig','main'))||{}; return window._cfgLoaded; }
+function _feeFor(cfg,amt,months,extra){
+  const n=(v,d)=>(v===undefined||v===null||v===''||isNaN(Number(v)))?d:Number(v);
+  const rate=n(cfg.annualInterestRate,18), xi=cfg.extraInterest||{}, xr=xi.on?(Number(xi.rate)||0):0;
+  const custom=(Array.isArray(cfg.customFees)?cfg.customFees:[]).filter(f=>f&&f.on!==false&&f.name&&Number(f.value)>0).reduce((a,f)=>a+(f.type==='percent'?Math.round(amt*f.value/100):Math.round(f.value)),0);
+  return n(cfg.orgFee,200)+n(cfg.serviceCharge,100)+n(cfg.processingFee,100)+custom+Math.round(Number(extra)||0)+Math.round(amt*rate/100*months/12)+Math.round(amt*xr/100*months/12);
+}
+async function _walletsList(){ if(!(_D.wallets&&_D.wallets.length)) _D.wallets=await _get('wallets','order','asc'); return _D.wallets||[]; }
+async function openManApp(phone){
+  ['maName','maNid','maEmail','maOcc','maAddr','maAmt','maTerm','maPurpose','maPayNo','maXName','maXAmt','maNote'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('maPhone').value=phone?('0'+_ph(phone)):''; document.getElementById('maStat').value='Pending Fee Payment';
+  document.getElementById('maUserHint').innerHTML=''; document.getElementById('maFeeTot').textContent='-';
+  openMo('moManApp');
+  const ws=await _walletsList();
+  document.getElementById('maWallet').innerHTML=ws.filter(w=>w.enabled!==false).map(w=>`<option>${_escA(w.name||'')}</option>`).join('')+'<option>Other</option>';
+  await _cfgMain(); if(phone) maUserHint();
+}
+async function maUserHint(){
+  const phone=_ph(document.getElementById('maPhone').value), el=document.getElementById('maUserHint');
+  if(!_okPh(phone)){ el.innerHTML=''; return; }
+  const u=(_D.users||[]).find(x=>String(x.phone)===phone) || await window._getDoc('users',phone);
+  if(u){ el.innerHTML='<span style="color:var(--p)">✓ User found</span>'; if(u.name && !document.getElementById('maName').value) document.getElementById('maName').value=u.name;
+    // reuse the details of their last application
+    const last=(_D.applications||[]).filter(a=>String(a.uid)===phone).sort((a,b)=>new Date(b.submittedAt||0)-new Date(a.submittedAt||0))[0];
+    if(last){ const set=(i,v)=>{ const e=document.getElementById(i); if(e && !e.value && v) e.value=v; }; set('maName',last.name); set('maNid',last.nid); set('maEmail',last.email); set('maOcc',last.occupation); set('maAddr',last.address); set('maPurpose',last.loanPurpose); set('maPayNo',last.bankPhone); }
+  } else el.innerHTML=`<span style="color:var(--orange)">No user with this number.</span> <a href="javascript:void(0)" style="color:var(--p)" onclick="openNewUser('${phone}')">Create user</a>`;
+}
+function maFee(){
+  const amt=Number(document.getElementById('maAmt').value)||0, m=Number(document.getElementById('maTerm').value)||0;
+  document.getElementById('maFeeTot').textContent=amt&&m?'৳'+fa(_feeFor(window._cfgLoaded||{},amt,m,document.getElementById('maXAmt').value)):'-';
+}
+async function saveManApp(){
+  const g=i=>document.getElementById(i).value.trim();
+  const phone=_ph(g('maPhone')), amt=Math.round(Number(g('maAmt'))||0), term=Math.round(Number(g('maTerm'))||0);
+  if(!_okPh(phone)){toast('Enter the user phone','w');return;}
+  if(!g('maName')){toast('Enter the applicant name','w');return;}
+  if(amt<=0||term<=0){toast('Enter the loan amount and term','w');return;}
+  const status=g('maStat'), now=new Date().toISOString();
+  const app={uid:phone,name:g('maName'),email:g('maEmail'),nid:g('maNid'),occupation:g('maOcc'),address:g('maAddr'),loanPurpose:g('maPurpose'),
+    loanAmount:amt.toLocaleString('en-US'),term:String(term),wallet:g('maWallet'),bankPhone:g('maPayNo'),payoutKind:'mobile',
+    status:'Pending Fee Payment',submittedAt:now,createdBy:'admin',adminNote:g('maNote')};
+  const xa=Math.round(Number(g('maXAmt'))||0); if(xa>0){ app.extraFee=xa; app.extraFeeName=g('maXName')||'Additional fee'; }
+  showL(true);
+  try{
+    const ref=await window._addDoc('applications',app);
+    const id=ref.id;
+    if(status!=='Pending Fee Payment') await setAppStatus(id,status);
+    await _notifyUser(phone,'Application Added 📝',`A loan application CU-${id.slice(-6).toUpperCase()} for ৳${fa(amt)} (${term} months) was added to your account by our team.`+(status==='Pending Fee Payment'?' Open the app to pay the fee.':''),'info');
+    await logAct(`Application added manually for ${phone} (৳${fa(amt)}, ${term}m, ${status})`,'application',id);
+    closeMo('moManApp'); toast('Application created ✓');
+    if(_sec==='applications') loadApps();
+  }catch(e){ toast(e.message||'Could not create the application','e'); }
+  showL(false);
+}
+async function openManTrx(phone){
+  ['mtTrx','mtAmt','mtFrom','mtNote'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('mtPhone').value=phone?('0'+_ph(phone)):''; document.getElementById('mtStat').value='Verified'; document.getElementById('mtType').value='';
+  document.getElementById('mtApp').innerHTML='<option value="">— not linked —</option>';
+  openMo('moManTrx');
+  const ws=await _walletsList();
+  document.getElementById('mtMethod').innerHTML=ws.map(w=>`<option data-id="${_escA(w._id)}">${_escA(w.name||'')}</option>`).join('')+'<option>Cash</option><option>Bank</option><option>Other</option>';
+  await _cfgMain(); if(phone) mtLoadApps();
+}
+async function mtLoadApps(){
+  const phone=_ph(document.getElementById('mtPhone').value); const sel=document.getElementById('mtApp');
+  if(!_okPh(phone)){ sel.innerHTML='<option value="">— not linked —</option>'; return; }
+  if(!(_D.applications&&_D.applications.length)) _D.applications=await _get('applications','submittedAt');
+  const apps=_D.applications.filter(a=>String(a.uid)===phone).sort((a,b)=>new Date(b.submittedAt||0)-new Date(a.submittedAt||0));
+  sel.innerHTML='<option value="">— not linked —</option>'+apps.map(a=>`<option value="${a._id}">CU-${a._id.slice(-6).toUpperCase()} · ৳${_escA(a.loanAmount)} · ${_escA(a.status||'')}</option>`).join('');
+  const open=apps.find(a=>['Pending Fee Payment','TrxID Submitted'].includes(a.status));
+  if(open){ sel.value=open._id; mtAppPick(); }
+}
+function mtAppPick(){
+  const a=findById('applications',document.getElementById('mtApp').value); if(!a) return;
+  const amt=Number(String(a.loanAmount||0).replace(/,/g,''))||0;
+  if(!document.getElementById('mtAmt').value) document.getElementById('mtAmt').value=_feeFor(window._cfgLoaded||{},amt,Number(a.term)||0,a.extraFee);
+  if(!document.getElementById('mtFrom').value && a.bankPhone) document.getElementById('mtFrom').value=a.bankPhone;
+}
+async function saveManTrx(){
+  const g=i=>document.getElementById(i).value.trim();
+  const phone=_ph(g('mtPhone')), amt=Math.round(Number(g('mtAmt'))||0);
+  if(!_okPh(phone)){toast('Enter the user phone','w');return;}
+  if(amt<=0){toast('Enter the amount','w');return;}
+  let trxId=g('mtTrx').toUpperCase().replace(/[^A-Z0-9-]/g,'');
+  if(!trxId) trxId='MAN-'+Date.now().toString(36).toUpperCase();
+  const key='trx_'+trxId.replace(/[^A-Z0-9]/g,'').slice(0,60);
+  const app=findById('applications',g('mtApp'));
+  const mOpt=document.getElementById('mtMethod').selectedOptions[0];
+  const now=new Date().toISOString();
+  const t={uid:phone,trxId,payMethod:g('mtMethod'),walletId:mOpt?.dataset.id||'',payType:g('mtType'),receivingNumber:g('mtFrom'),appId:app?app._id:'',
+    amount:amt,totalFee:amt,appliedBalance:0,loanAmount:app?Number(String(app.loanAmount).replace(/,/g,''))||0:0,term:app?Number(app.term)||0:0,wallet:app?.wallet||'',
+    status:'Pending',submittedAt:now,manual:true,createdBy:'admin',adminNote:g('mtNote')};
+  showL(true);
+  try{
+    if(await window._getDoc('transactions',key)){ showL(false); toast('This Transaction ID already exists','w'); return; }
+    await window._setDoc('transactions',key,t);
+    t._id=key; _D.transactions=[t,...(_D.transactions||[])];
+    if(app && app.status==='Pending Fee Payment') await setAppStatus(app._id,'TrxID Submitted',{trxId});
+    await logAct(`Transaction ${trxId} added manually for ${phone} (৳${fa(amt)})`,'transaction',key);
+    closeMo('moManTrx');
+    if(g('mtStat')==='Verified'){ showL(false); await qVTrx(key); return; }   // verifies, syncs the application and tells the user
+    await _notifyUser(phone,'Payment Recorded ⏳',`Your payment of ৳${fa(amt)} (TrxID ${trxId}) was recorded by our team and is being verified.`,'transaction');
+    toast('Transaction saved ✓'); if(_sec==='transactions') loadTrx();
+  }catch(e){ toast(e.message||'Could not save the transaction','e'); }
+  showL(false);
+}
 
 // ══ TRANSACTIONS ═════════════════════════════════════
 // a verified fee moves its application to "Fee Verified" (the loan itself is approved separately);
@@ -2725,7 +3099,7 @@ function discardTab(){
 }
 document.addEventListener('DOMContentLoaded',()=>{
   const c=document.getElementById('sec-config');
-  if(c){ c.addEventListener('input',()=>markDirty('config')); c.addEventListener('change',()=>markDirty('config')); }
+  if(c){ c.addEventListener('input',()=>{ markDirty('config'); if(typeof cfPreview==='function') cfPreview(); }); c.addEventListener('change',()=>markDirty('config')); }
 });
 window.addEventListener('beforeunload', e=>{ if(Object.keys(_dirty).some(_isDirty)){ e.preventDefault(); e.returnValue=''; } });
 async function delW(id){ showL(true); await window._deleteDoc(id,'wallets'); showL(false); await logAct('Wallet deleted','wallet',id); toast('Wallet deleted','e'); loadWallets(); }
@@ -2743,13 +3117,68 @@ async function loadConfig(){
   s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');s('c-rfp',cfg.refundPolicy||'');
   s('c-wa',cfg.contact?.whatsapp);s('c-tg',cfg.contact?.telegram);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
   s('c-ss',cfg.splashSubtitle);s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
+  window._cfFees = (Array.isArray(cfg.customFees)?cfg.customFees:[]).map(f=>({name:f.name||'',type:f.type==='percent'?'percent':'fixed',value:Number(f.value)||0,on:f.on!==false}));
+  const xi=cfg.extraInterest||{}; cb('c-xi-on',xi.on); s('c-xi-lbl',xi.label||''); s('c-xi-rate',xi.rate!=null?xi.rate:'');
+  cfRender();
+  _brandFill(cfg.branding||{});
   cb('c-ro',cfg.flags?.registrationOpen!==false);cb('c-lo',cfg.flags?.loansOpen!==false);cb('c-mn',cfg.flags?.maintenance);
+}
+// Site Text & Branding
+const BR_KEYS={name:'br-name',title:'br-title',icon:'br-icon',borrowLabel:'br-blbl',btn:'br-btn',btnBn:'br-btnbn',f1:'br-f1',f2:'br-f2',f3:'br-f3',quick:'br-qs',welcome:'br-welcome',again:'br-again',s1t:'br-s1t',s1d:'br-s1d',s2t:'br-s2t',s2d:'br-s2d',s3t:'br-s3t',s3d:'br-s3d',polTitle:'br-polt',polSub:'br-pols',wait:'br-wait'};
+const BR_DEF={c1:'#1ddb80',c2:'#0fbb65'};
+const _hex=v=>/^#[0-9a-f]{6}$/i.test(String(v||'').trim())?String(v).trim().toLowerCase():'';
+function _brandFill(b){
+  Object.entries(BR_KEYS).forEach(([k,id])=>{ const e=document.getElementById(id); if(e) e.value=b[k]||''; });
+  // the Bangla button text can be cleared on purpose: keep an explicit empty value
+  const bn=document.getElementById('br-btnbn'); if(bn) bn.value = b.btnBn===undefined ? 'লোন নিন' : b.btnBn;
+  ['c1','c2'].forEach(k=>{ const v=_hex(b[k])||BR_DEF[k]; document.getElementById('br-'+k).value=v; document.getElementById('br-'+k+'t').value=_hex(b[k])||''; });
+}
+function _brandRead(){
+  const o={}; Object.entries(BR_KEYS).forEach(([k,id])=>{ const v=(document.getElementById(id)?.value||'').trim(); if(v||k==='btnBn') o[k]=v; });
+  ['c1','c2'].forEach(k=>{ const v=_hex(document.getElementById('br-'+k+'t')?.value); if(v) o[k]=v; });
+  if(o.icon && !/^https:\/\//i.test(o.icon)) delete o.icon;
+  return o;
+}
+function brResetColors(){ ['c1','c2'].forEach(k=>{ document.getElementById('br-'+k).value=BR_DEF[k]; document.getElementById('br-'+k+'t').value=''; }); markDirty('config'); }
+document.addEventListener('input',e=>{
+  const m=/^br-(c[12])(t?)$/.exec(e.target.id||''); if(!m) return;
+  if(m[2]){ const v=_hex(e.target.value); if(v) document.getElementById('br-'+m[1]).value=v; }
+  else document.getElementById('br-'+m[1]+'t').value=e.target.value;
+});
+// custom fee list (Site Config)
+function cfRender(){
+  const el=document.getElementById('cfList'); if(!el) return;
+  const L=window._cfFees=window._cfFees||[];
+  el.innerHTML=L.length?L.map((f,i)=>`<div class="cf-row">
+    <label class="tog" title="On / off"><input type="checkbox" ${f.on!==false?'checked':''} onchange="cfSet(${i},'on',this.checked)"><span class="tog-sl"></span></label>
+    <input placeholder="Fee name (e.g. Insurance fee)" maxlength="40" value="${_escA(f.name)}" oninput="cfSet(${i},'name',this.value)">
+    <select onchange="cfSet(${i},'type',this.value)"><option value="fixed" ${f.type!=='percent'?'selected':''}>Fixed ৳</option><option value="percent" ${f.type==='percent'?'selected':''}>% of loan</option></select>
+    <input class="cf-v" type="number" min="0" step="any" placeholder="${f.type==='percent'?'e.g. 1.5':'e.g. 50'}" value="${f.value||''}" oninput="cfSet(${i},'value',this.value)">
+    <button class="ab ab-d" title="Remove" onclick="cfDel(${i})"><i class="fa-solid fa-trash"></i></button></div>`).join(''):'<div class="cf-empty">No custom fees yet. Tap “Add fee” to add one.</div>';
+  cfPreview();
+}
+function cfAdd(){ (window._cfFees=window._cfFees||[]).push({name:'',type:'fixed',value:0,on:true}); cfRender(); markDirty('config'); const r=document.querySelectorAll('#cfList .cf-row input:not([type=checkbox])'); if(r.length) r[r.length-2].focus(); }
+function cfDel(i){ window._cfFees.splice(i,1); cfRender(); markDirty('config'); }
+function cfSet(i,k,v){ const f=window._cfFees[i]; if(!f) return; f[k]=k==='value'?(parseFloat(v)||0):v; if(k==='type'||k==='on') cfRender(); else cfPreview(); markDirty('config'); }
+// example fee for ৳10,000 / 6 months with the values on screen
+function cfPreview(){
+  const v=id=>parseFloat(document.getElementById(id)?.value)||0, on=document.getElementById('c-xi-on')?.checked;
+  const amt=10000, m=6, ir=v('c-ir'), xr=on?v('c-xi-rate'):0;
+  const tot=document.getElementById('cfRateTot'); if(tot) tot.textContent=(ir+xr)+'% per year';
+  const custom=(window._cfFees||[]).filter(f=>f.on!==false&&f.name&&Number(f.value)>0).map(f=>({n:f.name,a:f.type==='percent'?Math.round(amt*f.value/100):Math.round(f.value)}));
+  const fixed=v('c-of')+v('c-sc')+v('c-pf'), interest=Math.round(amt*ir/100*m/12), extra=Math.round(amt*xr/100*m/12);
+  const total=fixed+custom.reduce((a,c)=>a+c.a,0)+interest+extra;
+  const p=document.getElementById('cfPrev'); if(!p) return;
+  p.innerHTML=`<i class="fa-solid fa-calculator" style="color:var(--p);margin-right:6px"></i>Example — ৳10,000 for 6 months: fixed fees <b>৳${fa(fixed)}</b>`+custom.map(c=>` + ${_escA(c.n)} <b>৳${fa(c.a)}</b>`).join('')+` + interest <b>৳${fa(interest)}</b>`+(extra?` + ${_escA(document.getElementById('c-xi-lbl')?.value||'Additional interest')} <b>৳${fa(extra)}</b>`:'')+` = <b style="color:var(--p)">৳${fa(total)}</b> total upfront fee.`;
 }
 async function saveConfig(quiet){
   const g=id=>document.getElementById(id)?.value.trim();
   const sl=s=>s.split(',').map(x=>x.trim()).filter(Boolean);
   const cb=id=>document.getElementById(id)?.checked;
   const cfg={maxBorrowAmount:g('c-mb')||'60,000.00',annualInterestRate:parseFloat(g('c-ir'))||18,orgFee:parseFloat(g('c-of'))||200,serviceCharge:parseFloat(g('c-sc'))||100,processingFee:parseFloat(g('c-pf'))||100,newUserBonus:(g('c-nb')===''||isNaN(parseFloat(g('c-nb'))))?100:Math.max(0,parseFloat(g('c-nb'))),loanAmounts:sl(g('c-la')||''),loanTerms:sl(g('c-lt')||''),loanPurposes:sl(g('c-lp')||''),occupations:sl(g('c-oc')||''),paymentNumbers:(window._cfgLoaded?.paymentNumbers)||{},feePaymentNoteTitle:g('c-pnt')||'Note',feePaymentNote:g('c-pnn')||'',refundPolicy:g('c-rfp')||'',contact:{whatsapp:g('c-wa'),telegram:g('c-tg'),email:g('c-em')},policyEmail:g('c-pe'),companyAddress:g('c-ad'),splashSubtitle:g('c-ss'),policyDate:g('c-pd'),tagline:g('c-tag'),flags:{registrationOpen:cb('c-ro'),loansOpen:cb('c-lo'),maintenance:cb('c-mn')},updatedAt:new Date().toISOString()};
+  cfg.customFees=(window._cfFees||[]).filter(f=>String(f.name||'').trim()&&Number(f.value)>0).map(f=>({name:String(f.name).trim().slice(0,40),type:f.type==='percent'?'percent':'fixed',value:Math.max(0,Number(f.value)||0),on:f.on!==false}));
+  cfg.extraInterest={on:!!cb('c-xi-on'),label:(g('c-xi-lbl')||'Additional interest').slice(0,40),rate:Math.max(0,parseFloat(g('c-xi-rate'))||0)};
+  cfg.branding=_brandRead();
   if(!quiet) showL(true); await window._setDoc('siteConfig','main',cfg); if(!quiet) showL(false);
   await logAct('Site config saved','config','main'); if(!quiet) toast('Configuration saved ✓');
 }
