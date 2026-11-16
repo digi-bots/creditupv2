@@ -30,8 +30,16 @@ function computeFee(app, cfg) {
   const months = Number(app.term) || 0;
   const rate = n(cfg.annualInterestRate, 18);
   const interest = Math.round(amt * (rate / 100) * (months / 12));
-  const total = n(cfg.orgFee, 200) + n(cfg.serviceCharge, 100) + n(cfg.processingFee, 100) + interest;
-  return { loanAmount: amt, term: months, interest, total };
+  // additional interest and custom fees from Site Config (same rules as the app's _feeBreak)
+  const xi = cfg.extraInterest || {};
+  const xRate = xi.on ? (Number(xi.rate) || 0) : 0;
+  const extraInterest = Math.round(amt * (xRate / 100) * (months / 12));
+  let custom = (Array.isArray(cfg.customFees) ? cfg.customFees : [])
+    .filter(f => f && f.on !== false && f.name && Number(f.value) > 0)
+    .reduce((a, f) => a + (f.type === 'percent' ? Math.round(amt * Number(f.value) / 100) : Math.round(Number(f.value))), 0);
+  if (Number(app.extraFee) > 0) custom += Math.round(Number(app.extraFee));   // per-application fee set by the admin
+  const total = n(cfg.orgFee, 200) + n(cfg.serviceCharge, 100) + n(cfg.processingFee, 100) + custom + interest + extraInterest;
+  return { loanAmount: amt, term: months, interest: interest + extraInterest, total };
 }
 
 function baseUrl(req) {

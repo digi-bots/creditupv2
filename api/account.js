@@ -13,6 +13,9 @@
 //   adminBalanceOffer { phone, op: status|unlock|lock } (admin) → same state; unlock gives one more use now, lock switches it off
 //   adminResetPassword { phone, password } (admin) → sets a user's new password
 //   adminDeleteLogin   { phone }           (admin) → removes a deleted user's login
+//   adminCreateUser    { phone, password, name?, balance?, status?, referrer?, note?, fixLogin? } (admin) → creates the login + profile by hand
+//   adminLoginStatus   { phone }           (admin) → { profile, login } so the admin can see why a user cannot sign in
+//   ping               {}            (signed in) → records when the user was last active (Admin → Users → Active users)
 // Needs FIREBASE_SERVICE_ACCOUNT in Vercel → Settings → Environment Variables.
 const crypto = require('crypto');
 const { readBody } = require('./_lib/pay');
@@ -316,6 +319,65 @@ const actions = {
     if (await authUser(phone)) await auth().updateUser(phone, { password: pw });
     else await createLogin(phone, pw);
     await d.ref.update({ password: admin.firestore.FieldValue.delete(), passwordResetAt: new Date().toISOString() });
+    return [200, { ok: true }];
+  },
+
+  // admin: make an account by hand (when a user could not register). With fixLogin, an existing profile
+  // that has no working login gets one with this password instead.
+  async adminCreateUser(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    const phone = String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+    const pw = String(b.password || '');
+    if (!isPhone(phone)) return [400, { error: 'Enter a valid 10-digit BD mobile number (e.g. 1711000000).' }];
+    if (pw.length < 6 || pw.length > 128) return [400, { error: 'Password must be at least 6 characters.' }];
+    const store = db();
+    const existing = await findUserDoc(phone);
+    const login = await authUser(phone);
+    if (existing && login) return [409, { error: 'This number already has an account and a login. Use "Reset password" on the user instead.', code: 'exists' }];
+    if (existing) {
+      if (!b.fixLogin) return [409, { error: 'A profile with this number exists but it has no login. Tick "Repair login" to give it this password.', code: 'no_login' }];
+      await createLogin(phone, pw);
+      await existing.ref.update({ password: admin.firestore.FieldValue.delete(), loginRepairedAt: new Date().toISOString(), loginRepairedBy: me.uid });
+      return [200, { ok: true, phone, repaired: true }];
+    }
+    const now = new Date().toISOString();
+    const balance = Math.max(0, Math.round(Number(b.balance) || 0));
+    const status = ['active', 'inactive', 'suspended'].includes(b.status) ? b.status : 'active';
+    const u = { phone, createdAt: now, appStatus: 0, balance, status, createdBy: 'admin', createdByAdmin: me.uid };
+    const name = String(b.name || '').trim().slice(0, 60);
+    if (name) u.name = name;
+    const note = String(b.note || '').trim().slice(0, 300);
+    if (note) u.adminNote = note;
+    const ref = String(b.referrer || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+    if (isPhone(ref) && ref !== phone && await findUserDoc(ref)) u.referredBy = ref;
+    if (login) await auth().updateUser(phone, { password: pw, email: phoneEmail(phone), emailVerified: true });   // a stray login without a profile: reuse it
+    else await createLogin(phone, pw);
+    try { await store.collection('users').doc(phone).set(u); }
+    catch (e) { if (!login) await auth().deleteUser(phone).catch(() => {}); throw e; }
+    await notifyUser(phone, 'Welcome to Credit Up! 🎉', 'Your account was created by our support team. You can now log in with your phone number and password.', 'welcome');
+    if (balance > 0) await notifyUser(phone, 'Balance Added 🎁', `৳${balance} has been added to your Credit Up balance.`, 'bonus');
+    if (u.referredBy) await notifyReferrer(u.referredBy);
+    return [200, { ok: true, phone }];
+  },
+
+  // admin: does this number have a profile and a working login?
+  async adminLoginStatus(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    const phone = String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+    if (!isPhone(phone)) return [400, { error: 'Invalid phone number.' }];
+    const d = await findUserDoc(phone), u = await authUser(phone);
+    return [200, { phone, profile: !!d, login: !!u, disabled: !!(u && u.disabled), lastSignIn: u?.metadata?.lastSignInTime || '', status: d ? (d.data().status || 'active') : '' }];
+  },
+
+  // signed-in user: "I am here" (throttled in the app to once every few minutes)
+  async ping(b, me) {
+    if (!me) return [401, { error: 'Please login again.' }];
+    const d = await findUserDoc(me.uid);
+    if (!d) return [404, { error: 'Account not found.' }];
+    const ua = String(b.device || '').slice(0, 80);
+    const upd = { lastSeenAt: new Date().toISOString() };
+    if (ua) upd.lastDevice = ua;
+    await d.ref.update(upd);
     return [200, { ok: true }];
   },
 
