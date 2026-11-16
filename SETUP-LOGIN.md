@@ -58,3 +58,16 @@ Firestore → `admin` collection → `credentials` document → **Delete**. It h
 - When an existing user logs in with their old password, their account moves to the new secure login automatically, and their password is deleted from Firestore.
 - If someone's password is shorter than 6 characters, they see a "contact support" message. Open Admin panel → Users → the user → **Reset Login Password** to set a new one.
 - If a user forgets their password, the admin can set a new one the same way. Admins can never see anyone's password.
+
+## Team, roles, overdue check and SEO (after the November update)
+
+1. **Publish the new rules** – open Firebase Console → Firestore Database → Rules, paste the whole
+   `firestore.rules` file and press **Publish**. Until you do, every admin keeps full access.
+2. **Make yourself Super Admin** – in Firestore → `admins` → your document, add a field
+   `role` = `superadmin`. (An admin document without a role is treated as an owner with full access,
+   so nothing breaks if you skip this.) Then add your team in **Team & Settings**.
+3. **Daily overdue check** – `vercel.json` runs `/api/cron/overdue` every day at 9:00 AM Bangladesh time.
+   Optional but recommended: add `CRON_SECRET` (any long random text) in Vercel → Settings →
+   Environment Variables; Vercel then signs its own calls and nobody else can start the job.
+4. **SEO** – fill in **SEO & Reviews**, then in Google Search Console verify the site with the
+   HTML-tag code and submit `https://<your-domain>/sitemap.xml`.

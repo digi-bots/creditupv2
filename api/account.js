@@ -16,11 +16,29 @@
 //   adminCreateUser    { phone, password, name?, balance?, status?, referrer?, note?, fixLogin? } (admin) → creates the login + profile by hand
 //   adminLoginStatus   { phone }           (admin) → { profile, login } so the admin can see why a user cannot sign in
 //   ping               {}            (signed in) → records when the user was last active (Admin → Users → Active users)
-//   showcase           { admin? }               → home page stats (users, granted loans, money sent, today) + invite champions + offer winners
+//   showcase           { admin? }               → home page stats (users, granted loans, money sent, today) + invite champions + offer winners + reviews
+//   adminTeam          { op: list|create|update|remove|password, ... } (super admin) → manage admin accounts and their roles
+//   runOverdue         {}                (admin) → mark overdue loans and send reminders now (also runs daily)
+//   submitReview       { rating, text }  (signed in, had a loan) → a review waits for admin approval (SEO & Reviews)
+//   myReview           {}                (signed in) → { canReview, review }
 // Needs FIREBASE_SERVICE_ACCOUNT in Vercel → Settings → Environment Variables.
 const crypto = require('crypto');
 const { readBody } = require('./_lib/pay');
 const { admin, db, auth, caller, isAdmin, findUserDoc, phoneEmail, isPhone } = require('./_lib/auth');
+const { runOverdue } = require('./_lib/overdue');
+
+// admins: a document in "admins" per Firebase Auth UID. role: superadmin | admin | a custom role (Team & Settings).
+// An older admin document without a role is treated as an owner (full access), so nothing breaks after the update.
+async function adminInfo(uid) {
+  if (!uid) return null;
+  const s = await db().collection('admins').doc(uid).get();
+  if (!s.exists) return null;
+  const d = s.data() || {};
+  const role = String(d.role || '').toLowerCase().replace(/[\s_-]/g, '');
+  return { ...d, uid, role: role || 'owner', canTeam: !role || role === 'superadmin' };
+}
+const cleanEmail = e => String(e || '').trim().toLowerCase();
+const okEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
 // the "use balance for the fee" offer: 1 use, plus 1 more for every this many active friends
 const BAL_FRIENDS_PER_USE = 5;
@@ -328,7 +346,6 @@ const actions = {
     const home = await homeCfg();
     const S = home.stats || {}, W = home.winners || {};
     const admin = !!(b && b.admin && me && await isAdmin(me.uid));
-    if (S.on === false && W.on === false && !admin) return [200, { off: true }];
     const d = await showcaseData();
     const targets = refTargetsFrom(home);
     // target events depend on the admin's targets; announced winners must be real, registered users
@@ -357,7 +374,107 @@ const actions = {
       out.feed = events.filter(e => kinds[e.kind] && keep(e) && keep({ id: 'u_' + e.phone })).slice(0, admin ? 40 : feedN)
         .map(e => ({ id: e.id, kind: e.kind, target: e.target || 0, prize: e.prize, offer: e.offer || '', at: e.at, name: shortName(d.names[e.phone], e.phone), ...(admin ? { hidden: hidden.has(e.id) } : {}) }));
     }
+    let R = {};
+    try { const sd = await db().collection('siteConfig').doc('seo').get(); R = (sd.exists && sd.data().reviews) || {}; } catch (e) {}
+    out.reviewCfg = { on: R.on !== false, title: R.title || 'What our users say', ask: R.ask !== false, askText: R.askText || '' };
+    if (R.on !== false || admin) {
+      const rs = await db().collection('reviews').where('status', '==', 'approved').get();
+      const list = rs.docs.map(x => ({ id: x.id, ...x.data() })).filter(r => r.removed !== true && Number(r.rating) >= (Number(R.minStars) || 1))
+        .sort((a, b) => (b.featured === true) - (a.featured === true) || String(b.createdAt).localeCompare(String(a.createdAt)));
+      const all = rs.docs.map(x => x.data()).filter(r => r.removed !== true);
+      out.reviews = { count: all.length, avg: all.length ? Math.round(all.reduce((t, r) => t + Number(r.rating || 0), 0) / all.length * 10) / 10 : 0,
+        items: list.slice(0, Math.min(30, Math.max(1, Number(R.max) || 10))).map(r => ({ id: r.id, name: r.name || 'User', rating: Number(r.rating) || 5, text: r.text || '', at: r.createdAt || '', featured: r.featured === true })) };
+    }
     return [200, out];
+  },
+
+  // a user who received a loan may leave one review; it shows on the site only after an admin approves it
+  async myReview(b, me) {
+    if (!me) return [401, { error: 'Please login again.' }];
+    const [apps, mine] = await Promise.all([
+      db().collection('applications').where('uid', '==', me.uid).get(),
+      db().collection('reviews').where('uid', '==', me.uid).limit(1).get()
+    ]);
+    const had = apps.docs.some(d => ['Approved', 'Disbursed', 'Active', 'Repaid', 'Overdue'].includes(d.data().status) && d.data().removed !== true);
+    const r = mine.empty ? null : { id: mine.docs[0].id, ...mine.docs[0].data() };
+    return [200, { canReview: had && !r, review: r ? { rating: r.rating, text: r.text, status: r.status } : null }];
+  },
+
+  async submitReview(b, me) {
+    if (!me) return [401, { error: 'Please login again.' }];
+    const rating = Math.round(Number(b.rating));
+    const text = String(b.text || '').replace(/\s+/g, ' ').trim().slice(0, 400);
+    if (!(rating >= 1 && rating <= 5)) return [400, { error: 'Please choose 1 to 5 stars.' }];
+    if (text.length < 10) return [400, { error: 'Please write a few words (at least 10 letters).' }];
+    const [st, info] = await actions.myReview(b, me);
+    if (st !== 200 || !info.canReview) return [403, { error: info.review ? 'You already left a review. Thank you!' : 'You can leave a review after you receive a loan.' }];
+    const d = await findUserDoc(me.uid);
+    const apps = await db().collection('applications').where('uid', '==', me.uid).get();
+    const nm = (d && d.data().name) || (apps.docs.map(x => x.data().name).find(Boolean)) || '';
+    await db().collection('reviews').add({ uid: me.uid, name: shortName(nm, me.uid), rating, text, status: 'pending', createdAt: new Date().toISOString() });
+    return [200, { ok: true }];
+  },
+
+  async runOverdue(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    return [200, await runOverdue({ force: true, by: 'admin' })];
+  },
+
+  // team: only a super admin (or an older owner account without a role) may add, change or remove admins
+  async adminTeam(b, me) {
+    const meInfo = me && await adminInfo(me.uid);
+    if (!meInfo) return [403, { error: 'Admin login required.' }];
+    const op = String(b.op || 'list');
+    if (op !== 'list' && !meInfo.canTeam) return [403, { error: 'Only a Super Admin can manage the team.' }];
+    const col = db().collection('admins');
+    if (op === 'list') {
+      const s = await col.get();
+      const list = await Promise.all(s.docs.map(async d => {
+        const x = d.data() || {}; let u = null; try { u = await auth().getUser(d.id); } catch (e) {}
+        return { uid: d.id, name: x.name || '', email: (u && u.email) || x.email || '', role: x.role || '', disabled: !!(u && u.disabled), lastSignIn: (u && u.metadata.lastSignInTime) || '', createdAt: x.createdAt || '', me: d.id === me.uid };
+      }));
+      return [200, { list, canTeam: meInfo.canTeam }];
+    }
+    if (op === 'create') {
+      const email = cleanEmail(b.email), pw = String(b.password || ''), role = String(b.role || 'admin').slice(0, 30), name = String(b.name || '').trim().slice(0, 60);
+      if (!okEmail(email)) return [400, { error: 'Enter a valid e-mail address.' }];
+      if (pw.length < 8) return [400, { error: 'Password must be at least 8 characters.' }];
+      let u;
+      try { u = await auth().getUserByEmail(email); } catch (e) { u = null; }
+      if (u && (await col.doc(u.uid).get()).exists) return [409, { error: 'This e-mail is already an admin.' }];
+      if (u) await auth().updateUser(u.uid, { password: pw, displayName: name || undefined, disabled: false });
+      else u = await auth().createUser({ email, password: pw, displayName: name || undefined, emailVerified: true });
+      await col.doc(u.uid).set({ role, name, email, createdAt: new Date().toISOString(), createdBy: me.uid });
+      return [200, { ok: true, uid: u.uid }];
+    }
+    const uid = String(b.uid || '');
+    const target = uid && await col.doc(uid).get();
+    if (!target || !target.exists) return [404, { error: 'Admin not found.' }];
+    const supers = (await col.get()).docs.filter(d => { const r = String(d.data().role || '').toLowerCase(); return r === 'superadmin' || !r; });
+    const isLastSuper = supers.length === 1 && supers[0].id === uid;
+    if (op === 'update') {
+      const upd = {};
+      if (b.role !== undefined) { if (isLastSuper && String(b.role).toLowerCase() !== 'superadmin') return [400, { error: 'Keep at least one Super Admin.' }]; upd.role = String(b.role).slice(0, 30); }
+      if (b.name !== undefined) upd.name = String(b.name).trim().slice(0, 60);
+      if (b.disabled !== undefined) { if (uid === me.uid) return [400, { error: 'You cannot block your own account.' }]; await auth().updateUser(uid, { disabled: !!b.disabled }); upd.disabled = !!b.disabled; }
+      upd.updatedAt = new Date().toISOString(); upd.updatedBy = me.uid;
+      await target.ref.update(upd);
+      return [200, { ok: true }];
+    }
+    if (op === 'password') {
+      const pw = String(b.password || '');
+      if (pw.length < 8) return [400, { error: 'Password must be at least 8 characters.' }];
+      await auth().updateUser(uid, { password: pw });
+      return [200, { ok: true }];
+    }
+    if (op === 'remove') {
+      if (uid === me.uid) return [400, { error: 'You cannot remove yourself.' }];
+      if (isLastSuper) return [400, { error: 'Keep at least one Super Admin.' }];
+      await target.ref.delete();
+      try { await auth().updateUser(uid, { disabled: true }); } catch (e) {}
+      return [200, { ok: true }];
+    }
+    return [400, { error: 'Unknown action.' }];
   },
 
   async offerCount() {
