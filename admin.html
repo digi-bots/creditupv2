@@ -1457,7 +1457,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label>Button text <span style="color:var(--txt2);font-weight:500">(optional)</span></label><input id="bc-bt" maxlength="30" placeholder="e.g. Apply Now"></div>
       <div class="fg"><label>Button link</label><input id="bc-bl" placeholder="https://creditup.online"></div>
     </div>
-    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-p" id="bcSendBtn" onclick="sendBC()"><i class="fa-solid fa-paper-plane"></i>Send</button></div>
+    <div style="margin-top:12px;display:flex;gap:14px;flex-wrap:wrap;align-items:center"><button class="btn btn-p" id="bcSendBtn" onclick="sendBC()"><i class="fa-solid fa-paper-plane"></i>Send</button>
+      <label class="hp-sw" style="display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700"><label class="tog"><input type="checkbox" id="bc-push" checked><span class="tog-sl"></span></label>Also send to phones (push notification)</label></div>
   </div>
   <div class="bc-card">
     <div class="bc-sec-title"><i class="fa-solid fa-history"></i>Broadcast History</div>
@@ -2272,6 +2273,8 @@ function _loanAmt(app){ return Number(String(app?.loanAmount || 0).replace(/,/g,
 async function _notifyUser(uid, title, message, type='info'){
   if(!uid) return;
   try{ await window._addDoc('user_notifications', { uid, title, message, type, createdAt: new Date().toISOString() }); }catch(e){ console.warn('notify:', e); }
+  // also to the user's phone, if App Settings → Push Notifications allows this kind (runs in the background)
+  try{ window._accountApi && window._accountApi('adminPush', { audience:'user', phone:String(uid), title, body:message, type, auto:true, link:'/?go=notifications' }); }catch(e){}
 }
 async function _notifyAccountStatus(phone, status, reason){
   if(!phone) return;
@@ -4164,11 +4167,13 @@ async function sendBC(){
       const users=await _get('users'); if(!users.find(u=>u.phone===ph)){ showL(false); toast('No user with that phone','w'); return; }
       await window._addDoc('user_notifications',{...d, uid:ph, type:ty||'info'});
       await logAct(`Message to ${ph}: "${t}"`,'broadcast',ph);
-      toast('Message sent to 0'+ph+' ✓');
+      const pr = document.getElementById('bc-push')?.checked ? await window._accountApi('adminPush',{audience:'user',phone:ph,title:t,body:sub||m,link:'/?go=notifications',image:isPdf?'':att}) : null;
+      toast('Message sent to 0'+ph+' ✓'+(pr&&pr.ok?` · phone: ${pr.data.sent||0} device(s)`:''));
     } else {
       await window._addDoc('broadcasts',d);
       await logAct(`Broadcast: "${t}"`,'broadcast','new');
-      toast('Broadcast sent to all users ✓');
+      const pr = document.getElementById('bc-push')?.checked ? await window._accountApi('adminPush',{audience:'all',title:t,body:sub||m,link:'/?go=notifications',image:isPdf?'':att}) : null;
+      toast('Broadcast sent to all users ✓'+(pr&&pr.ok?` · pushed to ${pr.data.sent||0} of ${pr.data.devices||0} device(s)`:''));
     }
     ['bc-t','bc-s','bc-m','bc-a','bc-aName','bc-bt','bc-bl','bc-u'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('bc-aHint').innerText='Images show inside the notification; PDFs show as a download button.';

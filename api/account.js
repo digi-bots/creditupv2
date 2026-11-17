@@ -21,11 +21,16 @@
 //   runOverdue         {}                (admin) → mark overdue loans and send reminders now (also runs daily)
 //   submitReview       { rating, text }  (signed in, had a loan) → a review waits for admin approval (SEO & Reviews)
 //   myReview           {}                (signed in) → { canReview, review }
+//   pushSubscribe      { token, device } (signed in) → this device gets phone notifications for this user
+//   pushUnsubscribe    { token }                     → stop notifications on this device (logout)
+//   adminPush          { audience: all|user, phone?, title, body, link?, type?, auto? } (admin) → send a phone notification
+//   adminPushStats     {}                (admin) → { devices, users }
 // Needs FIREBASE_SERVICE_ACCOUNT in Vercel → Settings → Environment Variables.
 const crypto = require('crypto');
 const { readBody } = require('./_lib/pay');
 const { admin, db, auth, caller, isAdmin, findUserDoc, phoneEmail, isPhone } = require('./_lib/auth');
 const { runOverdue } = require('./_lib/overdue');
+const { sendPush, autoPush, pushCfg, tokenId, category } = require('./_lib/push');
 
 // admins: a document in "admins" per Firebase Auth UID. role: superadmin | admin | a custom role (Team & Settings).
 // An older admin document without a role is treated as an owner (full access), so nothing breaks after the update.
@@ -78,6 +83,7 @@ async function balanceState(d, phone, syncFlag) {
 async function notifyUser(uid, title, message, type) {
   try { await db().collection('user_notifications').add({ uid, title, message, type: type || 'info', createdAt: new Date().toISOString() }); }
   catch (e) { console.warn('notify', e); }
+  await autoPush(uid, title, message, type || 'info');   // also to the phone, when allowed
 }
 
 // a friend joined with this user's link: tell them, plus any reward or balance-offer use it unlocked
@@ -413,6 +419,45 @@ const actions = {
     const nm = (d && d.data().name) || (apps.docs.map(x => x.data().name).find(Boolean)) || '';
     await db().collection('reviews').add({ uid: me.uid, name: shortName(nm, me.uid), rating, text, status: 'pending', createdAt: new Date().toISOString() });
     return [200, { ok: true }];
+  },
+
+  async pushSubscribe(b, me) {
+    if (!me) return [401, { error: 'Please login again.' }];
+    const token = String(b.token || '');
+    if (token.length < 20 || token.length > 4096) return [400, { error: 'Invalid device.' }];
+    const ref = db().collection('pushTokens').doc(tokenId(token));
+    const cur = await ref.get();
+    await ref.set({ uid: me.uid, token, device: String(b.device || '').slice(0, 60), lastSeen: new Date().toISOString(), ...(cur.exists ? {} : { createdAt: new Date().toISOString() }) }, { merge: true });
+    return [200, { ok: true }];
+  },
+
+  // no login needed: the device token itself identifies the subscription (used on logout)
+  async pushUnsubscribe(b) {
+    const token = String(b.token || '');
+    if (token.length < 20) return [400, { error: 'Invalid device.' }];
+    await db().collection('pushTokens').doc(tokenId(token)).delete().catch(() => {});
+    return [200, { ok: true }];
+  },
+
+  async adminPush(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    const title = String(b.title || '').trim(), body = String(b.body || '').trim();
+    if (!title) return [400, { error: 'A title is needed.' }];
+    const cfg = await pushCfg();
+    if (b.auto) {   // automatic copies of in-app notifications follow the App Settings switches
+      if (cfg.on === false || cfg.auto[category(b.type)] === false) return [200, { skipped: true }];
+    }
+    const link = /^https:\/\//i.test(b.link || '') || String(b.link || '').startsWith('/') ? String(b.link) : '/';
+    if (b.audience === 'all') return [200, await sendPush({ all: true }, { title, body, link, tag: 'cu-broadcast', image: b.image })];
+    const phone = String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+    if (!isPhone(phone)) return [400, { error: 'Invalid phone number.' }];
+    return [200, await sendPush({ uids: [phone] }, { title, body, link, tag: 'cu-' + (b.type || 'info'), image: b.image })];
+  },
+
+  async adminPushStats(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    const s = await db().collection('pushTokens').get();
+    return [200, { devices: s.size, users: new Set(s.docs.map(d => d.data().uid)).size }];
   },
 
   async runOverdue(b, me) {

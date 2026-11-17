@@ -83,7 +83,9 @@ const BN = {
   'Satisfied Users': 'সন্তুষ্ট ব্যবহারকারী', 'Loans Granted': 'অনুমোদিত লোন', 'Total Disbursed': 'মোট বিতরণ', "Today's Disbursed": 'আজকের বিতরণ', 'Real numbers from Credit Up, updated live': 'ক্রেডিট আপের আসল সংখ্যা, লাইভ আপডেট',
   'Invite friends, climb the board and win real rewards': 'বন্ধুদের আমন্ত্রণ জানান, তালিকায় উঠুন, আসল পুরস্কার জিতুন', 'Your name here': 'এখানে আপনার নাম', 'Invite to win': 'আমন্ত্রণ করে জিতুন', 'Be the first!': 'প্রথম হোন!',
   'Close': 'বন্ধ করুন', 'Yes': 'হ্যাঁ', 'No': 'না', 'Save': 'সেভ করুন', 'Submit': 'জমা দিন', 'Back': 'ফিরে যান', 'Next': 'পরবর্তী', 'Done': 'সম্পন্ন', 'Error': 'ত্রুটি', 'Success': 'সফল',
-  'Track your application': 'আবেদন ট্র্যাক করুন', 'Pay the fee': 'ফি পরিশোধ করুন', 'Pay the application fee to continue.': 'এগোতে আবেদনের ফি পরিশোধ করুন।', 'We are sending the money to your account.': 'আপনার অ্যাকাউন্টে টাকা পাঠানো হচ্ছে।',
+  'Track your application': 'আবেদন ট্র্যাক করুন', 'Get updates on your phone': 'ফোনেই আপডেট পান', 'Turn on': 'চালু করুন', 'Later': 'পরে', 'How to install': 'কীভাবে ইনস্টল করবেন',
+  'Know the moment your payment is verified, your loan is approved or the money is sent — even when the app is closed.': 'পেমেন্ট যাচাই, লোন অনুমোদন বা টাকা পাঠানো হলেই জানতে পারবেন — অ্যাপ বন্ধ থাকলেও।',
+  'Notifications are on for this phone.': 'এই ফোনে নোটিফিকেশন চালু হয়েছে।', 'Pay the fee': 'ফি পরিশোধ করুন', 'Pay the application fee to continue.': 'এগোতে আবেদনের ফি পরিশোধ করুন।', 'We are sending the money to your account.': 'আপনার অ্যাকাউন্টে টাকা পাঠানো হচ্ছে।',
   'We received your application.': 'আমরা আপনার আবেদন পেয়েছি।', 'Your payment is waiting for verification.': 'আপনার পেমেন্ট যাচাইয়ের অপেক্ষায়।', 'Our team is checking your details.': 'আমাদের টিম আপনার তথ্য যাচাই করছে।', 'Your loan was approved.': 'আপনার লোন অনুমোদিত হয়েছে।',
   'The loan was sent to your account.': 'লোন আপনার অ্যাকাউন্টে পাঠানো হয়েছে।', 'Your fee payment was confirmed.': 'আপনার ফি পেমেন্ট নিশ্চিত হয়েছে।', 'Under review': 'যাচাই চলছে', 'Payment verified': 'পেমেন্ট যাচাই হয়েছে', 'Money sent': 'টাকা পাঠানো হয়েছে', 'Usually takes': 'সাধারণত লাগে',
   'Application not approved': 'আবেদন অনুমোদিত হয়নি', 'What our users say': 'ব্যবহারকারীরা যা বলেন', 'Rate your experience': 'আপনার অভিজ্ঞতা রেট করুন', 'Send review': 'রিভিউ পাঠান',
@@ -237,6 +239,7 @@ function _goShortcut(){
   const g = new URLSearchParams(location.search).get('go');
   if(g === 'calc') _whenReady('openCalculator', f => setTimeout(f, 800));
   if(g === 'apply') _whenReady('handleMainAction', f => setTimeout(f, 1200));
+  if(g === 'notifications') _whenReady('openNotificationModal', f => setTimeout(() => { if(typeof _getUser === 'function' && _getUser()) f(); }, 1500));
 }
 
 /* ═════════ USER REVIEWS + SHARING ═════════ */
@@ -279,6 +282,66 @@ async function _rvAsk(C){
 }
 window.addEventListener('cu:showcase', e => _rvRender(e.detail));
 
+/* ═════════ PHONE NOTIFICATIONS (push) ═════════ */
+const PUSH_DEF = { on: true, askTitle: 'Get updates on your phone', askText: 'Know the moment your payment is verified, your loan is approved or the money is sent — even when the app is closed.', askBtn: 'Turn on', askDelay: 8 };
+const _pushDev = () => ((/Android|iPhone|iPad|Windows|Macintosh|Linux/.exec(navigator.userAgent) || ['Web'])[0]).replace('Macintosh', 'Mac') + (_standalone() ? ' app' : ' browser');
+async function _pushSync(force){
+  // register this device for the signed-in user (quietly, at most once a day)
+  if(typeof window._pushToken !== 'function' || typeof window._api !== 'function') return false;
+  let last = 0; try{ last = Number(localStorage.getItem('cu_push_at') || 0); }catch(e){}
+  if(!force && Date.now() - last < 864e5) return true;
+  try{
+    const t = await window._pushToken(); if(!t) return false;
+    const r = await window._api('pushSubscribe', { token: t, device: _pushDev() }, true);
+    if(!r.ok) return false;
+    try{ localStorage.setItem('cu_push_token', t); localStorage.setItem('cu_push_at', String(Date.now())); }catch(e){}
+    return true;
+  }catch(e){ console.warn('push', e); return false; }
+}
+function _pushCard(P){
+  if(_ap('pushCard')) return;
+  const ios = _ios() && !_standalone();
+  const c = document.createElement('div'); c.id = 'pushCard'; c.className = 'push-card';
+  c.innerHTML = `<div class="pc-ic"><i class="fa-solid fa-bell"></i></div><div class="pc-m"><b>${_ae(P.askTitle)}</b><small>${ios ? 'On iPhone: first tap Share → “Add to Home Screen”, open the app from your home screen, then turn on notifications.' : _ae(P.askText)}</small>
+    <div class="pc-acts">${ios ? '<button type="button" class="pc-go" data-k="ios">How to install</button>' : `<button type="button" class="pc-go" data-k="on">${_ae(P.askBtn || 'Turn on')}</button>`}<button type="button" class="pc-no">Later</button></div></div>`;
+  const home = document.querySelector('#screen-home .home-body'); if(!home) return;
+  home.insertBefore(c, home.firstChild);
+  c.querySelector('.pc-no').onclick = () => { c.remove(); try{ localStorage.setItem('cu_push_later', String(Date.now())); }catch(e){} };
+  c.querySelector('.pc-go').onclick = async ev => {
+    if(ev.currentTarget.dataset.k === 'ios') return _pwIosHelp();
+    const perm = await Notification.requestPermission().catch(() => 'denied');
+    if(perm !== 'granted'){ c.querySelector('small').textContent = 'Notifications are blocked. You can allow them later in your browser’s site settings.'; return; }
+    ev.currentTarget.disabled = true; ev.currentTarget.textContent = '…';
+    const ok = await _pushSync(true);
+    c.innerHTML = ok ? '<div class="pc-ok"><i class="fa-solid fa-circle-check"></i> Notifications are on for this phone.</div>' : '<div class="pc-ok bad">Could not turn on notifications. Please try again later.</div>';
+    setTimeout(() => c.remove(), 4000);
+  };
+}
+function _pushInit(cfg){
+  const P = { ...PUSH_DEF, ...((cfg || {}).push || {}) };
+  if(P.on === false) return;
+  const tick = () => {
+    const u = typeof _getUser === 'function' && _getUser(); if(!u || !u.phone) return;
+    if(!('Notification' in window) || !('serviceWorker' in navigator)){ if(_ios() && !_standalone()) _pushAsk(P); return; }
+    if(Notification.permission === 'granted') _pushSync(false);
+    else if(Notification.permission === 'default') _pushAsk(P);
+  };
+  setTimeout(tick, Math.max(2, Number(P.askDelay) || 8) * 1000);
+}
+function _pushAsk(P){
+  let later = 0; try{ later = Number(localStorage.getItem('cu_push_later') || 0); }catch(e){}
+  if(Date.now() - later < 3 * 864e5) return;
+  _pushCard(P);
+}
+// signing out: this phone stops getting the account's notifications
+_whenReady('logoutUser', f => {
+  window.logoutUser = logoutUser = function(){
+    let t = null; try{ t = localStorage.getItem('cu_push_token'); localStorage.removeItem('cu_push_token'); localStorage.removeItem('cu_push_at'); }catch(e){}
+    if(t && typeof window._api === 'function') window._api('pushUnsubscribe', { token: t }).catch(() => {});
+    return f.apply(this, arguments);
+  };
+});
+
 /* ═════════ BIG SCREENS: side panel next to the app ═════════ */
 function _deskInit(cfg){
   if(_ap('deskSide')) return;
@@ -295,6 +358,6 @@ function _deskInit(cfg){
   const ready = () => document.readyState === 'loading' ? new Promise(r => document.addEventListener('DOMContentLoaded', r)) : Promise.resolve();
   await ready();
   const cfg = await appCfg();
-  _langInit(cfg); _pwInit(cfg); _deskInit(cfg); _goShortcut();
+  _langInit(cfg); _pwInit(cfg); _deskInit(cfg); _goShortcut(); _pushInit(cfg);
   if(window._showcase) _rvRender(window._showcase);
 })();

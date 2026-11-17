@@ -1,6 +1,7 @@
 // Overdue loans: marks loans past their due date (plus grace days) as "Overdue" and sends reminders.
 // Settings: Admin → App Settings → Overdue Loans (siteConfig/app.overdue). Used by the daily cron and by "Run check now".
 const { db } = require('./pay');
+const { autoPush } = require('./push');
 
 const OPEN = ['Approved', 'Disbursed', 'Active'];
 const DEF = {
@@ -41,11 +42,11 @@ async function runOverdue({ force = false, by = 'cron' } = {}) {
       const upd = { status: 'Overdue', overdueAt: new Date().toISOString(), statusUpdatedAt: new Date().toISOString(), dueDate: a.dueDate || due.toISOString() };
       await d.ref.update(upd);
       result.marked++;
-      if (cfg.notify !== false && a.uid) await notes.add({ uid: a.uid, title: cfg.title || DEF.title, message: fill(cfg.msg || DEF.msg, a, due), type: 'warning', createdAt: new Date().toISOString() });
+      if (cfg.notify !== false && a.uid) { const t = cfg.title || DEF.title, m = fill(cfg.msg || DEF.msg, a, due); await notes.add({ uid: a.uid, title: t, message: m, type: 'warning', createdAt: new Date().toISOString() }); await autoPush(a.uid, t, m, 'warning'); }
     } else if (cfg.remind !== false && remindMs && t - now <= remindMs && t > now && !a.remindedAt) {
       await d.ref.update({ remindedAt: new Date().toISOString(), dueDate: a.dueDate || due.toISOString() });
       result.reminded++;
-      if (a.uid) await notes.add({ uid: a.uid, title: cfg.remindTitle || DEF.remindTitle, message: fill(cfg.remindMsg || DEF.remindMsg, a, due), type: 'info', createdAt: new Date().toISOString() });
+      if (a.uid) { const t = cfg.remindTitle || DEF.remindTitle, m = fill(cfg.remindMsg || DEF.remindMsg, a, due); await notes.add({ uid: a.uid, title: t, message: m, type: 'info', createdAt: new Date().toISOString() }); await autoPush(a.uid, t, m, 'info'); }
     }
   }
   await store.collection('adminConfig').doc('overdueRun').set(result);

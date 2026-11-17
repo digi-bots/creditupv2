@@ -110,6 +110,8 @@ const APP_DEF = {
   lang: { on: true, showSwitch: true, def: 'en', custom: [] },
   pwa: { on: true, name: 'Credit Up', short: 'Credit Up', desc: '', theme: '#0a6e35', bg: '#060d1a', display: 'standalone', icon: '', prompt: true,
     promptText: 'Install the Credit Up app — opens faster and works like a real app.', btn: 'Install', delay: 15, iosHint: true },
+  push: { on: true, askDelay: 8, askTitle: 'Get updates on your phone', askText: 'Know the moment your payment is verified, your loan is approved or the money is sent — even when the app is closed.', askBtn: 'Turn on',
+    auto: { updates: true, bonus: true, welcome: true, broadcast: true } },
   overdue: { on: true, graceDays: 0, notify: true, title: 'Payment Overdue', msg: 'Your loan {ref} was due on {due}. Please pay as soon as possible to keep your account in good standing.',
     remind: true, remindDays: 3, remindTitle: 'Payment Reminder', remindMsg: 'Your loan {ref} is due on {due}. Please make sure the payment is ready.' }
 };
@@ -118,7 +120,7 @@ let _APP = clone(APP_DEF);
 function buildAppSet(){
   const s = $p('sec-appset'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>App Settings</h2>${svBtn('appset')}</div>${roBanner}
-  ${proTabs('appset', [['tl', 'route', 'Tracking Timeline'], ['lang', 'language', 'Language'], ['pwa', 'download', 'App Install'], ['od', 'calendar-xmark', 'Overdue Loans']], 'tl')}
+  ${proTabs('appset', [['tl', 'route', 'Tracking Timeline'], ['lang', 'language', 'Language'], ['pwa', 'download', 'App Install'], ['push', 'bell', 'Push Notifications'], ['od', 'calendar-xmark', 'Overdue Loans']], 'tl')}
   <div class="pro-pane" data-k="tl">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-route"></i>Live application tracking</div>
       <div class="fgrid fgrid3">${tog('tl-on', 'Show the tracking timeline', 1)}${tog('tl-live', 'Update live (no refresh needed)', 1)}${tog('tl-times', 'Show date and time of each step', 1)}${tog('tl-eta', 'Show “usually takes” times', 1)}
@@ -152,6 +154,17 @@ function buildAppSet(){
       <div class="hint" style="margin-top:8px">Android and desktop Chrome show a real install button. iPhone (Safari) has no install button, so users get short “Share → Add to Home Screen” help instead.</div>
     </div>
   </div>
+  <div class="pro-pane" data-k="push">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-bell"></i>Phone notifications <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="puStats()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+      <div class="stats" id="puStats" style="margin-bottom:10px"></div>
+      <div class="fgrid fgrid3">${tog('pu-on', 'Phone notifications on', 1)}${inp('pu-delay', 'Ask users after (seconds)', '8', 'type="number" min="2" max="120"')}</div>
+      <div class="man-sub">Send these to phones automatically</div>
+      <div class="fgrid fgrid3">${tog('pu-a-updates', 'Payment & loan updates (verified, approved, sent, overdue, reminders)', 1)}${tog('pu-a-bonus', 'Bonuses & rewards', 1)}${tog('pu-a-welcome', 'Welcome message', 1)}${tog('pu-a-broadcast', 'Broadcasts (default for the Broadcast page)', 1)}</div>
+      <div class="man-sub">Invitation card</div>
+      <div class="fgrid">${inp('pu-title', 'Title', 'Get updates on your phone', 'full maxlength="60"')}${area('pu-text', 'Text', '', 2, 'maxlength="200"')}${inp('pu-btn', 'Button', 'Turn on', 'maxlength="16"')}</div>
+      <div class="hint" style="margin-top:8px">Users are asked only after they log in, with a friendly card first (not a sudden browser pop-up). Android and computers work in the browser; iPhone needs iOS 16.4+ and the app added to the home screen. Send a message to everyone from <b>Broadcast</b>.</div>
+    </div>
+  </div>
   <div class="pro-pane" data-k="od">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-calendar-xmark"></i>Mark overdue loans automatically <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="odRun()"><i class="fa-solid fa-play"></i>Run check now</button></div>
       <div class="fgrid fgrid3">${tog('od-on', 'Check every day automatically', 1)}${inp('od-grace', 'Grace days after the due date', '0', 'type="number" min="0" max="60"')}${tog('od-notify', 'Tell the user when the loan becomes overdue', 1)}
@@ -179,10 +192,13 @@ async function loadAppSet(){
   buildAppSet();
   const d = (await window._getDoc('siteConfig', 'app')) || {};
   _APP = clone(APP_DEF);
-  ['timeline', 'lang', 'pwa', 'overdue'].forEach(k => Object.assign(_APP[k], d[k] || {}));
+  ['timeline', 'lang', 'pwa', 'overdue', 'push'].forEach(k => Object.assign(_APP[k], d[k] || {}));
+  _APP.push.auto = { ...APP_DEF.push.auto, ...((d.push || {}).auto || {}) };
   _APP.timeline.steps = { ...clone(APP_DEF.timeline.steps), ...((d.timeline || {}).steps || {}) };
   _APP.lang.custom = (Array.isArray(_APP.lang.custom) ? _APP.lang.custom : []).map(x => ({ id: hid(), ...x }));
-  const T = _APP.timeline, G = _APP.lang, W = _APP.pwa, O = _APP.overdue;
+  const T = _APP.timeline, G = _APP.lang, W = _APP.pwa, O = _APP.overdue, U = _APP.push;
+  fillIn({ 'pu-on': U.on, 'pu-delay': U.askDelay, 'pu-a-updates': U.auto.updates, 'pu-a-bonus': U.auto.bonus, 'pu-a-welcome': U.auto.welcome, 'pu-a-broadcast': U.auto.broadcast, 'pu-title': U.askTitle, 'pu-text': U.askText, 'pu-btn': U.askBtn });
+  puStats();
   fillIn({ 'tl-on': T.on, 'tl-live': T.live, 'tl-times': T.showTimes, 'tl-eta': T.showEta, 'tl-rejected': T.rejected, 'tl-note': T.note,
     'lg-on': G.on, 'lg-switch': G.showSwitch, 'lg-def': G.def,
     'pw-on': W.on, 'pw-name': W.name, 'pw-short': W.short, 'pw-theme': W.theme, 'pw-bg': W.bg, 'pw-display': W.display, 'pw-icon': W.icon, 'pw-desc': W.desc, 'pw-prompt': W.prompt, 'pw-delay': W.delay, 'pw-ios': W.iosHint, 'pw-text': W.promptText, 'pw-btn': W.btn,
@@ -201,6 +217,8 @@ async function saveAppSet(){
     lang: { on: chk('lg-on'), showSwitch: chk('lg-switch'), def: val('lg-def') || 'en', custom: _APP.lang.custom.filter(x => String(x.en || '').trim() && String(x.bn || '').trim()).map(x => ({ en: String(x.en).trim(), bn: String(x.bn).trim() })) },
     pwa: { on: chk('pw-on'), name: val('pw-name') || 'Credit Up', short: (val('pw-short') || val('pw-name') || 'Credit Up').slice(0, 12), theme: hex(val('pw-theme'), '#0a6e35'), bg: hex(val('pw-bg'), '#060d1a'),
       display: val('pw-display') || 'standalone', icon, desc: val('pw-desc'), prompt: chk('pw-prompt'), delay: numv('pw-delay', 15, 0, 600), iosHint: chk('pw-ios'), promptText: val('pw-text') || APP_DEF.pwa.promptText, btn: val('pw-btn') || 'Install' },
+    push: { on: chk('pu-on'), askDelay: numv('pu-delay', 8, 2, 120), askTitle: val('pu-title') || APP_DEF.push.askTitle, askText: val('pu-text') || APP_DEF.push.askText, askBtn: val('pu-btn') || 'Turn on',
+      auto: { updates: chk('pu-a-updates'), bonus: chk('pu-a-bonus'), welcome: chk('pu-a-welcome'), broadcast: chk('pu-a-broadcast') } },
     overdue: { on: chk('od-on'), graceDays: numv('od-grace', 0, 0, 60), notify: chk('od-notify'), title: val('od-title') || APP_DEF.overdue.title, msg: val('od-msg') || APP_DEF.overdue.msg,
       remind: chk('od-remind'), remindDays: numv('od-rdays', 3, 1, 30), remindTitle: val('od-rtitle') || APP_DEF.overdue.remindTitle, remindMsg: val('od-rmsg') || APP_DEF.overdue.remindMsg },
     updatedAt: new Date().toISOString()
@@ -208,6 +226,12 @@ async function saveAppSet(){
   await window._setDoc('siteConfig', 'app', data);
   await logAct('App settings saved', 'config', 'app');
   _APP.lang.custom = data.lang.custom.map(x => ({ id: hid(), ...x })); lgRender();
+}
+async function puStats(){
+  const el = $p('puStats'); if(!el) return;
+  const r = await window._accountApi('adminPushStats', {});
+  const v = r.ok ? r.data : { devices: '–', users: '–' };
+  el.innerHTML = [['mobile-screen', 'gn', v.devices, 'Devices with notifications on'], ['users', 'bl', v.users, 'Users reachable by push']].map(([ic, cl, n, l]) => `<div class="sc ${cl}"><div class="sc-ic ic-${cl}"><i class="fa-solid fa-${ic}"></i></div><div class="sc-val">${n}</div><div class="sc-lbl">${l}</div></div>`).join('');
 }
 async function odLast(){
   const r = await window._getDoc('adminConfig', 'overdueRun');
@@ -622,6 +646,7 @@ gS = function(id, el){
   if(p === 'none' && id !== 'settings'){ toast('Your role cannot open this page', 'w'); return; }
   _gS0(id, el);
   document.getElementById('sec-' + id)?.classList.toggle('ro', p === 'view');
+  if(id === 'broadcast') window._getDoc('siteConfig', 'app').then(d => { const c = $p('bc-push'); const P = (d && d.push) || {}; if(c) c.checked = P.on !== false && (P.auto || {}).broadcast !== false; }).catch(() => {});
 };
 const _loginOK0 = loginOK;
 // after login: apply the role, then fill the Risk Center and Reviews counters on the menu
