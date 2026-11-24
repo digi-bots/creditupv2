@@ -1041,6 +1041,11 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div id="wxTargetsEd" class="hp-list"></div>
       <div class="hint" style="margin-top:6px">Used everywhere: the Winners section, the invite popup, the calculator offer box, the profile progress and the “Reward Unlocked” messages. Friends = active friends who joined with the user’s link.</div>
     </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-user-check"></i>Choose target winners <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="hpLoadShowcase()"><i class="fa-solid fa-rotate-right"></i>Refresh</button></div>
+      <div class="fgrid fgrid3"><div class="fg"><label>How target winners are published</label><select id="wx-mode" onchange="markDirty('home','wxmode');wxPickRender()"><option value="manual">I choose the winners (recommended)</option><option value="auto">Automatic: everyone who reaches a target</option></select></div></div>
+      <div id="wxPick" class="hp-list"><div class="hint">Loading...</div></div>
+      <div class="hint" style="margin-top:6px">Everyone who reached a target is listed here. Tick the people you want, or press <b>Pick at random</b>, then press <b>Save</b> to publish them on the site. Untick and Save to remove a winner. Users who reach a target are told that our team chooses the winners.</div>
+    </div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-award"></i>Announce a winner <button class="btn btn-sm btn-p" style="margin-left:auto" onclick="wxListAdd('announced')"><i class="fa-solid fa-plus"></i>Add winner</button></div>
       <div id="wxAnn" class="hp-list"></div>
       <div class="hint" style="margin-top:6px">For campaign or contest winners you choose yourself. The phone must belong to a registered user; the name is shortened automatically and the phone is never shown.</div>
@@ -1649,6 +1654,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="mo-h"><h3>Transaction Details</h3><button class="mo-x" onclick="closeMo('moTrx')">✕</button></div>
   <div class="mo-b">
     <div class="trx-hero" id="tHero"></div>
+    <div id="tCheck"></div>
     <div class="dg" id="tGrid"></div>
     <div style="margin-top:13px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="trxAct('Verified')"><i class="fa-solid fa-circle-check"></i>Approve & Verify</button>
@@ -2122,6 +2128,8 @@ async function updateUserStatus(){
   const log=[...(existing.statusLog||[]),{status,reason,action:'Status changed',at:new Date().toISOString()}];
   await window._updateDoc(_userId,'users',{status,adminNote:note,suspendReason:reason,statusLog:log,updatedAt:new Date().toISOString()});
   if(existing.status !== status) await _notifyAccountStatus(existing.phone, status, reason);
+  // activating also removes a wrong-password lock, so the user can sign in again
+  if(status==='active' && existing.phone){ try{ await window._accountApi('adminUnlockLogin',{phone:_ph(existing.phone),activate:false}); }catch(e){} }
   await logAct(`User status → "${status}"`,'user',_userId);
   toast(`Status updated to "${status}"`); closeMo('moUser'); loadUsers();
 }
@@ -2544,10 +2552,20 @@ async function _loginCheckHtml(phone){
   if(!d.profile && !d.login) tip=`No account with this number. <a href="javascript:void(0)" onclick="closeMo('moLoginCheck');openNewUser('${phone}')" style="color:var(--p);font-weight:700">Create it now →</a>`;
   else if(d.profile && !d.login) tip=`The profile has no login, so sign-in fails. <a href="javascript:void(0)" onclick="closeMo('moLoginCheck');openNewUser('${phone}');document.getElementById('nuFix').checked=true" style="color:var(--p);font-weight:700">Repair login →</a>`;
   else if(!d.profile && d.login) tip=`A login exists without a profile. <a href="javascript:void(0)" onclick="closeMo('moLoginCheck');openNewUser('${phone}')" style="color:var(--p);font-weight:700">Create the profile →</a>`;
+  else if(d.lock && (d.lock.suspended || d.lock.until)) tip=`${d.lock.suspended?'Suspended after too many wrong passwords.':'Locked until <b>'+fd(d.lock.until)+'</b> after 5 wrong passwords.'} <a href="javascript:void(0)" onclick="unlockLogin('${phone}',this)" style="color:var(--p);font-weight:700">Unlock now →</a>`;
   else if(d.disabled) tip='The login is disabled in Firebase Authentication.';
   else if(['banned','suspended'].includes(d.status)) tip=`The account is <b>${d.status}</b>. Activate it in the user details to let them in.`;
   else tip='Everything looks fine. If the user forgot the password, set a new one in the user details.';
-  return `<div class="lc-res">${row('Profile',d.profile,d.profile?'Found ✓':'Missing')}${row('Login',d.login&&!d.disabled,d.login?(d.disabled?'Disabled':'Working ✓'):'Missing')}${d.status?row('Status',!['banned','suspended'].includes(d.status),d.status):''}${d.lastSignIn?row('Last sign-in',true,fd(d.lastSignIn)):''}<div class="hint" style="font-size:12px;line-height:1.6">${tip}</div></div>`;
+  return `<div class="lc-res">${row('Profile',d.profile,d.profile?'Found ✓':'Missing')}${row('Login',d.login&&!d.disabled,d.login?(d.disabled?'Disabled':'Working ✓'):'Missing')}${d.status?row('Status',!['banned','suspended'].includes(d.status),d.status):''}${d.lastSignIn?row('Last sign-in',true,fd(d.lastSignIn)):''}${d.lock?row('Wrong passwords',!(d.lock.suspended||d.lock.until),d.lock.suspended?'Suspended':d.lock.until?'Locked':`${d.lock.fails} of 5 (lock level ${d.lock.level})`):''}<div class="hint" style="font-size:12px;line-height:1.6">${tip}</div></div>`;
+}
+async function unlockLogin(phone,el){
+  if(el) el.textContent='Unlocking...';
+  const r=await window._accountApi('adminUnlockLogin',{phone});
+  if(!r.ok){ toast(r.data.error||'Could not unlock','e'); if(el) el.textContent='Unlock now →'; return; }
+  await logAct(`Login unlocked: ${phone}`,'user',phone);
+  toast('Unlocked — the user can sign in now ✓');
+  const box=el&&el.closest('.lc-res'); if(box) box.outerHTML=await _loginCheckHtml(phone);
+  if(_sec==='users') loadUsers();
 }
 async function runLoginCheck(){
   const phone=_ph(document.getElementById('lcPhone').value);
@@ -2694,8 +2712,9 @@ async function syncAppOnTrx(trx,newStatus){
 
 async function loadTrx(){
   showL(true);
-  const [tx, wl] = await Promise.all([_get('transactions','submittedAt'), (_D.wallets&&_D.wallets.length) ? Promise.resolve(_D.wallets) : _get('wallets','order','asc').catch(()=>[])]);
-  _D.transactions=tx; _D.wallets=wl||[]; _pg.transactions=0; showL(false);
+  const [tx, wl, ap] = await Promise.all([_get('transactions','submittedAt'), (_D.wallets&&_D.wallets.length) ? Promise.resolve(_D.wallets) : _get('wallets','order','asc').catch(()=>[]),
+    (_D.applications&&_D.applications.length) ? Promise.resolve(_D.applications) : _get('applications').catch(()=>[]), _cfgMain().catch(()=>({}))]);
+  _D.transactions=tx; _D.wallets=wl||[]; _D.applications=ap||[]; _pg.transactions=0; showL(false);
   const t=_D.transactions;
   const paid=x=>Number(x.amount||0)+Number(x.appliedBalance||0);
   const sum=arr=>arr.reduce((a,x)=>a+paid(x),0);
@@ -2798,7 +2817,13 @@ function renderTP(){
       const times=(k && k!=='BALANCE_PAYMENT') ? (dup[k]||0) : 0;
       const dupBadge = times>1 ? `<span class="wbadge or" title="This TrxID was submitted ${times} times">DUP ×${times}</span>` : '';
       const appRef = r.appId ? `<span class="wbadge" title="Linked application">CU-${String(r.appId).slice(-6).toUpperCase()}</span>` : '';
-      return `<tr class="${r.removed?'is-removed':''}"><td class="mono">${r.trxId||'-'} ${dupBadge}${rmTag(r)}</td><td class="mono">${r.uid||'-'}</td><td><div class="tm">${_trxLogoHtml(r)}<div class="tm-txt">${r.payMethod||(String(r.trxId).toUpperCase()==='BALANCE_PAYMENT'?'Balance':'-')}${r.gateway?' <span class="wbadge">AUTO</span>':''}${r.payType?`<small>${r.payType}</small>`:''}${appRef}</div></div></td><td style="font-weight:800;white-space:nowrap">৳${fa(Number(r.amount||0)+Number(r.appliedBalance||0))}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button>${r.removed?`<button class="ab ab-ok" title="Restore to the user site" onclick="restoreDoc('transactions','${r._id}',loadTrx)"><i class="fa-solid fa-rotate-left"></i></button>`:`<button class="ab ab-d" title="Remove / delete" onclick="delTrx('${r._id}')"><i class="fa-solid fa-trash"></i></button>`}</div></td></tr>`;
+      // compare with the fee from the admin's own settings (shown once Site Config is loaded)
+      let feeChk='';
+      const ap=r.appId&&window._cfgLoaded?findById('applications',r.appId):null;
+      if(ap){ const am=Number(String(ap.loanAmount||'').replace(/,/g,''))||0, mo=Number(ap.term)||0;
+        if(am&&mo){ const d=Number(r.amount||0)+Number(r.appliedBalance||0)-_feeFor(window._cfgLoaded,am,mo,ap.extraFee);
+          feeChk=d===0?'<div style="font-size:10px;color:var(--p);font-weight:700">= fee ✓</div>':`<div style="font-size:10px;color:${d<0?'var(--red)':'var(--orange)'};font-weight:800" title="Compared with the fee from your settings">${d<0?'short ৳'+fa(-d):'+৳'+fa(d)}</div>`; } }
+      return `<tr class="${r.removed?'is-removed':''}"><td class="mono">${r.trxId||'-'} ${dupBadge}${rmTag(r)}</td><td class="mono">${r.uid||'-'}</td><td><div class="tm">${_trxLogoHtml(r)}<div class="tm-txt">${r.payMethod||(String(r.trxId).toUpperCase()==='BALANCE_PAYMENT'?'Balance':'-')}${r.gateway?' <span class="wbadge">AUTO</span>':''}${r.payType?`<small>${r.payType}</small>`:''}${appRef}</div></div></td><td style="font-weight:800;white-space:nowrap">৳${fa(Number(r.amount||0)+Number(r.appliedBalance||0))}${Number(r.appliedBalance)>0?`<div style="font-size:10px;color:var(--txt2);font-weight:600">wallet ৳${fa(r.amount||0)} + bal ৳${fa(r.appliedBalance)}</div>`:''}${feeChk}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button>${r.removed?`<button class="ab ab-ok" title="Restore to the user site" onclick="restoreDoc('transactions','${r._id}',loadTrx)"><i class="fa-solid fa-rotate-left"></i></button>`:`<button class="ab ab-d" title="Remove / delete" onclick="delTrx('${r._id}')"><i class="fa-solid fa-trash"></i></button>`}</div></td></tr>`;
     }).join(''):'<tr class="empty"><td colspan="8">No transactions found</td></tr>';
   });
 }
@@ -2856,7 +2881,40 @@ function viewTrx(id){
   ].map(f=>`<div class="dr"><div class="dl">${f.l}</div><div class="dv ${f.c||''}">${f.v||'-'}</div></div>`).join('');
   const mBtn=document.getElementById('trxMatchBtn');
   if(mBtn) mBtn.style.display = t.appId ? 'none' : 'inline-flex';
+  document.getElementById('tCheck').innerHTML='';
   openMo('moTrx');
+  _trxCheck(t);
+}
+// payment check: the fee the admin's own settings give for this loan vs what the user says was paid
+async function _trxCheck(t){
+  const el=document.getElementById('tCheck'); if(!el) return;
+  const cfg=await _cfgMain();
+  if(_docId!==t._id) return;
+  const app=t.appId?findById('applications',t.appId):null;
+  const amt=app?Number(String(app.loanAmount||'').replace(/,/g,''))||0:0, months=app?Number(app.term)||0:0;
+  const expected=app&&amt&&months?_feeFor(cfg,amt,months,app.extraFee):null;
+  const wallet=Number(t.amount)||0, bal=Number(t.appliedBalance)||0, paid=wallet+bal;
+  const user=(_D.users||[]).find(u=>String(u.phone)===String(t.uid));
+  const diff=expected===null?null:paid-expected;
+  const st=diff===null?['muted','Link the application to compare']:diff===0?['ok','Matches the fee ✓']:diff<0?['bad',`Short by ৳${fa(-diff)}`]:['warn',`৳${fa(diff)} more than the fee`];
+  const col={ok:'var(--p)',bad:'var(--red)',warn:'var(--orange)',muted:'var(--txt2)'}[st[0]];
+  const isBal=String(t.trxId||'').toUpperCase()==='BALANCE_PAYMENT';
+  const L=(l,v,strong)=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--border)"><span style="color:var(--txt2)">${l}</span><span style="font-weight:${strong?800:600};text-align:right">${v}</span></div>`;
+  const ago=t.submittedAt?Math.round((Date.now()-new Date(t.submittedAt))/60000):null;
+  const agoTxt=ago===null?'':ago<60?`${ago} min ago`:ago<1440?`${Math.round(ago/60)} h ago`:`${Math.round(ago/1440)} days ago`;
+  el.innerHTML=`<div style="margin:10px 0 12px;padding:12px 14px;border:1px solid ${col};border-radius:12px;background:rgba(255,255,255,.02)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><i class="fa-solid fa-scale-balanced" style="color:${col}"></i><b>Payment check</b><span style="margin-left:auto;color:${col};font-weight:800">${st[1]}</span></div>
+    ${L('Fee for this loan (your settings)',expected===null?'—':'৳'+fa(expected),1)}
+    ${app?L('Loan',`৳${fa(amt)} · ${months} months · app ${_escA(String(t.appId).slice(-6).toUpperCase())}`):''}
+    ${L('Fee the app showed the user',t.totalFee?'৳'+fa(t.totalFee):'—')}
+    ${L('Sent by wallet (user says)',isBal?'—':'৳'+fa(wallet),1)}
+    ${L('Paid from balance',bal?`৳${fa(bal)}${user?` <span style="color:var(--txt2);font-weight:500">(balance now ৳${fa(user.balance||0)})</span>`:''}`:'৳0')}
+    ${L('Total paid',`৳${fa(paid)}`,1)}
+    ${L('Payment submitted',t.submittedAt?`${new Date(t.submittedAt).toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true})} <span style="color:var(--txt2);font-weight:500">(${agoTxt})</span>`:'—')}
+    ${app&&(app.submittedAt||app.createdAt)?L('Application submitted',fd(app.submittedAt||app.createdAt)):''}
+    ${t.verifiedAt?L('Verified',fd(t.verifiedAt)):''}
+    ${isBal?'':`<div style="margin-top:8px;font-size:12px;line-height:1.6;color:var(--txt2)"><i class="fa-solid fa-mobile-screen"></i> In your <b>${_escA(t.payMethod||'wallet')}</b> app${t.collectionNumber?` for <b>${_escA(t.collectionNumber)}</b>`:''}, find an incoming <b>৳${fa(wallet)}</b> with TrxID <b class="mono">${_escA(t.trxId||'')}</b>${t.senderNumber?` from <b>${_escA(t.senderNumber)}</b>`:''} around <b>${t.submittedAt?new Date(t.submittedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:true}):'the time above'}</b>. Approve only if the amount you received matches.</div>`}
+  </div>`;
 }
 // a rejected payment gives the user their one-time balance adjustment back
 async function restoreBalanceAdjust(trx){
@@ -3383,7 +3441,7 @@ function _fGroup(e){
 }
 function _snapData(tab){
   if(tab==='home' && _H) return {'Notice Bar › Notices':_H.notice.items,'Partners › Partner logos':_H.partners.items,'Trust Badges › Badges':_H.trust.items,
-    'Loading Screen › Payment logos':_H.splash.pays,'Offers › Offer cards':_H.offers.items,'Live Transactions › Hidden entries':_H.live.hidden,'Winners › Hidden people / entries':_H.winners?_H.winners.hidden:[],'Stats › Cards':_H.stats?_H.stats.items:[],'Winners › Invite tips':_H.winners?_H.winners.tips:[],'Winners › Invite targets':_H.winners?_H.winners.targets:[],'Winners › Announced winners':_H.winners?_H.winners.announced:[],'Footer › Links':_H.footer?_H.footer.links:[],'Hot Offer › Offer round':_H.fomo.round};
+    'Loading Screen › Payment logos':_H.splash.pays,'Offers › Offer cards':_H.offers.items,'Live Transactions › Hidden entries':_H.live.hidden,'Winners › Hidden people / entries':_H.winners?_H.winners.hidden:[],'Stats › Cards':_H.stats?_H.stats.items:[],'Winners › Invite tips':_H.winners?_H.winners.tips:[],'Winners › Invite targets':_H.winners?_H.winners.targets:[],'Winners › Announced winners':_H.winners?_H.winners.announced:[],'Winners › Chosen target winners':_H.winners?Object.entries(_H.winners.picked||{}).flatMap(([k,L])=>(L||[]).map(p=>({id:k+'_'+p,target:k+' friends',phone:'0'+p}))):[],'Footer › Links':_H.footer?_H.footer.links:[],'Hot Offer › Offer round':_H.fomo.round};
   if(tab==='config') return {'Custom Fees & Additional Interest › Fee list':window._cfFees||[]};
   if(window._SAVERS[tab] && window._SAVERS[tab].data) return window._SAVERS[tab].data();
   return {};
@@ -3613,7 +3671,7 @@ async function saveConfig(quiet){
   cfg.extraInterest={on:!!cb('c-xi-on'),label:(g('c-xi-lbl')||'Additional interest').slice(0,40),rate:Math.max(0,parseFloat(g('c-xi-rate'))||0)};
   cfg.branding=_brandRead();
   cfg.submitFlow={ seconds:Math.min(120,Math.max(1,parseFloat(g('c-sf-sec'))||1.5)), texts:[0,1,2,3].map(i=>(g('c-sf-t'+i)||'').slice(0,40)) };
-  if(!quiet) showL(true); await window._setDoc('siteConfig','main',cfg); if(!quiet) showL(false);
+  if(!quiet) showL(true); await window._setDoc('siteConfig','main',cfg); window._cfgLoaded=null; if(!quiet) showL(false);
   await logAct('Site config saved','config','main'); if(!quiet) toast('Configuration saved ✓');
 }
 
@@ -3700,7 +3758,7 @@ async function loadHome(){
   const X=_H.stats, Y=_H.winners;
   set('sx-on',X.on); set('sx-title',X.title); set('sx-sub',X.sub); set('sx-format',X.format); set('sx-size',X.size||'md'); set('sx-cols',String(X.cols||2)); set('sx-refresh',X.refresh); set('sx-note',X.note);
   set('wx-on',Y.on); set('wx-title',Y.title); set('wx-sub',Y.sub); set('wx-cta',Y.cta); set('wx-tipsec',Y.tipSec); set('wx-leader',Y.showLeader); set('wx-targets',Y.showTargets);
-  set('wx-tcount',Y.targetCount); set('wx-feed',Y.showFeed); set('wx-ftitle',Y.feedTitle); set('wx-fcount',Y.feedCount); set('wx-scroll',Y.scroll);
+  set('wx-tcount',Y.targetCount); set('wx-mode',Y.mode||'manual'); if(!Y.picked||typeof Y.picked!=='object') Y.picked={}; set('wx-feed',Y.showFeed); set('wx-ftitle',Y.feedTitle); set('wx-fcount',Y.feedCount); set('wx-scroll',Y.scroll);
   ['hot','target','balance','bonus','announce'].forEach(k=>set('wx-k-'+k,Y.kinds[k]));
   wxRenderLists();
   const Z=_H.footer;
@@ -3755,7 +3813,7 @@ function _sxItems(st){
 const WX_DEF = { on:true, title:'Invite Champions', sub:'Invite friends, climb the board and win real rewards',
   advice:'Every friend who joins with your link brings you closer to the next reward. Share your link today — the more friends, the bigger the prize!', cta:'Invite Friends',
   showLeader:true, leaderCount:3, showTargets:true, targetCount:5, showFeed:true, feedTitle:'Live Offer Winners', feedCount:10, scroll:true,
-  kinds:{ hot:true, target:true, balance:true, bonus:false, announce:true }, hidden:[], tipSec:6 };
+  kinds:{ hot:true, target:true, balance:true, bonus:false, announce:true }, hidden:[], tipSec:6, mode:'manual', picked:{} };
 const WX_TARGETS_DEF = [ { need:20, prize:'1st installment free (loans under ৳10,000)', short:'1st installment free', name:'Bronze' },
   { need:50, prize:'৳5,000 loan, no need to pay back', short:'৳5,000 loan, no pay back', name:'Silver' }, { need:100, prize:'৳50,000 cash reward', short:'৳50,000 cash reward', name:'Gold' } ];
 function sxRenderCards(){
@@ -3782,6 +3840,7 @@ async function hpLoadShowcase(){
   const d=r.data||{}, st=d.stats||{};
   if(sp) sp.innerHTML=Object.entries(SX_METRICS).filter(([k])=>k!=='text').map(([k,[l,f]])=>`<div class="sxp"><b>${f==='money'?'৳':''}${fa(st[k]||0)}</b><span>${l}</span></div>`).join('');
   if(!wp||!_H) return;
+  window._wxElig=d.targets||[]; wxPickRender();
   const H=new Set(_H.winners.hidden);
   const row=(id,ic,title,sub)=>{ const h=H.has(id); return `<div class="hp-row ${h?'off':''}"><div class="hp-ic"><i class="fa-solid fa-${ic}"></i></div><div class="hp-main"><div class="hp-t">${title}${h?'<span class="hp-badge off">Hidden</span>':''}</div><div class="hp-s">${sub}</div></div><button class="btn btn-sm ${h?'btn-p':'btn-s'}" onclick="wxHide('${_he(id)}')"><i class="fa-solid fa-${h?'eye':'eye-slash'}"></i>${h?'Show':'Hide'}</button></div>`; };
   const people=new Map();
@@ -3792,6 +3851,40 @@ async function hpLoadShowcase(){
   h+='<div class="man-sub">Winners list entries</div>'+((d.feed||[]).map(e=>row(e.id,e.kind==='target'?'trophy':e.kind==='hot'?'fire':e.kind==='balance'?'wallet':'gift',`${_he(e.name)} · ${kindTxt[e.kind]||e.kind}`,`${_he(e.prize)} · ${fd(e.at)}`)).join('')||'<div class="hint">No winners yet.</div>');
   wp.innerHTML=h;
 }
+// Choose target winners: everyone who reached a target, tick or pick at random (Save publishes)
+function wxPickRender(){
+  const el=document.getElementById('wxPick'); if(!el||!_H) return;
+  const W=_H.winners; if(!W.picked||typeof W.picked!=='object') W.picked={};
+  const manual=(document.getElementById('wx-mode')?.value||W.mode||'manual')!=='auto';
+  const T=window._wxElig||[];
+  if(!manual){ el.innerHTML='<div class="hint">Automatic mode: everyone who reaches a target is shown on the site right away.</div>'; return; }
+  if(!T.length){ el.innerHTML='<div class="hint">No invite targets yet. Add targets above.</div>'; return; }
+  el.innerHTML=T.map(t=>{
+    const k=String(t.need), P=new Set(W.picked[k]||[]), E=t.eligible||[];
+    const rows=E.map(p=>`<label class="hp-row" style="cursor:pointer;gap:10px"><input type="checkbox" ${P.has(p.phone)?'checked':''} onchange="wxPickSet('${k}','${_he(p.phone)}',this.checked)">
+      <div class="hp-main"><div class="hp-t">${_he(p.name||'(no name)')} <span style="color:var(--txt2);font-weight:600">· 0${_he(p.phone)}</span>${P.has(p.phone)?'<span class="hp-badge" style="background:rgba(29,219,128,.15);color:var(--p)">Winner</span>':''}</div>
+      <div class="hp-s">${p.count} active friends${p.at?' · reached on '+fd(p.at):''}</div></div></label>`).join('');
+    return `<div class="man-sub" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">Target ${t.level}: ${t.need} friends — ${_he(t.prize)}
+      <span style="color:var(--txt2);font-weight:600">(${E.length} reached · ${[...P].filter(x=>E.some(e=>e.phone===x)).length} chosen)</span>
+      <span style="margin-left:auto;display:flex;gap:6px;align-items:center"><input id="wxN-${k}" type="number" min="1" value="1" style="width:64px;padding:5px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg2,var(--card));color:var(--txt)" title="How many">
+      <button class="btn btn-sm btn-p" onclick="wxPickRandom('${k}')" ${E.length?'':'disabled'}><i class="fa-solid fa-shuffle"></i>Pick at random</button>
+      <button class="btn btn-sm btn-s" onclick="wxPickClear('${k}')"><i class="fa-solid fa-eraser"></i>Clear</button></span></div>`
+      +(rows||'<div class="hint">Nobody has reached this target yet.</div>');
+  }).join('');
+}
+function wxPickSet(k,phone,on){ const W=_H.winners; const L=new Set(W.picked[k]||[]); on?L.add(phone):L.delete(phone); W.picked[k]=[...L]; markDirty('home','wxpick'); wxPickRender(); }
+function wxPickRandom(k){
+  const t=(window._wxElig||[]).find(x=>String(x.need)===k); if(!t) return;
+  const W=_H.winners, have=new Set(W.picked[k]||[]);
+  const pool=(t.eligible||[]).map(p=>p.phone).filter(p=>!have.has(p));
+  if(!pool.length){ toast('Everyone who reached this target is already chosen','w'); return; }
+  let n=Math.max(1,Math.round(Number(document.getElementById('wxN-'+k)?.value)||1)); n=Math.min(n,pool.length);
+  const rnd=()=>{ const a=new Uint32Array(1); crypto.getRandomValues(a); return a[0]/4294967296; };
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  pool.slice(0,n).forEach(p=>have.add(p)); W.picked[k]=[...have]; markDirty('home','wxpick'); wxPickRender();
+  toast(`${n} winner${n>1?'s':''} picked at random — press Save to publish`);
+}
+function wxPickClear(k){ _H.winners.picked[k]=[]; markDirty('home','wxpick'); wxPickRender(); }
 // Winners lists: tips, invite targets, announced winners
 function wxRenderLists(){
   if(!_H) return; const W=_H.winners;
@@ -3825,7 +3918,7 @@ function _hpRead(){
   Object.assign(_H.stats, { on:c('sx-on'), title:t('sx-title')||SX_DEF.title, sub:t('sx-sub'), format:t('sx-format')||'short', size:t('sx-size')||'md', cols:Number(t('sx-cols'))||2, refresh:Math.max(0,n('sx-refresh',120)), note:t('sx-note') });
   delete _H.stats.cards; delete _H.stats.usersMode;
   Object.assign(_H.winners, { on:c('wx-on'), title:t('wx-title')||WX_DEF.title, sub:t('wx-sub'), cta:t('wx-cta')||WX_DEF.cta, tipSec:Math.min(60,Math.max(3,n('wx-tipsec',6))), showLeader:c('wx-leader'), showTargets:c('wx-targets'),
-    targetCount:Math.min(20,Math.max(1,n('wx-tcount',5))), showFeed:c('wx-feed'), feedTitle:t('wx-ftitle')||WX_DEF.feedTitle, feedCount:Math.min(40,Math.max(1,n('wx-fcount',10))), scroll:c('wx-scroll'),
+    targetCount:Math.min(20,Math.max(1,n('wx-tcount',5))), mode:t('wx-mode')==='auto'?'auto':'manual', showFeed:c('wx-feed'), feedTitle:t('wx-ftitle')||WX_DEF.feedTitle, feedCount:Math.min(40,Math.max(1,n('wx-fcount',10))), scroll:c('wx-scroll'),
     kinds:{ hot:c('wx-k-hot'), target:c('wx-k-target'), balance:c('wx-k-balance'), bonus:c('wx-k-bonus'), announce:c('wx-k-announce') } });
   delete _H.winners.advice;
   _H.winners.targets=_H.winners.targets.filter(x=>Number(x.need)>0&&String(x.prize||'').trim()).map(x=>({ ...x, need:Math.round(Number(x.need)) })).sort((a,b)=>a.need-b.need);
