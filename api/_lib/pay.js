@@ -3,7 +3,7 @@
 //   SSLCZ_STORE_ID, SSLCZ_STORE_PASSWD   – from the SSLCommerz merchant panel
 //   SSLCZ_SANDBOX                        – "true" for test mode, "false" for live
 //   FIREBASE_SERVICE_ACCOUNT             – service account JSON (plain or base64)
-//   PUBLIC_BASE_URL (optional)           – e.g. https://creditup.online
+//   PUBLIC_BASE_URL (optional)           – e.g. https://www.creditfy.online
 const admin = require('firebase-admin');
 
 const REQUIRED = ['SSLCZ_STORE_ID', 'SSLCZ_STORE_PASSWD', 'FIREBASE_SERVICE_ACCOUNT'];

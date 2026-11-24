@@ -24,7 +24,9 @@ async function load() {
   return out;
 }
 
-function siteUrl(S, req) { return String(S.canonical || baseUrl(req)).replace(/\/+$/, ''); }
+// the main address: SEO › Site address, else the official domain
+const SITE_URL = 'https://www.creditfy.online';
+function siteUrl(S, req) { return String(S.canonical || SITE_URL || baseUrl(req)).replace(/\/+$/, ''); }
 
 function headTags(d, req) {
   const S = { ...SEO_DEF, ...d.seo }, url = siteUrl(S, req);

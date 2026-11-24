@@ -248,6 +248,7 @@ async function odRun(){
 window._SAVERS.appset = { load: loadAppSet, save: saveAppSet, data: () => ({ 'Language › Own translations': _APP.lang.custom }) };
 
 /* ═════════ SEO & REVIEWS (siteConfig/seo + reviews) ═════════ */
+const SITE_URL = 'https://www.creditfy.online';   // the site's main address (used when SEO › Site address is empty)
 const SEO_DEF = { title: 'Creditfy – Smart Loans in Bangladesh', description: 'Apply for a loan from your phone in minutes. Transparent fees, fast review and money sent to bKash, Nagad or Rocket.',
   keywords: 'online loan, instant loan bangladesh, bkash loan, nagad loan, mobile loan', canonical: '', siteName: 'Creditfy', locale: 'en_BD', author: '', ogTitle: '', ogDescription: '', ogImage: '', twitter: '',
   schemaType: 'FinancialService', org: { name: '', logo: '', phone: '', email: '', address: '', city: 'Dhaka', country: 'BD', sameAs: [] }, faq: [], verify: { google: '', bing: '', yandex: '', facebook: '' },
@@ -342,7 +343,7 @@ async function loadSeo(){
   _SEO = { ...clone(SEO_DEF), ...d, org: { ...SEO_DEF.org, ...(d.org || {}) }, verify: { ...SEO_DEF.verify, ...(d.verify || {}) }, analytics: { ...SEO_DEF.analytics, ...(d.analytics || {}) }, reviews: { ...SEO_DEF.reviews, ...(d.reviews || {}) } };
   _SEO.faq = (Array.isArray(d.faq) ? d.faq : []).map(x => ({ id: hid(), on: true, ...x }));
   const S = _SEO;
-  fillIn({ 'se-title': S.title, 'se-desc': S.description, 'se-kw': S.keywords, 'se-url': S.canonical || location.origin, 'se-name': S.siteName, 'se-locale': S.locale, 'se-author': S.author,
+  fillIn({ 'se-title': S.title, 'se-desc': S.description, 'se-kw': S.keywords, 'se-url': S.canonical || SITE_URL, 'se-name': S.siteName, 'se-locale': S.locale, 'se-author': S.author,
     'se-ogt': S.ogTitle, 'se-ogd': S.ogDescription, 'se-ogi': S.ogImage, 'se-tw': S.twitter, 'se-type': S.schemaType,
     'se-oname': S.org.name, 'se-ologo': S.org.logo, 'se-ophone': S.org.phone, 'se-oemail': S.org.email, 'se-oaddr': S.org.address, 'se-ocity': S.org.city, 'se-oarea': S.org.area || 'BD', 'se-same': (S.org.sameAs || []).join('\n'), 'se-ratings': S.ratings !== false,
     'se-vg': S.verify.google, 'se-vb': S.verify.bing, 'se-vy': S.verify.yandex, 'se-vf': S.verify.facebook, 'se-ga': S.analytics.ga4, 'se-gtm': S.analytics.gtm, 'se-px': S.analytics.pixel, 'se-cl': S.analytics.clarity,
@@ -373,7 +374,7 @@ async function saveSeo(){
 }
 function seoScore(){
   if(!$p('se-title')) return;
-  const t = val('se-title'), d = val('se-desc'), url = val('se-url') || location.origin, img = val('se-ogi');
+  const t = val('se-title'), d = val('se-desc'), url = val('se-url') || SITE_URL, img = val('se-ogi');
   $p('cntT').textContent = `${t.length} letters`; $p('cntT').className = 'cnt full' + (t.length < 30 || t.length > 65 ? ' bad' : '');
   $p('cntD').textContent = `${d.length} letters`; $p('cntD').className = 'cnt full' + (d.length < 70 || d.length > 165 ? ' bad' : '');
   const ck = [];
