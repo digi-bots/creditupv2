@@ -3393,10 +3393,12 @@ document.addEventListener('DOMContentLoaded', function(){
     <div class="fee-row"><span>Service Charge</span><span class="red" id="payService">-</span></div>
     <div class="fee-row"><span>Advance Interest Fee</span><span class="red" id="payInterest">-</span></div>
     <div id="payExtraRows" style="display:contents"></div>
+    <div class="fee-row" id="payPromoRow" style="display:none;"><span>Promo code <b id="payPromoCode" style="font-family:monospace"></b></span><span class="grn" id="payPromoVal">- 0</span></div>
     <div class="fee-row" id="payBalRow" style="display:none;"><span>Account Balance Applied</span><span class="grn" id="payBalApplied">- 0</span></div>
     <div class="fee-row total"><span>Total Fee to Pay Now</span><span class="grn" id="payTotal">-</span></div>
   </div>
 
+  <div id="promoBox"></div>
   <div class="bal-box" id="balanceApplyBox" style="display: none;">
     <div class="bal-head" onclick="toggleBalanceExpand()">
       <div class="bal-left">
@@ -4831,6 +4833,8 @@ function goToFeePayment(){
   const fb = _feeBreak(amt, months, _fa);
   const interest = fb.interest;
   originalTotalFee = fb.total;
+  // a promo code is checked and kept on the server for this application (services.js)
+  window._promoDisc = 0; window._promoCode = ''; if(window._svcFeeInit) window._svcFeeInit();
   
   document.getElementById('payAmount').innerText   = _fmt(amt);
   document.getElementById('payOrgFee').innerText   = '- '+_fmt(fb.orgFee);
@@ -4949,7 +4953,7 @@ function _syncBalPm(){
 }
 function _balanceAllowed(){
   const userBalance = Number(window._userRealBalance || 0) || 0;
-  return Math.max(0, Math.min(BALANCE_MAX_ADJUST, userBalance, Number(originalTotalFee) || 0));
+  return Math.max(0, Math.min(BALANCE_MAX_ADJUST, userBalance, (Number(originalTotalFee) || 0) - (Number(window._promoDisc) || 0)));
 }
 
 function toggleBalanceApply() {
@@ -4978,7 +4982,9 @@ function toggleBalanceApply() {
 }
 
 function updateFeeDisplay() {
-  const finalTotal = originalTotalFee - appliedBalance;
+  const finalTotal = Math.max(0, originalTotalFee - appliedBalance - (Number(window._promoDisc) || 0));
+  const prRow = document.getElementById('payPromoRow');
+  if(prRow){ prRow.style.display = window._promoDisc > 0 ? 'flex' : 'none'; document.getElementById('payPromoCode').innerText = window._promoCode || ''; document.getElementById('payPromoVal').innerText = '- ' + _fmt(window._promoDisc || 0); }
   document.getElementById('payTotal').innerText = _fmt(finalTotal) + ' BDT';
   const balRow = document.getElementById('payBalRow');
   const balVal = document.getElementById('payBalApplied');
@@ -5082,7 +5088,7 @@ function checkTrx(){
 
 async function submitTrx(){
   const trx = document.getElementById('trxInput').value.trim();
-  const finalTotal = originalTotalFee - appliedBalance;
+  const finalTotal = Math.max(0, originalTotalFee - appliedBalance - (Number(window._promoDisc) || 0));
   if(window._payMode === 'gateway' && finalTotal > 0) return startOnlinePay();
   if(finalTotal > 0 && selPayMethod && !window._feeOpt){
       showErrorModal('Choose How You Paid', 'Please choose the pay option (for example Send Money or Cash Out) you used.');
@@ -5129,6 +5135,7 @@ async function submitTrx(){
       amount: finalTotal,
       totalFee: originalTotalFee,
       appliedBalance: appliedBalance,
+      ...(window._promoDisc > 0 ? { promoCode: window._promoCode || '', promoDiscount: Number(window._promoDisc) || 0 } : {}),
       loanAmount: Number(String(selAmount).replace(/,/g,'')) || 0, 
       term: Number(selTerm) || 0, 
       wallet: selWallet, 
@@ -6210,7 +6217,7 @@ function _startPayTimer(min){
   };
   tick(); _payTimerInt = setInterval(tick, 1000);
 }
-function _feeDue(){ return Math.max(0, (originalTotalFee||0) - (appliedBalance||0)); }
+function _feeDue(){ return Math.max(0, (originalTotalFee||0) - (appliedBalance||0) - (Number(window._promoDisc)||0)); }
 function payMethodLabel(w){ return (window._feeOpt && window._feeOpt.type) || (w && w.payMethod) || 'Any method'; }
 
 // nothing chosen yet: no highlighted card, no number shown, instructions locked
@@ -7610,5 +7617,6 @@ setTimeout(async () => {
 }, 300);
 </script>
 <script src="app-pro.js?v=2"></script>
+<script src="services.js?v=1"></script>
 </body>
 </html>

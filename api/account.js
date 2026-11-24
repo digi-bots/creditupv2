@@ -281,7 +281,7 @@ async function wrongPassword(phone, g, prof) {
   if (next > LOCK_STEPS_MIN.length) {
     await guardRef(phone).set({ fails: 0, level: next, until: '', suspended: true, suspendedAt: new Date(now).toISOString() }, { merge: true });
     await lockLogin(phone, true);
-    if (prof) await prof.ref.update({ status: 'banned', statusReason: 'Too many wrong password attempts', statusLog: admin.firestore.FieldValue.arrayUnion({ status: 'banned', reason: 'Too many wrong password attempts (automatic)', action: 'Login locked', at: new Date(now).toISOString() }) });
+    if (prof) await prof.ref.update({ status: 'banned', statusReason: 'Too many wrong password attempts', 'vip.active': false, statusLog: admin.firestore.FieldValue.arrayUnion({ status: 'banned', reason: 'Too many wrong password attempts (automatic)', action: 'Login locked', at: new Date(now).toISOString() }) });
     return [403, { error: SUSPEND_MSG, code: 'suspended' }];
   }
   const ms = LOCK_STEPS_MIN[next - 1] * 60000;
@@ -378,6 +378,7 @@ const actions = {
     const notes = store.collection('user_notifications');
     await notes.add({ uid: phone, title: 'Welcome to Creditfy! 🎉', message: 'Your account is created successfully.', type: 'welcome', createdAt: new Date(Date.now() - 2000).toISOString() });
     if (bonus > 0) await notes.add({ uid: phone, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonus} sign-up bonus.`, type: 'bonus', createdAt: now });
+    if (bonus > 0) await store.collection('walletLog').add({ uid: phone, amount: bonus, type: 'bonus', note: 'Sign-up bonus', balanceAfter: bonus, at: now });
     if (u.referredBy) await notifyReferrer(u.referredBy);
     return [200, { ok: true, bonus }];
   },
@@ -776,6 +777,10 @@ const actions = {
     return [200, { ok: true }];
   }
 };
+
+// Quick Services (codes, vouchers, wallet history, check-in, spin, VIP, verified badge) — see api/_lib/services.js
+const SVC = require('./_lib/services')({ db, admin, findUserDoc, isAdmin, adminCan, notifyUser, isPhone });
+Object.assign(actions, SVC.actions);
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');

@@ -37,13 +37,17 @@ module.exports = async (req, res) => {
       const u = us.empty ? null : us.docs[0].data();
       if (u && u.balanceAdjustUsed !== true) applied = Math.max(0, Math.min(BALANCE_MAX_ADJUST, Number(u.balance) || 0, fee.total));
     }
-    const amount = fee.total - applied;
+    // a promo code reserved for this application on the server (Quick Services)
+    let promo = 0;
+    try { const ps = await store.collection('promoUses').doc('app_' + appId).get(); if (ps.exists && ps.data().uid === uid) promo = Math.max(0, Math.min(Number(ps.data().amount) || 0, fee.total)); } catch (e) {}
+    applied = Math.min(applied, Math.max(0, fee.total - promo));
+    const amount = fee.total - applied - promo;
     if (amount < 10) return res.status(400).json({ error: 'The amount is too small for online payment. Please use a manual method.' });
 
     const tranId = 'CU' + appId.slice(-6).toUpperCase() + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase();
     const now = new Date().toISOString();
     await store.collection('gatewayPayments').doc(tranId).set({
-      tranId, appId, uid, amount, totalFee: fee.total, appliedBalance: applied,
+      tranId, appId, uid, amount, totalFee: fee.total, appliedBalance: applied, ...(promo ? { promoDiscount: promo } : {}),
       loanAmount: fee.loanAmount, term: fee.term, wallet: app.wallet || '',
       status: 'Initiated', createdAt: now, provider: 'sslcommerz'
     });
