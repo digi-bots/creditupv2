@@ -2,7 +2,9 @@
 //   POST /api/account  { action, ... }
 //   exists        { phone }                 → { exists }
 //   register      { phone, password, referrer? } → creates the login + profile (bonus decided here)
-//   migrate       { phone, password }       → moves an older account (password kept in Firestore) to Firebase Auth
+//   login         { phone, password }       → { token } to sign in; counts wrong passwords (5 tries → 5 min, 30 min, 1 h, 6 h, 12 h, then suspended)
+//   migrate       { phone, password }       → same as login (older app versions)
+//   adminUnlockLogin { phone }       (admin) → removes the wrong-password lock / automatic suspension
 //   feed          { admin? }                → live activity: approved loans + verified fees (masked), per Home Page settings
 //   myReferral    {}            (signed in) → can this user still add an invite code?
 //   setReferrer   { code }      (signed in) → adds the inviter's code after sign-up (if the admin allows it)
@@ -119,7 +121,11 @@ async function notifyReferrer(ref) {
     const next = targets.find(t => t.need > active), hit = targets.find(t => t.need === active);
     await notifyUser(ref, 'A Friend Joined! 👋', `A friend joined Creditfy with your invite link. You now have ${active} active friend${active === 1 ? '' : 's'}.`
       + (next ? ` ${next.need - active} more to unlock: ${next.prize}.` : ''), 'bonus');
-    if (hit) await notifyUser(ref, 'Reward Unlocked! 🏆', `You reached ${active} active friends and unlocked: ${hit.prize}. Contact support to claim it.`, 'bonus');
+    if (hit) {
+      const manual = (((await homeCfg()).winners || {}).mode || 'manual') !== 'auto';
+      if (manual) await notifyUser(ref, 'Target Reached! 🎯', `You reached ${active} active friends for: ${hit.prize}. Winners are chosen by our team — watch the Winners section on the home page!`, 'bonus');
+      else await notifyUser(ref, 'Reward Unlocked! 🏆', `You reached ${active} active friends and unlocked: ${hit.prize}. Contact support to claim it.`, 'bonus');
+    }
     await balanceState(d, ref, true);   // sends "Balance Offer Unlocked" if 5 more friends freed it again
   } catch (e) { console.warn('referrer notify', e); }
 }
@@ -235,7 +241,103 @@ async function createLogin(phone, password) {
   await auth().createUser({ uid: phone, email: phoneEmail(phone), password, emailVerified: true });
 }
 
+// ── wrong-password limit ──
+// 5 wrong passwords → locked 5 min; each next 5 → 30 min, 1 h, 6 h, 12 h; after that the account is suspended
+// until an admin unlocks it. While locked, the Firebase login itself is disabled too, so the lock cannot be skipped.
+const LOCK_STEPS_MIN = [5, 30, 60, 360, 720];
+const TRIES = 5;
+const WEB_API_KEY = process.env.FIREBASE_WEB_API_KEY || 'AIzaSyA6FTCSfXhNxPkpq2WCnz_EiaJFJWYYc8Q';
+const guardRef = phone => db().collection('loginGuard').doc(phone);
+const waitText = ms => { const m = Math.ceil(ms / 60000); return m >= 60 ? `${Math.round(m / 60 * 10) / 10} hour${m >= 120 ? 's' : ''}` : `${m} minute${m === 1 ? '' : 's'}`; };
+const SUSPEND_MSG = 'Your account was suspended after too many wrong password attempts. Please contact our support team (admin) to unlock it.';
+
+// checks the password with Firebase Auth without signing in here: 'ok' | 'wrong' | 'disabled' | 'busy'
+async function checkPassword(phone, pw) {
+  const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${WEB_API_KEY}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: phoneEmail(phone), password: pw, returnSecureToken: false })
+  });
+  if (r.ok) return 'ok';
+  const j = await r.json().catch(() => ({}));
+  const code = String((j.error && j.error.message) || '');
+  if (/USER_DISABLED/.test(code)) return 'disabled';
+  if (/TOO_MANY_ATTEMPTS/.test(code)) return 'busy';
+  if (/INVALID_PASSWORD|INVALID_LOGIN_CREDENTIALS|EMAIL_NOT_FOUND/.test(code)) return 'wrong';
+  throw new Error('password check failed: ' + code);
+}
+
+async function lockLogin(phone, disabled) {
+  try { await auth().updateUser(phone, { disabled }); } catch (e) { /* no login yet (old account) */ }
+}
+
+// one more wrong password: returns the reply for the app
+async function wrongPassword(phone, g, prof) {
+  const fails = (Number(g.fails) || 0) + 1, level = Number(g.level) || 0, now = Date.now();
+  if (fails < TRIES) {
+    await guardRef(phone).set({ fails, level, lastFailAt: new Date(now).toISOString() }, { merge: true });
+    const left = TRIES - fails;
+    return [401, { error: `The password you entered is incorrect. ${left} attempt${left === 1 ? '' : 's'} left before your account is locked.`, code: 'wrong_password', left }];
+  }
+  const next = level + 1;
+  if (next > LOCK_STEPS_MIN.length) {
+    await guardRef(phone).set({ fails: 0, level: next, until: '', suspended: true, suspendedAt: new Date(now).toISOString() }, { merge: true });
+    await lockLogin(phone, true);
+    if (prof) await prof.ref.update({ status: 'banned', statusReason: 'Too many wrong password attempts', statusLog: admin.firestore.FieldValue.arrayUnion({ status: 'banned', reason: 'Too many wrong password attempts (automatic)', action: 'Login locked', at: new Date(now).toISOString() }) });
+    return [403, { error: SUSPEND_MSG, code: 'suspended' }];
+  }
+  const ms = LOCK_STEPS_MIN[next - 1] * 60000;
+  await guardRef(phone).set({ fails: 0, level: next, until: new Date(now + ms).toISOString(), lastFailAt: new Date(now).toISOString(), suspended: false }, { merge: true });
+  await lockLogin(phone, true);
+  return [429, { error: `Too many wrong passwords. Your account is locked for ${waitText(ms)}. Please try again later.`, code: 'locked', until: new Date(now + ms).toISOString() }];
+}
+
 const actions = {
+  // sign in through the server so wrong passwords are counted; returns a one-time sign-in token
+  async login(b) {
+    const phone = String(b.phone || ''), pw = String(b.password || '');
+    if (!isPhone(phone) || !pw) return [400, { error: 'Please enter your phone number and password.' }];
+    const prof = await findUserDoc(phone);
+    const gs = await guardRef(phone).get();
+    const g = gs.exists ? (gs.data() || {}) : {};
+    if (g.suspended) return [403, { error: SUSPEND_MSG, code: 'suspended' }];
+    if (g.until && new Date(g.until).getTime() > Date.now())
+      return [429, { error: `Too many wrong passwords. Please try again in ${waitText(new Date(g.until).getTime() - Date.now())}.`, code: 'locked', until: g.until }];
+    if (g.until) { await lockLogin(phone, false); await guardRef(phone).set({ until: '' }, { merge: true }); }   // the lock time is over
+    const data = prof ? (prof.data() || {}) : null;
+    if (data && data.status === 'banned') return [403, { error: 'Your account has been suspended by admin.', code: 'banned' }];
+    if (data && data.removed === true) return [403, { error: 'This account is no longer available. Please contact support if you think this is a mistake.', code: 'removed' }];
+    const login = await authUser(phone);
+    if (login) {
+      const res = await checkPassword(phone, pw);
+      if (res === 'busy') return [429, { error: 'Too many attempts. Please wait a few minutes and try again.', code: 'busy' }];
+      if (res === 'disabled') return [403, { error: 'Your login is switched off. Please contact support.', code: 'disabled' }];
+      if (res === 'wrong') return wrongPassword(phone, g, prof);
+    } else {
+      // an account from before the secure login: the old password is checked once and moved to Firebase Auth
+      if (!prof) return [404, { error: 'No account with this number.', code: 'not_found' }];
+      if (typeof data.password !== 'string' || !sameText(data.password, pw)) return wrongPassword(phone, g, prof);
+      if (pw.length < 6) return [400, { error: 'Your password is too short for the new secure login. Please contact support to set a new password.', code: 'short' }];
+      await createLogin(phone, pw);
+      await prof.ref.update({ password: admin.firestore.FieldValue.delete(), authMigratedAt: new Date().toISOString() });
+    }
+    if (gs.exists) await guardRef(phone).delete();
+    return [200, { ok: true, token: await auth().createCustomToken(phone) }];
+  },
+
+  // admin: remove the wrong-password lock (and the automatic suspension) so the user can sign in again
+  async adminUnlockLogin(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    if (!(await adminCan(me, ['users']))) return noRole;
+    const phone = String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+    if (!isPhone(phone)) return [400, { error: 'Invalid phone number.' }];
+    const gs = await guardRef(phone).get();
+    await guardRef(phone).delete();
+    await lockLogin(phone, false);
+    const prof = await findUserDoc(phone);
+    if (prof && b.activate !== false && prof.data().statusReason === 'Too many wrong password attempts')
+      await prof.ref.update({ status: 'active', statusReason: admin.firestore.FieldValue.delete(), statusLog: admin.firestore.FieldValue.arrayUnion({ status: 'active', reason: 'Login unlocked by admin', action: 'Login unlocked', at: new Date().toISOString() }) });
+    return [200, { ok: true, wasLocked: gs.exists }];
+  },
+
   async exists(b) {
     if (!isPhone(b.phone)) return [400, { error: 'Invalid phone number.' }];
     const d = await findUserDoc(b.phone);
@@ -280,21 +382,9 @@ const actions = {
     return [200, { ok: true, bonus }];
   },
 
+  // older app versions call this; it now goes through the same wrong-password limit as login
   async migrate(b) {
-    const phone = String(b.phone || ''), pw = String(b.password || '');
-    if (!isPhone(phone) || !pw) return [400, { error: 'Invalid request.' }];
-    const d = await findUserDoc(phone);
-    if (!d) return [404, { error: 'No account with this number.', code: 'not_found' }];
-    // already moved: the browser's sign-in failed, so the password is wrong
-    if (await authUser(phone)) return [401, { error: 'The password you entered is incorrect.', code: 'wrong_password' }];
-    const data = d.data();
-    if (typeof data.password !== 'string' || !sameText(data.password, pw)) return [401, { error: 'The password you entered is incorrect.', code: 'wrong_password' }];
-    if (data.status === 'banned') return [403, { error: 'Your account has been suspended by admin.', code: 'banned' }];
-    if (pw.length < 6) return [400, { error: 'Your password is too short for the new secure login. Please contact support to set a new password.', code: 'short' }];
-    await createLogin(phone, pw);
-    // the password now lives only in Firebase Auth (hashed); remove the plain copy
-    await d.ref.update({ password: admin.firestore.FieldValue.delete(), authMigratedAt: new Date().toISOString() });
-    return [200, { ok: true }];
+    return actions.login(b);
   },
 
   // live activity on the home page: real approved loans and verified fee payments only.
@@ -368,9 +458,14 @@ const actions = {
     const admin = !!(b && b.admin && me && await isAdmin(me.uid));
     const d = await showcaseData();
     const targets = refTargetsFrom(home);
+    // manual mode (default): a target winner is shown only after the admin picks them (Home Page → Winners)
+    const manual = (W.mode || 'manual') !== 'auto';
+    const picked = (W.picked && typeof W.picked === 'object') ? W.picked : {};
+    const isPicked = (t, phone) => (Array.isArray(picked[String(t.need)]) ? picked[String(t.need)] : []).includes(phone);
+    const won = (t, r) => r.count >= t.need && (!manual || isPicked(t, r.phone));
     // target events depend on the admin's targets; announced winners must be real, registered users
     const events = [...d.events];
-    d.refs.forEach(r => targets.forEach((t, i) => { if (r.count >= t.need) events.push({ id: `t${i + 1}_` + r.phone, kind: 'target', target: i + 1, phone: r.phone, at: r.joined[t.need - 1] || '', prize: t.prize }); }));
+    d.refs.forEach(r => targets.forEach((t, i) => { if (won(t, r)) events.push({ id: `t${i + 1}_` + r.phone, kind: 'target', target: i + 1, phone: r.phone, at: r.joined[t.need - 1] || '', prize: t.prize }); }));
     (Array.isArray(W.announced) ? W.announced : []).forEach(a => {
       const ph = String(a.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
       if (a.on !== false && d.known.has(ph) && a.prize) events.push({ id: 'a_' + (a.id || ph), kind: 'announce', phone: ph, at: a.at || '', prize: String(a.prize).slice(0, 120), offer: String(a.offer || 'Special offer').slice(0, 60) });
@@ -379,15 +474,18 @@ const actions = {
     const hidden = new Set(Array.isArray(W.hidden) ? W.hidden : []);
     const person = (phone, extra) => ({ id: 'u_' + phone, name: shortName(d.names[phone], phone), ...(admin ? { phone, hidden: hidden.has('u_' + phone) } : {}), ...extra });
     const keep = x => admin || !hidden.has(x.id);
-    const out = {};
+    const out = { mode: manual ? 'manual' : 'auto' };
     if (S.on !== false || admin) out.stats = { ...d.stats };
     if (W.on !== false || admin) {
       const top = Math.min(10, Math.max(1, Number(W.leaderCount) || 3));
       out.leaders = d.refs.filter(r => keep({ id: 'u_' + r.phone })).slice(0, top).map((r, i) => person(r.phone, { rank: i + 1, count: r.count }));
       const perTarget = Math.min(20, Math.max(1, Number(W.targetCount) || 5));
       out.targets = targets.map((t, i) => {
-        const all = d.refs.filter(r => r.count >= t.need && keep({ id: 'u_' + r.phone }));
-        return { level: i + 1, need: t.need, prize: t.prize, total: all.length, winners: all.slice(0, perTarget).map(r => person(r.phone, { count: r.count })) };
+        const all = d.refs.filter(r => won(t, r) && keep({ id: 'u_' + r.phone }));
+        const out1 = { level: i + 1, need: t.need, prize: t.prize, total: all.length, winners: all.slice(0, perTarget).map(r => person(r.phone, { count: r.count })) };
+        // the admin also sees everyone who reached the target, to choose the winners from
+        if (admin) out1.eligible = d.refs.filter(r => r.count >= t.need).map(r => ({ phone: r.phone, name: String(d.names[r.phone] || ''), count: r.count, at: r.joined[t.need - 1] || '', picked: isPicked(t, r.phone) }));
+        return out1;
       });
       const kinds = { hot: true, target: true, balance: true, bonus: false, announce: true, ...(W.kinds || {}) };
       const feedN = Math.min(40, Math.max(1, Number(W.feedCount) || 10));
@@ -651,7 +749,9 @@ const actions = {
     const phone = String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
     if (!isPhone(phone)) return [400, { error: 'Invalid phone number.' }];
     const d = await findUserDoc(phone), u = await authUser(phone);
-    return [200, { phone, profile: !!d, login: !!u, disabled: !!(u && u.disabled), lastSignIn: u?.metadata?.lastSignInTime || '', status: d ? (d.data().status || 'active') : '' }];
+    const gs = await guardRef(phone).get(), g = gs.exists ? (gs.data() || {}) : null;
+    const lock = g ? { fails: Number(g.fails) || 0, level: Number(g.level) || 0, until: g.until && new Date(g.until).getTime() > Date.now() ? g.until : '', suspended: !!g.suspended, lastFailAt: g.lastFailAt || '' } : null;
+    return [200, { phone, profile: !!d, login: !!u, disabled: !!(u && u.disabled), lastSignIn: u?.metadata?.lastSignInTime || '', status: d ? (d.data().status || 'active') : '', lock }];
   },
 
   // signed-in user: "I am here" (throttled in the app to once every few minutes)

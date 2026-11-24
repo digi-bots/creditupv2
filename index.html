@@ -5921,7 +5921,7 @@ async function getDocs(q){
   if(docs.length === s.docs.length) return s;
   return { docs, empty: !docs.length, size: docs.length, forEach: f => docs.forEach(f) };
 }
-import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,EmailAuthProvider,reauthenticateWithCredential,updatePassword} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import{getAuth,signInWithEmailAndPassword,signInWithCustomToken,signOut,onAuthStateChanged,EmailAuthProvider,reauthenticateWithCredential,updatePassword} from'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 const CLOUDINARY_CLOUD_NAME = 'qglwjtxe';
 const CLOUDINARY_UPLOAD_PRESET = 'loan_docs';
@@ -6835,23 +6835,20 @@ window.submitLoginPassword=async function(){
   if(!isValidBDPhone(ph) || !fbAuth){ showAlert('Error','Please enter your phone number again.','error'); return; }
   _loggingIn = true; showLoader(true);
   try{
-    try{ await _signIn(ph, pw); }
-    catch(e){
-      const c = e && e.code || '';
-      if(c === 'auth/too-many-requests'){ showLoader(false); showAlert('Too Many Attempts','Too many wrong attempts. Please wait a few minutes and try again.','error'); return; }
-      if(c === 'auth/network-request-failed'){ showLoader(false); showAlert('No Connection','Please check your internet connection and try again.','error'); return; }
-      if(!/invalid-credential|invalid-login-credentials|user-not-found|wrong-password|invalid-email/.test(c)) throw e;
-      // an account from before the secure login: the server checks the old password once and moves it
-      const r = await _api('migrate', { phone: ph, password: pw });
-      if(!r.ok){
-        showLoader(false);
-        if(r.data.code === 'banned') showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.');
-        else if(r.data.code === 'wrong_password') showAlert('Incorrect Password','The password you entered is incorrect.','error');
-        else showAlert('Login Failed', r.data.error || 'Could not log in. Please try again.', 'error');
-        return;
-      }
-      await _signIn(ph, pw);
+    // the server checks the password and counts wrong tries (5 tries, then a lock: 5 min → 30 min → 1 h → 6 h → 12 h → suspended)
+    const r = await _api('login', { phone: ph, password: pw });
+    if(!r.ok || !r.data.token){
+      showLoader(false);
+      const c = r.data.code, m = r.data.error || 'Could not log in. Please try again.';
+      if(c === 'banned') showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.');
+      else if(c === 'suspended') showErrorModal('Account Suspended 🔒', m);
+      else if(c === 'locked') showErrorModal('Account Locked ⏳', m);
+      else if(c === 'removed') showErrorModal('Account Not Available', m);
+      else if(c === 'wrong_password') showAlert('Incorrect Password', m, 'error');
+      else showAlert('Login Failed', m, 'error');
+      return;
     }
+    await signInWithCustomToken(fbAuth, r.data.token);
     const snap = await getDocs(query(collection(db,'users'), where('phone','==',ph)));
     const prof = snap.empty ? { phone: ph } : { ...snap.docs[0].data(), id: snap.docs[0].id };
     if(prof.status === 'banned'){ await signOut(fbAuth); showLoader(false); showErrorModal('Account Suspended 🚫', 'Your account has been suspended by admin.'); return; }
