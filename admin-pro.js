@@ -113,14 +113,15 @@ const APP_DEF = {
   push: { on: true, askDelay: 8, askTitle: 'Get updates on your phone', askText: 'Know the moment your payment is verified, your loan is approved or the money is sent — even when the app is closed.', askBtn: 'Turn on',
     auto: { updates: true, bonus: true, welcome: true, broadcast: true } },
   overdue: { on: true, graceDays: 0, notify: true, title: 'Payment Overdue', msg: 'Your loan {ref} was due on {due}. Please pay as soon as possible to keep your account in good standing.',
-    remind: true, remindDays: 3, remindTitle: 'Payment Reminder', remindMsg: 'Your loan {ref} is due on {due}. Please make sure the payment is ready.' }
+    remind: true, remindDays: 3, remindTitle: 'Payment Reminder', remindMsg: 'Your loan {ref} is due on {due}. Please make sure the payment is ready.' },
+  protect: { on: true, rightClick: true, keys: true, select: true, images: true, warn: true }
 };
 let _APP = clone(APP_DEF);
 
 function buildAppSet(){
   const s = $p('sec-appset'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>App Settings</h2>${svBtn('appset')}</div>${roBanner}
-  ${proTabs('appset', [['tl', 'route', 'Tracking Timeline'], ['lang', 'language', 'Language'], ['pwa', 'download', 'App Install'], ['push', 'bell', 'Push Notifications'], ['od', 'calendar-xmark', 'Overdue Loans']], 'tl')}
+  ${proTabs('appset', [['tl', 'route', 'Tracking Timeline'], ['lang', 'language', 'Language'], ['pwa', 'download', 'App Install'], ['push', 'bell', 'Push Notifications'], ['od', 'calendar-xmark', 'Overdue Loans'], ['pr', 'shield-halved', 'Site Protection']], 'tl')}
   <div class="pro-pane" data-k="tl">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-route"></i>Live application tracking</div>
       <div class="fgrid fgrid3">${tog('tl-on', 'Show the tracking timeline', 1)}${tog('tl-live', 'Update live (no refresh needed)', 1)}${tog('tl-times', 'Show date and time of each step', 1)}${tog('tl-eta', 'Show “usually takes” times', 1)}
@@ -174,6 +175,15 @@ function buildAppSet(){
       <div class="hint" style="margin-top:8px">Use {ref} for the loan number, {due} for the due date and {amount} for the loan amount. Due date = the stored due date, or the day the loan was sent + its term. The daily check runs at 9:00 AM Bangladesh time.</div>
       <div id="odLast" class="pro-note" style="margin-top:10px"></div>
     </div>
+  </div>
+  <div class="pro-pane" data-k="pr">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-shield-halved"></i>Protect the user site from copying</div>
+      <div class="fgrid fgrid3">${tog('pr-on', 'Protection on', 1)}${tog('pr-rc', 'Block right-click / long-press menu', 1)}${tog('pr-keys', 'Block view-source & developer-tool keys (Ctrl+U, Ctrl+S, F12, Ctrl+Shift+I/J/C)', 1)}
+      ${tog('pr-sel', 'Block selecting and copying page text', 1)}${tog('pr-img', 'Block saving / dragging images', 1)}${tog('pr-warn', 'Show a security warning in the browser console', 1)}</div>
+      <div class="hint" style="margin-top:8px">Typing boxes (TrxID, phone, password) still allow copy and paste, and the site’s own Copy buttons keep working.
+      This stops ordinary visitors, but no website can fully hide its code: the browser must download it to show the page.
+      Your real protection is the login, the Firestore rules and the hidden admin address.</div>
+    </div>
   </div>`;
   ['pw-text', 'pw-btn'].forEach(id => $p(id).addEventListener('input', pwPrev));
 }
@@ -192,11 +202,12 @@ async function loadAppSet(){
   buildAppSet();
   const d = (await window._getDoc('siteConfig', 'app')) || {};
   _APP = clone(APP_DEF);
-  ['timeline', 'lang', 'pwa', 'overdue', 'push'].forEach(k => Object.assign(_APP[k], d[k] || {}));
+  ['timeline', 'lang', 'pwa', 'overdue', 'push', 'protect'].forEach(k => Object.assign(_APP[k], d[k] || {}));
   _APP.push.auto = { ...APP_DEF.push.auto, ...((d.push || {}).auto || {}) };
   _APP.timeline.steps = { ...clone(APP_DEF.timeline.steps), ...((d.timeline || {}).steps || {}) };
   _APP.lang.custom = (Array.isArray(_APP.lang.custom) ? _APP.lang.custom : []).map(x => ({ id: hid(), ...x }));
-  const T = _APP.timeline, G = _APP.lang, W = _APP.pwa, O = _APP.overdue, U = _APP.push;
+  const T = _APP.timeline, G = _APP.lang, W = _APP.pwa, O = _APP.overdue, U = _APP.push, R = _APP.protect;
+  fillIn({ 'pr-on': R.on, 'pr-rc': R.rightClick, 'pr-keys': R.keys, 'pr-sel': R.select, 'pr-img': R.images, 'pr-warn': R.warn });
   fillIn({ 'pu-on': U.on, 'pu-delay': U.askDelay, 'pu-a-updates': U.auto.updates, 'pu-a-bonus': U.auto.bonus, 'pu-a-welcome': U.auto.welcome, 'pu-a-broadcast': U.auto.broadcast, 'pu-title': U.askTitle, 'pu-text': U.askText, 'pu-btn': U.askBtn });
   puStats();
   fillIn({ 'tl-on': T.on, 'tl-live': T.live, 'tl-times': T.showTimes, 'tl-eta': T.showEta, 'tl-rejected': T.rejected, 'tl-note': T.note,
@@ -221,6 +232,7 @@ async function saveAppSet(){
       auto: { updates: chk('pu-a-updates'), bonus: chk('pu-a-bonus'), welcome: chk('pu-a-welcome'), broadcast: chk('pu-a-broadcast') } },
     overdue: { on: chk('od-on'), graceDays: numv('od-grace', 0, 0, 60), notify: chk('od-notify'), title: val('od-title') || APP_DEF.overdue.title, msg: val('od-msg') || APP_DEF.overdue.msg,
       remind: chk('od-remind'), remindDays: numv('od-rdays', 3, 1, 30), remindTitle: val('od-rtitle') || APP_DEF.overdue.remindTitle, remindMsg: val('od-rmsg') || APP_DEF.overdue.remindMsg },
+    protect: { on: chk('pr-on'), rightClick: chk('pr-rc'), keys: chk('pr-keys'), select: chk('pr-sel'), images: chk('pr-img'), warn: chk('pr-warn') },
     updatedAt: new Date().toISOString()
   };
   await window._setDoc('siteConfig', 'app', data);
