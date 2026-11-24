@@ -27,6 +27,20 @@ const css = `
 .g-dark{background:linear-gradient(135deg,#3b3b55,#151526);border:1px solid rgba(255,215,106,.5);color:#ffd76a}
 .sv-sheet{position:fixed;inset:0;z-index:2600;display:none;background:var(--bg);overflow:hidden}
 .sv-open .hot-offer-floating,.sv-open .act-bar,.sv-open #pwBar,.sv-open .pw-bar{display:none!important}
+/* premium Verified seal */
+.vf-seal{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.18em;margin-left:.3em;position:relative;filter:drop-shadow(0 0 6px rgba(56,170,255,.65));animation:vfGlow 2.4s ease-in-out infinite}
+.vf-seal svg{width:100%;height:100%;display:block;animation:vfSpin 9s linear infinite}
+.vf-seal svg .ck{animation:vfSpinR 9s linear infinite;transform-origin:12px 12px}
+@keyframes vfSpin{to{transform:rotate(360deg)}}@keyframes vfSpinR{to{transform:rotate(-360deg)}}
+@keyframes vfGlow{50%{filter:drop-shadow(0 0 11px rgba(56,170,255,.95)) drop-shadow(0 0 3px #fff)}}
+.vf-chip{display:inline-flex;align-items:center;gap:5px;margin-left:7px;padding:3px 10px 3px 6px;border-radius:20px;font-size:10.5px;font-weight:900;letter-spacing:.4px;color:#fff;vertical-align:middle;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#0b5bd3,#1da1f2 45%,#7fd3ff 55%,#1da1f2 65%,#0b5bd3);background-size:250% 100%;animation:vfShine 3s linear infinite;box-shadow:0 0 0 1px rgba(255,255,255,.25) inset,0 4px 14px rgba(13,110,253,.45)}
+.vf-chip .vf-seal{margin:0;width:15px;height:15px}
+@keyframes vfShine{to{background-position:-150% 0}}
+.vf-ring{position:relative}
+.vf-ring::before{content:"";position:absolute;inset:-4px;border-radius:50%;padding:3px;background:conic-gradient(#1da1f2,#7fd3ff,#ffd76a,#1da1f2);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:vfSpin 4s linear infinite}
+.vf-ring .vf-corner{position:absolute;right:-3px;bottom:-3px;width:40%;height:40%;margin:0;z-index:2}
+@media (prefers-reduced-motion:reduce){.vf-seal,.vf-seal svg,.vf-seal svg .ck,.vf-chip,.vf-ring::before{animation:none}}
 .sv-sheet.on{display:flex;flex-direction:column;animation:svIn .22s ease-out}
 @keyframes svIn{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
 .sv-wrap{width:100%;max-width:520px;margin:0 auto;height:100%;display:flex;flex-direction:column}
@@ -340,9 +354,9 @@ const PAGES = {
     const V = SV.cfg.verify || { price: 100 };
     const u = user() || {};
     const pend = s && (s.orders || []).find(o => o.kind === 'verify' && o.status === 'Pending');
-    if(s && s.verified){ show('Verify Number', `<div class="vf-hero"><div class="ic"><i class="fa-solid fa-check"></i></div><h2>Your number is verified</h2><p>0${E(u.phone)} <span class="vf-badge"><i class="fa-solid fa-circle-check"></i>Verified</span><br>Since ${fdate(s.verifiedAt)}</p></div><div class="sv-card"><p>Your applications show the Verified badge to our review team.</p></div>`); return; }
-    show('Verify Number', `<div class="vf-hero"><div class="ic"><i class="fa-solid fa-circle-check"></i></div><h2>${E(V.title || 'Get a Verified badge')}</h2><p>${E(V.text || '')}</p></div>
-      <div class="vf-why"><div><i class="fa-solid fa-arrow-trend-up"></i>Better approval chance</div><div><i class="fa-solid fa-user-shield"></i>Trusted profile</div><div><i class="fa-solid fa-certificate"></i>Blue badge</div></div>
+    if(s && s.verified){ show('Verify Number', `<div class="vf-hero"><div style="font-size:64px;line-height:1">${seal()}</div><h2>Your account is verified</h2><p>0${E(u.phone)} <span class="vf-chip" data-noi18n>${seal()}VERIFIED</span><br>Since ${fdate(s.verifiedAt)}</p></div><div class="sv-card"><p>Your premium Verified badge shows next to your number and on your profile, and our review team sees that you are a serious customer.</p></div>`); return; }
+    show('Verify Number', `<div class="vf-hero"><div style="font-size:64px;line-height:1">${seal()}</div><h2>${E(V.title || 'Get a Verified badge')}</h2><p>${E(V.text || '')}</p></div>
+      <div class="vf-why"><div><i class="fa-solid fa-arrow-trend-up"></i>Better approval chance</div><div><i class="fa-solid fa-handshake"></i>Shows you are a serious customer</div><div><i class="fa-solid fa-certificate"></i>Premium badge on your profile</div></div>
       <div class="sv-card"><div class="sv-row"><span>Your number</span><b>0${E(u.phone || '')}</b></div><div class="sv-row"><span>One-time fee</span><b>${tk(V.price)}</b></div><div class="sv-row" style="border:0"><span>Pay from</span><b>Any bKash / Nagad number</b></div></div>
       ${pend ? `<div class="ord"><i class="fa-solid fa-hourglass-half" style="color:var(--orange)"></i><div><b>Verification</b> is being checked<br>TrxID ${E(pend.trxId)} · ${ftime(pend.createdAt)}</div><span class="st st-Pending">PENDING</span></div>` : `<button class="sv-btn" style="background:linear-gradient(135deg,#46b0ff,#0d6efd);color:#fff" onclick="svPay('verify')"><i class="fa-solid fa-circle-check"></i>Verify for ${tk(V.price)}</button>`}`);
   },
@@ -442,12 +456,26 @@ window.svPaySubmit = async function(){
 };
 
 /* ───────── badges on the profile ───────── */
+// the premium Verified seal: a scalloped blue badge with a white tick, slowly turning and glowing
+const SEAL_PATH = (() => { let d = ''; for(let i = 0; i < 24; i++){ const a = i * Math.PI / 12, r = i % 2 ? 9.6 : 11.6; d += (i ? 'L' : 'M') + (12 + r * Math.cos(a)).toFixed(2) + ' ' + (12 + r * Math.sin(a)).toFixed(2); } return d + 'Z'; })();
+function seal(cls){ const id = 'vg' + Math.random().toString(36).slice(2, 7);
+  return `<span class="vf-seal ${cls || ''}" data-noi18n title="Verified"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd3ff"/><stop offset=".5" stop-color="#1d8cf2"/><stop offset="1" stop-color="#0b4fc4"/></linearGradient></defs><path d="${SEAL_PATH}" fill="url(#${id})" stroke="#bfe6ff" stroke-width=".7"/><path class="ck" d="M7.4 12.3l3 3 6.2-6.4" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`; }
+window._vfSeal = seal;
 function badges(){
-  const s = SV.st; const el = $s('profPhone'); if(!el || !s) return;
-  el.querySelectorAll('.vf-badge,.vip-badge').forEach(x => x.remove());
-  if(s.verified) el.insertAdjacentHTML('beforeend', '<span class="vf-badge" data-noi18n><i class="fa-solid fa-circle-check"></i>Verified</span>');
-  if(s.vip) el.insertAdjacentHTML('beforeend', `<span class="vip-badge" data-noi18n>👑 ${E(s.vip.name)}</span>`);
+  const s = SV.st; if(!s) return;
+  const ph = $s('profPhone');
+  if(ph){ ph.querySelectorAll('.vf-badge,.vf-chip,.vip-badge').forEach(x => x.remove());
+    if(s.verified) ph.insertAdjacentHTML('beforeend', `<span class="vf-chip" data-noi18n>${seal()}VERIFIED</span>`);
+    if(s.vip) ph.insertAdjacentHTML('beforeend', `<span class="vip-badge" data-noi18n>👑 ${E(s.vip.name)}</span>`); }
+  // the profile picture and the top-bar picture get a turning ring and a corner seal
+  ['pfAv', 'abAv'].forEach(id => { const a = $s(id); if(!a) return; a.classList.toggle('vf-ring', !!s.verified); a.querySelectorAll('.vf-corner').forEach(x => x.remove()); if(s.verified) a.insertAdjacentHTML('beforeend', seal('vf-corner')); });
+  // the phone number in the top bar
+  const g = $s('userGreeting');
+  if(g){ g.querySelectorAll('.vf-seal').forEach(x => x.remove()); if(s.verified && user()) g.insertAdjacentHTML('beforeend', seal()); }
 }
+// the app rewrites the top-bar title now and then: put the seal back each time
+(function watch(){ const g = $s('userGreeting'); if(!g){ setTimeout(watch, 800); return; }
+  new MutationObserver(() => { if(SV.st && SV.st.verified && user() && !g.querySelector('.vf-seal')) g.insertAdjacentHTML('beforeend', seal()); }).observe(g, { childList: true, characterData: true, subtree: true }); })();
 const _op = window.openProfileModal;
 if(typeof _op === 'function') window.openProfileModal = function(){ const r = _op.apply(this, arguments); badges(); if(user()) loadState(); return r; };
 

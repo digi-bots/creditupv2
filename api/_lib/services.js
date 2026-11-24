@@ -16,7 +16,7 @@ const DEF = {
     terms: ['If your loan is not approved and sent within 72 hours, your VIP fee is refunded.', 'VIP speeds up the review; approval still depends on your details.',
       'A rejected application does not end your VIP — apply again any time while it is valid.', 'If your account is suspended, VIP ends automatically.']
   },
-  verify: { on: true, price: 100, title: 'Get a Verified badge', text: 'Pay a one-time ৳100 from any bKash / Nagad number. Our team checks the payment and adds a blue Verified badge to your account. Verified accounts are reviewed with more trust, so your application has a better chance of approval.' },
+  verify: { on: true, price: 100, title: 'Get a Verified badge', text: 'Pay a one-time ৳100 from any bKash / Nagad number. The Verified badge shows that you are a serious customer who really wants our service — a premium blue badge appears next to your number and on your profile, and your applications are reviewed with more trust, so you have a better chance of approval.' },
   checkin: { on: true, rewards: [1, 1, 2, 2, 3, 3, 10] },
   spin: { on: true, period: 'month', prizes: [
     { id: 'p1', label: '৳5', type: 'balance', value: 5, weight: 30, color: '#1ddb80' },
