@@ -150,6 +150,25 @@ function _langInit(cfg){
     b.onclick = () => setLang(_LANG === 'bn' ? 'en' : 'bn'); acts.insertBefore(b, acts.firstChild);
   }
   setLang(L.on === false ? 'en' : (saved || L.def || 'en'), false);
+  // the app starts in English; if the phone is set to Bangla, offer Bangla once (the choice is remembered)
+  if(L.on !== false && !saved){
+    const dev = ((navigator.languages && navigator.languages.join(',')) || navigator.language || '').toLowerCase();
+    if(/(^|,)bn/.test(dev) && _LANG !== 'bn') setTimeout(_langAsk, 2500);
+  }
+}
+function _langAsk(){
+  if(_ap('langAsk')) return;
+  const st = document.createElement('style'); st.textContent = `#langAsk{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 90px);transform:translate(-50%,30px);opacity:0;z-index:2500;width:min(360px,calc(100vw - 32px));
+    border-radius:18px;padding:14px;background:linear-gradient(160deg,#10223a,#0a1628);border:1px solid rgba(29,219,128,.4);box-shadow:0 18px 40px rgba(0,0,0,.55);transition:.3s;font-family:inherit}
+    #langAsk.on{opacity:1;transform:translate(-50%,0)}#langAsk b{display:block;font-size:15px;color:#fff}#langAsk p{margin:3px 0 11px;font-size:12.5px;color:#9fb0cc}
+    #langAsk .r{display:flex;gap:8px}#langAsk button{flex:1;border-radius:12px;padding:11px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff}
+    #langAsk button.p{background:linear-gradient(135deg,#1ddb80,#0fbb65);color:#03210f;border:0}`;
+  document.head.appendChild(st);
+  const d = document.createElement('div'); d.id = 'langAsk'; d.setAttribute('data-noi18n', '');
+  d.innerHTML = '<b>বাংলায় দেখতে চান?</b><p>উপরের বাং / EN বাটন দিয়ে যেকোনো সময় ভাষা বদলাতে পারবেন।</p><div class="r"><button class="p" type="button" id="laBn">বাংলা</button><button type="button" id="laEn">English</button></div>';
+  document.body.appendChild(d); requestAnimationFrame(() => d.classList.add('on'));
+  const done = l => { setLang(l); d.classList.remove('on'); setTimeout(() => d.remove(), 350); };
+  _ap('laBn').onclick = () => done('bn'); _ap('laEn').onclick = () => done('en');
 }
 
 /* ═════════ LIVE APPLICATION TRACKING ═════════ */
