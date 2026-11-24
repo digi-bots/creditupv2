@@ -687,6 +687,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="nav" id="n-wallets" onclick="gS('wallets',this)"><i class="fa-solid fa-wallet"></i>Wallets</div>
   <div class="nav" id="n-config" onclick="gS('config',this)"><i class="fa-solid fa-sliders"></i>Site Config</div>
   <div class="nav" id="n-home" onclick="gS('home',this)"><i class="fa-solid fa-house-laptop"></i>Home Page</div>
+  <div class="nav" id="n-services" onclick="gS('services',this)"><i class="fa-solid fa-gem"></i>Services &amp; Rewards<span class="nb nb-o" id="nb-svc" style="display:none">0</span></div>
   <div class="nav" id="n-appset" onclick="gS('appset',this)"><i class="fa-solid fa-mobile-screen-button"></i>App Settings</div>
   <div class="nav" id="n-seo" onclick="gS('seo',this)"><i class="fa-solid fa-magnifying-glass-chart"></i>SEO &amp; Reviews<span class="nb nb-o" id="nb-rv" style="display:none">0</span></div>
   <div class="nav" id="n-broadcast" onclick="gS('broadcast',this)"><i class="fa-solid fa-bullhorn"></i>Broadcast</div>
@@ -1511,6 +1512,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
 <!-- ADMIN SETTINGS -->
 <div class="sec" id="sec-appset"></div>
+<div class="sec" id="sec-services"></div>
 <div class="sec" id="sec-seo"></div>
 <div class="sec" id="sec-risk"></div>
 
@@ -1547,6 +1549,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="bal-box" style="margin-top:13px">
       <h4><i class="fa-solid fa-bangladeshi-taka-sign" style="color:var(--p);margin-right:6px"></i>Balance Management</h4>
       <div style="font-size:20px;font-weight:900;color:var(--p);margin-bottom:10px" id="uBal">৳ 0</div>
+      <div id="uSvc" style="display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 10px"></div>
       <div class="bal-row">
         <input class="bal-inp" type="number" id="uAmt" placeholder="Amount (৳)">
         <button class="btn btn-p btn-sm" onclick="adjBal('add')"><i class="fa-solid fa-plus"></i>Add</button>
@@ -1898,7 +1901,7 @@ async function saveGateway(quiet){
 
 // ══ CONFIG ══════════════════════════════════════════
 const PG = 20;
-const TITLES = {appset:'App Settings',seo:'SEO & Reviews',risk:'Risk Center',home:'Home Page',dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Team & Settings'};
+const TITLES = {services:'Services & Rewards',appset:'App Settings',seo:'SEO & Reviews',risk:'Risk Center',home:'Home Page',dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Team & Settings'};
 const PIPE_STEPS = ['Applied','Fee Pending','Fee Submitted','Fee Verified','Approved','Disbursed','Active','Repaid'];
 const PIPE_MAP = {'Pending Fee Payment':1,'TrxID Submitted':2,'Fee Verified':3,'Approved':4,'Disbursement Rejected':4,'Disbursed':5,'Active':6,'Repaid':7};
 
@@ -1947,7 +1950,7 @@ function exportCur(){ exportCSV(_sec); }
 async function loadSec(id){
   if(!window._db) return;
   const map={dashboard:loadDash,users:loadUsers,applications:loadApps,transactions:loadTrx,portfolio:loadPortfolio,analytics:loadAnalytics,wallets:loadWallets,config:loadConfig,home:loadHome,broadcast:loadBC,support:loadSupport,actlog:loadActLog,
-    appset:()=>window.loadAppSet&&loadAppSet(), seo:()=>window.loadSeo&&loadSeo(), risk:()=>window.loadRisk&&loadRisk(), settings:()=>window.loadTeam&&loadTeam()};
+    appset:()=>window.loadAppSet&&loadAppSet(), services:()=>window.loadSvc&&loadSvc(), seo:()=>window.loadSeo&&loadSeo(), risk:()=>window.loadRisk&&loadRisk(), settings:()=>window.loadTeam&&loadTeam()};
   if(map[id]) await map[id]();
 }
 
@@ -1975,6 +1978,8 @@ function riskScore(a){
   if(a.occupation==='Unemployed') s-=30; else if(a.occupation==='Student') s-=15; else if(a.occupation==='Salaried Employee') s+=5;
   if(a.marital==='Married') s+=5; else if(a.marital==='Divorced') s-=5;
   if(a.education==='PhD'||a.education==='Masters') s+=8; else if(a.education==='SSC / O-Level') s-=5;
+  // a verified number (paid from the user's own wallet) is a real trust signal
+  const vu=(_D.users||[]).find(x=>String(x.phone)===String(a.uid)); if(vu&&vu.phoneVerified) s+=10;
   return Math.max(5,Math.min(100,s));
 }
 function riskBadge(sc){ if(sc>=75) return `<span class="b b-low">Low ${sc}</span>`; if(sc>=50) return `<span class="b b-medium">Med ${sc}</span>`; return `<span class="b b-high">High ${sc}</span>`; }
@@ -2094,6 +2099,9 @@ function viewUser(id){
     {l:'Created by',v:u.createdBy==='admin'?'Admin (manual)':'User (self sign-up)'},
   ].map(f=>`<div class="dr"><div class="dl">${f.l}</div><div class="dv ${f.c||''}">${f.v||'-'}</div></div>`).join('');
   document.getElementById('uBal').innerText='৳ '+fa(u.balance||0);
+  { const v=u.vip, vipOn=v&&v.plan&&v.active!==false&&(!v.until||new Date(v.until)>new Date())&&!['banned','suspended'].includes(u.status);
+    document.getElementById('uSvc').innerHTML=(u.phoneVerified?'<span class="b b-active" style="background:rgba(29,161,242,.15);color:#46b0ff"><i class="fa-solid fa-circle-check"></i> Verified number</span>':'<span class="b b-inactive">Number not verified</span>')
+      +(vipOn?`<span class="b" style="background:rgba(255,215,106,.15);color:#ffd76a">👑 ${_escA(v.name||v.plan)} · ${v.until?'till '+fd(v.until):'lifetime'}</span>`:(v&&v.plan?`<span class="b b-inactive">VIP ended${v.endedReason?' ('+_escA(v.endedReason)+')':''}</span>`:'')); }
   document.getElementById('uStat').value=u.status||'active';
   document.getElementById('uNote').value=u.adminNote||'';
   document.getElementById('uReason').value='';
@@ -2112,6 +2120,8 @@ async function adjBal(action){
     const u=await window._getDoc('users',_userId); if(!u){toast('User not found','e');showL(false);return;}
     let b=Number(u.balance)||0; if(action==='add') b+=amt; else b=Math.max(0,b-amt);
     await window._updateDoc(_userId,'users',{balance:b,balanceUpdatedAt:new Date().toISOString()});
+    // the user's Cashback Wallet history
+    try{ const diff=b-(Number(u.balance)||0); if(diff) await window._addDoc('walletLog',{uid:String(u.phone||''),amount:diff,type:'admin',note:action==='add'?'Added by Creditfy':'Deducted by Creditfy',balanceAfter:b,at:new Date().toISOString()}); }catch(e){}
     await _notifyUser(u.phone, action==='add' ? 'Balance Added 💰' : 'Balance Updated',
       action==='add' ? `৳${fa(amt)} has been added to your Creditfy balance. New balance: ৳${fa(b)}.` : `৳${fa(amt)} was deducted from your Creditfy balance. New balance: ৳${fa(b)}.`, action==='add'?'bonus':'transaction');
     document.getElementById('uBal').innerText='৳ '+fa(b);
@@ -2128,6 +2138,8 @@ async function updateUserStatus(){
   const log=[...(existing.statusLog||[]),{status,reason,action:'Status changed',at:new Date().toISOString()}];
   await window._updateDoc(_userId,'users',{status,adminNote:note,suspendReason:reason,statusLog:log,updatedAt:new Date().toISOString()});
   if(existing.status !== status) await _notifyAccountStatus(existing.phone, status, reason);
+  // VIP ends automatically when the account is suspended
+  if(['banned','suspended'].includes(status) && existing.vip && existing.vip.active!==false){ try{ await window._updateDoc(_userId,'users',{'vip.active':false,'vip.endedAt':new Date().toISOString(),'vip.endedReason':'Account '+status}); }catch(e){} }
   // activating also removes a wrong-password lock, so the user can sign in again
   if(status==='active' && existing.phone){ try{ await window._accountApi('adminUnlockLogin',{phone:_ph(existing.phone),activate:false}); }catch(e){} }
   await logAct(`User status → "${status}"`,'user',_userId);
@@ -2194,7 +2206,10 @@ async function delUser(id){ showL(true); const du=findById('users',id); if(du&&d
 
 // ══ APPLICATIONS ═════════════════════════════════════
 async function loadApps(){
-  showL(true); _D.applications=await _get('applications','submittedAt'); _pg.applications=0; showL(false);
+  showL(true);
+  // users too: the Verified number and VIP badges, and the verified bonus in the risk score
+  const [apl, usl] = await Promise.all([_get('applications','submittedAt'), (_D.users&&_D.users.length)?Promise.resolve(_D.users):_get('users').catch(()=>[])]);
+  _D.applications=apl; _D.users=usl||[]; _pg.applications=0; showL(false);
   const a=_D.applications;
   document.getElementById('aStats').innerHTML=[
     {ic:'clock',cl:'or',v:a.filter(x=>x.status==='Pending Fee Payment').length,l:'Pending Fee'},
@@ -2385,7 +2400,9 @@ function viewApp(id){
     {l:'Date of Birth',v:a.dob},{l:'Income',v:a.income},{l:'Loan Amount',v:'৳'+fa(a.loanAmount)},{l:'Term',v:(a.term||'-')+' months'},
     {l:'Purpose',v:a.loanPurpose},{l:'Occupation',v:a.occupation},{l:'Education',v:a.education},{l:'Marital',v:a.marital},
     {l:'Children',v:a.children},{l:'Company',v:a.company},{l:'Address',v:a.address,full:true},{l:'Wallet',v:a.wallet},
-    {l:'Bank Phone',v:a.bankPhone},{l:'Status',v:sb(a.status)},{l:'Risk Score',v:riskBadge(riskScore(a))},{l:'Promo',v:a.promo?'🔥 '+a.promo:'-'},
+    {l:'Bank Phone',v:a.bankPhone},{l:'Status',v:sb(a.status)},{l:'Risk Score',v:riskBadge(riskScore(a))},
+    {l:'Customer',v:(()=>{ const u=(_D.users||[]).find(x=>String(x.phone)===String(a.uid))||{}; const v=u.vip; const vipOn=v&&v.plan&&v.active!==false&&(!v.until||new Date(v.until)>new Date())&&!['banned','suspended'].includes(u.status);
+      return (u.phoneVerified?'<span class="b" style="background:rgba(29,161,242,.15);color:#46b0ff">✔ Verified number</span> ':'<span class="b b-inactive">Not verified</span> ')+(vipOn?`<span class="b" style="background:rgba(255,215,106,.15);color:#ffd76a">👑 ${_escA(v.name||'VIP')} — ${Number(_svcHours())}h express</span>`:''); })()},{l:'Promo',v:a.promo?'🔥 '+a.promo:'-'},
     {l:'Contact 1',v:`${a.emergency1?.name||'-'} (${a.emergency1?.phone||''}) — ${a.emergency1?.relation||''}`,full:true},
     {l:'Contact 2',v:`${a.emergency2?.name||'-'} (${a.emergency2?.phone||''}) — ${a.emergency2?.relation||''}`,full:true},
     {l:'Receive via',v:[a.wallet,a.payoutAccountType].filter(Boolean).join(' · ')||'-'},
@@ -2712,8 +2729,9 @@ async function syncAppOnTrx(trx,newStatus){
 
 async function loadTrx(){
   showL(true);
-  const [tx, wl, ap] = await Promise.all([_get('transactions','submittedAt'), (_D.wallets&&_D.wallets.length) ? Promise.resolve(_D.wallets) : _get('wallets','order','asc').catch(()=>[]),
-    (_D.applications&&_D.applications.length) ? Promise.resolve(_D.applications) : _get('applications').catch(()=>[]), _cfgMain().catch(()=>({}))]);
+  const [tx, wl, ap, , pu] = await Promise.all([_get('transactions','submittedAt'), (_D.wallets&&_D.wallets.length) ? Promise.resolve(_D.wallets) : _get('wallets','order','asc').catch(()=>[]),
+    (_D.applications&&_D.applications.length) ? Promise.resolve(_D.applications) : _get('applications').catch(()=>[]), _cfgMain().catch(()=>({})), _get('promoUses').catch(()=>[])]);
+  _D.promoUses=pu||[];
   _D.transactions=tx; _D.wallets=wl||[]; _D.applications=ap||[]; _pg.transactions=0; showL(false);
   const t=_D.transactions;
   const paid=x=>Number(x.amount||0)+Number(x.appliedBalance||0);
@@ -2821,8 +2839,9 @@ function renderTP(){
       let feeChk='';
       const ap=r.appId&&window._cfgLoaded?findById('applications',r.appId):null;
       if(ap){ const am=Number(String(ap.loanAmount||'').replace(/,/g,''))||0, mo=Number(ap.term)||0;
-        if(am&&mo){ const d=Number(r.amount||0)+Number(r.appliedBalance||0)-_feeFor(window._cfgLoaded,am,mo,ap.extraFee);
-          feeChk=d===0?'<div style="font-size:10px;color:var(--p);font-weight:700">= fee ✓</div>':`<div style="font-size:10px;color:${d<0?'var(--red)':'var(--orange)'};font-weight:800" title="Compared with the fee from your settings">${d<0?'short ৳'+fa(-d):'+৳'+fa(d)}</div>`; } }
+        if(am&&mo){ const pr=(_D.promoUses||[]).find(p=>p._id==='app_'+r.appId), promo=pr?Number(pr.amount)||0:0;
+          const d=Number(r.amount||0)+Number(r.appliedBalance||0)-Math.max(0,_feeFor(window._cfgLoaded,am,mo,ap.extraFee)-promo);
+          feeChk=(promo?`<div style="font-size:10px;color:#c085ff;font-weight:700">promo −৳${fa(promo)}</div>`:'')+(d===0?'<div style="font-size:10px;color:var(--p);font-weight:700">= fee ✓</div>':`<div style="font-size:10px;color:${d<0?'var(--red)':'var(--orange)'};font-weight:800" title="Compared with the fee from your settings">${d<0?'short ৳'+fa(-d):'+৳'+fa(d)}</div>`); } }
       return `<tr class="${r.removed?'is-removed':''}"><td class="mono">${r.trxId||'-'} ${dupBadge}${rmTag(r)}</td><td class="mono">${r.uid||'-'}</td><td><div class="tm">${_trxLogoHtml(r)}<div class="tm-txt">${r.payMethod||(String(r.trxId).toUpperCase()==='BALANCE_PAYMENT'?'Balance':'-')}${r.gateway?' <span class="wbadge">AUTO</span>':''}${r.payType?`<small>${r.payType}</small>`:''}${appRef}</div></div></td><td style="font-weight:800;white-space:nowrap">৳${fa(Number(r.amount||0)+Number(r.appliedBalance||0))}${Number(r.appliedBalance)>0?`<div style="font-size:10px;color:var(--txt2);font-weight:600">wallet ৳${fa(r.amount||0)} + bal ৳${fa(r.appliedBalance)}</div>`:''}${feeChk}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button>${r.removed?`<button class="ab ab-ok" title="Restore to the user site" onclick="restoreDoc('transactions','${r._id}',loadTrx)"><i class="fa-solid fa-rotate-left"></i></button>`:`<button class="ab ab-d" title="Remove / delete" onclick="delTrx('${r._id}')"><i class="fa-solid fa-trash"></i></button>`}</div></td></tr>`;
     }).join(''):'<tr class="empty"><td colspan="8">No transactions found</td></tr>';
   });
@@ -2886,13 +2905,16 @@ function viewTrx(id){
   _trxCheck(t);
 }
 // payment check: the fee the admin's own settings give for this loan vs what the user says was paid
+function _svcHours(){ try{ return (_SV&&_SV.vip&&_SV.vip.hours)||72; }catch(e){ return 72; } }
 async function _trxCheck(t){
   const el=document.getElementById('tCheck'); if(!el) return;
   const cfg=await _cfgMain();
+  const pu=t.appId?await window._getDoc('promoUses','app_'+t.appId):null;
+  const promo=pu?Number(pu.amount)||0:0;
   if(_docId!==t._id) return;
   const app=t.appId?findById('applications',t.appId):null;
   const amt=app?Number(String(app.loanAmount||'').replace(/,/g,''))||0:0, months=app?Number(app.term)||0:0;
-  const expected=app&&amt&&months?_feeFor(cfg,amt,months,app.extraFee):null;
+  const expected=app&&amt&&months?Math.max(0,_feeFor(cfg,amt,months,app.extraFee)-promo):null;
   const wallet=Number(t.amount)||0, bal=Number(t.appliedBalance)||0, paid=wallet+bal;
   const user=(_D.users||[]).find(u=>String(u.phone)===String(t.uid));
   const diff=expected===null?null:paid-expected;
@@ -2904,7 +2926,8 @@ async function _trxCheck(t){
   const agoTxt=ago===null?'':ago<60?`${ago} min ago`:ago<1440?`${Math.round(ago/60)} h ago`:`${Math.round(ago/1440)} days ago`;
   el.innerHTML=`<div style="margin:10px 0 12px;padding:12px 14px;border:1px solid ${col};border-radius:12px;background:rgba(255,255,255,.02)">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><i class="fa-solid fa-scale-balanced" style="color:${col}"></i><b>Payment check</b><span style="margin-left:auto;color:${col};font-weight:800">${st[1]}</span></div>
-    ${L('Fee for this loan (your settings)',expected===null?'—':'৳'+fa(expected),1)}
+    ${L(promo?'Fee for this loan, after promo':'Fee for this loan (your settings)',expected===null?'—':'৳'+fa(expected),1)}
+    ${promo?L('Promo code (checked by the server)',`${_escA(pu.code)} · −৳${fa(promo)}`):(t.promoDiscount?L('Promo code',`<span style="color:var(--red)">user claims −৳${fa(t.promoDiscount)} but no server record</span>`):'')}
     ${app?L('Loan',`৳${fa(amt)} · ${months} months · app ${_escA(String(t.appId).slice(-6).toUpperCase())}`):''}
     ${L('Fee the app showed the user',t.totalFee?'৳'+fa(t.totalFee):'—')}
     ${L('Sent by wallet (user says)',isBal?'—':'৳'+fa(wallet),1)}
@@ -4589,7 +4612,7 @@ window._cloudinaryUploadLogo = async function(file, name){
 // Users can write their own applications, payments, chats and tickets. Before any of that reaches the admin panel,
 // characters that could turn into HTML or script (< > " ' `) are replaced with look-alike harmless ones,
 // and records with an unusual ID are left out (they can only come from someone tampering with the database).
-const _UW = new Set(['users','applications','transactions','support_chats','support_tickets','user_notifications','reviews','riskReviews','pushTokens','gatewayPayments']);
+const _UW = new Set(['users','applications','transactions','support_chats','support_tickets','user_notifications','reviews','riskReviews','pushTokens','gatewayPayments','serviceOrders','promoUses','walletLog','spinLog','callbacks']);
 const _SAFE_ID = /^[A-Za-z0-9_.:@-]{1,200}$/;
 const _safeTxt = t => t.replace(/[<>"'`]/g, c => ({'<':'‹','>':'›','"':'”',"'":'’','`':'ˋ'}[c]));
 function _clean(v){
@@ -4807,5 +4830,6 @@ onAuthStateChanged(fbAuth, async user=>{
 });
 </script>
 <script src="admin-pro.js?v=2"></script>
+<script src="admin-svc.js?v=1"></script>
 </body>
 </html>

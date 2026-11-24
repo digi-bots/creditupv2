@@ -539,7 +539,7 @@ window._SAVERS.risk = { load: loadRisk, save: saveRisk };
 
 /* ═════════ TEAM & ROLES (admins + adminConfig/roles) ═════════ */
 const P_SECS = [['dashboard', 'Dashboard'], ['users', 'Users'], ['applications', 'Applications'], ['transactions', 'Transactions'], ['portfolio', 'Loan Portfolio'], ['analytics', 'Analytics'], ['wallets', 'Wallets'],
-  ['config', 'Site Config'], ['home', 'Home Page'], ['appset', 'App Settings'], ['seo', 'SEO & Reviews'], ['broadcast', 'Broadcast'], ['support', 'Support'], ['risk', 'Risk Center'], ['actlog', 'Activity Log']];
+  ['config', 'Site Config'], ['home', 'Home Page'], ['services', 'Services & Rewards'], ['appset', 'App Settings'], ['seo', 'SEO & Reviews'], ['broadcast', 'Broadcast'], ['support', 'Support'], ['risk', 'Risk Center'], ['actlog', 'Activity Log']];
 const allP = v => Object.fromEntries(P_SECS.map(([k]) => [k, v]));
 const ROLE_DEF = {
   manager: { label: 'Manager', perms: allP('edit') },

@@ -42,7 +42,10 @@ service cloud.firestore {
     match /reviews/{id}             { allow write: if can('seo'); }
     match /riskReviews/{id}         { allow write: if can('risk'); }
     match /adminConfig/risk         { allow write: if can('risk'); }
-    match /siteConfig/{id}          { allow write: if (id == 'main' && can('config')) || (id == 'home' && can('home')) || (id == 'app' && can('appset')) || (id == 'seo' && can('seo')); }
+    match /siteConfig/{id}          { allow write: if (id == 'main' && can('config')) || (id == 'home' && can('home')) || (id == 'app' && can('appset')) || (id == 'seo' && can('seo')) || (id == 'services' && can('services')); }
+    // Services & Rewards: codes, orders and the VIP refund note
+    match /promoCodes/{id}          { allow write: if can('services'); }
+    match /walletLog/{id}           { allow create: if can('users') || can('services'); }
     // notices and the activity log are written by many admin actions
     match /user_notifications/{id}  { allow create: if isAdmin(); }
     match /activityLog/{id}         { allow create: if isAdmin(); }
