@@ -361,3 +361,39 @@ function _deskInit(cfg){
   _langInit(cfg); _pwInit(cfg); _deskInit(cfg); _goShortcut(); _pushInit(cfg);
   if(window._showcase) _rvRender(window._showcase);
 })();
+
+/* ═════════ SITE PROTECTION (Admin → App Settings → Site Protection) ═════════
+   Stops casual copying: right-click menu, view-source / developer-tool keys, text selection and image saving.
+   Typing boxes keep copy & paste. It cannot truly hide code (the browser must download it); real security is the
+   login, the Firestore rules and the hidden admin address. */
+(function(){
+  const P = { on: true, rightClick: true, keys: true, select: true, images: true, warn: true };
+  const H = document.documentElement, use = k => P.on !== false && P[k] !== false;
+  const editable = el => !!(el && el.closest && el.closest('input,textarea,select,[contenteditable="true"],.cf-allow-copy'));
+  const st = document.createElement('style');
+  st.textContent = 'html.cf-nosel body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}'
+    + 'html.cf-nosel input,html.cf-nosel textarea,html.cf-nosel [contenteditable="true"],html.cf-nosel .cf-allow-copy{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}'
+    + 'html.cf-noimg img{-webkit-user-drag:none;-webkit-touch-callout:none}';
+  document.head.appendChild(st);
+  document.addEventListener('contextmenu', e => { if(use('rightClick') && !editable(e.target)) e.preventDefault(); }, true);
+  document.addEventListener('dragstart', e => { if(use('images') && e.target && e.target.tagName === 'IMG') e.preventDefault(); }, true);
+  document.addEventListener('copy', e => { if(use('select') && !editable(document.activeElement) && !editable(e.target)) e.preventDefault(); }, true);
+  document.addEventListener('keydown', e => {
+    if(!use('keys')) return;
+    const k = String(e.key || '').toLowerCase(), c = e.ctrlKey || e.metaKey;
+    const bad = k === 'f12' || (c && e.shiftKey && ['i', 'j', 'c', 'k'].includes(k)) || (e.metaKey && e.altKey && ['i', 'j', 'c', 'u'].includes(k)) || (c && !e.shiftKey && ['u', 's'].includes(k));
+    if(bad){ e.preventDefault(); e.stopPropagation(); }
+  }, true);
+  let warned = false;
+  function apply(){
+    H.classList.toggle('cf-nosel', use('select'));
+    H.classList.toggle('cf-noimg', use('images'));
+    if(use('warn') && !warned){
+      warned = true;
+      try { console.log('%cStop!', 'color:#e5383b;font-size:42px;font-weight:900');
+        console.log('%cThis is a browser feature for developers. If someone told you to paste something here, it is a scam and can give them access to your account.', 'font-size:15px'); } catch(e){}
+    }
+  }
+  apply();
+  appCfg().then(c => { Object.assign(P, (c && c.protect) || {}); apply(); });
+})();
