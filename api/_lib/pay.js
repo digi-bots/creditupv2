@@ -1,13 +1,30 @@
-// Shared code for the online fee payment (SSLCommerz).
+// Shared code for the online fee payment. Two providers are supported; TZPayWay is used when its key is set.
 // Secrets live only in Vercel environment variables, never in Firestore or the browser:
-//   SSLCZ_STORE_ID, SSLCZ_STORE_PASSWD   – from the SSLCommerz merchant panel
+//   TZPAY_API_KEY                        – TZPayWay merchant API key (X-API-KEY)
+//   TZPAY_BASE_URL (optional)            – default https://tzpayway.com
+//   SSLCZ_STORE_ID, SSLCZ_STORE_PASSWD   – from the SSLCommerz merchant panel (used when no TZPayWay key)
 //   SSLCZ_SANDBOX                        – "true" for test mode, "false" for live
 //   FIREBASE_SERVICE_ACCOUNT             – service account JSON (plain or base64)
 //   PUBLIC_BASE_URL (optional)           – e.g. https://www.creditfy.online
 const admin = require('firebase-admin');
 
-const REQUIRED = ['SSLCZ_STORE_ID', 'SSLCZ_STORE_PASSWD', 'FIREBASE_SERVICE_ACCOUNT'];
-const missingEnv = () => REQUIRED.filter(k => !process.env[k]);
+const provider = () => process.env.TZPAY_API_KEY ? 'tzpayway' : 'sslcommerz';
+const REQUIRED = { tzpayway: ['TZPAY_API_KEY', 'FIREBASE_SERVICE_ACCOUNT'], sslcommerz: ['SSLCZ_STORE_ID', 'SSLCZ_STORE_PASSWD', 'FIREBASE_SERVICE_ACCOUNT'] };
+const missingEnv = () => REQUIRED[provider()].filter(k => !process.env[k]);
+
+// ── TZPayWay (https://tzpayway.com/api-docs) ──
+const tzBase = () => String(process.env.TZPAY_BASE_URL || 'https://tzpayway.com').replace(/\/+$/, '');
+async function tzCall(path, body) {
+  const r = await fetch(tzBase() + '/api/v1' + path, {
+    method: body ? 'POST' : 'GET',
+    headers: { 'X-API-KEY': process.env.TZPAY_API_KEY, 'Accept': 'application/json', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    ...(body ? { body: JSON.stringify(body) } : {})
+  });
+  const j = await r.json().catch(() => ({}));
+  return { ok: r.ok && j.success !== false, status: r.status, data: j.data || {}, raw: j };
+}
+const tzCreate = body => tzCall('/payment/create', body);
+const tzStatus = trxId => tzCall('/payment/status/' + encodeURIComponent(trxId));
 const isSandbox = () => String(process.env.SSLCZ_SANDBOX ?? 'true').toLowerCase() !== 'false';
 const sslHost = () => isSandbox() ? 'https://sandbox.sslcommerz.com' : 'https://securepay.sslcommerz.com';
 
@@ -70,18 +87,38 @@ async function finalizePaid(tranId, valId) {
   const pay = snap.data();
   if (pay.status === 'Paid') return { ok: true, already: true, pay };
 
-  const v = await validateWithSslcz(valId);
-  const valid = (v.status === 'VALID' || v.status === 'VALIDATED')
-    && v.tran_id === tranId
-    && String(v.currency || v.currency_type || 'BDT').toUpperCase() === 'BDT'
-    && Math.abs(Number(v.amount) - Number(pay.amount)) < 0.01;
-  if (!valid) {
-    await payRef.set({ status: 'Invalid', lastCheck: { status: v.status || '', amount: v.amount || '', at: new Date().toISOString() } }, { merge: true });
-    return { ok: false, reason: 'validation failed', pay };
+  let v, valid, gwRef = '', method;
+  if (pay.provider === 'tzpayway') {
+    // never trust the webhook body or the return URL: ask TZPayWay with our own key
+    if (!pay.gwTrxId) return { ok: false, reason: 'no provider id', pay };
+    const s = await tzStatus(pay.gwTrxId);
+    const st = String(s.data.status || '').toLowerCase();
+    if (!s.ok) return { ok: false, reason: 'status http ' + s.status, pay };
+    if (['pending', 'processing', 'assigned', 'initiated', ''].includes(st)) {
+      await payRef.set({ lastCheck: { status: st, at: new Date().toISOString() } }, { merge: true });
+      return { ok: false, pending: true, pay };
+    }
+    valid = ['completed', 'success', 'paid'].includes(st) && String(s.data.trx_id || pay.gwTrxId) === pay.gwTrxId && Number(s.data.amount) + 0.01 >= Number(pay.amount);
+    v = { status: st, amount: s.data.amount };
+    gwRef = pay.gwTrxId; method = 'Online' + (s.data.method ? ' · ' + String(s.data.method).slice(0, 20) : '');
+    if (!valid) {
+      await payRef.set({ status: ['failed', 'cancelled', 'canceled', 'rejected', 'expired'].includes(st) ? 'Failed' : 'Invalid', lastCheck: { status: st, amount: s.data.amount ?? '', at: new Date().toISOString() } }, { merge: true });
+      return { ok: false, reason: 'not completed', pay };
+    }
+  } else {
+    v = await validateWithSslcz(valId);
+    valid = (v.status === 'VALID' || v.status === 'VALIDATED')
+      && v.tran_id === tranId
+      && String(v.currency || v.currency_type || 'BDT').toUpperCase() === 'BDT'
+      && Math.abs(Number(v.amount) - Number(pay.amount)) < 0.01;
+    if (!valid) {
+      await payRef.set({ status: 'Invalid', lastCheck: { status: v.status || '', amount: v.amount || '', at: new Date().toISOString() } }, { merge: true });
+      return { ok: false, reason: 'validation failed', pay };
+    }
+    gwRef = v.bank_tran_id || ''; method = 'Online' + (v.card_type ? ' · ' + v.card_type : '');
   }
 
   const now = new Date().toISOString();
-  const method = 'Online' + (v.card_type ? ' · ' + v.card_type : '');
   const result = await store.runTransaction(async (t) => {
     const fresh = await t.get(payRef);
     if (fresh.data().status === 'Paid') return { already: true };
@@ -92,10 +129,10 @@ async function finalizePaid(tranId, valId) {
       const us = await t.get(store.collection('users').where('phone', '==', pay.uid).limit(1));
       if (!us.empty) userRef = us.docs[0].ref;
     }
-    t.set(payRef, { status: 'Paid', paidAt: now, valId, bankTranId: v.bank_tran_id || '', cardType: v.card_type || '' }, { merge: true });
+    t.set(payRef, { status: 'Paid', paidAt: now, valId: valId || '', bankTranId: gwRef, cardType: v.card_type || '' }, { merge: true });
     t.set(store.collection('transactions').doc('gw_' + tranId), {
-      uid: pay.uid, appId: pay.appId, trxId: v.bank_tran_id || tranId, gatewayTranId: tranId,
-      gateway: 'sslcommerz', payMethod: method, payType: 'Online',
+      uid: pay.uid, appId: pay.appId, trxId: gwRef || tranId, gatewayTranId: tranId,
+      gateway: pay.provider || 'sslcommerz', payMethod: method, payType: 'Online',
       amount: pay.amount, totalFee: pay.totalFee, appliedBalance: pay.appliedBalance || 0,
       loanAmount: pay.loanAmount, term: pay.term, wallet: pay.wallet || '',
       status: 'Verified', submittedAt: pay.createdAt, verifiedAt: now
@@ -123,4 +160,4 @@ function readBody(req) {
   return {};
 }
 
-module.exports = { missingEnv, isSandbox, sslHost, db, computeFee, baseUrl, validateWithSslcz, finalizePaid, readBody };
+module.exports = { provider, missingEnv, isSandbox, sslHost, tzCreate, tzStatus, db, computeFee, baseUrl, validateWithSslcz, finalizePaid, readBody };

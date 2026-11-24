@@ -6385,6 +6385,7 @@ function handlePayReturn(){
   const app = q.get('app') || '';
   history.replaceState(null, '', window.location.pathname);
   if(st === 'success') showAlert('Payment Successful ✅', `Your fee for application ${appRef(app)} is paid and verified automatically. Our team is now reviewing your application.`, 'success');
+  else if(st === 'pending') showAlert('Payment Being Confirmed ⏳', `We are waiting for the payment provider to confirm your fee for ${appRef(app)}. This usually takes a few minutes — you will get a notification as soon as it is verified. Please do not pay again.`, 'info');
   else if(st === 'cancelled') showAlert('Payment Cancelled', 'You cancelled the online payment. No money was taken. You can pay again any time.', 'info');
   else showAlert('Payment Not Completed', 'The online payment did not go through. If money was taken, it will be checked and returned automatically by the payment provider. You can try again or use a manual method.', 'error');
 }
@@ -7629,6 +7630,6 @@ setTimeout(async () => {
 <script src="services.js?v=2"></script>
 <script src="loans.js?v=2"></script>
 <script src="help.js?v=2"></script>
-<script src="i18n-bn.js?v=1"></script>
+<script src="i18n-bn.js?v=2"></script>
 </body>
 </html>

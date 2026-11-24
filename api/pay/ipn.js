@@ -1,12 +1,25 @@
-// SSLCommerz server-to-server notice (IPN). Verified with SSLCommerz before anything changes.
+// Server-to-server payment notice (SSLCommerz IPN or TZPayWay webhook).
+// Nothing in the notice is trusted: the payment is always re-checked with the provider before anything changes.
 const { missingEnv, db, finalizePaid, readBody } = require('../_lib/pay');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).end();
   if (missingEnv().length) return res.status(503).end();
   const b = readBody(req);
-  const tranId = String(b.tran_id || '');
+  const q = req.query || {};
   try {
+    // TZPayWay: our tran id is in the webhook URL; the (encrypted) body is ignored and the status API decides
+    if (q.gw === 'tz') {
+      let tranId = String(q.tran || '');
+      if (!tranId && b && b.trx_id) {
+        const s = await db().collection('gatewayPayments').where('gwTrxId', '==', String(b.trx_id)).limit(1).get();
+        if (!s.empty) tranId = s.docs[0].id;
+      }
+      if (!/^[A-Za-z0-9_-]{6,80}$/.test(tranId)) return res.status(200).json({ ok: false });
+      const out = await finalizePaid(tranId, '');
+      return res.status(200).json({ ok: out.ok, pending: !!out.pending });
+    }
+    const tranId = String(b.tran_id || '');
     if ((b.status === 'VALID' || b.status === 'VALIDATED') && b.val_id && tranId) {
       const out = await finalizePaid(tranId, String(b.val_id));
       return res.status(200).json({ ok: out.ok });

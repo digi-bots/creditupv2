@@ -836,7 +836,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
     <div class="wblk">
       <div class="wblk-h">
         <div class="wblk-ic in"><i class="fa-solid fa-arrow-down"></i></div>
-        <div class="wblk-t"><strong>1 · Fee receive from users (online)</strong><span>Users pay on the SSLCommerz page. The fee is verified automatically, no TrxID needed</span></div>
+        <div class="wblk-t"><strong>1 · Fee receive from users (online)</strong><span>Users pay on the TZPayWay (or SSLCommerz) page. The fee is verified automatically, no TrxID needed</span></div>
         <label class="tog" title="Show online payment to users"><input type="checkbox" id="gwEn" onchange="markDirty('wallets','gw')"><span class="tog-sl"></span></label>
       </div>
       <div id="gwStatus" class="gw-st"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking the server…</div>
@@ -855,6 +855,13 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <summary><i class="fa-solid fa-screwdriver-wrench"></i>One-time setup (Setup guide)</summary>
         <div class="gw-guide" style="margin:10px 0 0">
           <p>To turn on online payment, add these values in <strong>Vercel → Project → Settings → Environment Variables</strong>, then <strong>Redeploy</strong>. They are secret, so they are never kept in this panel or in Firestore.</p>
+          <p><b>TZPayWay</b> (used when its key is set):</p>
+          <ol>
+            <li><code>TZPAY_API_KEY</code> — TZPayWay → <b>API Credentials → Generate New Key</b> → the API key (<code>pk_live_…</code>). Leave the IP whitelist empty (Vercel has no fixed IP).</li>
+            <li><code>FIREBASE_SERVICE_ACCOUNT</code> — already set.</li>
+          </ol>
+          <p style="font-size:11.5px;color:var(--txt2)">The webhook and return addresses are sent automatically with each payment. Every payment is re-checked with TZPayWay's status API using your key before the fee is marked paid, so the secret key is not needed on the server.</p>
+          <p><b>SSLCommerz</b> (used only when there is no TZPayWay key):</p>
           <ol>
             <li><code>SSLCZ_STORE_ID</code> — the <b>Store ID</b> from the SSLCommerz merchant panel</li>
             <li><code>SSLCZ_STORE_PASSWD</code> — the SSLCommerz <b>Store Password</b> (API password)</li>
@@ -1875,7 +1882,7 @@ async function loadGateway(){
     const r = await fetch('/api/pay/status', {cache:'no-store'});
     const j = await r.json();
     st.innerHTML = j.configured
-      ? `<i class="fa-solid fa-circle-check" style="color:var(--p)"></i> Server is ready · <strong>${j.sandbox ? 'Sandbox (test) mode' : 'Live mode'}</strong>`
+      ? `<i class="fa-solid fa-circle-check" style="color:var(--p)"></i> Server is ready · <strong>${j.provider === 'tzpayway' ? 'TZPayWay' : 'SSLCommerz'}</strong> · <strong>${j.sandbox ? 'Sandbox (test) mode' : 'Live mode'}</strong>${j.provider === 'tzpayway' ? '<br><span style="font-size:11px;color:var(--txt2)">The method groups below apply to SSLCommerz only — TZPayWay shows the methods enabled in your TZPayWay account.</span>' : ''}`
       : `<i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i> Not set up yet. Missing on Vercel: <strong>${(j.missing||[]).join(', ')}</strong>. Users will not see online payment until this is done.`;
   }catch(e){
     st.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i> The payment server is not reachable from this page (it only runs on the Vercel deployment).';
