@@ -40,18 +40,36 @@ const SVD = {
   spin: { on: true, period: 'month', prizes: [{ id: 'p1', label: '৳5', type: 'balance', value: 5, weight: 30, color: '#1ddb80' }, { id: 'p2', label: 'Try again', type: 'none', value: 0, weight: 35, color: '#4d8fff' }, { id: 'p3', label: '৳10', type: 'balance', value: 10, weight: 18, color: '#ff8c42' }, { id: 'p4', label: '৳20', type: 'balance', value: 20, weight: 8, color: '#a855f7' }, { id: 'p5', label: 'Better luck', type: 'none', value: 0, weight: 7, color: '#5a6b85' }, { id: 'p6', label: '৳50', type: 'balance', value: 50, weight: 2, color: '#ffc94d' }] },
   voucher: { on: true, min: 50, max: 1000, days: 30 },
   codes: { promo: true, redeem: true },
+  loans: { emiMode: 'principal', pay: { on: true }, payoff: { on: true, discountPct: 0, fee: 0 }, limit: { on: true, enforce: false, start: 20000, step: 10000, verifiedBonus: 5000, vipBonus: 10000, max: 0 },
+    trust: { on: true, levels: [{ name: 'Bronze', min: 0, perk: 'Welcome to Creditfy' }, { name: 'Silver', min: 30, perk: 'Faster review' }, { name: 'Gold', min: 60, perk: 'Higher loan limit and priority review' }, { name: 'Platinum', min: 85, perk: 'Our best limits and the fastest service' }] },
+    budget: { safePct: 40 }, statement: { on: true } },
   hub: { home: ['vip', 'checkin', 'spin', 'wallet', 'calc', 'refer', 'history', 'all'], tiles: {} }
 };
 const SV_TILES = [['vip', 'VIP Express'], ['verify', 'Verify Number'], ['checkin', 'Daily Check-in'], ['spin', 'Spin & Win'], ['wallet', 'Wallet'], ['redeem', 'Redeem Code'], ['voucher', 'Gift Voucher'],
   ['calc', 'Calculator'], ['refer', 'Refer & Earn'], ['history', 'History'], ['profile', 'Profile'],
-  ['loans', 'My Loans'], ['pay', 'Pay Installment'], ['payoff', 'Early Payoff'], ['limit', 'Loan Limit'], ['trust', 'Trust Level'], ['statement', 'Statement (PDF)'], ['budget', 'Budget Planner'], ['compare', 'EMI Compare'],
+  ['loans', 'My Loans'], ['repay', 'Pay Installment'], ['payoff', 'Early Payoff'], ['limit', 'Loan Limit'], ['trust', 'Trust Level'], ['statement', 'Statement (PDF)'], ['budget', 'Budget Planner'], ['compare', 'EMI Compare'],
   ['tips', 'Smart Tips'], ['sponsors', 'Partners & Sites'], ['faq', 'Help Center'], ['fees', 'Fees Explained'], ['safety', 'Stay Safe'], ['callback', 'Call Me Back'], ['offices', 'Our Offices']];
 let _SV = clone(SVD), _ORD = [], _CODES = [], _USES = [];
 
 function buildSvc(){
   const s = $p('sec-services'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Services &amp; Rewards</h2>${svBtn('services')}</div>${roBanner}
-  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['hub', 'grip', 'Quick Services tiles']], 'orders')}
+  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['hub', 'grip', 'Quick Services tiles']], 'orders')}
+  <div class="pro-pane" data-k="loans">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-calendar-days"></i>Installments</div>
+      <div class="fgrid fgrid3"><div class="fg"><label>How the monthly installment is counted</label><select id="ln-mode"><option value="principal">Loan ÷ months (interest is paid upfront with the fee)</option><option value="flat">(Loan + interest) ÷ months</option><option value="amortized">Bank EMI (reducing balance)</option></select></div>
+      ${tog('ln-pay', 'Users can pay installments in the app', 1)}${tog('ln-po', 'Users can pay off early', 1)}${inp('ln-pod', 'Early payoff discount (% of what is left)', '0', 'type="number" min="0" max="100"')}${inp('ln-pof', 'Early payoff fee (৳)', '0', 'type="number" min="0"')}</div>
+      <div class="hint" style="margin-top:6px">The same installment is shown in the calculator, Loan Details and My Loans. Your fee already includes the interest (“Advance Interest Fee”), so “Loan ÷ months” avoids charging interest twice. Repayments appear in Transactions as INSTALLMENT / EARLY PAYOFF; verifying them updates the loan and marks it Repaid when it is fully paid.</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-arrow-trend-up"></i>Personal loan limit</div>
+      <div class="fgrid fgrid3">${tog('lm-on', 'Show users their loan limit', 1)}${tog('lm-enf', 'Block applications above the limit', 0)}${inp('lm-start', 'Starting limit (৳)', '20000', 'type="number" min="0"')}${inp('lm-step', 'Added per loan repaid (৳)', '10000', 'type="number" min="0"')}${inp('lm-vf', 'Added for a verified number (৳)', '5000', 'type="number" min="0"')}${inp('lm-vip', 'Added for VIP members (৳)', '10000', 'type="number" min="0"')}${inp('lm-max', 'Highest limit (৳, 0 = Max Borrow Amount)', '0', 'type="number" min="0"')}</div>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-shield-heart"></i>Trust levels</div>
+      <div class="hint" style="margin-bottom:8px">Score out of 100: verified number 20, first loan repaid 15, second 15, always on time 20, member 3 months 10, VIP 10, complete profile 10; an overdue installment takes 30 away.</div>
+      <div id="trLv"></div>
+      <div class="fgrid fgrid3" style="margin-top:8px">${inp('bd-pct', 'Budget planner: safe share of free money for installments (%)', '40', 'type="number" min="10" max="80"')}</div>
+    </div>
+  </div>
   <div class="pro-pane" data-k="orders">
     <div class="sv-st" id="odStats"></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>VIP &amp; verification payments
@@ -292,6 +310,7 @@ function spCost(){
   const avg = P.reduce((a, p) => a + (p.type === 'balance' ? (Number(p.value) || 0) * (Number(p.weight) || 0) / tot : 0), 0);
   $p('spCost').innerHTML = `Average cost per spin: <b>৳${avg.toFixed(1)}</b>. With 1,000 spins ≈ ৳${fa(Math.round(avg * 1000))}.`;
 }
+function trRender(){ $p('trLv').innerHTML = _SV.loans.trust.levels.map((l, i) => `<div class="pl-row" style="grid-template-columns:1fr .6fr 2fr"><input value="${ep(l.name)}" placeholder="Level name" oninput="_SV.loans.trust.levels[${i}].name=this.value;markDirty('services','tr')"><input type="number" min="0" max="100" value="${Number(l.min) || 0}" placeholder="From score" oninput="_SV.loans.trust.levels[${i}].min=Number(this.value)||0;markDirty('services','tr')"><input value="${ep(l.perk || '')}" placeholder="What this level gets" oninput="_SV.loans.trust.levels[${i}].perk=this.value;markDirty('services','tr')"></div>`).join(''); }
 function hbRender(){
   const H = _SV.hub, home = H.home || [];
   const order = [...home.filter(k => k !== 'all'), ...SV_TILES.map(t => t[0]).filter(k => !home.includes(k))];
@@ -312,11 +331,17 @@ async function loadSvc(){
   const d = (await window._getDoc('siteConfig', 'services')) || {};
   _SV = clone(SVD);
   ['vip', 'verify', 'checkin', 'spin', 'voucher', 'codes', 'hub'].forEach(k => Object.assign(_SV[k], d[k] || {}));
-  ['tips', 'sponsors', 'help', 'loans'].forEach(k => { if(d[k]) _SV[k] = clone(d[k]); });
+  ['tips', 'sponsors', 'help'].forEach(k => { if(d[k]) _SV[k] = clone(d[k]); });
   if(!Array.isArray(_SV.vip.plans) || !_SV.vip.plans.length) _SV.vip.plans = clone(SVD.vip.plans);
   ['perks', 'terms'].forEach(k => { if(!Array.isArray(_SV.vip[k])) _SV.vip[k] = clone(SVD.vip[k]); });
   _SV.checkin.rewards = Array.from({ length: 7 }, (_, i) => Number((_SV.checkin.rewards || [])[i]) || 0);
   if(!Array.isArray(_SV.hub.home) || !_SV.hub.home.length) _SV.hub.home = clone(SVD.hub.home);
+  const Ld = d.loans || {}; _SV.loans = { ...clone(SVD.loans), ...Ld, pay: { ...SVD.loans.pay, ...(Ld.pay || {}) }, payoff: { ...SVD.loans.payoff, ...(Ld.payoff || {}) }, limit: { ...SVD.loans.limit, ...(Ld.limit || {}) },
+    trust: { ...SVD.loans.trust, ...(Ld.trust || {}), levels: clone(Ld.trust && Array.isArray(Ld.trust.levels) && Ld.trust.levels.length ? Ld.trust.levels : SVD.loans.trust.levels) }, budget: { ...SVD.loans.budget, ...(Ld.budget || {}) } };
+  const LL = _SV.loans;
+  fillIn({ 'ln-mode': LL.emiMode || 'principal', 'ln-pay': LL.pay.on !== false, 'ln-po': LL.payoff.on !== false, 'ln-pod': LL.payoff.discountPct, 'ln-pof': LL.payoff.fee,
+    'lm-on': LL.limit.on !== false, 'lm-enf': LL.limit.enforce === true, 'lm-start': LL.limit.start, 'lm-step': LL.limit.step, 'lm-vf': LL.limit.verifiedBonus, 'lm-vip': LL.limit.vipBonus, 'lm-max': LL.limit.max, 'bd-pct': LL.budget.safePct });
+  trRender();
   fillIn({ 'vp-on': _SV.vip.on !== false, 'vp-hours': _SV.vip.hours, 'vp-normal': _SV.vip.normal, 'vf-on': _SV.verify.on !== false, 'vf-price': _SV.verify.price, 'vf-title': _SV.verify.title, 'vf-text': _SV.verify.text,
     'ck-on': _SV.checkin.on !== false, 'sp-on': _SV.spin.on !== false, 'sp-period': _SV.spin.period || 'month', 'vc-on': _SV.voucher.on !== false, 'vc-min': _SV.voucher.min, 'vc-max': _SV.voucher.max, 'vc-days': _SV.voucher.days,
     'cd-promo-on': _SV.codes.promo !== false, 'cd-redeem-on': _SV.codes.redeem !== false });
@@ -337,10 +362,14 @@ async function saveSvc(){
     voucher: { on: chk('vc-on'), min: numv('vc-min', 50, 1, 1e6), max: numv('vc-max', 1000, 1, 1e6), days: numv('vc-days', 30, 1, 365) },
     codes: { promo: chk('cd-promo-on'), redeem: chk('cd-redeem-on') },
     hub: { home: _SV.hub.home, tiles: _SV.hub.tiles || {} },
+    loans: { emiMode: val('ln-mode') || 'principal', pay: { on: chk('ln-pay') }, payoff: { on: chk('ln-po'), discountPct: numv('ln-pod', 0, 0, 100), fee: numv('ln-pof', 0, 0, 1e6) },
+      limit: { on: chk('lm-on'), enforce: chk('lm-enf'), start: numv('lm-start', 20000, 0, 1e8), step: numv('lm-step', 10000, 0, 1e8), verifiedBonus: numv('lm-vf', 5000, 0, 1e8), vipBonus: numv('lm-vip', 10000, 0, 1e8), max: numv('lm-max', 0, 0, 1e9) },
+      trust: { on: true, levels: _SV.loans.trust.levels.filter(l => String(l.name || '').trim()).map(l => ({ name: String(l.name).trim().slice(0, 20), min: Math.max(0, Math.min(100, Number(l.min) || 0)), perk: String(l.perk || '').slice(0, 120) })).sort((a, b) => a.min - b.min) },
+      budget: { safePct: numv('bd-pct', 40, 10, 80) }, statement: { on: true } },
     updatedAt: new Date().toISOString()
   };
   if(data.voucher.min > data.voucher.max) throw new Error('The smallest voucher is bigger than the largest');
-  ['tips', 'sponsors', 'help', 'loans'].forEach(k => { if(window._svExtra && window._svExtra[k]) data[k] = window._svExtra[k](); });
+  ['tips', 'sponsors', 'help'].forEach(k => { if(window._svExtra && window._svExtra[k]) data[k] = window._svExtra[k](); });
   await window._setDoc('siteConfig', 'services', data);
   await logAct('Services & Rewards saved', 'config', 'services');
 }

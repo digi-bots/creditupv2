@@ -2835,14 +2835,15 @@ function renderTP(){
       const times=(k && k!=='BALANCE_PAYMENT') ? (dup[k]||0) : 0;
       const dupBadge = times>1 ? `<span class="wbadge or" title="This TrxID was submitted ${times} times">DUP ×${times}</span>` : '';
       const appRef = r.appId ? `<span class="wbadge" title="Linked application">CU-${String(r.appId).slice(-6).toUpperCase()}</span>` : '';
+      const repayTag = r.payType==='installment' ? '<span class="wbadge" style="background:rgba(77,143,255,.15);color:#7fb0ff">INSTALLMENT</span>' : r.payType==='payoff' ? '<span class="wbadge" style="background:rgba(29,219,128,.15);color:var(--p)">EARLY PAYOFF</span>' : '';
       // compare with the fee from the admin's own settings (shown once Site Config is loaded)
       let feeChk='';
-      const ap=r.appId&&window._cfgLoaded?findById('applications',r.appId):null;
+      const ap=!repayTag&&r.appId&&window._cfgLoaded?findById('applications',r.appId):null;
       if(ap){ const am=Number(String(ap.loanAmount||'').replace(/,/g,''))||0, mo=Number(ap.term)||0;
         if(am&&mo){ const pr=(_D.promoUses||[]).find(p=>p._id==='app_'+r.appId), promo=pr?Number(pr.amount)||0:0;
           const d=Number(r.amount||0)+Number(r.appliedBalance||0)-Math.max(0,_feeFor(window._cfgLoaded,am,mo,ap.extraFee)-promo);
           feeChk=(promo?`<div style="font-size:10px;color:#c085ff;font-weight:700">promo −৳${fa(promo)}</div>`:'')+(d===0?'<div style="font-size:10px;color:var(--p);font-weight:700">= fee ✓</div>':`<div style="font-size:10px;color:${d<0?'var(--red)':'var(--orange)'};font-weight:800" title="Compared with the fee from your settings">${d<0?'short ৳'+fa(-d):'+৳'+fa(d)}</div>`); } }
-      return `<tr class="${r.removed?'is-removed':''}"><td class="mono">${r.trxId||'-'} ${dupBadge}${rmTag(r)}</td><td class="mono">${r.uid||'-'}</td><td><div class="tm">${_trxLogoHtml(r)}<div class="tm-txt">${r.payMethod||(String(r.trxId).toUpperCase()==='BALANCE_PAYMENT'?'Balance':'-')}${r.gateway?' <span class="wbadge">AUTO</span>':''}${r.payType?`<small>${r.payType}</small>`:''}${appRef}</div></div></td><td style="font-weight:800;white-space:nowrap">৳${fa(Number(r.amount||0)+Number(r.appliedBalance||0))}${Number(r.appliedBalance)>0?`<div style="font-size:10px;color:var(--txt2);font-weight:600">wallet ৳${fa(r.amount||0)} + bal ৳${fa(r.appliedBalance)}</div>`:''}${feeChk}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button>${r.removed?`<button class="ab ab-ok" title="Restore to the user site" onclick="restoreDoc('transactions','${r._id}',loadTrx)"><i class="fa-solid fa-rotate-left"></i></button>`:`<button class="ab ab-d" title="Remove / delete" onclick="delTrx('${r._id}')"><i class="fa-solid fa-trash"></i></button>`}</div></td></tr>`;
+      return `<tr class="${r.removed?'is-removed':''}"><td class="mono">${r.trxId||'-'} ${dupBadge}${rmTag(r)}</td><td class="mono">${r.uid||'-'}</td><td><div class="tm">${_trxLogoHtml(r)}<div class="tm-txt">${r.payMethod||(String(r.trxId).toUpperCase()==='BALANCE_PAYMENT'?'Balance':'-')}${r.gateway?' <span class="wbadge">AUTO</span>':''}${r.payType&&!repayTag?`<small>${r.payType}</small>`:''}${repayTag}${appRef}</div></div></td><td style="font-weight:800;white-space:nowrap">৳${fa(Number(r.amount||0)+Number(r.appliedBalance||0))}${Number(r.appliedBalance)>0?`<div style="font-size:10px;color:var(--txt2);font-weight:600">wallet ৳${fa(r.amount||0)} + bal ৳${fa(r.appliedBalance)}</div>`:''}${feeChk}</td><td>${sb(r.status||'Pending')}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.submittedAt)}</td><td style="font-size:10px;color:var(--txt2)">${fd(r.verifiedAt)}</td><td><div class="acts"><button class="ab ab-v" onclick="viewTrx('${r._id}')"><i class="fa-solid fa-eye"></i></button><button class="ab ab-ok" onclick="qVTrx('${r._id}')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" onclick="qRTrx('${r._id}')"><i class="fa-solid fa-xmark"></i></button>${r.removed?`<button class="ab ab-ok" title="Restore to the user site" onclick="restoreDoc('transactions','${r._id}',loadTrx)"><i class="fa-solid fa-rotate-left"></i></button>`:`<button class="ab ab-d" title="Remove / delete" onclick="delTrx('${r._id}')"><i class="fa-solid fa-trash"></i></button>`}</div></td></tr>`;
     }).join(''):'<tr class="empty"><td colspan="8">No transactions found</td></tr>';
   });
 }
@@ -2908,6 +2909,16 @@ function viewTrx(id){
 function _svcHours(){ try{ return (_SV&&_SV.vip&&_SV.vip.hours)||72; }catch(e){ return 72; } }
 async function _trxCheck(t){
   const el=document.getElementById('tCheck'); if(!el) return;
+  if(['installment','payoff'].includes(t.payType)){
+    const app=t.appId?findById('applications',t.appId):null;
+    el.innerHTML=`<div style="margin:10px 0 12px;padding:12px 14px;border:1px solid var(--blue);border-radius:12px;background:rgba(77,143,255,.05);font-size:13px;line-height:1.8">
+      <b><i class="fa-solid fa-hand-holding-dollar" style="color:var(--blue)"></i> Loan repayment — ${t.payType==='payoff'?'early payoff (whole loan)':(t.installments||1)+' installment'+((t.installments||1)>1?'s':'')}</b><br>
+      Amount the server asked for: <b>৳${fa(t.amount)}</b>${t.payoffDiscount?` (after ৳${fa(t.payoffDiscount)} early-payoff discount)`:''}<br>
+      Loan: ${app?`৳${fa(app.loanAmount)} · ${app.term} months · CU-${_escA(String(t.appId).slice(-6).toUpperCase())} · paid so far ৳${fa(app.paidAmount||0)}`:_escA(t.appId||'-')}<br>
+      Sent from <b>${_escA(t.senderNumber||'-')}</b> to <b>${_escA(t.collectionNumber||'-')}</b> via ${_escA(t.payMethod||'-')} · ${fd(t.submittedAt)}<br>
+      <span style="color:var(--txt2);font-size:12px">Find ৳${fa(t.amount)} with TrxID <b class="mono">${_escA(t.trxId||'')}</b> in your wallet app, then Approve. Verifying updates the loan; a payoff (or the last installment) marks it Repaid.</span></div>`;
+    return;
+  }
   const cfg=await _cfgMain();
   const pu=t.appId?await window._getDoc('promoUses','app_'+t.appId):null;
   const promo=pu?Number(pu.amount)||0:0;
@@ -2961,8 +2972,20 @@ async function deductBalanceIfApplied(trx) {
     } catch(e) { console.error("Balance deduct error:", e); }
   }
 }
+// loan repayments (installment / early payoff) are verified on the server, which updates the loan
+async function _repayAct(id,status){
+  const t=findById('transactions',id)||{};
+  if(status==='Verified'&&!confirm(`Verify this ${t.payType==='payoff'?'early payoff':'installment'} of ৳${fa(t.amount)} (TrxID ${t.trxId})? Check that the money arrived first.`)) return;
+  showL(true); const r=await window._accountApi('adminRepay',{id,op:status==='Verified'?'verify':'reject'}); showL(false);
+  if(!r.ok){ toast(r.data.error||'Failed','e'); return; }
+  await logAct(`${t.payType==='payoff'?'Early payoff':'Installment'} ${status.toLowerCase()}: ৳${fa(t.amount)} (TrxID ${t.trxId})${r.data.repaid?' — loan fully repaid':''}`,'transaction',id);
+  toast(status==='Verified'?(r.data.repaid?'Verified — loan fully repaid 🎉':'Installment verified ✓'):'Rejected',status==='Verified'?'s':'e');
+  closeMo('moTrx'); loadTrx();
+}
+const _isRepay=id=>{ const t=findById('transactions',id); return !!(t&&['installment','payoff'].includes(t.payType)); };
 async function trxAct(status){
   if(!_docId)return;
+  if(_isRepay(_docId)) return _repayAct(_docId,status);
   showL(true);
   try{
     const trx=findById('transactions',_docId);
@@ -2984,6 +3007,7 @@ async function trxAct(status){
   showL(false);
 }
 async function qVTrx(id){
+  if(_isRepay(id)) return _repayAct(id,'Verified');
   showL(true);
   const trx=findById('transactions',id)||{_id:id};
   await window._updateDoc(id,'transactions',{status:'Verified',verifiedAt:new Date().toISOString()});
@@ -2994,6 +3018,7 @@ async function qVTrx(id){
   toast(synced?'Fee verified — approve the loan from Applications':'Verified ✓'); showL(false); loadTrx();
 }
 async function qRTrx(id){
+  if(_isRepay(id)) return _repayAct(id,'Rejected');
   showL(true);
   const trx=findById('transactions',id)||{_id:id};
   await window._updateDoc(id,'transactions',{status:'Rejected'});

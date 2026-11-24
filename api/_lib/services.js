@@ -27,8 +27,18 @@ const DEF = {
     { id: 'p6', label: '৳50', type: 'balance', value: 50, weight: 2, color: '#ffc94d' }
   ] },
   voucher: { on: true, min: 50, max: 1000, days: 30 },
-  codes: { promo: true, redeem: true }
+  codes: { promo: true, redeem: true },
+  // loan tools: how installments are counted, early payoff, the personal loan limit and trust levels
+  loans: {
+    emiMode: 'principal',            // principal = loan ÷ months (interest is paid upfront with the fee) · flat = (loan + interest) ÷ months · amortized = bank EMI
+    pay: { on: true }, payoff: { on: true, discountPct: 0, fee: 0 },
+    limit: { on: true, enforce: false, start: 20000, step: 10000, verifiedBonus: 5000, vipBonus: 10000, max: 0 },
+    trust: { on: true, levels: [{ name: 'Bronze', min: 0, perk: 'Welcome to Creditfy' }, { name: 'Silver', min: 30, perk: 'Faster review' }, { name: 'Gold', min: 60, perk: 'Higher loan limit and priority review' }, { name: 'Platinum', min: 85, perk: 'Our best limits and the fastest service' }] },
+    budget: { safePct: 40 }, statement: { on: true }
+  }
 };
+const LIVE = ['Disbursed', 'Active', 'Overdue'];
+const num = v => Number(String(v ?? '').replace(/,/g, '')) || 0;
 
 const iso = (t = Date.now()) => new Date(t).toISOString();
 // Bangladesh date (UTC+6) — check-in days and spin periods follow the local calendar
@@ -46,8 +56,84 @@ function merge(d) {
     spin: { ...DEF.spin, ...(d.spin || {}), prizes: (Array.isArray(d.spin?.prizes) && d.spin.prizes.length ? d.spin.prizes : DEF.spin.prizes).slice(0, 12) },
     voucher: { ...DEF.voucher, ...(d.voucher || {}) },
     codes: { ...DEF.codes, ...(d.codes || {}) },
-    hub: d.hub || {}, tips: d.tips || null, sponsors: d.sponsors || null, help: d.help || null, loans: d.loans || null
+    hub: d.hub || {}, tips: d.tips || null, sponsors: d.sponsors || null, help: d.help || null,
+    loans: loansCfg(d.loans)
   };
+}
+function loansCfg(l) {
+  l = l || {}; const D = DEF.loans;
+  return { ...D, ...l, pay: { ...D.pay, ...(l.pay || {}) }, payoff: { ...D.payoff, ...(l.payoff || {}) }, limit: { ...D.limit, ...(l.limit || {}) },
+    trust: { ...D.trust, ...(l.trust || {}), levels: Array.isArray(l.trust?.levels) && l.trust.levels.length ? l.trust.levels : D.trust.levels },
+    budget: { ...D.budget, ...(l.budget || {}) }, statement: { ...D.statement, ...(l.statement || {}) } };
+}
+// one loan: installment, total to repay, what is paid, the schedule and the next due date
+function loanView(a, txs, L, rate, now = Date.now()) {
+  const amount = num(a.loanAmount), term = Math.max(1, Number(a.term) || 1);
+  const r = (Number(rate) || 0) / 100 / 12;
+  let emi, total;
+  if (L.emiMode === 'amortized' && r > 0) { emi = Math.round(amount * r * Math.pow(1 + r, term) / (Math.pow(1 + r, term) - 1)); total = emi * term; }
+  else if (L.emiMode === 'flat') { total = amount + Math.round(amount * (Number(rate) || 0) / 100 * term / 12); emi = Math.ceil(total / term); }
+  else { total = amount; emi = Math.ceil(amount / term); }
+  const mine = txs.filter(t => t.appId === a.id && ['installment', 'payoff'].includes(t.payType) && t.removed !== true);
+  const paid = Math.min(total, mine.filter(t => t.status === 'Verified').reduce((x, t) => x + num(t.amount), 0) + num(a.paidManual));
+  const pending = mine.filter(t => !t.status || t.status === 'Pending').reduce((x, t) => x + num(t.amount), 0);
+  const startS = a.disbursedAt || a.creditedAt || a.approvedAt || '';
+  const start = startS ? new Date(startS) : null;
+  const repaid = a.status === 'Repaid' || paid >= total - 0.5;
+  const schedule = Array.from({ length: term }, (_, i) => {
+    const due = start ? new Date(start) : null; if (due) due.setMonth(due.getMonth() + i + 1);
+    const amt = i === term - 1 ? total - emi * (term - 1) : emi;
+    const before = emi * i, got = Math.max(0, Math.min(amt, paid - before));
+    return { n: i + 1, due: due ? due.toISOString() : '', amount: amt, paid: got, done: got >= amt - 0.5 };
+  });
+  const next = repaid ? null : schedule.find(x => !x.done) || null;
+  const overdue = !!(next && next.due && new Date(next.due).getTime() < now) || a.status === 'Overdue';
+  return { id: a.id, amount, term, status: a.status, submittedAt: a.submittedAt || '', disbursedAt: startS, dueDate: a.dueDate || (schedule.length ? schedule[schedule.length - 1].due : ''),
+    emi, total, paid, pending, remaining: Math.max(0, total - paid), paidCount: schedule.filter(x => x.done).length, next, overdue, repaid, live: LIVE.includes(a.status) && !repaid, schedule,
+    payments: mine.map(t => ({ id: t.id, type: t.payType, amount: num(t.amount), status: t.status || 'Pending', trxId: t.trxId || '', at: t.submittedAt || '', verifiedAt: t.verifiedAt || '' })).sort((x, y) => String(y.at).localeCompare(String(x.at))) };
+}
+function payoffOf(v, L) {
+  const P = L.payoff || {};
+  const disc = Math.round(v.remaining * Math.min(100, Math.max(0, Number(P.discountPct) || 0)) / 100);
+  return { amount: Math.max(0, v.remaining - disc + Math.round(Number(P.fee) || 0)), discount: disc, fee: Math.round(Number(P.fee) || 0) };
+}
+// trust score 0–100 from the user's own history
+function trustOf(u, views, apps, vip, L) {
+  const items = [];
+  const add = (ok, pts, label, tip) => items.push({ ok, pts: ok ? pts : 0, max: pts, label, tip });
+  const repaid = views.filter(v => v.repaid).length;
+  const late = apps.filter(a => a.overdueAt || a.status === 'Overdue').length;
+  const ageDays = u.createdAt ? (Date.now() - new Date(u.createdAt).getTime()) / 864e5 : 0;
+  add(u.phoneVerified === true, 20, 'Verified number', 'Verify your number');
+  add(repaid >= 1, 15, 'First loan repaid', 'Repay a loan fully');
+  add(repaid >= 2, 15, 'Two loans repaid', 'Repay a second loan');
+  add(repaid >= 1 && late === 0, 20, 'Always on time', 'Pay every installment by its due date');
+  add(ageDays >= 90, 10, 'Member for 3 months', 'Stay with us for 3 months');
+  add(!!vip, 10, 'VIP member', 'Join VIP');
+  add(!!(u.name || apps.some(a => a.name)), 10, 'Complete profile', 'Complete your profile');
+  let score = items.reduce((x, i) => x + i.pts, 0);
+  if (views.some(v => v.overdue)) score = Math.max(0, score - 30);
+  score = Math.min(100, score);
+  const levels = [...L.trust.levels].sort((a, b) => a.min - b.min);
+  const lvl = levels.filter(l => score >= l.min).pop() || levels[0];
+  const nxt = levels.find(l => l.min > score) || null;
+  return { score, level: lvl.name, perk: lvl.perk || '', next: nxt ? { name: nxt.name, need: nxt.min - score } : null, items, levels, overdueNow: views.some(v => v.overdue) };
+}
+function limitOf(u, views, vip, L, maxBorrow) {
+  const C = L.limit || {};
+  const cap = num(C.max) || num(maxBorrow) || 60000;
+  const onTime = views.filter(v => v.repaid).length;
+  const parts = [{ label: 'Starting limit', amount: num(C.start) }];
+  if (onTime) parts.push({ label: `${onTime} loan${onTime > 1 ? 's' : ''} repaid`, amount: onTime * num(C.step) });
+  if (u.phoneVerified === true) parts.push({ label: 'Verified number', amount: num(C.verifiedBonus) });
+  if (vip) parts.push({ label: 'VIP member', amount: num(C.vipBonus) });
+  const raw = parts.reduce((x, p) => x + p.amount, 0);
+  const limit = Math.min(cap, Math.max(0, raw));
+  const tips = [];
+  if (u.phoneVerified !== true && num(C.verifiedBonus)) tips.push({ label: 'Verify your number', amount: num(C.verifiedBonus), go: 'verify' });
+  if (num(C.step)) tips.push({ label: 'Repay your loan on time', amount: num(C.step), go: 'loans' });
+  if (!vip && num(C.vipBonus)) tips.push({ label: 'Join VIP', amount: num(C.vipBonus), go: 'vip' });
+  return { on: C.on !== false, enforce: C.enforce === true, limit, cap, parts, tips: limit >= cap ? [] : tips };
 }
 
 // the fee for a loan, from Site Config (the same rules as the app and the admin panel)
@@ -378,6 +464,89 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
     else { d.setUTCMonth(d.getUTCMonth() + 1, 1); }
     return new Date(d.getTime() - 6 * 3600e3).toISOString();   // midnight in Bangladesh
   }
+
+  // ── loan tools ──
+  async function myData(uid) {
+    const { d, u } = await me(uid);
+    const [C, main, as, ts] = await Promise.all([cfg(), db().collection('siteConfig').doc('main').get(), db().collection('applications').where('uid', '==', uid).get(), db().collection('transactions').where('uid', '==', uid).get()]);
+    const M = main.exists ? main.data() : {};
+    const apps = as.docs.map(x => ({ id: x.id, ...x.data() })).filter(a => a.removed !== true);
+    const txs = ts.docs.map(x => ({ id: x.id, ...x.data() }));
+    const views = apps.map(a => loanView(a, txs, C.loans, M.annualInterestRate ?? 18));
+    const vip = vipState(u);
+    return { d, u, C, M, apps, txs, views, vip };
+  }
+  Object.assign(actions, {
+    myLoans: wrap(async (b, uid) => {
+      const { u, C, M, apps, txs, views, vip } = await myData(uid);
+      const L = C.loans;
+      const loans = views.map(v => { const a = apps.find(x => x.id === v.id) || {}; return { ...v, ref: 'CU-' + v.id.slice(-6).toUpperCase(), wallet: a.wallet || '', fee: txs.filter(t => t.appId === v.id && !['installment', 'payoff'].includes(t.payType) && t.removed !== true).map(t => ({ amount: num(t.amount) + num(t.appliedBalance), status: t.status || 'Pending', at: t.submittedAt || '' })), payoff: v.live ? payoffOf(v, L) : null }; })
+        .sort((x, y) => String(y.submittedAt).localeCompare(String(x.submittedAt)));
+      return [200, { cfg: L, rate: M.annualInterestRate ?? 18, loans, limit: limitOf(u, views, vip, L, M.maxBorrowAmount), trust: trustOf(u, views, apps, vip, L),
+        user: { phone: uid, name: u.name || (apps.find(a => a.name) || {}).name || '', verified: u.phoneVerified === true, vip, since: u.createdAt || '', balance: num(u.balance) } }];
+    }),
+
+    // pay one or more installments, or the whole loan early: the user sends the money, the admin checks it
+    payLoan: wrap(async (b, uid) => {
+      const { C, apps, txs, views } = await myData(uid);
+      const L = C.loans, kind = b.kind === 'payoff' ? 'payoff' : 'installment';
+      if (kind === 'payoff' && L.payoff.on === false) return [400, { error: 'Early payoff is not available right now.' }];
+      if (kind === 'installment' && L.pay.on === false) return [400, { error: 'Paying installments in the app is not available right now.' }];
+      const v = views.find(x => x.id === String(b.appId || ''));
+      if (!v) return [404, { error: 'Loan not found.' }];
+      if (!v.live) return [400, { error: v.repaid ? 'This loan is already fully repaid. 🎉' : 'This loan is not active yet.' }];
+      if (txs.some(t => t.appId === v.id && t.payType === 'payoff' && (!t.status || t.status === 'Pending'))) return [400, { error: 'Your early payoff is already waiting for review.' }];
+      let amount, count = 0;
+      const left = Math.max(0, v.remaining - v.pending);
+      if (kind === 'payoff') { amount = payoffOf(v, L).amount - v.pending; if (amount <= 0) return [400, { error: 'Your pending payments already cover this loan.' }]; }
+      else { count = Math.max(1, Math.min(v.term, Math.round(Number(b.count) || 1))); amount = Math.min(left, v.emi * count); if (amount <= 0) return [400, { error: 'Your pending payments already cover this loan.' }]; }
+      const trxId = String(b.trxId || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 40);
+      if (trxId.length < 6) return [400, { error: 'Please enter the Transaction ID from your payment SMS.' }];
+      const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+      if (!isPhone(sender)) return [400, { error: 'Please enter the number you paid from.' }];
+      const ref = db().collection('transactions').doc('trx_' + trxId);
+      const [dupT, dupO] = await Promise.all([ref.get(), db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get()]);
+      if (dupT.exists || !dupO.empty) return [400, { error: 'This Transaction ID has already been used.' }];
+      const a = apps.find(x => x.id === v.id);
+      await ref.set({ uid, appId: v.id, trxId, payType: kind, amount, installments: count, payoffDiscount: kind === 'payoff' ? payoffOf(v, L).discount : 0,
+        payMethod: String(b.payMethod || '').slice(0, 30), collectionNumber: String(b.toNumber || '').replace(/[^\d+]/g, '').slice(0, 20), senderNumber: sender,
+        totalFee: 0, appliedBalance: 0, loanAmount: v.amount, term: v.term, wallet: a.wallet || '', status: 'Pending', submittedAt: iso() });
+      await notifyUser(uid, kind === 'payoff' ? 'Early payoff received ⏳' : 'Installment received ⏳', `We received your ${kind === 'payoff' ? 'early payoff' : 'installment'} of ৳${amount.toLocaleString('en-US')} for loan CU-${v.id.slice(-6).toUpperCase()} (TrxID ${trxId}). Our team will verify it shortly.`, 'transaction');
+      return [200, { ok: true, amount }];
+    }),
+
+    // admin: verify or reject a repayment; a fully paid loan becomes "Repaid"
+    async adminRepay(b, user) {
+      if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admin login required.' }];
+      if (!(await adminCan(user, ['transactions', 'portfolio']))) return [403, { error: 'Your admin role does not allow this.' }];
+      const ref = db().collection('transactions').doc(String(b.id || ''));
+      const s = await ref.get();
+      if (!s.exists) return [404, { error: 'Payment not found.' }];
+      const t = s.data();
+      if (!['installment', 'payoff'].includes(t.payType)) return [400, { error: 'This is not a loan repayment.' }];
+      const status = b.op === 'reject' ? 'Rejected' : 'Verified';
+      await ref.update({ status, verifiedAt: status === 'Verified' ? iso() : null, decidedBy: user.uid });
+      const tk = n => '৳' + Number(n || 0).toLocaleString('en-US');
+      if (status === 'Rejected') {
+        await notifyUser(t.uid, 'Payment not verified', `We could not verify your ${t.payType === 'payoff' ? 'early payoff' : 'installment'} payment (TrxID ${t.trxId}). Please check it and contact support.`, 'warning');
+        return [200, { ok: true }];
+      }
+      const C = await cfg(), main = (await db().collection('siteConfig').doc('main').get()).data() || {};
+      const as = await db().collection('applications').doc(t.appId).get();
+      if (!as.exists) return [200, { ok: true, note: 'The loan no longer exists.' }];
+      const ts = await db().collection('transactions').where('appId', '==', t.appId).get();
+      const v = loanView({ id: as.id, ...as.data() }, ts.docs.map(x => ({ id: x.id, ...x.data() })), C.loans, main.annualInterestRate ?? 18);
+      const done = v.repaid || t.payType === 'payoff';
+      const upd = { paidAmount: v.paid, lastPaidAt: iso(), updatedAt: iso() };
+      if (done) Object.assign(upd, { status: 'Repaid', repaidAt: iso(), statusUpdatedAt: iso() });
+      else if (as.data().status === 'Overdue' && !v.overdue) Object.assign(upd, { status: 'Active', statusUpdatedAt: iso() });
+      await as.ref.update(upd);
+      await notifyUser(t.uid, done ? 'Loan fully repaid 🎉' : 'Installment received ✅', done
+        ? `Congratulations! Loan CU-${t.appId.slice(-6).toUpperCase()} is fully repaid. Thank you — your trust level and loan limit grow with every loan you repay.`
+        : `Your payment of ${tk(t.amount)} is verified. Paid ${tk(v.paid)} of ${tk(v.total)}${v.next ? `; next installment ${tk(v.next.amount - v.next.paid)} due ${v.next.due ? new Date(v.next.due).toDateString() : 'soon'}` : ''}.`, 'success');
+      return [200, { ok: true, repaid: done, paid: v.paid, total: v.total }];
+    }
+  });
 
   return { actions, vipState, credit, cfg, feeFor };
 };
