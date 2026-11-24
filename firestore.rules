@@ -12,6 +12,9 @@ service cloud.firestore {
     function signedIn() { return request.auth != null; }
     function isAdmin() { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
     function me() { return request.auth.uid; }
+    // records a user creates: a plain ID and a reasonable size (blocks tampered records that could attack the admin panel)
+    function okId(id) { return id.matches('^[A-Za-z0-9_.:@-]{1,200}$'); }
+    function okSize() { return request.resource.data.size() <= 80; }
     function onlyChanges(keys) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys); }
 
     // ── admins and their roles (Admin → Team & Settings) ──
@@ -63,7 +66,7 @@ service cloud.firestore {
     // loan applications: a user creates and reads their own; only "fee sent" may be set by them
     match /applications/{id} {
       allow read: if signedIn() && resource.data.uid == me();
-      allow create: if signedIn() && request.resource.data.uid == me()
+      allow create: if signedIn() && request.resource.data.uid == me() && okId(id) && okSize()
         && request.resource.data.status == 'Pending Fee Payment';
       allow update: if signedIn() && resource.data.uid == me()
         && onlyChanges(['status', 'statusUpdatedAt'])
@@ -76,24 +79,27 @@ service cloud.firestore {
     match /transactions/{id} {
       allow get: if signedIn() && (resource == null || resource.data.uid == me());
       allow list: if signedIn() && resource.data.uid == me();
-      allow create: if signedIn() && request.resource.data.uid == me()
-        && request.resource.data.status == 'Pending';
+      allow create: if signedIn() && request.resource.data.uid == me() && okId(id) && okSize()
+        && request.resource.data.status == 'Pending'
+        // "use balance for the fee" is at most ৳100 (the same limit as the app)
+        && (!('appliedBalance' in request.resource.data) || (request.resource.data.appliedBalance is number
+            && request.resource.data.appliedBalance >= 0 && request.resource.data.appliedBalance <= 100));
     }
 
     // notifications: a user sees their own and may add notes to their own list
     match /user_notifications/{id} {
       allow read: if signedIn() && resource.data.uid == me();
-      allow create: if signedIn() && request.resource.data.uid == me();
+      allow create: if signedIn() && request.resource.data.uid == me() && okId(id) && okSize();
     }
 
     // support chat: one conversation per user
     match /support_chats/{id} {
       allow read: if signedIn() && resource.data.uid == me();
-      allow create: if signedIn() && request.resource.data.uid == me();
+      allow create: if signedIn() && request.resource.data.uid == me() && okId(id) && okSize();
       allow update: if signedIn() && resource.data.uid == me() && request.resource.data.uid == me();
     }
     match /support_tickets/{id} {
-      allow create: if signedIn() && request.resource.data.uid == me();
+      allow create: if signedIn() && request.resource.data.uid == me() && okId(id) && okSize();
     }
 
     // everything else (admin, gatewayPayments, activity log, …) is admin / server only

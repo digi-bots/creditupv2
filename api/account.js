@@ -42,6 +42,20 @@ async function adminInfo(uid) {
   const role = String(d.role || '').toLowerCase().replace(/[\s_-]/g, '');
   return { ...d, uid, role: role || 'owner', canTeam: !role || role === 'superadmin' };
 }
+// may this admin change this section? The same rule as Firestore: full roles may do everything,
+// other roles need "edit" for one of the sections in adminConfig/roles (Team & Settings). secs = null: any admin.
+const FULL_ROLES = ['', 'owner', 'superadmin', 'admin'];
+async function adminCan(me, secs) {
+  if (!me) return false;
+  const s = await db().collection('admins').doc(me.uid).get();
+  if (!s.exists) return false;
+  const raw = String((s.data() || {}).role || '').toLowerCase();
+  if (!secs || FULL_ROLES.includes(raw.replace(/[\s_-]/g, ''))) return true;
+  const r = await db().collection('adminConfig').doc('roles').get();
+  const perms = ((((r.exists && r.data().roles) || {})[raw]) || {}).perms || {};
+  return secs.some(k => perms[k] === 'edit');
+}
+const noRole = [403, { error: 'Your admin role does not allow this.' }];
 const cleanEmail = e => String(e || '').trim().toLowerCase();
 const okEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
@@ -441,6 +455,7 @@ const actions = {
 
   async adminPush(b, me) {
     if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    if (!(await adminCan(me, b.auto ? ['applications', 'transactions', 'users', 'support', 'broadcast', 'risk', 'portfolio'] : ['broadcast']))) return noRole;
     const title = String(b.title || '').trim(), body = String(b.body || '').trim();
     if (!title) return [400, { error: 'A title is needed.' }];
     const cfg = await pushCfg();
@@ -462,6 +477,7 @@ const actions = {
 
   async runOverdue(b, me) {
     if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    if (!(await adminCan(me, ['applications', 'portfolio', 'appset']))) return noRole;
     return [200, await runOverdue({ force: true, by: 'admin' })];
   },
 
@@ -562,6 +578,7 @@ const actions = {
     const d = await findUserDoc(phone);
     if (!d) return [404, { error: 'Account not found.' }];
     const op = String(b.op || 'status');
+    if (op !== 'status' && !(await adminCan(me, ['users']))) return noRole;
     if (op === 'unlock') {
       const st = await balanceState(d, phone, false);
       const extra = (Number(d.data().balanceExtraUses) || 0) + Math.max(0, st.used + 1 - st.allowed);
@@ -577,6 +594,7 @@ const actions = {
 
   async adminResetPassword(b, me) {
     if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    if (!(await adminCan(me, ['users']))) return noRole;
     const phone = String(b.phone || ''), pw = String(b.password || '');
     if (!isPhone(phone)) return [400, { error: 'Invalid phone number.' }];
     if (pw.length < 6 || pw.length > 128) return [400, { error: 'Password must be at least 6 characters.' }];
@@ -592,6 +610,7 @@ const actions = {
   // that has no working login gets one with this password instead.
   async adminCreateUser(b, me) {
     if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    if (!(await adminCan(me, ['users']))) return noRole;
     const phone = String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
     const pw = String(b.password || '');
     if (!isPhone(phone)) return [400, { error: 'Enter a valid 10-digit BD mobile number (e.g. 1711000000).' }];
@@ -650,6 +669,7 @@ const actions = {
   // removes the login of a user the admin deleted, so the number can register again
   async adminDeleteLogin(b, me) {
     if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    if (!(await adminCan(me, ['users']))) return noRole;
     const phone = String(b.phone || '');
     if (!isPhone(phone)) return [400, { error: 'Invalid phone number.' }];
     if (await authUser(phone)) await auth().deleteUser(phone);
