@@ -216,8 +216,26 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
     // everything the Quick Services pages need, in one call (works without login: settings only)
     async svcConfig() {
       const C = await cfg();
+      // the Help Center can also show the FAQ written in SEO & Reviews
+      let seoFaq = [];
+      if (!C.help || C.help.useSeoFaq !== false) { try { const s = await db().collection('siteConfig').doc('seo').get(); seoFaq = ((s.exists && s.data().faq) || []).filter(f => f && f.q && f.a && f.on !== false).map(f => ({ q: f.q, a: f.a, cat: 'General' })); } catch (e) {} }
       return [200, { vip: C.vip, verify: C.verify, checkin: { on: C.checkin.on, rewards: C.checkin.rewards }, spin: { on: C.spin.on, period: C.spin.period, prizes: C.spin.prizes.map(p => ({ id: p.id, label: p.label, color: p.color })) },
-        voucher: C.voucher, codes: C.codes, hub: C.hub, tips: C.tips, sponsors: C.sponsors, help: C.help, loans: C.loans }];
+        voucher: C.voucher, codes: C.codes, hub: C.hub, tips: C.tips, sponsors: C.sponsors, help: { ...(C.help || {}), seoFaq }, loans: C.loans }];
+    },
+
+    // "Call me back": the user picks a topic and a time, the team calls
+    async callbackRequest(b, user) {
+      const C = await cfg(), H = C.help || {};
+      if (H.callback && H.callback.on === false) return [400, { error: 'Call-back requests are switched off right now.' }];
+      const phone = user ? user.uid : String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+      if (!isPhone(phone)) return [400, { error: 'Please enter a valid mobile number.' }];
+      const name = String(b.name || '').replace(/[<>]/g, '').trim().slice(0, 60);
+      const open = await db().collection('callbacks').where('phone', '==', phone).get();
+      if (open.docs.some(x => x.data().status === 'Open')) return [400, { error: 'You already asked for a call. Our team will call you soon.' }];
+      await db().collection('callbacks').add({ phone, name, uid: user ? user.uid : '', topic: String(b.topic || 'General').slice(0, 60), slot: String(b.slot || 'Any time').slice(0, 60),
+        note: String(b.note || '').replace(/[<>]/g, '').slice(0, 300), status: 'Open', createdAt: iso() });
+      if (user) await notifyUser(user.uid, 'Call request received 📞', `We will call you on 0${phone} (${String(b.slot || 'any time').slice(0, 60)}).`, 'info');
+      return [200, { ok: true }];
     },
 
     svcState: wrap(async (b, uid) => {
