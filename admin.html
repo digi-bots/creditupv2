@@ -4435,7 +4435,8 @@ function exportCSV(key){
   const data=(_D[key]||[]).map(x=>{ const c={...x};delete c._id;return c;}); 
   if(!data.length){toast('No data to export','w');return;} 
   const keys=[...new Set(data.flatMap(Object.keys))].filter(k=>typeof data[0][k]!=='object'); 
-  const rows=[keys.join(','),...data.map(r=>keys.map(k=>`"${(r[k]||'').toString().replace(/"/g,'""')}"`).join(','))]; 
+  const cell=v=>{ let t=(v??'').toString(); if(/^[=+\-@\t\r]/.test(t)) t="'"+t; return `"${t.replace(/"/g,'""')}"`; };
+  const rows=[keys.join(','),...data.map(r=>keys.map(k=>cell(r[k])).join(','))]; 
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));a.download=`${key}-${Date.now()}.csv`;a.click(); toast(`Exported ${data.length} rows`); 
 }
 
@@ -4491,11 +4492,31 @@ window._cloudinaryUploadLogo = async function(file, name){
   return { url: data.secure_url, publicId: data.public_id };
 };
 
+// ══ SAFE TEXT FROM USERS ══
+// Users can write their own applications, payments, chats and tickets. Before any of that reaches the admin panel,
+// characters that could turn into HTML or script (< > " ' `) are replaced with look-alike harmless ones,
+// and records with an unusual ID are left out (they can only come from someone tampering with the database).
+const _UW = new Set(['users','applications','transactions','support_chats','support_tickets','user_notifications','reviews','riskReviews','pushTokens','gatewayPayments']);
+const _SAFE_ID = /^[A-Za-z0-9_.:@-]{1,200}$/;
+const _safeTxt = t => t.replace(/[<>"'`]/g, c => ({'<':'‹','>':'›','"':'”',"'":'’','`':'ˋ'}[c]));
+function _clean(v){
+  if(typeof v === 'string') return _safeTxt(v);
+  if(Array.isArray(v)) return v.map(_clean);
+  if(v && typeof v === 'object' && Object.getPrototypeOf(v) === Object.prototype){ const o = {}; for(const k in v) o[_safeTxt(k)] = _clean(v[k]); return o; }
+  return v;
+}
+function _row(col, d){
+  if(!_UW.has(col)) return { _id: d.id, ...d.data() };
+  if(!_SAFE_ID.test(d.id)){ console.warn('Skipped a record with an unsafe ID in', col); return null; }
+  return { ..._clean(d.data() || {}), _id: d.id };
+}
+window._cleanRow = _row;
+
 // ══ VERCEL-READY FALLBACK FETCH ══
 window._getDocs = async function(col, orderF='createdAt', dir='desc'){
   try{
     const snap = await getDocs(collection(db,col));
-    const data = snap.docs.map(d=>({_id:d.id, ...d.data()}));
+    const data = snap.docs.map(d=>_row(col, d)).filter(Boolean);
     return data.sort((a,b) => {
       const dateA = new Date(a.submittedAt || a.date || a.createdAt || a.at || a.verifiedAt || 0);
       const dateB = new Date(b.submittedAt || b.date || b.createdAt || b.at || b.verifiedAt || 0);
@@ -4507,7 +4528,7 @@ window._getDocs = async function(col, orderF='createdAt', dir='desc'){
   }
 };
 
-window._getDoc=async function(col,id){try{const s=await getDoc(doc(db,col,id));return s.exists()?{_id:s.id,...s.data()}:null;}catch{return null;}};
+window._getDoc=async function(col,id){try{const s=await getDoc(doc(db,col,id));return s.exists()?_row(col,s):null;}catch{return null;}};
 window._addDoc=async function(col,data){return await addDoc(collection(db,col),data);};
 window._updateDoc=async function(id,col,data){await updateDoc(doc(db,col,id),data);};
 window._deleteDoc=async function(id,col){await deleteDoc(doc(db,col,id));};
@@ -4519,7 +4540,7 @@ window._adminGetSupportChat = async function(uid) {
     const q = query(collection(db, 'support_chats'), where('uid', '==', uid));
     const snap = await getDocs(q);
     if (snap.empty) return null;
-    return { _id: snap.docs[0].id, ...snap.docs[0].data() };
+    return _row('support_chats', snap.docs[0]);
   } catch(e) { console.warn(e); return null; }
 };
 
@@ -4609,8 +4630,9 @@ window._startAdminSupportBadgeListener = function() {
     let total = 0;
     const chats = [];
     snap.forEach(d => {
-      const data = d.data();
-      chats.push({ _id: d.id, ...data });
+      const data = _row('support_chats', d);
+      if(!data) return;
+      chats.push(data);
       total += (Number(data.unreadByAdmin) || 0);
     });
     const tb = document.getElementById('nb-st');
