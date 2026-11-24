@@ -54,7 +54,24 @@ let _SV = clone(SVD), _ORD = [], _CODES = [], _USES = [];
 function buildSvc(){
   const s = $p('sec-services'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Services &amp; Rewards</h2>${svBtn('services')}</div>${roBanner}
-  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['hub', 'grip', 'Quick Services tiles']], 'orders')}
+  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['help', 'circle-question', 'Help & Info'], ['hub', 'grip', 'Quick Services tiles']], 'orders')}
+  <div class="pro-pane" data-k="help">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-phone-volume"></i>Call-back requests <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="cbLoad()"><i class="fa-solid fa-rotate-right"></i></button></div><div id="cbList"></div></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-lightbulb"></i>Smart Tips <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="heAdd('tips')"><i class="fa-solid fa-plus"></i>Add tip</button></div>
+      <div class="hint" style="margin-bottom:6px">Empty list = the built-in tips. “Opens” = a service key such as compare, budget, verify, vip, loans, payoff, safety.</div><div id="he-tips"></div></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-handshake"></i>Partners &amp; Sites (sponsored) <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="heAdd('sponsors')"><i class="fa-solid fa-plus"></i>Add site</button></div>
+      <div class="hint" style="margin-bottom:6px">Shown with a “Sponsored” label (change it in Tag; leave Tag empty for none). Links open in a new tab.</div><div id="he-sponsors"></div></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-circle-question"></i>Help Center questions <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="heAdd('faq')"><i class="fa-solid fa-plus"></i>Add question</button></div>
+      <div class="fgrid fgrid3">${tog('hp-seofaq', 'Also show the FAQ from SEO &amp; Reviews', 1)}</div>
+      <div class="hint" style="margin:6px 0">Empty list = built-in questions about loans, fees, payments and the account.</div><div id="he-faq"></div></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Fees Explained &amp; Stay Safe</div>
+      <div class="hint" style="margin-bottom:6px">Fees are taken from Site Config automatically. The fee payment numbers from Wallets are always listed as official numbers.</div>
+      <div class="fgrid">${area('hp-feesnote', 'Extra note on the Fees page (optional)', '', 2, 'maxlength="400"')}${area('hp-safetips', 'Safety warnings — one per line (empty = built-in)', '', 4, 'maxlength="1500"')}${area('hp-nums', 'Other official numbers — one per line as Label | Number (e.g. Hotline | 09612345678)', '', 3, 'maxlength="800"')}</div></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-location-dot"></i>Our Offices <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="heAdd('offices')"><i class="fa-solid fa-plus"></i>Add office</button></div>
+      <div class="hint" style="margin-bottom:6px">Empty = the company address from Site Config. Map link optional (a Google Maps search is used otherwise).</div><div id="he-offices"></div></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-phone"></i>Call Me Back settings</div>
+      <div class="fgrid">${tog('cb-on', 'Users can ask for a call', 1)}${inp('cb-text', 'Text on the page', 'Choose a topic and a good time…', 'full maxlength="200"')}${area('cb-topics', 'Topics — one per line (empty = built-in)', '', 3)}${area('cb-slots', 'Time choices — one per line (empty = built-in)', '', 3)}</div></div>
+  </div>
   <div class="pro-pane" data-k="loans">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-calendar-days"></i>Installments</div>
       <div class="fgrid fgrid3"><div class="fg"><label>How the monthly installment is counted</label><select id="ln-mode"><option value="principal">Loan ÷ months (interest is paid upfront with the fee)</option><option value="flat">(Loan + interest) ÷ months</option><option value="amortized">Bank EMI (reducing balance)</option></select></div>
@@ -311,6 +328,33 @@ function spCost(){
   $p('spCost').innerHTML = `Average cost per spin: <b>৳${avg.toFixed(1)}</b>. With 1,000 spins ≈ ৳${fa(Math.round(avg * 1000))}.`;
 }
 function trRender(){ $p('trLv').innerHTML = _SV.loans.trust.levels.map((l, i) => `<div class="pl-row" style="grid-template-columns:1fr .6fr 2fr"><input value="${ep(l.name)}" placeholder="Level name" oninput="_SV.loans.trust.levels[${i}].name=this.value;markDirty('services','tr')"><input type="number" min="0" max="100" value="${Number(l.min) || 0}" placeholder="From score" oninput="_SV.loans.trust.levels[${i}].min=Number(this.value)||0;markDirty('services','tr')"><input value="${ep(l.perk || '')}" placeholder="What this level gets" oninput="_SV.loans.trust.levels[${i}].perk=this.value;markDirty('services','tr')"></div>`).join(''); }
+// Help & Info list editors
+const HE = {
+  tips: { list: () => _SV.tips, fields: [['title', 'Title', 2], ['text', 'Text', 4], ['icon', 'Icon (e.g. lightbulb)', 1.4], ['go', 'Opens (service key)', 1.2], ['btn', 'Button text', 1.2]], add: { on: true, title: '', text: '', icon: 'lightbulb', go: '', btn: '' } },
+  sponsors: { list: () => _SV.sponsors, fields: [['name', 'Name', 1.4], ['url', 'https://link', 2], ['logo', 'Logo URL (optional)', 1.8], ['desc', 'Short description', 2.4], ['tag', 'Tag', .8]], add: { on: true, name: '', url: '', logo: '', desc: '', tag: 'Sponsored' } },
+  faq: { list: () => _SV.help.faq, fields: [['cat', 'Category', 1], ['q', 'Question', 2.4], ['a', 'Answer', 4]], add: { cat: 'General', q: '', a: '' } },
+  offices: { list: () => _SV.help.offices, fields: [['name', 'Office name', 1.3], ['address', 'Address', 2.4], ['phone', 'Phone', 1.1], ['hours', 'Hours', 1.3], ['map', 'Map link (optional)', 1.6]], add: { on: true, name: '', address: '', phone: '', hours: '', map: '' } }
+};
+function heRender(k){
+  const D = HE[k], L = D.list(), el = $p('he-' + k); if(!el) return;
+  const cols = (D.add.on !== undefined ? 'auto ' : '') + D.fields.map(f => f[2] + 'fr').join(' ') + ' auto';
+  el.innerHTML = L.length ? L.map((x, i) => `<div class="pl-row" style="grid-template-columns:${cols}">${D.add.on !== undefined ? `<label class="tog" title="Show"><input type="checkbox" ${x.on !== false ? 'checked' : ''} onchange="heSet('${k}',${i},'on',this.checked)"><span class="tog-sl"></span></label>` : ''}
+    ${D.fields.map(([f, ph]) => `<input value="${ep(x[f] ?? '')}" placeholder="${ep(ph)}" oninput="heSet('${k}',${i},'${f}',this.value)">`).join('')}
+    <button class="ab ab-d" onclick="heDel('${k}',${i})"><i class="fa-solid fa-trash"></i></button></div>`).join('') : '<div class="hint">Nothing yet.</div>';
+}
+function heAdd(k){ HE[k].list().push(clone(HE[k].add)); markDirty('services', 'he' + k); heRender(k); }
+function heSet(k, i, f, v){ const L = HE[k].list(); if(L[i]) L[i][f] = v; markDirty('services', 'he' + k); }
+function heDel(k, i){ HE[k].list().splice(i, 1); markDirty('services', 'he' + k); heRender(k); }
+const lines = id => val(id).split('\n').map(t => t.trim()).filter(Boolean);
+async function cbLoad(){
+  const L = (await window._getDocs('callbacks')).sort((a, b) => (a.status === 'Open' ? 0 : 1) - (b.status === 'Open' ? 0 : 1) || String(b.createdAt).localeCompare(String(a.createdAt)));
+  const el = $p('cbList'); if(!el) return;
+  el.innerHTML = L.length ? L.slice(0, 100).map(c => `<div class="od-row" style="grid-template-columns:1.1fr 1fr 1.4fr .8fr auto"><div><b>${ep(c.name || '-')}</b><small>0${ep(c.phone)}</small></div><div>${ep(c.topic)}<small>${ep(c.slot)}</small></div><div><small style="margin:0">${ep(c.note || '')}</small></div>
+    <div>${c.status === 'Open' ? '<span class="pro-warn">Waiting</span>' : '<span class="pro-ok">Called</span>'}<small>${fd(c.createdAt)}</small></div>
+    <div class="acts"><a class="ab ab-v" href="tel:0${ep(c.phone)}" title="Call"><i class="fa-solid fa-phone"></i></a>${c.status === 'Open' ? `<button class="ab ab-ok" title="Mark called" onclick="cbDone('${ep(c._id)}')"><i class="fa-solid fa-check"></i></button>` : ''}</div></div>`).join('') : '<div class="hint">No call-back requests yet.</div>';
+  const n = L.filter(c => c.status === 'Open').length; const b = $p('nb-svc'); if(b && n){ b.title = n + ' call-back request(s)'; }
+}
+async function cbDone(id){ await window._updateDoc(id, 'callbacks', { status: 'Done', doneAt: new Date().toISOString() }); await logAct('Call-back request marked as called', 'user', id); toast('Marked as called ✓'); cbLoad(); }
 function hbRender(){
   const H = _SV.hub, home = H.home || [];
   const order = [...home.filter(k => k !== 'all'), ...SV_TILES.map(t => t[0]).filter(k => !home.includes(k))];
@@ -331,7 +375,8 @@ async function loadSvc(){
   const d = (await window._getDoc('siteConfig', 'services')) || {};
   _SV = clone(SVD);
   ['vip', 'verify', 'checkin', 'spin', 'voucher', 'codes', 'hub'].forEach(k => Object.assign(_SV[k], d[k] || {}));
-  ['tips', 'sponsors', 'help'].forEach(k => { if(d[k]) _SV[k] = clone(d[k]); });
+  _SV.tips = Array.isArray(d.tips) ? clone(d.tips) : []; _SV.sponsors = Array.isArray(d.sponsors) ? clone(d.sponsors) : [];
+  const Hd = d.help || {}; _SV.help = { useSeoFaq: Hd.useSeoFaq !== false, faq: clone(Hd.faq || []), feesNote: Hd.feesNote || '', safety: { numbers: clone((Hd.safety || {}).numbers || []), tips: clone((Hd.safety || {}).tips || []) }, offices: clone(Hd.offices || []), callback: { on: true, text: '', topics: [], slots: [], ...(Hd.callback || {}) } };
   if(!Array.isArray(_SV.vip.plans) || !_SV.vip.plans.length) _SV.vip.plans = clone(SVD.vip.plans);
   ['perks', 'terms'].forEach(k => { if(!Array.isArray(_SV.vip[k])) _SV.vip[k] = clone(SVD.vip[k]); });
   _SV.checkin.rewards = Array.from({ length: 7 }, (_, i) => Number((_SV.checkin.rewards || [])[i]) || 0);
@@ -341,14 +386,16 @@ async function loadSvc(){
   const LL = _SV.loans;
   fillIn({ 'ln-mode': LL.emiMode || 'principal', 'ln-pay': LL.pay.on !== false, 'ln-po': LL.payoff.on !== false, 'ln-pod': LL.payoff.discountPct, 'ln-pof': LL.payoff.fee,
     'lm-on': LL.limit.on !== false, 'lm-enf': LL.limit.enforce === true, 'lm-start': LL.limit.start, 'lm-step': LL.limit.step, 'lm-vf': LL.limit.verifiedBonus, 'lm-vip': LL.limit.vipBonus, 'lm-max': LL.limit.max, 'bd-pct': LL.budget.safePct });
-  trRender();
+  trRender(); ['tips', 'sponsors', 'faq', 'offices'].forEach(heRender);
+  fillIn({ 'hp-seofaq': _SV.help.useSeoFaq, 'hp-feesnote': _SV.help.feesNote, 'hp-safetips': _SV.help.safety.tips.join('\n'), 'hp-nums': _SV.help.safety.numbers.map(n => `${n.label || ''} | ${n.number}`).join('\n'),
+    'cb-on': _SV.help.callback.on !== false, 'cb-text': _SV.help.callback.text, 'cb-topics': (_SV.help.callback.topics || []).join('\n'), 'cb-slots': (_SV.help.callback.slots || []).join('\n') });
   fillIn({ 'vp-on': _SV.vip.on !== false, 'vp-hours': _SV.vip.hours, 'vp-normal': _SV.vip.normal, 'vf-on': _SV.verify.on !== false, 'vf-price': _SV.verify.price, 'vf-title': _SV.verify.title, 'vf-text': _SV.verify.text,
     'ck-on': _SV.checkin.on !== false, 'sp-on': _SV.spin.on !== false, 'sp-period': _SV.spin.period || 'month', 'vc-on': _SV.voucher.on !== false, 'vc-min': _SV.voucher.min, 'vc-max': _SV.voucher.max, 'vc-days': _SV.voucher.days,
     'cd-promo-on': _SV.codes.promo !== false, 'cd-redeem-on': _SV.codes.redeem !== false });
   vpRender(); ckRender(); spRender(); hbRender(); cdKind();
   proTabStart('services', 'orders');
   afterLoad('services');
-  odLoad(); cdLoad(); vqLoad();
+  odLoad(); cdLoad(); vqLoad(); cbLoad();
 }
 async function saveSvc(){
   const plans = _SV.vip.plans.filter(p => String(p.name || '').trim()).map(p => ({ ...p, id: p.id || 'p' + hid(), price: Math.max(0, Math.round(Number(p.price) || 0)), days: Math.max(0, Math.round(Number(p.days) || 0)) }));
@@ -369,7 +416,12 @@ async function saveSvc(){
     updatedAt: new Date().toISOString()
   };
   if(data.voucher.min > data.voucher.max) throw new Error('The smallest voucher is bigger than the largest');
-  ['tips', 'sponsors', 'help'].forEach(k => { if(window._svExtra && window._svExtra[k]) data[k] = window._svExtra[k](); });
+  const clean = (L, req) => L.filter(x => String(x[req] || '').trim()).map(x => Object.fromEntries(Object.entries(x).map(([k, v]) => [k, typeof v === 'string' ? v.trim().slice(0, 600) : v])));
+  if(_SV.sponsors.some(x => String(x.name || '').trim() && !/^https?:\/\//i.test(String(x.url || '').trim()))) throw new Error('Every partner site needs a link starting with https://');
+  data.tips = clean(_SV.tips, 'title'); data.sponsors = clean(_SV.sponsors, 'name');
+  data.help = { useSeoFaq: chk('hp-seofaq'), faq: clean(_SV.help.faq, 'q').filter(f => f.a), feesNote: val('hp-feesnote'),
+    safety: { tips: lines('hp-safetips'), numbers: lines('hp-nums').map(l => { const [a, b] = l.includes('|') ? l.split('|') : ['Official', l]; return { label: a.trim().slice(0, 40), number: String(b || '').trim().slice(0, 30) }; }).filter(n => n.number) },
+    offices: clean(_SV.help.offices, 'name'), callback: { on: chk('cb-on'), text: val('cb-text'), topics: lines('cb-topics'), slots: lines('cb-slots') } };
   await window._setDoc('siteConfig', 'services', data);
   await logAct('Services & Rewards saved', 'config', 'services');
 }

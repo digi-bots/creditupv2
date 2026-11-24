@@ -26,6 +26,7 @@ const css = `
 .g-teal{background:linear-gradient(135deg,#2fd6d0,#0e9aa0)}.g-red{background:linear-gradient(135deg,#ff6b81,#e0334f)}.g-slate{background:linear-gradient(135deg,#7b90b4,#4a5d80)}.g-cyan{background:linear-gradient(135deg,#46c8ff,#1786d8)}
 .g-dark{background:linear-gradient(135deg,#3b3b55,#151526);border:1px solid rgba(255,215,106,.5);color:#ffd76a}
 .sv-sheet{position:fixed;inset:0;z-index:2600;display:none;background:var(--bg);overflow:hidden}
+.sv-open .hot-offer-floating,.sv-open .act-bar,.sv-open #pwBar,.sv-open .pw-bar{display:none!important}
 .sv-sheet.on{display:flex;flex-direction:column;animation:svIn .22s ease-out}
 @keyframes svIn{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
 .sv-wrap{width:100%;max-width:520px;margin:0 auto;height:100%;display:flex;flex-direction:column}
@@ -205,7 +206,7 @@ function sheet(){
   if(!s){ s = document.createElement('div'); s.id = 'svSheet'; s.className = 'sv-sheet'; s.innerHTML = '<div class="sv-wrap"><div class="sv-head"><button onclick="svBack()" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button><h3 id="svTitle"></h3></div><div class="sv-body" id="svBody"></div></div>'; document.body.appendChild(s); }
   return s;
 }
-function show(title, html){ sheet().classList.add('on'); $s('svTitle').textContent = title; $s('svBody').innerHTML = html; $s('svBody').scrollTop = 0; document.body.style.overflow = 'hidden'; }
+function show(title, html){ sheet().classList.add('on'); $s('svTitle').textContent = title; $s('svBody').innerHTML = html; $s('svBody').scrollTop = 0; document.body.style.overflow = 'hidden'; document.body.classList.add('sv-open'); }
 window.svGo = function(k){
   const t = T[k]; if(!t) return;
   if(t.login && !user()){ if(window.nav) nav('screen-login'); return; }
@@ -216,7 +217,7 @@ window.svGo = function(k){
 function open(k){ const P = PAGES[k] || window._svcPages[k]; if(P) P(); }
 window.svBack = function(){ try { if(history.state && history.state.sv) { history.back(); return; } } catch (e) {} _pop(); };
 function _pop(){ _stack.pop(); const k = _stack[_stack.length - 1]; if(k) open(k); else svClose(true); }
-window.svClose = function(silent){ const s = $s('svSheet'); if(s) s.classList.remove('on'); document.body.style.overflow = ''; _stack = []; renderHub(); };
+window.svClose = function(silent){ const s = $s('svSheet'); if(s) s.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('sv-open'); _stack = []; renderHub(); };
 window.addEventListener('popstate', () => { if($s('svSheet') && $s('svSheet').classList.contains('on')) _pop(); });
 window._svShow = show; window._svApi = api; window._svToast = toast; window._svE = E; window._svTk = tk; window._svCfg = () => SV.cfg || {}; window._svLoadCfg = loadCfg;
 

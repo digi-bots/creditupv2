@@ -46,6 +46,7 @@ service cloud.firestore {
     // Services & Rewards: codes, orders and the VIP refund note
     match /promoCodes/{id}          { allow write: if can('services'); }
     match /walletLog/{id}           { allow create: if can('users') || can('services'); }
+    match /callbacks/{id}           { allow write: if can('support') || can('services'); }
     // notices and the activity log are written by many admin actions
     match /user_notifications/{id}  { allow create: if isAdmin(); }
     match /activityLog/{id}         { allow create: if isAdmin(); }
