@@ -1,6 +1,6 @@
 /* Creditfy service worker: installable app, friendly offline page and phone notifications.
    Pages and data always come from the network first, so users never see stale loan information. */
-const V = 'cu-v2';
+const V = 'cu-v3';
 const SHELL = ['/offline.html', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -13,7 +13,8 @@ self.addEventListener('fetch', e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin || url.pathname.startsWith('/api/') || url.pathname.startsWith('/admin')) return;
   if (req.mode === 'navigate') {
-    // the page: network first, the last copy or the offline page when there is no connection
+    if (url.pathname !== '/' && url.pathname !== '/index.html') return; // other pages (e.g. the admin panel) are never stored
+    // the home page: network first, the last copy or the offline page when there is no connection
     e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(V).then(c => c.put('/', copy)).catch(() => {}); return r; })
       .catch(() => caches.match('/').then(r => r || caches.match('/offline.html'))));
     return;

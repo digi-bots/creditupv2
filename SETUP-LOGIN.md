@@ -71,3 +71,12 @@ Firestore → `admin` collection → `credentials` document → **Delete**. It h
    Environment Variables; Vercel then signs its own calls and nobody else can start the job.
 4. **SEO** – fill in **SEO & Reviews**, then in Google Search Console verify the site with the
    HTML-tag code and submit `https://<your-domain>/sitemap.xml`.
+
+## Hide the admin panel address
+
+1. Vercel → Project → Settings → Environment Variables → add `ADMIN_PATH` with a secret word only you know
+   (letters, numbers and `-`, no dots or slashes, e.g. `cf-desk-7k2q9x`). Environment: Production (and Preview if you use it).
+2. Deployments → latest → ⋯ → Redeploy.
+3. The admin panel now opens only at `https://www.creditfy.online/<your-secret-word>`.
+   `/admin.html` shows "404 not found". Bookmark the new address.
+4. To change the address later, change `ADMIN_PATH` and redeploy. Delete the variable to go back to `/admin.html`.

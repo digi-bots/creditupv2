@@ -79,7 +79,7 @@ module.exports = async (req, res) => {
     const S = { ...SEO_DEF, ...d.seo }, url = siteUrl(S, req);
     if (f === 'robots') {
       res.setHeader('Content-Type', 'text/plain; charset=utf-8'); res.setHeader('Cache-Control', 'public, s-maxage=600');
-      const lines = S.index === false ? ['User-agent: *', 'Disallow: /'] : ['User-agent: *', 'Allow: /', 'Disallow: /admin.html', 'Disallow: /api/'];
+      const lines = S.index === false ? ['User-agent: *', 'Disallow: /'] : ['User-agent: *', 'Allow: /', 'Disallow: /api/'];
       if (S.robotsExtra) lines.push(...String(S.robotsExtra).split('\n').map(x => x.trim()).filter(Boolean));
       lines.push('', `Sitemap: ${url}/sitemap.xml`);
       return res.status(200).send(lines.join('\n') + '\n');
