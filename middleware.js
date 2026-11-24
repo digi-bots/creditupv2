@@ -3,7 +3,7 @@
 // 2) Hides the admin panel behind a secret address. Set ADMIN_PATH in Vercel (e.g. "cf-desk-7k2q9x"),
 //    then the panel opens only at https://your-site/cf-desk-7k2q9x and /admin.html shows "not found".
 //    Without ADMIN_PATH the panel stays at /admin.html as before.
-export const config = { matcher: ['/', '/admin.html', '/admin', '/:slug([^/.]+)'] };
+export const config = { matcher: ['/((?!api/|icons/).*)'] };
 
 const secret = () => String(process.env.ADMIN_PATH || '').trim().replace(/^\/+|\/+$/g, '');
 
@@ -27,7 +27,9 @@ export default async function middleware(request) {
   }
 
   if (path !== '/') {
-    if (!key || path.slice(1) !== key) return undefined;              // any other page: untouched
+    let slug = path; try { slug = decodeURIComponent(path); } catch (e) {}
+    slug = slug.replace(/^\/+|\/+$/g, '');
+    if (!key || slug.toLowerCase() !== key.toLowerCase()) return undefined; // files and other pages: untouched
     try {
       const r = await fetch(new URL('/admin.html?k=' + encodeURIComponent(key), url.origin));
       if (r.ok) {
