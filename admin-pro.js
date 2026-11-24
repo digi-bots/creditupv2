@@ -1,4 +1,4 @@
-/* Credit Up admin — App Settings, SEO & Reviews, Risk Center, Team & roles.
+/* Creditfy admin — App Settings, SEO & Reviews, Risk Center, Team & roles.
    Every settings page here uses the same save system as Site Config (header Save button + bottom save bar). */
 
 const $p = id => document.getElementById(id);
@@ -108,8 +108,8 @@ const APP_DEF = {
       approved: { on: true, label: 'Loan approved', desc: 'Your loan was approved.', eta: '' },
       disbursed: { on: true, label: 'Money sent', desc: 'The loan was sent to your account.', eta: '' } } },
   lang: { on: true, showSwitch: true, def: 'en', custom: [] },
-  pwa: { on: true, name: 'Credit Up', short: 'Credit Up', desc: '', theme: '#0a6e35', bg: '#060d1a', display: 'standalone', icon: '', prompt: true,
-    promptText: 'Install the Credit Up app — opens faster and works like a real app.', btn: 'Install', delay: 15, iosHint: true },
+  pwa: { on: true, name: 'Creditfy', short: 'Creditfy', desc: '', theme: '#0a6e35', bg: '#060d1a', display: 'standalone', icon: '', prompt: true,
+    promptText: 'Install the Creditfy app — opens faster and works like a real app.', btn: 'Install', delay: 15, iosHint: true },
   push: { on: true, askDelay: 8, askTitle: 'Get updates on your phone', askText: 'Know the moment your payment is verified, your loan is approved or the money is sent — even when the app is closed.', askBtn: 'Turn on',
     auto: { updates: true, bonus: true, welcome: true, broadcast: true } },
   overdue: { on: true, graceDays: 0, notify: true, title: 'Payment Overdue', msg: 'Your loan {ref} was due on {due}. Please pay as soon as possible to keep your account in good standing.',
@@ -142,7 +142,7 @@ function buildAppSet(){
   </div>
   <div class="pro-pane" data-k="pwa">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-mobile-screen-button"></i>Install as an app (PWA)</div>
-      <div class="fgrid fgrid3">${tog('pw-on', 'Allow installing the app', 1)}${inp('pw-name', 'App name', 'Credit Up', 'maxlength="40"')}${inp('pw-short', 'Name under the icon (max 12)', 'Credit Up', 'maxlength="12"')}
+      <div class="fgrid fgrid3">${tog('pw-on', 'Allow installing the app', 1)}${inp('pw-name', 'App name', 'Creditfy', 'maxlength="40"')}${inp('pw-short', 'Name under the icon (max 12)', 'Creditfy', 'maxlength="12"')}
       ${inp('pw-theme', 'Theme colour', '#0a6e35', 'maxlength="7"')}${inp('pw-bg', 'Splash background colour', '#060d1a', 'maxlength="7"')}
       <div class="fg"><label>Opens as</label><select id="pw-display"><option value="standalone">App window (recommended)</option><option value="fullscreen">Full screen</option><option value="minimal-ui">Browser with small bar</option></select></div>
       ${inp('pw-icon', 'Icon URL (PNG 512×512, optional)', 'https://… empty = built-in icon', 'full')}${area('pw-desc', 'Description', 'Apply for loans from your phone in minutes.')}</div>
@@ -150,7 +150,7 @@ function buildAppSet(){
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-bell"></i>Install invitation</div>
       <div class="fgrid fgrid3">${tog('pw-prompt', 'Invite users to install', 1)}${inp('pw-delay', 'Show after (seconds on the site)', '15', 'type="number" min="0" max="600"')}${tog('pw-ios', 'Show iPhone “Add to Home Screen” help', 1)}
       ${inp('pw-text', 'Invitation text', '', 'full maxlength="120"')}${inp('pw-btn', 'Button text', 'Install', 'maxlength="16"')}</div>
-      <div class="man-sub">Preview</div><div class="pw-prev"><div class="ic">CU</div><div class="tx" id="pwPrevT"></div><button id="pwPrevB">Install</button></div>
+      <div class="man-sub">Preview</div><div class="pw-prev"><div class="ic">CF</div><div class="tx" id="pwPrevT"></div><button id="pwPrevB">Install</button></div>
       <div class="hint" style="margin-top:8px">Android and desktop Chrome show a real install button. iPhone (Safari) has no install button, so users get short “Share → Add to Home Screen” help instead.</div>
     </div>
   </div>
@@ -215,7 +215,7 @@ async function saveAppSet(){
   const data = {
     timeline: { on: chk('tl-on'), live: chk('tl-live'), showTimes: chk('tl-times'), showEta: chk('tl-eta'), rejected: val('tl-rejected') || APP_DEF.timeline.rejected, note: val('tl-note'), steps },
     lang: { on: chk('lg-on'), showSwitch: chk('lg-switch'), def: val('lg-def') || 'en', custom: _APP.lang.custom.filter(x => String(x.en || '').trim() && String(x.bn || '').trim()).map(x => ({ en: String(x.en).trim(), bn: String(x.bn).trim() })) },
-    pwa: { on: chk('pw-on'), name: val('pw-name') || 'Credit Up', short: (val('pw-short') || val('pw-name') || 'Credit Up').slice(0, 12), theme: hex(val('pw-theme'), '#0a6e35'), bg: hex(val('pw-bg'), '#060d1a'),
+    pwa: { on: chk('pw-on'), name: val('pw-name') || 'Creditfy', short: (val('pw-short') || val('pw-name') || 'Creditfy').slice(0, 12), theme: hex(val('pw-theme'), '#0a6e35'), bg: hex(val('pw-bg'), '#060d1a'),
       display: val('pw-display') || 'standalone', icon, desc: val('pw-desc'), prompt: chk('pw-prompt'), delay: numv('pw-delay', 15, 0, 600), iosHint: chk('pw-ios'), promptText: val('pw-text') || APP_DEF.pwa.promptText, btn: val('pw-btn') || 'Install' },
     push: { on: chk('pu-on'), askDelay: numv('pu-delay', 8, 2, 120), askTitle: val('pu-title') || APP_DEF.push.askTitle, askText: val('pu-text') || APP_DEF.push.askText, askBtn: val('pu-btn') || 'Turn on',
       auto: { updates: chk('pu-a-updates'), bonus: chk('pu-a-bonus'), welcome: chk('pu-a-welcome'), broadcast: chk('pu-a-broadcast') } },
@@ -248,8 +248,9 @@ async function odRun(){
 window._SAVERS.appset = { load: loadAppSet, save: saveAppSet, data: () => ({ 'Language › Own translations': _APP.lang.custom }) };
 
 /* ═════════ SEO & REVIEWS (siteConfig/seo + reviews) ═════════ */
-const SEO_DEF = { title: 'Credit Up – Smart Loans in Bangladesh', description: 'Apply for a loan from your phone in minutes. Transparent fees, fast review and money sent to bKash, Nagad or Rocket.',
-  keywords: 'online loan, instant loan bangladesh, bkash loan, nagad loan, mobile loan', canonical: '', siteName: 'Credit Up', locale: 'en_BD', author: '', ogTitle: '', ogDescription: '', ogImage: '', twitter: '',
+const SITE_URL = 'https://www.creditfy.online';   // the site's main address (used when SEO › Site address is empty)
+const SEO_DEF = { title: 'Creditfy – Smart Loans in Bangladesh', description: 'Apply for a loan from your phone in minutes. Transparent fees, fast review and money sent to bKash, Nagad or Rocket.',
+  keywords: 'online loan, instant loan bangladesh, bkash loan, nagad loan, mobile loan', canonical: '', siteName: 'Creditfy', locale: 'en_BD', author: '', ogTitle: '', ogDescription: '', ogImage: '', twitter: '',
   schemaType: 'FinancialService', org: { name: '', logo: '', phone: '', email: '', address: '', city: 'Dhaka', country: 'BD', sameAs: [] }, faq: [], verify: { google: '', bing: '', yandex: '', facebook: '' },
   analytics: { ga4: '', gtm: '', pixel: '', clarity: '' }, index: true, ratings: true, robotsExtra: '', sitemapExtra: [],
   reviews: { on: true, title: 'What our users say', max: 10, minStars: 1, ask: true, askText: 'How was your experience? Your review helps other people choose with confidence.' } };
@@ -280,7 +281,7 @@ function buildSeo(){
       <div class="fgrid">${inp('se-title', 'Page title (50–60 letters is best)', '', 'full maxlength="80"')}<div class="cnt full" id="cntT"></div>
       ${area('se-desc', 'Description (120–160 letters is best)', '', 3, 'maxlength="300"')}<div class="cnt full" id="cntD"></div>
       ${inp('se-kw', 'Keywords (comma-separated)', 'online loan, bkash loan, …', 'full')}
-      ${inp('se-url', 'Site address (canonical URL)', 'https://www.yoursite.com', '')}${inp('se-name', 'Site name', 'Credit Up')}
+      ${inp('se-url', 'Site address (canonical URL)', 'https://www.yoursite.com', '')}${inp('se-name', 'Site name', 'Creditfy')}
       <div class="fg"><label>Main language / region</label><select id="se-locale"><option value="en_BD">English – Bangladesh</option><option value="bn_BD">বাংলা – Bangladesh</option><option value="en_US">English</option></select></div>${inp('se-author', 'Author / company', '')}</div>
     </div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-share-nodes"></i>Social sharing (Facebook, WhatsApp, Messenger, X)</div>
@@ -342,7 +343,7 @@ async function loadSeo(){
   _SEO = { ...clone(SEO_DEF), ...d, org: { ...SEO_DEF.org, ...(d.org || {}) }, verify: { ...SEO_DEF.verify, ...(d.verify || {}) }, analytics: { ...SEO_DEF.analytics, ...(d.analytics || {}) }, reviews: { ...SEO_DEF.reviews, ...(d.reviews || {}) } };
   _SEO.faq = (Array.isArray(d.faq) ? d.faq : []).map(x => ({ id: hid(), on: true, ...x }));
   const S = _SEO;
-  fillIn({ 'se-title': S.title, 'se-desc': S.description, 'se-kw': S.keywords, 'se-url': S.canonical || location.origin, 'se-name': S.siteName, 'se-locale': S.locale, 'se-author': S.author,
+  fillIn({ 'se-title': S.title, 'se-desc': S.description, 'se-kw': S.keywords, 'se-url': S.canonical || SITE_URL, 'se-name': S.siteName, 'se-locale': S.locale, 'se-author': S.author,
     'se-ogt': S.ogTitle, 'se-ogd': S.ogDescription, 'se-ogi': S.ogImage, 'se-tw': S.twitter, 'se-type': S.schemaType,
     'se-oname': S.org.name, 'se-ologo': S.org.logo, 'se-ophone': S.org.phone, 'se-oemail': S.org.email, 'se-oaddr': S.org.address, 'se-ocity': S.org.city, 'se-oarea': S.org.area || 'BD', 'se-same': (S.org.sameAs || []).join('\n'), 'se-ratings': S.ratings !== false,
     'se-vg': S.verify.google, 'se-vb': S.verify.bing, 'se-vy': S.verify.yandex, 'se-vf': S.verify.facebook, 'se-ga': S.analytics.ga4, 'se-gtm': S.analytics.gtm, 'se-px': S.analytics.pixel, 'se-cl': S.analytics.clarity,
@@ -358,7 +359,7 @@ async function saveSeo(){
   const url = val('se-url').replace(/\/+$/, '');
   if(url && !/^https?:\/\//i.test(url)) throw new Error('Site address must start with https://');
   const img = val('se-ogi'); if(img && !/^https:\/\//i.test(img)) throw new Error('Share image must be an https:// link');
-  const data = { title: val('se-title') || SEO_DEF.title, description: val('se-desc') || SEO_DEF.description, keywords: val('se-kw'), canonical: url, siteName: val('se-name') || 'Credit Up', locale: val('se-locale') || 'en_BD', author: val('se-author'),
+  const data = { title: val('se-title') || SEO_DEF.title, description: val('se-desc') || SEO_DEF.description, keywords: val('se-kw'), canonical: url, siteName: val('se-name') || 'Creditfy', locale: val('se-locale') || 'en_BD', author: val('se-author'),
     ogTitle: val('se-ogt'), ogDescription: val('se-ogd'), ogImage: img, twitter: val('se-tw').replace(/^@/, ''), schemaType: val('se-type') || 'FinancialService',
     org: { name: val('se-oname'), logo: val('se-ologo'), phone: val('se-ophone'), email: val('se-oemail'), address: val('se-oaddr'), city: val('se-ocity'), area: val('se-oarea') || 'BD', country: 'BD', sameAs: lines('se-same').filter(x => /^https:\/\//i.test(x)) },
     ratings: chk('se-ratings'), faq: _SEO.faq.filter(x => String(x.q || '').trim() && String(x.a || '').trim()).map(x => ({ q: x.q.trim(), a: x.a.trim(), on: x.on !== false })),
@@ -373,7 +374,7 @@ async function saveSeo(){
 }
 function seoScore(){
   if(!$p('se-title')) return;
-  const t = val('se-title'), d = val('se-desc'), url = val('se-url') || location.origin, img = val('se-ogi');
+  const t = val('se-title'), d = val('se-desc'), url = val('se-url') || SITE_URL, img = val('se-ogi');
   $p('cntT').textContent = `${t.length} letters`; $p('cntT').className = 'cnt full' + (t.length < 30 || t.length > 65 ? ' bad' : '');
   $p('cntD').textContent = `${d.length} letters`; $p('cntD').className = 'cnt full' + (d.length < 70 || d.length > 165 ? ' bad' : '');
   const ck = [];

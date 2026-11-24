@@ -75,7 +75,7 @@ async function balanceState(d, phone, syncFlag) {
   if (syncFlag && wasUsed === available) {
     await d.ref.update({ balanceAdjustUsed: !available });
     // it was used before and is free again (new friends or an admin unlock): tell the user
-    if (available && wasUsed) await notifyUser(phone, 'Balance Offer Unlocked 🔓', 'You can use up to ৳100 of your Credit Up balance on your next fee payment again.', 'bonus');
+    if (available && wasUsed) await notifyUser(phone, 'Balance Offer Unlocked 🔓', 'You can use up to ৳100 of your Creditfy balance on your next fee payment again.', 'bonus');
   }
   return { available, locked, used, allowed, extra, active, needMore, perUse: BAL_FRIENDS_PER_USE };
 }
@@ -103,7 +103,7 @@ async function notifyReferrer(ref) {
     const active = refs.docs.filter(x => x.data().status === 'active').length;
     const targets = refTargetsFrom(await homeCfg());
     const next = targets.find(t => t.need > active), hit = targets.find(t => t.need === active);
-    await notifyUser(ref, 'A Friend Joined! 👋', `A friend joined Credit Up with your invite link. You now have ${active} active friend${active === 1 ? '' : 's'}.`
+    await notifyUser(ref, 'A Friend Joined! 👋', `A friend joined Creditfy with your invite link. You now have ${active} active friend${active === 1 ? '' : 's'}.`
       + (next ? ` ${next.need - active} more to unlock: ${next.prize}.` : ''), 'bonus');
     if (hit) await notifyUser(ref, 'Reward Unlocked! 🏆', `You reached ${active} active friends and unlocked: ${hit.prize}. Contact support to claim it.`, 'bonus');
     await balanceState(d, ref, true);   // sends "Balance Offer Unlocked" if 5 more friends freed it again
@@ -260,7 +260,7 @@ const actions = {
       throw e;
     }
     const notes = store.collection('user_notifications');
-    await notes.add({ uid: phone, title: 'Welcome to Credit Up! 🎉', message: 'Your account is created successfully.', type: 'welcome', createdAt: new Date(Date.now() - 2000).toISOString() });
+    await notes.add({ uid: phone, title: 'Welcome to Creditfy! 🎉', message: 'Your account is created successfully.', type: 'welcome', createdAt: new Date(Date.now() - 2000).toISOString() });
     if (bonus > 0) await notes.add({ uid: phone, title: 'Sign-up Bonus Received! 🎁', message: `You have received ৳${bonus} sign-up bonus.`, type: 'bonus', createdAt: now });
     if (u.referredBy) await notifyReferrer(u.referredBy);
     return [200, { ok: true, bonus }];
@@ -620,8 +620,8 @@ const actions = {
     else await createLogin(phone, pw);
     try { await store.collection('users').doc(phone).set(u); }
     catch (e) { if (!login) await auth().deleteUser(phone).catch(() => {}); throw e; }
-    await notifyUser(phone, 'Welcome to Credit Up! 🎉', 'Your account was created by our support team. You can now log in with your phone number and password.', 'welcome');
-    if (balance > 0) await notifyUser(phone, 'Balance Added 🎁', `৳${balance} has been added to your Credit Up balance.`, 'bonus');
+    await notifyUser(phone, 'Welcome to Creditfy! 🎉', 'Your account was created by our support team. You can now log in with your phone number and password.', 'welcome');
+    if (balance > 0) await notifyUser(phone, 'Balance Added 🎁', `৳${balance} has been added to your Creditfy balance.`, 'bonus');
     if (u.referredBy) await notifyReferrer(u.referredBy);
     return [200, { ok: true, phone }];
   },

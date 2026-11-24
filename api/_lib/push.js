@@ -29,7 +29,7 @@ async function sendPush(target, msg) {
   const docs = await tokensFor(target);
   res.devices = docs.length;
   if (!docs.length) return res;
-  const data = { title: String(msg.title || 'Credit Up').slice(0, 80), body: String(msg.body || '').slice(0, 240), link: String(msg.link || '/'), tag: String(msg.tag || 'cu'), image: /^https:\/\//i.test(msg.image || '') ? msg.image : '' };
+  const data = { title: String(msg.title || 'Creditfy').slice(0, 80), body: String(msg.body || '').slice(0, 240), link: String(msg.link || '/'), tag: String(msg.tag || 'cu'), image: /^https:\/\//i.test(msg.image || '') ? msg.image : '' };
   for (let i = 0; i < docs.length; i += 500) {
     const chunk = docs.slice(i, i + 500);
     const r = await admin.messaging().sendEachForMulticast({ tokens: chunk.map(d => d.data().token), data, webpush: { headers: { Urgency: 'high', TTL: '86400' } } });

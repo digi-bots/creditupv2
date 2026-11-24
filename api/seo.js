@@ -6,7 +6,7 @@
 const { db, baseUrl } = require('./_lib/pay');
 
 const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const SEO_DEF = { title: 'Credit Up – Smart Loans in Bangladesh', description: 'Apply for a loan from your phone in minutes. Transparent fees, fast review and money sent to bKash, Nagad or Rocket.', keywords: 'loan, online loan, bkash loan, nagad loan, instant loan bangladesh', siteName: 'Credit Up', locale: 'en_BD', index: true };
+const SEO_DEF = { title: 'Creditfy – Smart Loans in Bangladesh', description: 'Apply for a loan from your phone in minutes. Transparent fees, fast review and money sent to bKash, Nagad or Rocket.', keywords: 'loan, online loan, bkash loan, nagad loan, instant loan bangladesh', siteName: 'Creditfy', locale: 'en_BD', index: true };
 
 let cache = { at: 0, data: null };
 async function load() {
@@ -24,11 +24,13 @@ async function load() {
   return out;
 }
 
-function siteUrl(S, req) { return String(S.canonical || baseUrl(req)).replace(/\/+$/, ''); }
+// the main address: SEO › Site address, else the official domain
+const SITE_URL = 'https://www.creditfy.online';
+function siteUrl(S, req) { return String(S.canonical || SITE_URL || baseUrl(req)).replace(/\/+$/, ''); }
 
 function headTags(d, req) {
   const S = { ...SEO_DEF, ...d.seo }, url = siteUrl(S, req);
-  const brand = (d.main.branding && d.main.branding.name) || S.siteName || 'Credit Up';
+  const brand = (d.main.branding && d.main.branding.name) || S.siteName || 'Creditfy';
   const ogT = S.ogTitle || S.title, ogD = S.ogDescription || S.description;
   const img = /^https:\/\//i.test(S.ogImage || '') ? S.ogImage : '';
   const t = [];
@@ -89,7 +91,7 @@ module.exports = async (req, res) => {
       return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(u => `  <url><loc>${esc(u.loc)}</loc><lastmod>${mod}</lastmod><changefreq>daily</changefreq><priority>${u.pr}</priority></url>`).join('\n')}\n</urlset>\n`);
     }
     if (f === 'manifest') {
-      const P = { name: 'Credit Up', short: 'Credit Up', desc: S.description, theme: '#0a6e35', bg: '#060d1a', display: 'standalone', ...(d.app.pwa || {}) };
+      const P = { name: 'Creditfy', short: 'Creditfy', desc: S.description, theme: '#0a6e35', bg: '#060d1a', display: 'standalone', ...(d.app.pwa || {}) };
       const icon = /^https:\/\//i.test(P.icon || '') ? P.icon : '';
       res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8'); res.setHeader('Cache-Control', 'public, s-maxage=300');
       return res.status(200).send(JSON.stringify({

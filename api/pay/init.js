@@ -61,7 +61,7 @@ module.exports = async (req, res) => {
       cancel_url: ret('cancel'),
       ipn_url: `${base}/api/pay/ipn`,
       cus_name: String(app.name || 'Customer').slice(0, 50),
-      cus_email: String(app.email || 'customer@creditup.online').slice(0, 50),
+      cus_email: String(app.email || 'customer@creditfy.online').slice(0, 50),
       cus_add1: String(app.address || 'Bangladesh').slice(0, 50),
       cus_city: 'Dhaka',
       cus_postcode: '1000',

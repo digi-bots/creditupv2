@@ -1,5 +1,5 @@
 rules_version = '2';
-// Credit Up — Firestore security rules.
+// Creditfy — Firestore security rules.
 // Paste this whole file into Firebase Console → Firestore Database → Rules, then press Publish.
 //
 // Who is who:
