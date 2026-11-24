@@ -686,11 +686,14 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="nav" id="n-wallets" onclick="gS('wallets',this)"><i class="fa-solid fa-wallet"></i>Wallets</div>
   <div class="nav" id="n-config" onclick="gS('config',this)"><i class="fa-solid fa-sliders"></i>Site Config</div>
   <div class="nav" id="n-home" onclick="gS('home',this)"><i class="fa-solid fa-house-laptop"></i>Home Page</div>
+  <div class="nav" id="n-appset" onclick="gS('appset',this)"><i class="fa-solid fa-mobile-screen-button"></i>App Settings</div>
+  <div class="nav" id="n-seo" onclick="gS('seo',this)"><i class="fa-solid fa-magnifying-glass-chart"></i>SEO &amp; Reviews<span class="nb nb-o" id="nb-rv" style="display:none">0</span></div>
   <div class="nav" id="n-broadcast" onclick="gS('broadcast',this)"><i class="fa-solid fa-bullhorn"></i>Broadcast</div>
   <div class="sb-sec">System</div>
   <div class="nav" id="n-support" onclick="gS('support',this)"><i class="fa-solid fa-headset"></i>Support Tickets<span class="nb nb-r" id="nb-st">0</span></div>
+  <div class="nav" id="n-risk" onclick="gS('risk',this)"><i class="fa-solid fa-triangle-exclamation"></i>Risk Center<span class="nb nb-r" id="nb-risk" style="display:none">0</span></div>
   <div class="nav" id="n-actlog" onclick="gS('actlog',this)"><i class="fa-solid fa-scroll"></i>Activity Log</div>
-  <div class="nav" id="n-settings" onclick="gS('settings',this)"><i class="fa-solid fa-shield-halved"></i>Admin Settings</div>
+  <div class="nav" id="n-settings" onclick="gS('settings',this)"><i class="fa-solid fa-user-shield"></i>Team &amp; Settings</div>
   <div class="sb-foot">
     <div class="sb-av" id="sbAv">A</div>
     <div style="min-width:0"><div class="sb-av-n" id="sbName">Admin</div><div class="sb-av-r" id="sbRole">Admin</div></div>
@@ -1001,6 +1004,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <div class="fg"><label class="hp-sw"><label class="tog"><input type="checkbox" id="sx-on" checked><span class="tog-sl"></span></label>Show stats section</label></div>
         <div class="fg"><label>Title</label><input id="sx-title" maxlength="40" placeholder="Our Impact"></div>
         <div class="fg"><label>Subtitle</label><input id="sx-sub" maxlength="90" placeholder="Real numbers from Credit Up, updated live"></div>
+        <div class="fg"><label>Card size</label><select id="sx-size"><option value="sm">Small</option><option value="md" selected>Medium</option><option value="lg">Large</option></select></div>
+        <div class="fg"><label>Cards per row</label><select id="sx-cols"><option value="1">1 (full width)</option><option value="2" selected>2</option><option value="3">3 (compact)</option></select></div>
         <div class="fg"><label>Number style</label><select id="sx-format"><option value="short">Short (13K+, ৳2.9 Cr)</option><option value="full">Full (12,840 · ৳28,650,000)</option></select></div>
         <div class="fg"><label>Refresh (seconds, 0 = off)</label><input id="sx-refresh" type="number" min="0" placeholder="120"></div>
         <div class="fg full"><label>Small note under the cards</label><input id="sx-note" maxlength="120" placeholder="Optional, e.g. Figures since January 2026"></div>
@@ -1320,6 +1325,16 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div>
     <div class="cf-prev" id="cfPrev"></div>
   </div>
+  <div class="cfg-blk" data-cg="loan"><div class="cfg-t"><i class="fa-solid fa-hourglass-half"></i>Application submit screen</div>
+    <div class="fgrid fgrid3">
+      <div class="fg"><label>How long it runs (seconds)</label><input type="number" id="c-sf-sec" min="1" max="120" step="0.5" placeholder="1.5"><div class="hint">1.5 = fast (default). A higher number makes the “Submitting Application” progress slower.</div></div>
+      <div class="fg"><label>Text at the start</label><input id="c-sf-t0" maxlength="40" placeholder="Reviewing..."></div>
+      <div class="fg"><label>Text at 40%</label><input id="c-sf-t1" maxlength="40" placeholder="Uploading details..."></div>
+      <div class="fg"><label>Text at 75%</label><input id="c-sf-t2" maxlength="40" placeholder="Saving application..."></div>
+      <div class="fg"><label>Text when done</label><input id="c-sf-t3" maxlength="40" placeholder="Application received ✓"></div>
+    </div>
+    <div class="hint" style="margin-top:6px">The application is always saved for real; the screen only moves on once both the time is up and the save has finished.</div>
+  </div>
   <div class="cfg-blk" data-cg="loan"><div class="cfg-t"><i class="fa-solid fa-list"></i>Loan Options</div>
     <div class="fgrid">
       <div class="fg"><label>Loan Amounts (comma-separated)</label><textarea id="c-la" rows="2" placeholder="1,000, 2,500, 5,000, 10,000, 25,000, 50,000, 60,000"></textarea></div>
@@ -1442,7 +1457,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label>Button text <span style="color:var(--txt2);font-weight:500">(optional)</span></label><input id="bc-bt" maxlength="30" placeholder="e.g. Apply Now"></div>
       <div class="fg"><label>Button link</label><input id="bc-bl" placeholder="https://creditup.online"></div>
     </div>
-    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-p" id="bcSendBtn" onclick="sendBC()"><i class="fa-solid fa-paper-plane"></i>Send</button></div>
+    <div style="margin-top:12px;display:flex;gap:14px;flex-wrap:wrap;align-items:center"><button class="btn btn-p" id="bcSendBtn" onclick="sendBC()"><i class="fa-solid fa-paper-plane"></i>Send</button>
+      <label class="hp-sw" style="display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700"><label class="tog"><input type="checkbox" id="bc-push" checked><span class="tog-sl"></span></label>Also send to phones (push notification)</label></div>
   </div>
   <div class="bc-card">
     <div class="bc-sec-title"><i class="fa-solid fa-history"></i>Broadcast History</div>
@@ -1488,8 +1504,13 @@ tr:hover td{background:rgba(255,255,255,.015)}
 </div>
 
 <!-- ADMIN SETTINGS -->
+<div class="sec" id="sec-appset"></div>
+<div class="sec" id="sec-seo"></div>
+<div class="sec" id="sec-risk"></div>
+
 <div class="sec" id="sec-settings">
-  <div class="sec-head"><h2>Admin Settings</h2></div>
+  <div class="sec-head"><h2>Team &amp; Settings</h2><button class="btn btn-p btn-lg sv-btn" id="svBtn-settings" onclick="saveTab('settings')" disabled><i class="fa-solid fa-circle-check"></i><span>All saved</span></button></div>
+  <div id="teamWrap"></div>
   <div style="max-width:480px">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-lock"></i>Change Admin Password</div>
       <div class="fg" style="margin-bottom:12px"><label>Current Password</label><input type="password" id="as-c" placeholder="Enter current password"></div>
@@ -1870,7 +1891,7 @@ async function saveGateway(quiet){
 
 // ══ CONFIG ══════════════════════════════════════════
 const PG = 20;
-const TITLES = {home:'Home Page',dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Admin Settings'};
+const TITLES = {appset:'App Settings',seo:'SEO & Reviews',risk:'Risk Center',home:'Home Page',dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Team & Settings'};
 const PIPE_STEPS = ['Applied','Fee Pending','Fee Submitted','Fee Verified','Approved','Disbursed','Active','Repaid'];
 const PIPE_MAP = {'Pending Fee Payment':1,'TrxID Submitted':2,'Fee Verified':3,'Approved':4,'Disbursement Rejected':4,'Disbursed':5,'Active':6,'Repaid':7};
 
@@ -1918,7 +1939,8 @@ function refreshCur(){ loadSec(_sec); }
 function exportCur(){ exportCSV(_sec); }
 async function loadSec(id){
   if(!window._db) return;
-  const map={dashboard:loadDash,users:loadUsers,applications:loadApps,transactions:loadTrx,portfolio:loadPortfolio,analytics:loadAnalytics,wallets:loadWallets,config:loadConfig,home:loadHome,broadcast:loadBC,support:loadSupport,actlog:loadActLog};
+  const map={dashboard:loadDash,users:loadUsers,applications:loadApps,transactions:loadTrx,portfolio:loadPortfolio,analytics:loadAnalytics,wallets:loadWallets,config:loadConfig,home:loadHome,broadcast:loadBC,support:loadSupport,actlog:loadActLog,
+    appset:()=>window.loadAppSet&&loadAppSet(), seo:()=>window.loadSeo&&loadSeo(), risk:()=>window.loadRisk&&loadRisk(), settings:()=>window.loadTeam&&loadTeam()};
   if(map[id]) await map[id]();
 }
 
@@ -2251,6 +2273,8 @@ function _loanAmt(app){ return Number(String(app?.loanAmount || 0).replace(/,/g,
 async function _notifyUser(uid, title, message, type='info'){
   if(!uid) return;
   try{ await window._addDoc('user_notifications', { uid, title, message, type, createdAt: new Date().toISOString() }); }catch(e){ console.warn('notify:', e); }
+  // also to the user's phone, if App Settings → Push Notifications allows this kind (runs in the background)
+  try{ window._accountApi && window._accountApi('adminPush', { audience:'user', phone:String(uid), title, body:message, type, auto:true, link:'/?go=notifications' }); }catch(e){}
 }
 async function _notifyAccountStatus(phone, status, reason){
   if(!phone) return;
@@ -3321,7 +3345,7 @@ function markDirty(tab,part){ (_dirty[tab]=_dirty[tab]||new Set()).add(part||'x'
 function _isDirty(tab){ return !!(_dirty[tab] && _dirty[tab].size); }
 // ── what changed since the page was loaded (save bar list + Discard preview) ──
 const _snap={};            // tab → { f: {key:{v,label,group}}, d: {name:json} }
-const _TAB_NAME={config:'Site Config',home:'Home Page',wallets:'Payment Methods'};
+const _TAB_NAME={config:'Site Config',home:'Home Page',wallets:'Payment Methods',appset:'App Settings',seo:'SEO & Reviews',risk:'Risk Center',settings:'Team & Settings'};
 const _SNAP_SKIP=new Set(['cfRateTot']);
 function _fEls(tab){
   const sec=document.getElementById('sec-'+tab); if(!sec) return [];
@@ -3360,6 +3384,7 @@ function _snapData(tab){
   if(tab==='home' && _H) return {'Notice Bar › Notices':_H.notice.items,'Partners › Partner logos':_H.partners.items,'Trust Badges › Badges':_H.trust.items,
     'Loading Screen › Payment logos':_H.splash.pays,'Offers › Offer cards':_H.offers.items,'Live Transactions › Hidden entries':_H.live.hidden,'Winners › Hidden people / entries':_H.winners?_H.winners.hidden:[],'Stats › Cards':_H.stats?_H.stats.items:[],'Winners › Invite tips':_H.winners?_H.winners.tips:[],'Winners › Invite targets':_H.winners?_H.winners.targets:[],'Winners › Announced winners':_H.winners?_H.winners.announced:[],'Footer › Links':_H.footer?_H.footer.links:[],'Hot Offer › Offer round':_H.fomo.round};
   if(tab==='config') return {'Custom Fees & Additional Interest › Fee list':window._cfFees||[]};
+  if(window._SAVERS[tab] && window._SAVERS[tab].data) return window._SAVERS[tab].data();
   return {};
 }
 function _snapTake(tab){
@@ -3441,8 +3466,10 @@ function undoField(key){
 }
 function sbToggle(){ const b=document.getElementById('saveBar'); b.classList.toggle('open'); _paintSave(); }
 document.addEventListener('click',e=>{ const b=document.getElementById('saveBar'); if(b && b.classList.contains('open') && !b.contains(e.target)) b.classList.remove('open'); });
+// pages that keep their own save registry (App Settings, SEO, Risk, Team) add themselves here
+window._SAVERS = window._SAVERS || {};
 function _paintSave(){
-  ['wallets','config','home'].forEach(t=>{
+  ['wallets','config','home',...Object.keys(window._SAVERS)].forEach(t=>{
     const b=document.getElementById('svBtn-'+t); if(!b) return;
     const d=_isDirty(t); b.disabled=!d; b.classList.toggle('dirty',d);
     b.querySelector('span').textContent = d ? 'Save changes' : 'All saved';
@@ -3463,7 +3490,10 @@ async function saveTab(tab){
     if(tab==='wallets') await _saveWalletsTab();
     else if(tab==='config') await saveConfig(true);
     else if(tab==='home') await saveHome();
-    _dirty[tab]=new Set(); _paintSave();
+    else if(window._SAVERS[tab]) await window._SAVERS[tab].save();
+    _dirty[tab]=new Set();
+    if(window._SAVERS[tab]) _snapTake(tab);
+    _paintSave();
     toast('All changes saved ✓');
     if(tab==='wallets') loadWallets();
   }catch(e){ toast('Save failed: '+(e.message||e),'e'); }
@@ -3484,9 +3514,12 @@ function _doDiscard(tab){
   if(tab==='wallets'){ _wPend={}; _wDel=new Set(); loadWallets(); }
   if(tab==='config') loadConfig();
   if(tab==='home') loadHome();
+  if(window._SAVERS[tab]) window._SAVERS[tab].load();
   _paintSave();
   toast('Changes discarded','i');
 }
+document.addEventListener('input',e=>{ const sec=e.target.closest&&e.target.closest('.sec'); const t=sec&&sec.id.slice(4); if(t && window._SAVERS[t] && e.target.id && !e.target.dataset.nodirty) markDirty(t,'f'); });
+document.addEventListener('change',e=>{ const sec=e.target.closest&&e.target.closest('.sec'); const t=sec&&sec.id.slice(4); if(t && window._SAVERS[t] && e.target.id && !e.target.dataset.nodirty) markDirty(t,'f'); });
 document.addEventListener('DOMContentLoaded',()=>{
   const c=document.getElementById('sec-config');
   if(c){ c.addEventListener('input',()=>{ markDirty('config'); if(typeof cfPreview==='function') cfPreview(); }); c.addEventListener('change',()=>markDirty('config')); }
@@ -3506,7 +3539,8 @@ async function loadConfig(){
   // payment numbers live in the Wallets section now (kept untouched in the saved config)
   s('c-pnt',cfg.feePaymentNoteTitle||'Note');s('c-pnn',cfg.feePaymentNote||'');s('c-rfp',cfg.refundPolicy||'');
   s('c-wa',cfg.contact?.whatsapp);s('c-tg',cfg.contact?.telegram);s('c-em',cfg.contact?.email);s('c-pe',cfg.policyEmail);s('c-ad',cfg.companyAddress);
-  s('c-pd',cfg.policyDate);s('c-tag',cfg.tagline);
+  s('c-pd',cfg.policyDate);
+  const SF=cfg.submitFlow||{}, SFT=Array.isArray(SF.texts)?SF.texts:[]; s('c-sf-sec',SF.seconds!=null?SF.seconds:''); [0,1,2,3].forEach(i=>s('c-sf-t'+i,SFT[i]||''));s('c-tag',cfg.tagline);
   window._cfFees = (Array.isArray(cfg.customFees)?cfg.customFees:[]).map(f=>({name:f.name||'',type:f.type==='percent'?'percent':'fixed',value:Number(f.value)||0,on:f.on!==false}));
   const xi=cfg.extraInterest||{}; cb('c-xi-on',xi.on); s('c-xi-lbl',xi.label||''); s('c-xi-rate',xi.rate!=null?xi.rate:'');
   cfRender();
@@ -3577,6 +3611,7 @@ async function saveConfig(quiet){
   cfg.customFees=(window._cfFees||[]).filter(f=>String(f.name||'').trim()&&Number(f.value)>0).map(f=>({name:String(f.name).trim().slice(0,40),type:f.type==='percent'?'percent':'fixed',value:Math.max(0,Number(f.value)||0),on:f.on!==false}));
   cfg.extraInterest={on:!!cb('c-xi-on'),label:(g('c-xi-lbl')||'Additional interest').slice(0,40),rate:Math.max(0,parseFloat(g('c-xi-rate'))||0)};
   cfg.branding=_brandRead();
+  cfg.submitFlow={ seconds:Math.min(120,Math.max(1,parseFloat(g('c-sf-sec'))||1.5)), texts:[0,1,2,3].map(i=>(g('c-sf-t'+i)||'').slice(0,40)) };
   if(!quiet) showL(true); await window._setDoc('siteConfig','main',cfg); if(!quiet) showL(false);
   await logAct('Site config saved','config','main'); if(!quiet) toast('Configuration saved ✓');
 }
@@ -3662,7 +3697,7 @@ async function loadHome(){
   set('tb-theme',B.theme); set('tb-clear',B.clear); set('tb-glass',B.glass); set('tb-compact',B.compact); set('tb-hide',B.hideOnScroll); set('tb-avatar',B.avatar); set('tb-hi',B.greet);
   set('tb-balance',B.balance); set('tb-notif',B.notif); set('tb-support',B.support); set('tb-logout',B.logout); set('tb-alert',B.alert); set('tb-name',B.title); set('tb-vtext',B.visitorText);
   const X=_H.stats, Y=_H.winners;
-  set('sx-on',X.on); set('sx-title',X.title); set('sx-sub',X.sub); set('sx-format',X.format); set('sx-refresh',X.refresh); set('sx-note',X.note);
+  set('sx-on',X.on); set('sx-title',X.title); set('sx-sub',X.sub); set('sx-format',X.format); set('sx-size',X.size||'md'); set('sx-cols',String(X.cols||2)); set('sx-refresh',X.refresh); set('sx-note',X.note);
   set('wx-on',Y.on); set('wx-title',Y.title); set('wx-sub',Y.sub); set('wx-cta',Y.cta); set('wx-tipsec',Y.tipSec); set('wx-leader',Y.showLeader); set('wx-targets',Y.showTargets);
   set('wx-tcount',Y.targetCount); set('wx-feed',Y.showFeed); set('wx-ftitle',Y.feedTitle); set('wx-fcount',Y.feedCount); set('wx-scroll',Y.scroll);
   ['hot','target','balance','bonus','announce'].forEach(k=>set('wx-k-'+k,Y.kinds[k]));
@@ -3681,7 +3716,7 @@ async function loadHome(){
 const FT_DEF = { on:true, name:'', tagline:'Smart credit, made simple — fast, transparent and secure loans from your phone.', vip:true, vipText:'VIP', vipSub:'Premium Digital Lending',
   trust:true, contact:true, address:true, sign:true, signName:'Authorized Signatory', signTitle:'', signText:'', signImg:'', seal:'VERIFIED', signNote:'This website is operated and signed by its management.', copyright:'', legal:'', bottom:'',
   links:[ { label:'Loan Calculator', icon:'calculator', action:'calculator' }, { label:'Invite & Earn', icon:'gift', action:'refer' }, { label:'Privacy & Fees', icon:'shield-halved', action:'policy' }, { label:'Support', icon:'headset', action:'support' } ] };
-const FT_ACTIONS = { calculator:'Open Loan Calculator', refer:'Open Invite popup', apply:'Start an application', history:'Open History', profile:'Open Profile', support:'Open Support chat', policy:'Open Privacy & Fees page', whatsapp:'WhatsApp (Site Config number)', telegram:'Telegram (Site Config)', email:'Email (Site Config)', url:'Web link' };
+const FT_ACTIONS = { calculator:'Open Loan Calculator', refer:'Open Invite popup', apply:'Start an application', history:'Open History', profile:'Open Profile', support:'Open Support chat', policy:'Open Privacy & Fees page', install:'Install the app', share:'Share the site', whatsapp:'WhatsApp (Site Config number)', telegram:'Telegram (Site Config)', email:'Email (Site Config)', url:'Web link' };
 function ftRenderLinks(){
   const el=document.getElementById('ftLinksEd'); if(!el||!_H) return;
   const L=_H.footer.links;
@@ -3709,7 +3744,7 @@ const SX_ITEMS_DEF = [
   { metric:'granted', label:'Loans Granted', icon:'fa-file-circle-check', color:'blue' },
   { metric:'distributed', label:'Total Disbursed', icon:'fa-sack-dollar', color:'gold' },
   { metric:'today', label:"Today's Disbursed", icon:'fa-bolt', color:'pink' } ];
-const SX_DEF = { on:true, title:'Our Impact', sub:'Real numbers from Credit Up, updated live', format:'short', refresh:120, note:'' };
+const SX_DEF = { on:true, title:'Our Impact', sub:'Real numbers from Credit Up, updated live', format:'short', refresh:120, note:'', size:'md', cols:2 };
 // older settings had 4 fixed cards: turn them into the editable list
 function _sxItems(st){
   if(Array.isArray(st.items)) return st.items.map(x=>({ id:_hid(), on:true, tag:'', value:'', ...x }));
@@ -3732,7 +3767,7 @@ function sxRenderCards(){
     ${c.metric==='text'?`<input value="${_he(c.value||'')}" placeholder="Value, e.g. 24/7" maxlength="14" oninput="sxEdit(${i},'value',this.value)" aria-label="Value">`:`<input value="${_he(c.icon||'')}" placeholder="fa-star (icon)" maxlength="40" oninput="sxEdit(${i},'icon',this.value)" aria-label="Icon">`}
     <select onchange="sxEdit(${i},'color',this.value)" aria-label="Colour">${Object.keys(SX_COLORS).map(k=>`<option value="${k}" ${c.color===k?'selected':''}>${k}</option>`).join('')}</select>
     <input value="${_he(c.tag||'')}" placeholder="Tag (Live)" maxlength="14" oninput="sxEdit(${i},'tag',this.value)" aria-label="Tag">
-    <div class="sx-acts"><button class="ab ab-v" title="Move up" onclick="sxMove(${i},-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="ab ab-v" title="Move down" onclick="sxMove(${i},1)"><i class="fa-solid fa-arrow-down"></i></button><button class="ab ab-d" title="Remove card" onclick="sxDel(${i})"><i class="fa-solid fa-trash"></i></button></div>
+    <div class="sx-acts"><button class="ab ${c.wide?'ab-ok':'ab-v'}" title="${c.wide?'Full width (tap for normal)':'Normal width (tap for full width)'}" onclick="sxEdit(${i},'wide',${!c.wide});sxRenderCards()"><i class="fa-solid fa-${c.wide?'compress':'expand'}"></i></button><button class="ab ab-v" title="Move up" onclick="sxMove(${i},-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="ab ab-v" title="Move down" onclick="sxMove(${i},1)"><i class="fa-solid fa-arrow-down"></i></button><button class="ab ab-d" title="Remove card" onclick="sxDel(${i})"><i class="fa-solid fa-trash"></i></button></div>
   </div>`).join(''):'<div class="hint">No cards. Tap “Add card”.</div>';
 }
 function sxEdit(i,k,v){ const c=_H.stats.items[i]; if(!c) return; c[k]=v; if(k==='metric'){ if(!c.label||Object.values(SX_METRICS).some(m=>m[0]===c.label)) c.label=SX_METRICS[v][0]; if(v==='text'&&!c.icon) c.icon='fa-star'; } markDirty('home','sx'); if(k==='on'||k==='metric') sxRenderCards(); }
@@ -3786,7 +3821,7 @@ function _hpRead(){
     delay:Math.min(30,Math.max(0,f('fo-delay',3.5))), start:t('fo-start'), end:t('fo-end'), icon:t('fo-icon')||'🔥', promo:t('fo-promo')||FO_DEF.promo,
     bannerTitle:t('fo-btitle'), bannerText:t('fo-btext'), popupTitle:t('fo-ptitle'), button:t('fo-button')||FO_DEF.button, popupText:t('fo-ptext'), popupNote:t('fo-pnote'),
     counterLabel:t('fo-clabel')||FO_DEF.counterLabel, endedText:t('fo-ended')||FO_DEF.endedText, successTitle:t('fo-stitle')||FO_DEF.successTitle, successText:t('fo-stext')||FO_DEF.successText });
-  Object.assign(_H.stats, { on:c('sx-on'), title:t('sx-title')||SX_DEF.title, sub:t('sx-sub'), format:t('sx-format')||'short', refresh:Math.max(0,n('sx-refresh',120)), note:t('sx-note') });
+  Object.assign(_H.stats, { on:c('sx-on'), title:t('sx-title')||SX_DEF.title, sub:t('sx-sub'), format:t('sx-format')||'short', size:t('sx-size')||'md', cols:Number(t('sx-cols'))||2, refresh:Math.max(0,n('sx-refresh',120)), note:t('sx-note') });
   delete _H.stats.cards; delete _H.stats.usersMode;
   Object.assign(_H.winners, { on:c('wx-on'), title:t('wx-title')||WX_DEF.title, sub:t('wx-sub'), cta:t('wx-cta')||WX_DEF.cta, tipSec:Math.min(60,Math.max(3,n('wx-tipsec',6))), showLeader:c('wx-leader'), showTargets:c('wx-targets'),
     targetCount:Math.min(20,Math.max(1,n('wx-tcount',5))), showFeed:c('wx-feed'), feedTitle:t('wx-ftitle')||WX_DEF.feedTitle, feedCount:Math.min(40,Math.max(1,n('wx-fcount',10))), scroll:c('wx-scroll'),
@@ -4132,11 +4167,13 @@ async function sendBC(){
       const users=await _get('users'); if(!users.find(u=>u.phone===ph)){ showL(false); toast('No user with that phone','w'); return; }
       await window._addDoc('user_notifications',{...d, uid:ph, type:ty||'info'});
       await logAct(`Message to ${ph}: "${t}"`,'broadcast',ph);
-      toast('Message sent to 0'+ph+' ✓');
+      const pr = document.getElementById('bc-push')?.checked ? await window._accountApi('adminPush',{audience:'user',phone:ph,title:t,body:sub||m,link:'/?go=notifications',image:isPdf?'':att}) : null;
+      toast('Message sent to 0'+ph+' ✓'+(pr&&pr.ok?` · phone: ${pr.data.sent||0} device(s)`:''));
     } else {
       await window._addDoc('broadcasts',d);
       await logAct(`Broadcast: "${t}"`,'broadcast','new');
-      toast('Broadcast sent to all users ✓');
+      const pr = document.getElementById('bc-push')?.checked ? await window._accountApi('adminPush',{audience:'all',title:t,body:sub||m,link:'/?go=notifications',image:isPdf?'':att}) : null;
+      toast('Broadcast sent to all users ✓'+(pr&&pr.ok?` · pushed to ${pr.data.sent||0} of ${pr.data.devices||0} device(s)`:''));
     }
     ['bc-t','bc-s','bc-m','bc-a','bc-aName','bc-bt','bc-bl','bc-u'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('bc-aHint').innerText='Images show inside the notification; PDFs show as a download button.';
@@ -4602,10 +4639,11 @@ async function _isAdmin(user){
   try{ const s=await getDoc(doc(db,'admins',user.uid)); if(!s.exists()) return false; _showRole(user, s.data()||{}); return true; }catch(e){ return false; }
 }
 function _showRole(user, data){
+  window._adminData={ ...data, uid:user.uid, email:user.email||'' };
   const r=String(data.role||'').toLowerCase().replace(/[\s_-]/g,'');
   const sup=r==='superadmin';
   window._adminRole=sup?'superadmin':'admin';
-  const label=sup?'Super Admin':'Admin';
+  const label=sup?'Super Admin':(data.role&&!['admin'].includes(r)?String(data.roleLabel||data.role):'Admin');
   const name=String(data.name||(user.email||'').split('@')[0]||'Admin');
   const chip=document.getElementById('roleChip');
   if(chip){ chip.className='role-chip'+(sup?' super':''); chip.style.display='flex'; chip.title=(user.email||'')+' · '+label;
@@ -4652,5 +4690,6 @@ onAuthStateChanged(fbAuth, async user=>{
   else if(!_loggedIn) document.getElementById('loginScreen').style.display='flex';
 });
 </script>
+<script src="admin-pro.js?v=1"></script>
 </body>
 </html>

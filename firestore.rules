@@ -14,10 +14,35 @@ service cloud.firestore {
     function me() { return request.auth.uid; }
     function onlyChanges(keys) { return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys); }
 
-    // admins may read and change everything
-    match /{document=**} {
-      allow read, write: if isAdmin();
+    // ── admins and their roles (Admin → Team & Settings) ──
+    // role: "superadmin" or "admin" = everything; another role = what adminConfig/roles allows ("edit" per section).
+    // An older admin document without a role keeps full access.
+    function adminRole() { return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.get('role', 'admin').lower(); }
+    function fullAdmin() { return isAdmin() && adminRole() in ['superadmin', 'admin', 'super admin', 'super_admin', 'super-admin', 'owner']; }
+    function can(sec) {
+      return isAdmin() && (fullAdmin() ||
+        get(/databases/$(database)/documents/adminConfig/roles).data.roles[adminRole()].perms[sec] == 'edit');
     }
+
+    // every admin may read; full admins may change anything
+    match /{document=**} {
+      allow read: if isAdmin();
+      allow write: if fullAdmin();
+    }
+    // other roles may change only the sections their role allows
+    match /users/{id}               { allow write: if can('users'); }
+    match /applications/{id}        { allow write: if can('applications'); }
+    match /transactions/{id}        { allow write: if can('transactions'); }
+    match /wallets/{id}             { allow write: if can('wallets'); }
+    match /broadcasts/{id}          { allow write: if can('broadcast'); }
+    match /support_chats/{d=**}     { allow write: if can('support'); }
+    match /reviews/{id}             { allow write: if can('seo'); }
+    match /riskReviews/{id}         { allow write: if can('risk'); }
+    match /adminConfig/risk         { allow write: if can('risk'); }
+    match /siteConfig/{id}          { allow write: if (id == 'main' && can('config')) || (id == 'home' && can('home')) || (id == 'app' && can('appset')) || (id == 'seo' && can('seo')); }
+    // notices and the activity log are written by many admin actions
+    match /user_notifications/{id}  { allow create: if isAdmin(); }
+    match /activityLog/{id}         { allow create: if isAdmin(); }
 
     // public settings the app needs before login
     match /siteConfig/{id}  { allow read: if true; }
