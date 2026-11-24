@@ -109,7 +109,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #appBar .ab-back{width:36px;height:36px;flex-shrink:0;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.1);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 #appBar .ab-back:active{transform:scale(.94)}
 #appBar .ab-mid{flex:1;min-width:0}
-#appBar h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:16px;font-weight:900;letter-spacing:-.2px;white-space:nowrap}
+#appBar h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:16px;font-weight:900;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #appBar .balance-pill{margin-top:4px;padding:3px 10px;gap:6px}
 #appBar .balance-pill span{font-size:12.5px}
 #appBar .balance-pill .bp-lbl{font-size:11px;color:var(--p)}
@@ -3026,7 +3026,6 @@ document.addEventListener('DOMContentLoaded', function(){
   <div class="ab-acts">
     <div class="notif-btn" id="notifBtnContainer" onclick="openNotificationModal()" style="display:none;" aria-label="Notifications"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notifBadge"></div></div>
     <div class="notif-btn ab-sup" onclick="toggleCS()" aria-label="Support"><i class="fa-solid fa-headset"></i><div class="cs-unread-badge" data-support-badge>0</div></div>
-    <div class="notif-btn ab-out" id="logoutTopBtn" onclick="confirmLogout()" style="display:none;" aria-label="Log out"><i class="fa-solid fa-right-from-bracket"></i></div>
   </div>
 </div>
 

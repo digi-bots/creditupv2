@@ -48,7 +48,13 @@ const css = `
 .vf-chip.off em,.vf-get em{font-style:normal;color:#ffd76a;margin-left:1px}
 @keyframes vfBorder{to{background-position:0 0,-300% 0}}
 @keyframes vfPulse{50%{box-shadow:0 0 22px rgba(29,161,242,.6),0 0 4px rgba(255,215,106,.5)}}
-.vf-get{display:inline-flex;align-items:center;gap:4px;margin-left:7px;padding:2px 8px 2px 4px;border-radius:20px;font-size:9.5px;letter-spacing:.3px;vertical-align:middle;line-height:1.4}
+.vf-get{display:inline-flex;align-items:center;gap:4px;margin:5px 0 0 6px;padding:3px 9px 3px 4px;border-radius:14px;font-size:10px;letter-spacing:.2px;vertical-align:top;line-height:1.5;white-space:nowrap;-webkit-text-fill-color:initial}
+.vf-get.wait{background:rgba(255,140,66,.16);border:1px solid rgba(255,140,66,.45);color:var(--orange);animation:none;box-shadow:none}
+#appBar .ab-name{display:flex;align-items:center;gap:6px;min-width:0}
+#appBar .ab-name h3{min-width:0}
+#appBar .ab-name .vf-seal{flex:none;width:19px;height:19px;margin:0;cursor:pointer}
+#appBar .ab-name .vf-seal.off{animation:vfAsk 2s ease-in-out infinite}
+@keyframes vfAsk{0%,100%{transform:scale(1);filter:drop-shadow(0 0 3px rgba(255,215,106,.5))}50%{transform:scale(1.12);filter:drop-shadow(0 0 9px rgba(255,215,106,.9))}}
 .vf-get .vf-seal{margin:0;width:13px;height:13px}
 .vf-chip.wait{background:rgba(255,140,66,.16);color:var(--orange);animation:none;box-shadow:0 0 0 1px rgba(255,140,66,.4) inset;cursor:pointer}
 #userGreeting .vf-seal.off,#userGreeting .vf-seal.wait{cursor:pointer}
@@ -494,13 +500,20 @@ function badges(){
   ['pfAv', 'abAv'].forEach(id => { const a = $s(id); if(!a) return; a.classList.toggle('vf-ring', !!s.verified); a.querySelectorAll('.vf-corner').forEach(x => x.remove()); if(s.verified) a.insertAdjacentHTML('beforeend', seal('vf-corner')); });
   // the phone number in the top bar
   const g = $s('userGreeting');
-  if(g){ g.querySelectorAll('.vf-seal,.vf-get').forEach(x => x.remove()); topMark(g, vfKind(s)); }
+  if(g){ g.querySelectorAll('.vf-seal').forEach(x => x.remove()); topMark(g, vfKind(s)); }
 }
 // the app rewrites the top-bar title now and then: put the seal back each time
 (function watch(){ const g = $s('userGreeting'); if(!g){ setTimeout(watch, 800); return; }
-  new MutationObserver(() => { if(!g.querySelector('.vf-seal,.vf-get')) topMark(g, vfKind(SV.st)); }).observe(g, { childList: true, characterData: true, subtree: true }); })();
-function topMark(g, k){ if(k === null || !user()) return;
-  g.insertAdjacentHTML('beforeend', k === 'off' ? `<span class="vf-get" data-noi18n onclick="event.stopPropagation();svGo('verify')">${seal('', 'off')}<b>Get Verified</b></span>` : seal('', k)); }
+  new MutationObserver(() => { const row = g.parentElement; if(!(row && row.classList.contains('ab-name') && row.querySelector(':scope > .vf-seal'))) topMark(g, vfKind(SV.st)); }).observe(g, { childList: true, characterData: true, subtree: true }); })();
+// the title and the seal sit in their own row, so a long number never pushes into the buttons
+function nameRow(g){ if(g.parentElement && g.parentElement.classList.contains('ab-name')) return g.parentElement;
+  const w = document.createElement('div'); w.className = 'ab-name'; g.parentElement.insertBefore(w, g); w.appendChild(g); return w; }
+function topMark(g, k){
+  const row = nameRow(g); row.querySelectorAll(':scope > .vf-seal').forEach(x => x.remove());
+  if(k === null || !user()) return;
+  row.insertAdjacentHTML('beforeend', seal('', k));
+  const el = row.lastElementChild; el.setAttribute('title', k === 'off' ? 'Get Verified' : k === 'wait' ? 'Verification pending' : 'Verified');
+  if(!el.getAttribute('onclick')) el.setAttribute('onclick', "event.stopPropagation();svGo('verify')"); }
 const _op = window.openProfileModal;
 if(typeof _op === 'function') window.openProfileModal = function(){ const r = _op.apply(this, arguments); badges(); if(user()) loadState(); return r; };
 
