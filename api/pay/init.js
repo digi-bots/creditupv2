@@ -1,6 +1,6 @@
-// Starts an SSLCommerz payment for one application's fee.
+// Starts an online payment (TZPayWay or SSLCommerz) for one application's fee.
 // The amount is always computed here from Firestore, never taken from the browser.
-const { missingEnv, sslHost, db, computeFee, baseUrl, readBody } = require('../_lib/pay');
+const { provider, missingEnv, sslHost, tzCreate, db, computeFee, baseUrl, readBody } = require('../_lib/pay');
 const { caller } = require('../_lib/auth');
 
 const BALANCE_MAX_ADJUST = 100;
@@ -49,10 +49,27 @@ module.exports = async (req, res) => {
     await store.collection('gatewayPayments').doc(tranId).set({
       tranId, appId, uid, amount, totalFee: fee.total, appliedBalance: applied, ...(promo ? { promoDiscount: promo } : {}),
       loanAmount: fee.loanAmount, term: fee.term, wallet: app.wallet || '',
-      status: 'Initiated', createdAt: now, provider: 'sslcommerz'
+      status: 'Initiated', createdAt: now, provider: provider()
     });
 
     const base = baseUrl(req);
+    if (provider() === 'tzpayway') {
+      // our own tran id rides in every URL, so the webhook and the return can be matched and re-checked
+      const q = `gw=tz&tran=${encodeURIComponent(tranId)}`;
+      const r = await tzCreate({
+        amount: Number(amount.toFixed(2)), currency: 'BDT', country: 'BD', fee_paid_by_user: false,
+        webhook_url: `${base}/api/pay/ipn?${q}`, success_url: `${base}/api/pay/return?r=success&${q}`, cancel_url: `${base}/api/pay/return?r=cancel&${q}`,
+        cus_name: String(app.name || 'Customer').slice(0, 50), cus_number: '0' + uid.replace(/^0+/, '').slice(-10),
+        ...(app.email ? { cus_email: String(app.email).slice(0, 60) } : {}),
+        user_data: { tranId, appId }
+      });
+      if (!r.ok || !r.data.payment_url || !r.data.trx_id) {
+        await store.collection('gatewayPayments').doc(tranId).set({ status: 'InitFailed', error: String((r.raw && (r.raw.message || r.raw.error)) || r.status).slice(0, 200) }, { merge: true });
+        return res.status(502).json({ error: 'The payment provider did not respond. Please try again or use a manual method.' });
+      }
+      await store.collection('gatewayPayments').doc(tranId).set({ gwTrxId: String(r.data.trx_id) }, { merge: true });
+      return res.status(200).json({ url: r.data.payment_url, tranId, amount });
+    }
     const ret = (r) => `${base}/api/pay/return?r=${r}`;
     const form = new URLSearchParams({
       store_id: process.env.SSLCZ_STORE_ID,
