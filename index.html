@@ -4348,7 +4348,7 @@ function confirmPicker(){
     case 'gender':      selGender=pickerVal;     checkStep1(); break;
     case 'income':      selIncome=pickerVal;     checkStep1(); break;
     case 'loanPurpose': selPurpose=pickerVal;    checkStep2(); break;
-    case 'loanAmount':  selAmount=pickerVal;     checkStep2(); break;
+    case 'loanAmount':  if(window._limitCheck && !window._limitCheck(pickerVal)) break; selAmount=pickerVal;     checkStep2(); break;
     case 'term':        selTerm=pickerVal;       checkStep2(); break;
     case 'education':   selEdu=pickerVal;        checkStep2(); break;
     case 'marital':     selMarital=pickerVal;    checkStep2(); break;
@@ -4771,7 +4771,7 @@ function openLoanDetails(){
   const interest = fb.interest + fb.extraInterest;
   const feeTotal = fb.fees;
   const r        = rate / 100 / 12;
-  const emi      = r > 0 ? Math.round(amount * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1)) : Math.round(amount / months);
+  const emi      = window._svcEmi ? window._svcEmi(amount, months) : (r > 0 ? Math.round(amount * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1)) : Math.round(amount / months));
   const totalRepay = amount + interest + feeTotal;
 
   // dates: prefer the stored application dates, else compute from the term
@@ -5713,7 +5713,8 @@ function updateCalc(instant) {
   // the calculator shows principal + interest only (additional interest included); fees are shown later in the application
   const interest = fb.interest + fb.extraInterest;
   const total = amt + interest;
-  const monthly = Math.ceil(total / Math.max(1, term));
+  // the monthly installment follows the admin's repayment rule (Services & Rewards → Loan tools), same as My Loans
+  const monthly = window._svcEmi ? window._svcEmi(amt, term) : Math.ceil(total / Math.max(1, term));
   const tk = v => '৳ ' + v.toLocaleString('en-US');
   if(instant){ ['calcPrincipal','calcInterest','calcMonthly','calcTotal'].forEach(id => delete _calcShown[id]); }
 
@@ -7618,5 +7619,6 @@ setTimeout(async () => {
 </script>
 <script src="app-pro.js?v=2"></script>
 <script src="services.js?v=1"></script>
+<script src="loans.js?v=1"></script>
 </body>
 </html>
