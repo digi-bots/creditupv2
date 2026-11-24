@@ -6,7 +6,8 @@
 const { db, baseUrl } = require('./_lib/pay');
 
 const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const SEO_DEF = { title: 'Creditfy – Smart Loans in Bangladesh', description: 'Apply for a loan from your phone in minutes. Transparent fees, fast review and money sent to bKash, Nagad or Rocket.', keywords: 'loan, online loan, bkash loan, nagad loan, instant loan bangladesh', siteName: 'Creditfy', locale: 'en_BD', index: true };
+const SEO_DEF = { title: 'Creditfy – Fast Online Loans to bKash, Nagad & Rocket', description: 'Apply for a loan from your phone in minutes. Every fee shown upfront, live application tracking and money sent straight to your bKash, Nagad or Rocket.',
+  ogTitle: 'Creditfy — Smart loans, straight to your wallet', ogDescription: 'Apply in minutes from your phone. No hidden fees, live tracking, and money sent to bKash, Nagad or Rocket.', keywords: 'loan, online loan, bkash loan, nagad loan, instant loan bangladesh', siteName: 'Creditfy', locale: 'en_BD', index: true };
 
 let cache = { at: 0, data: null };
 async function load() {
@@ -29,10 +30,12 @@ const SITE_URL = 'https://www.creditfy.online';
 function siteUrl(S, req) { return String(S.canonical || SITE_URL || baseUrl(req)).replace(/\/+$/, ''); }
 
 function headTags(d, req) {
-  const S = { ...SEO_DEF, ...d.seo }, url = siteUrl(S, req);
+  // empty fields in the admin fall back to the defaults
+  const S = { ...SEO_DEF, ...Object.fromEntries(Object.entries(d.seo || {}).filter(([, v]) => v !== '' && v !== null && v !== undefined)) }, url = siteUrl(S, req);
   const brand = (d.main.branding && d.main.branding.name) || S.siteName || 'Creditfy';
   const ogT = S.ogTitle || S.title, ogD = S.ogDescription || S.description;
-  const img = /^https:\/\//i.test(S.ogImage || '') ? S.ogImage : '';
+  // the built-in 1200×630 preview image is used until the admin sets their own
+  const img = /^https:\/\//i.test(S.ogImage || '') ? S.ogImage : url + '/og-image.jpg';
   const t = [];
   t.push(`<meta name="description" content="${esc(S.description)}">`);
   if (S.keywords) t.push(`<meta name="keywords" content="${esc(S.keywords)}">`);
@@ -41,7 +44,8 @@ function headTags(d, req) {
   t.push(`<link rel="canonical" href="${esc(url)}/">`);
   t.push(`<meta property="og:type" content="website"><meta property="og:site_name" content="${esc(brand)}"><meta property="og:url" content="${esc(url)}/">`);
   t.push(`<meta property="og:title" content="${esc(ogT)}"><meta property="og:description" content="${esc(ogD)}"><meta property="og:locale" content="${esc(S.locale || 'en_BD')}">`);
-  if (img) t.push(`<meta property="og:image" content="${esc(img)}"><meta name="twitter:image" content="${esc(img)}">`);
+  if (img) t.push(`<meta property="og:image" content="${esc(img)}"><meta property="og:image:alt" content="${esc(ogT)}"><meta name="twitter:image" content="${esc(img)}">`);
+  if (img && !S.ogImage) t.push('<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/jpeg">');
   t.push(`<meta name="twitter:card" content="${img ? 'summary_large_image' : 'summary'}"><meta name="twitter:title" content="${esc(ogT)}"><meta name="twitter:description" content="${esc(ogD)}">`);
   if (S.twitter) t.push(`<meta name="twitter:site" content="@${esc(String(S.twitter).replace(/^@/, ''))}">`);
   const V = S.verify || {};
