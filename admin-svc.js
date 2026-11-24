@@ -35,7 +35,7 @@ const SVD = {
   vip: { on: true, hours: 72, normal: '7–15 days', plans: [{ id: 'vip', name: 'VIP', price: 499, days: 90, on: true, color: 'gold' }, { id: 'super', name: 'Super VIP', price: 999, days: 365, on: true, color: 'violet' }, { id: 'supreme', name: 'Supreme VIP', price: 1999, days: 0, on: true, color: 'black' }],
     perks: ['Loan approved and money sent within 72 hours', 'Your application goes first in the review queue', 'Priority support', 'Gold VIP badge on your profile'],
     terms: ['If your loan is not approved and sent within 72 hours, your VIP fee is refunded.', 'VIP speeds up the review; approval still depends on your details.', 'A rejected application does not end your VIP — apply again any time while it is valid.', 'If your account is suspended, VIP ends automatically.'] },
-  verify: { on: true, price: 100, title: 'Get a Verified badge', text: 'Pay ৳100 from your own bKash / Nagad number. Our team checks that the payment came from the number you registered and adds a Verified badge to your account. Verified numbers are reviewed with more trust, so your application has a better chance of approval.' },
+  verify: { on: true, price: 100, title: 'Get a Verified badge', text: 'Pay a one-time ৳100 from any bKash / Nagad number. Our team checks the payment and adds a blue Verified badge to your account. Verified accounts are reviewed with more trust, so your application has a better chance of approval.' },
   checkin: { on: true, rewards: [1, 1, 2, 2, 3, 3, 10] },
   spin: { on: true, period: 'month', prizes: [{ id: 'p1', label: '৳5', type: 'balance', value: 5, weight: 30, color: '#1ddb80' }, { id: 'p2', label: 'Try again', type: 'none', value: 0, weight: 35, color: '#4d8fff' }, { id: 'p3', label: '৳10', type: 'balance', value: 10, weight: 18, color: '#ff8c42' }, { id: 'p4', label: '৳20', type: 'balance', value: 20, weight: 8, color: '#a855f7' }, { id: 'p5', label: 'Better luck', type: 'none', value: 0, weight: 7, color: '#5a6b85' }, { id: 'p6', label: '৳50', type: 'balance', value: 50, weight: 2, color: '#ffc94d' }] },
   voucher: { on: true, min: 50, max: 1000, days: 30 },
@@ -93,7 +93,7 @@ function buildSvc(){
       <select id="odFilter" onchange="odRender()" style="margin-left:auto;height:32px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting for check</option><option value="all">All</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
       <button class="btn btn-sm btn-s ro-ok" onclick="odLoad()"><i class="fa-solid fa-rotate-right"></i></button></div>
       <div id="odList"></div>
-      <div class="hint" style="margin-top:6px">Find the payment in your bKash / Nagad app (amount, TrxID, sender number), then Approve. For verification the sender must be the user's own number. Approving VIP switches it on at once and starts the plan's days.</div>
+      <div class="hint" style="margin-top:6px">Find the payment in your bKash / Nagad app (amount, TrxID, sender number), then Approve. For verification any sender number is fine — check the ৳ amount and TrxID. Approving VIP switches it on at once and starts the plan's days.</div>
     </div>
   </div>
   <div class="pro-pane" data-k="vipq">
@@ -106,7 +106,7 @@ function buildSvc(){
   <div class="pro-pane" data-k="codes">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-plus"></i>New code</div>
       <div class="fgrid fgrid3">
-        <div class="fg"><label>Kind</label><select id="cd-kind" onchange="cdKind()"><option value="promo">Promo — discount on the fee</option><option value="redeem">Redeem — adds balance</option><option value="voucher">Gift voucher — adds balance, single use</option></select></div>
+        <div class="fg"><label>Kind</label><select id="cd-kind" onchange="cdKind()"><option value="redeem">Redeem — adds balance</option><option value="voucher">Gift voucher — adds balance, single use</option></select></div>
         <div class="fg"><label>Code (empty = random)</label><input id="cd-code" maxlength="24" placeholder="e.g. EID50" style="text-transform:uppercase"></div>
         <div class="fg cd-promo"><label>Discount type</label><select id="cd-type"><option value="flat">Fixed taka (৳)</option><option value="percent">Percent of the fee (%)</option></select></div>
         <div class="fg"><label id="cd-vlbl">Discount</label><input id="cd-value" type="number" min="1" placeholder="50"></div>
@@ -145,7 +145,7 @@ function buildSvc(){
   <div class="pro-pane" data-k="verify">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-circle-check"></i>Verified number badge</div>
       <div class="fgrid fgrid3">${tog('vf-on', 'Offer verification', 1)}${inp('vf-price', 'Fee (৳)', '100', 'type="number" min="0"')}${inp('vf-title', 'Title', 'Get a Verified badge', 'maxlength="60"')}${area('vf-text', 'Explanation shown to the user', '', 3, 'maxlength="500"')}</div>
-      <div class="hint" style="margin-top:6px">The user must pay from their own registered number — the server refuses any other sender. Verified users show a blue badge here in Users and in their profile. Use it in your review: a verified number proves the user owns it.</div>
+      <div class="hint" style="margin-top:6px">The user can pay from any number. The full fee is always paid — no promo, coupon or discount applies. Verified users show a blue badge here in Users and in their profile. Use it in your review: a verified number proves the user owns it.</div>
     </div>
   </div>
   <div class="pro-pane" data-k="rewards">
@@ -160,7 +160,7 @@ function buildSvc(){
       <div id="spList"></div><div class="hint" id="spCost" style="margin-top:6px"></div>
     </div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-gift"></i>Gift vouchers &amp; codes</div>
-      <div class="fgrid fgrid3">${tog('vc-on', 'Users can send gift vouchers from their balance', 1)}${inp('vc-min', 'Smallest voucher (৳)', '50', 'type="number" min="1"')}${inp('vc-max', 'Largest voucher (৳)', '1000', 'type="number" min="1"')}${inp('vc-days', 'Voucher valid for (days)', '30', 'type="number" min="1" max="365"')}${tog('cd-promo-on', 'Promo codes on the fee page', 1)}${tog('cd-redeem-on', 'Redeem codes', 1)}</div>
+      <div class="fgrid fgrid3">${tog('vc-on', 'Users can send gift vouchers from their balance', 1)}${inp('vc-min', 'Smallest voucher (৳)', '50', 'type="number" min="1"')}${inp('vc-max', 'Largest voucher (৳)', '1000', 'type="number" min="1"')}${inp('vc-days', 'Voucher valid for (days)', '30', 'type="number" min="1" max="365"')}${tog('cd-redeem-on', 'Redeem codes', 1)}</div>
     </div>
   </div>
   <div class="pro-pane" data-k="hub">
@@ -192,7 +192,7 @@ function odRender(){
     const own = String(o.sender) === String(o.uid);
     return `<div class="od-row"><div><b>${o.kind === 'vip' ? '👑 ' : '<i class="fa-solid fa-circle-check" style="color:#46b0ff"></i> '}${ep(o.planName || o.kind)}</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
       <div><b>৳${fa(o.price)}</b><small>${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
-      <div><span class="mono">${ep(o.trxId)}</span><small>from 0${ep(o.sender)} ${o.kind === 'verify' ? (own ? '<span class="pro-ok">own number ✓</span>' : '<span class="pro-bad">not own number</span>') : ''}</small></div>
+      <div><span class="mono">${ep(o.trxId)}</span><small>from 0${ep(o.sender)} </small></div>
       <div>${sb(o.status === 'Approved' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${fd(o.createdAt)}</small></div>
       <div class="acts">${o.status === 'Pending' ? `<button class="ab ab-ok" title="Approve" onclick="odAct('${ep(o._id)}','approve')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" title="Reject" onclick="odAct('${ep(o._id)}','reject')"><i class="fa-solid fa-xmark"></i></button>` : `<small>${o.reason ? ep(o.reason) : ''}</small>`}</div></div>`;
   }).join('') : '<div class="hint">Nothing here.</div>';
@@ -389,6 +389,7 @@ async function loadSvc(){
   trRender(); ['tips', 'sponsors', 'faq', 'offices'].forEach(heRender);
   fillIn({ 'hp-seofaq': _SV.help.useSeoFaq, 'hp-feesnote': _SV.help.feesNote, 'hp-safetips': _SV.help.safety.tips.join('\n'), 'hp-nums': _SV.help.safety.numbers.map(n => `${n.label || ''} | ${n.number}`).join('\n'),
     'cb-on': _SV.help.callback.on !== false, 'cb-text': _SV.help.callback.text, 'cb-topics': (_SV.help.callback.topics || []).join('\n'), 'cb-slots': (_SV.help.callback.slots || []).join('\n') });
+  if($p('cd-kind')) $p('cd-kind').value = 'redeem';
   fillIn({ 'vp-on': _SV.vip.on !== false, 'vp-hours': _SV.vip.hours, 'vp-normal': _SV.vip.normal, 'vf-on': _SV.verify.on !== false, 'vf-price': _SV.verify.price, 'vf-title': _SV.verify.title, 'vf-text': _SV.verify.text,
     'ck-on': _SV.checkin.on !== false, 'sp-on': _SV.spin.on !== false, 'sp-period': _SV.spin.period || 'month', 'vc-on': _SV.voucher.on !== false, 'vc-min': _SV.voucher.min, 'vc-max': _SV.voucher.max, 'vc-days': _SV.voucher.days,
     'cd-promo-on': _SV.codes.promo !== false, 'cd-redeem-on': _SV.codes.redeem !== false });
@@ -407,7 +408,7 @@ async function saveSvc(){
     checkin: { on: chk('ck-on'), rewards: _SV.checkin.rewards.map(v => Math.max(0, Math.round(Number(v) || 0))) },
     spin: { on: chk('sp-on'), period: val('sp-period') || 'month', prizes: _SV.spin.prizes.map(p => ({ id: p.id || 'p' + hid(), label: String(p.label).trim().slice(0, 16), type: p.type || 'balance', value: Math.max(0, Math.round(Number(p.value) || 0)), weight: Math.max(0, Number(p.weight) || 0), color: p.color || '#1ddb80' })) },
     voucher: { on: chk('vc-on'), min: numv('vc-min', 50, 1, 1e6), max: numv('vc-max', 1000, 1, 1e6), days: numv('vc-days', 30, 1, 365) },
-    codes: { promo: chk('cd-promo-on'), redeem: chk('cd-redeem-on') },
+    codes: { promo: false, redeem: chk('cd-redeem-on') },
     hub: { home: _SV.hub.home, tiles: _SV.hub.tiles || {} },
     loans: { emiMode: val('ln-mode') || 'principal', pay: { on: chk('ln-pay') }, payoff: { on: chk('ln-po'), discountPct: numv('ln-pod', 0, 0, 100), fee: numv('ln-pof', 0, 0, 1e6) },
       limit: { on: chk('lm-on'), enforce: chk('lm-enf'), start: numv('lm-start', 20000, 0, 1e8), step: numv('lm-step', 10000, 0, 1e8), verifiedBonus: numv('lm-vf', 5000, 0, 1e8), vipBonus: numv('lm-vip', 10000, 0, 1e8), max: numv('lm-max', 0, 0, 1e9) },

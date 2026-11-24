@@ -343,7 +343,7 @@ const PAGES = {
     if(s && s.verified){ show('Verify Number', `<div class="vf-hero"><div class="ic"><i class="fa-solid fa-check"></i></div><h2>Your number is verified</h2><p>0${E(u.phone)} <span class="vf-badge"><i class="fa-solid fa-circle-check"></i>Verified</span><br>Since ${fdate(s.verifiedAt)}</p></div><div class="sv-card"><p>Your applications show the Verified badge to our review team.</p></div>`); return; }
     show('Verify Number', `<div class="vf-hero"><div class="ic"><i class="fa-solid fa-circle-check"></i></div><h2>${E(V.title || 'Get a Verified badge')}</h2><p>${E(V.text || '')}</p></div>
       <div class="vf-why"><div><i class="fa-solid fa-arrow-trend-up"></i>Better approval chance</div><div><i class="fa-solid fa-user-shield"></i>Trusted profile</div><div><i class="fa-solid fa-certificate"></i>Blue badge</div></div>
-      <div class="sv-card"><div class="sv-row"><span>Your number</span><b>0${E(u.phone || '')}</b></div><div class="sv-row"><span>One-time fee</span><b>${tk(V.price)}</b></div><div class="sv-row" style="border:0"><span>Pay from</span><b>Your own number only</b></div></div>
+      <div class="sv-card"><div class="sv-row"><span>Your number</span><b>0${E(u.phone || '')}</b></div><div class="sv-row"><span>One-time fee</span><b>${tk(V.price)}</b></div><div class="sv-row" style="border:0"><span>Pay from</span><b>Any bKash / Nagad number</b></div></div>
       ${pend ? `<div class="ord"><i class="fa-solid fa-hourglass-half" style="color:var(--orange)"></i><div><b>Verification</b> is being checked<br>TrxID ${E(pend.trxId)} · ${ftime(pend.createdAt)}</div><span class="st st-Pending">PENDING</span></div>` : `<button class="sv-btn" style="background:linear-gradient(135deg,#46b0ff,#0d6efd);color:#fff" onclick="svPay('verify')"><i class="fa-solid fa-circle-check"></i>Verify for ${tk(V.price)}</button>`}`);
   },
 
@@ -366,10 +366,10 @@ const PAGES = {
       <div class="pay-w">${ws.map((x, i) => `<button class="${i === window._payW ? 'on' : ''}" onclick="window._payW=${i};svPage('pay')">${x.w.logoUrl ? `<img src="${E(x.w.logoUrl)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.w.name)}</button>`).join('')}</div>
       <span class="sv-lbl">2. ${E(opt.type || 'Send Money')} ${tk(price)} to this number</span>
       <div class="pay-num"><div><small>${E(cur.w.name)} · ${E(opt.type || 'Send Money')}</small><b>${E(opt.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(opt.number)}').then(()=>svToastOk('Number copied'))">Copy</button></div>
-      ${kind === 'verify' ? `<div style="font-size:11.5px;color:var(--orange);margin:6px 2px"><i class="fa-solid fa-triangle-exclamation"></i> Send from your own number <b>0${E(u.phone)}</b> — that is how we verify it.</div>` : ''}
+      ${kind === 'verify' ? `<div style="font-size:11.5px;color:var(--txt2);margin:6px 2px"><i class="fa-solid fa-circle-info"></i> The full ৳${price} is needed — no discount, coupon or promo code applies to this fee.</div>` : ''}
       <span class="sv-lbl">3. Enter the payment details</span>
       <input class="sv-in code" id="pyTrx" placeholder="TRANSACTION ID" maxlength="30" autocomplete="off">
-      <input class="sv-in" id="pySender" type="tel" placeholder="Paid from number (01XXXXXXXXX)" value="${kind === 'verify' ? '0' + E(u.phone) : ''}" ${kind === 'verify' ? 'readonly' : ''} style="margin-top:8px">
+      <input class="sv-in" id="pySender" type="tel" placeholder="Paid from number (01XXXXXXXXX)" value="" style="margin-top:8px">
       <button class="sv-btn ${kind === 'vip' ? 'gold' : ''}" style="margin-top:12px" id="pyBtn" onclick="svPaySubmit()"><i class="fa-solid fa-paper-plane"></i>Submit payment</button>
       <div style="font-size:11.5px;color:var(--txt2);margin-top:9px;text-align:center;line-height:1.6">Our team checks the payment and switches it on — usually within a few hours. You get a notification.</div>`);
     window._payData = { kind, plan: plan ? plan.id : '', price, payMethod: cur.w.name, toNumber: opt.number };
@@ -455,6 +455,7 @@ if(typeof _op === 'function') window.openProfileModal = function(){ const r = _o
 function appId(){ return window._latestAppId || (window._latestApp && window._latestApp.id) || ''; }
 function promoPaint(){
   const box = $s('promoBox'); if(!box) return;
+  box.innerHTML = ''; return;   // fees take no promo or coupon (only the one-time sign-up bonus balance)
   if(SV.cfg && SV.cfg.codes && SV.cfg.codes.promo === false){ box.innerHTML = ''; return; }
   if(window._promoDisc > 0){ box.innerHTML = `<div class="pr-box"><div class="pr-ok"><i class="fa-solid fa-tag" style="color:#c085ff"></i><div>Code <b>${E(window._promoCode)}</b> applied<br><span>−${tk(window._promoDisc)} off your fee</span></div><button onclick="svPromoOff()">Remove</button></div></div>`; return; }
   box.innerHTML = `<div class="pr-box" id="prBox"><div class="h" onclick="document.getElementById('prBox').classList.toggle('open')"><i class="fa-solid fa-tag"></i>Have a promo code?<em>Tap to add</em></div><div class="f"><input id="prIn" maxlength="24" placeholder="CODE" autocomplete="off"><button id="prBtn" onclick="svPromo()">Apply</button></div></div>`;
@@ -465,7 +466,7 @@ function feeRefresh(){
   promoPaint();
 }
 window._svcFeeInit = async function(){
-  promoPaint();
+  promoPaint(); return;
   const id = appId(); if(!id || !user()) return;
   await loadCfg(); promoPaint();
   const r = await api('myPromo', { appId: id });

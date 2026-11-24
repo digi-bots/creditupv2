@@ -16,7 +16,7 @@ const DEF = {
     terms: ['If your loan is not approved and sent within 72 hours, your VIP fee is refunded.', 'VIP speeds up the review; approval still depends on your details.',
       'A rejected application does not end your VIP — apply again any time while it is valid.', 'If your account is suspended, VIP ends automatically.']
   },
-  verify: { on: true, price: 100, title: 'Get a Verified badge', text: 'Pay ৳100 from your own bKash / Nagad number. Our team checks that the payment came from the number you registered and adds a Verified badge to your account. Verified numbers are reviewed with more trust, so your application has a better chance of approval.' },
+  verify: { on: true, price: 100, title: 'Get a Verified badge', text: 'Pay a one-time ৳100 from any bKash / Nagad number. Our team checks the payment and adds a blue Verified badge to your account. Verified accounts are reviewed with more trust, so your application has a better chance of approval.' },
   checkin: { on: true, rewards: [1, 1, 2, 2, 3, 3, 10] },
   spin: { on: true, period: 'month', prizes: [
     { id: 'p1', label: '৳5', type: 'balance', value: 5, weight: 30, color: '#1ddb80' },
@@ -27,7 +27,7 @@ const DEF = {
     { id: 'p6', label: '৳50', type: 'balance', value: 50, weight: 2, color: '#ffc94d' }
   ] },
   voucher: { on: true, min: 50, max: 1000, days: 30 },
-  codes: { promo: true, redeem: true },
+  codes: { promo: false, redeem: true },
   // loan tools: how installments are counted, early payoff, the personal loan limit and trust levels
   loans: {
     emiMode: 'principal',            // principal = loan ÷ months (interest is paid upfront with the fee) · flat = (loan + interest) ÷ months · amortized = bank EMI
@@ -55,7 +55,7 @@ function merge(d) {
     checkin: { ...DEF.checkin, ...(d.checkin || {}), rewards: (Array.isArray(d.checkin?.rewards) && d.checkin.rewards.length ? d.checkin.rewards : DEF.checkin.rewards).slice(0, 7).map(money) },
     spin: { ...DEF.spin, ...(d.spin || {}), prizes: (Array.isArray(d.spin?.prizes) && d.spin.prizes.length ? d.spin.prizes : DEF.spin.prizes).slice(0, 12) },
     voucher: { ...DEF.voucher, ...(d.voucher || {}) },
-    codes: { ...DEF.codes, ...(d.codes || {}) },
+    codes: { ...DEF.codes, ...(d.codes || {}), promo: false },
     hub: d.hub || {}, tips: d.tips || null, sponsors: d.sponsors || null, help: d.help || null,
     loans: loansCfg(d.loans)
   };
@@ -322,7 +322,8 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
     usePromo: wrap(async (b, uid) => {
       const { u } = await me(uid);
       const C = await cfg();
-      if (!C.codes.promo) return [400, { error: 'Promo codes are switched off right now.' }];
+      // fees take no promo or coupon: only the one-time balance use (sign-up bonus) works on a loan fee
+      return [400, { error: 'Promo codes cannot be used on fees.' }];
       const appId = String(b.appId || '');
       const a = appId && await db().collection('applications').doc(appId).get();
       if (!a || !a.exists || a.data().uid !== uid) return [404, { error: 'Application not found.' }];
@@ -424,7 +425,6 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
       if (trxId.length < 6) return [400, { error: 'Please enter the Transaction ID from your payment SMS.' }];
       const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
       if (!isPhone(sender)) return [400, { error: 'Please enter the number you paid from.' }];
-      if (kind === 'verify' && sender !== uid) return [400, { error: 'For verification, pay from your own registered number (0' + uid + ').' }];
       const [dupO, dupT] = await Promise.all([db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get(), db().collection('transactions').doc('trx_' + trxId).get()]);
       if (!dupO.empty || dupT.exists) return [400, { error: 'This Transaction ID has already been used.' }];
       const mine = await db().collection('serviceOrders').where('uid', '==', uid).get();

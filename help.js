@@ -56,10 +56,11 @@ const FAQ = [
   { cat: 'Loans', q: 'How long does approval take?', a: 'Normal applications are reviewed in 7–15 days. VIP Express members get a decision and the money within 72 hours, or their VIP fee back.' },
   { cat: 'Loans', q: 'How much can I borrow?', a: 'Up to the maximum shown on the home page. Your personal limit grows as you repay loans on time, verify your number or join VIP — see Loan Limit.' },
   { cat: 'Fees', q: 'What fees do I pay?', a: 'All fees and the upfront interest are shown before you apply and again on the fee page. See “Fees Explained” for the full list.' },
+  { cat: 'Fees', q: 'Can I use a promo code on my fee?', a: 'No — fees take no promo code or coupon. The only reduction is your one-time ৳100 sign-up bonus from your balance.' },
   { cat: 'Fees', q: 'Will I get my fee back if I am rejected?', a: 'Yes — if your application is rejected, the fee is refunded to the number you paid from.' },
   { cat: 'Payments', q: 'How do I pay an installment?', a: 'Open Quick Services → Pay Installment, send the amount to the number shown, then enter the Transaction ID. We verify it and update your loan.' },
   { cat: 'Payments', q: 'Can I repay early?', a: 'Yes. Early Payoff shows the exact amount to clear your loan today.' },
-  { cat: 'Account', q: 'What is the Verified badge?', a: 'Pay ৳100 from your own registered number. It proves the number is yours, adds a blue badge and helps your approval.' },
+  { cat: 'Account', q: 'What is the Verified badge?', a: 'A one-time ৳100 payment (from any bKash / Nagad number) adds a blue Verified badge to your account and helps your approval. The full fee is paid — no promo or discount applies.' },
   { cat: 'Account', q: 'I forgot my password', a: 'Contact support from the Support page. For your safety, our team will confirm it is you before setting a new password.' }
 ];
 const SAFE = ['Creditfy never asks for your password, PIN or OTP — not by call, SMS or WhatsApp.', 'Pay only to the numbers shown inside the app. We never ask you to pay to a personal number someone sends you.',
