@@ -1,4 +1,4 @@
-/* Credit Up service worker: installable app, friendly offline page and phone notifications.
+/* Creditfy service worker: installable app, friendly offline page and phone notifications.
    Pages and data always come from the network first, so users never see stale loan information. */
 const V = 'cu-v2';
 const SHELL = ['/offline.html', '/icons/icon-192.png', '/icons/icon-512.png'];
@@ -26,7 +26,7 @@ self.addEventListener('push', e => {
   let p = {};
   try { p = e.data ? e.data.json() : {}; } catch (err) { p = { data: { body: e.data && e.data.text() } }; }
   const d = { ...(p.notification || {}), ...(p.data || {}) };
-  const title = d.title || 'Credit Up';
+  const title = d.title || 'Creditfy';
   e.waitUntil(self.registration.showNotification(title, {
     body: d.body || '', icon: '/icons/icon-192.png', badge: '/icons/icon-192.png', image: d.image || undefined,
     tag: d.tag || 'cu', renotify: true, data: { link: d.link || '/' }, vibrate: [120, 60, 120]

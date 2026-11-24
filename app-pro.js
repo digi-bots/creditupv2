@@ -1,4 +1,4 @@
-/* Credit Up — Bangla / English, install as an app, live application tracking, user reviews and sharing.
+/* Creditfy — Bangla / English, install as an app, live application tracking, user reviews and sharing.
    Settings: Admin → App Settings (siteConfig/app) and Admin → SEO & Reviews (siteConfig/seo). */
 
 const _ap = id => document.getElementById(id);
@@ -39,7 +39,7 @@ const BN = {
   'Conversation Ended': 'কথোপকথন শেষ', 'This chat has been closed.': 'এই চ্যাটটি বন্ধ হয়েছে।', 'Start New Chat': 'নতুন চ্যাট শুরু', 'Smart credit, made simple': 'স্মার্ট ঋণ, সহজ পথে', 'Supported Payments': 'সমর্থিত পেমেন্ট',
   '100% Authentic & Verified': '১০০% আসল ও যাচাইকৃত', '256-bit SSL Encrypted | Safe & Secure': '২৫৬-বিট SSL এনক্রিপ্টেড | নিরাপদ', 'Under Maintenance': 'রক্ষণাবেক্ষণ চলছে',
   'We are currently upgrading our system. Please check back later.': 'আমরা সিস্টেম আপগ্রেড করছি। একটু পরে আবার আসুন।', 'Good morning 👋': 'শুভ সকাল 👋', 'Good afternoon 👋': 'শুভ অপরাহ্ন 👋', 'Good evening 👋': 'শুভ সন্ধ্যা 👋', 'Good night 👋': 'শুভ রাত্রি 👋',
-  'Welcome to Credit Up': 'ক্রেডিট আপে স্বাগতম', 'Notice': 'নোটিশ', 'Borrow up to (BDT)': 'সর্বোচ্চ লোন (টাকা)', 'Easy Approval': 'সহজ অনুমোদন', 'Fast Funding': 'দ্রুত টাকা', 'Safe & Secure': 'নিরাপদ ও সুরক্ষিত',
+  'Welcome to Creditfy': 'ক্রেডিফাইয়ে স্বাগতম', 'Notice': 'নোটিশ', 'Borrow up to (BDT)': 'সর্বোচ্চ লোন (টাকা)', 'Easy Approval': 'সহজ অনুমোদন', 'Fast Funding': 'দ্রুত টাকা', 'Safe & Secure': 'নিরাপদ ও সুরক্ষিত',
   'Borrow Now': 'লোন নিন', 'Apply for Another': 'আরেকটি আবেদন', 'Already have an account?': 'আগে থেকেই অ্যাকাউন্ট আছে?', 'Login / Register': 'লগইন / রেজিস্টার', 'Application Status': 'আবেদনের অবস্থা',
   'Tap to view your application details': 'আবেদনের বিবরণ দেখতে চাপুন', 'Quick Services': 'দ্রুত সেবা', 'Calculator': 'ক্যালকুলেটর', 'Refer & Earn': 'রেফার করে আয়', 'History': 'ইতিহাস', 'Profile': 'প্রোফাইল',
   'Step 1': 'ধাপ ১', 'Step 2': 'ধাপ ২', 'Step 3': 'ধাপ ৩', 'Apply Online': 'অনলাইনে আবেদন', 'Fill basic info in under a minute — no complex documents needed.': 'এক মিনিটে প্রাথমিক তথ্য দিন — জটিল কাগজপত্র লাগবে না।',
@@ -80,7 +80,7 @@ const BN = {
   'Enter your password': 'পাসওয়ার্ড দিন', 'Type your message...': 'মেসেজ লিখুন...', 'Enter mobile number': 'মোবাইল নম্বর দিন', 'Create password (min 8, letters + numbers)': 'পাসওয়ার্ড দিন (কমপক্ষে ৮, অক্ষর + সংখ্যা)',
   'Confirm password': 'পাসওয়ার্ড নিশ্চিত করুন', 'Name as on the bank account': 'ব্যাংক অ্যাকাউন্টে থাকা নাম', 'Pending Fee Payment': 'ফি পরিশোধ বাকি', 'TrxID Submitted': 'TrxID জমা হয়েছে', 'Fee Verified': 'ফি যাচাই হয়েছে',
   'Approved': 'অনুমোদিত', 'Disbursed': 'টাকা পাঠানো হয়েছে', 'Overdue': 'মেয়াদোত্তীর্ণ', 'Repaid': 'পরিশোধিত', 'Loan approved': 'লোন অনুমোদিত', 'Fee paid': 'ফি পরিশোধিত',
-  'Satisfied Users': 'সন্তুষ্ট ব্যবহারকারী', 'Loans Granted': 'অনুমোদিত লোন', 'Total Disbursed': 'মোট বিতরণ', "Today's Disbursed": 'আজকের বিতরণ', 'Real numbers from Credit Up, updated live': 'ক্রেডিট আপের আসল সংখ্যা, লাইভ আপডেট',
+  'Satisfied Users': 'সন্তুষ্ট ব্যবহারকারী', 'Loans Granted': 'অনুমোদিত লোন', 'Total Disbursed': 'মোট বিতরণ', "Today's Disbursed": 'আজকের বিতরণ', 'Real numbers from Creditfy, updated live': 'ক্রেডিফাইয়ের আসল সংখ্যা, লাইভ আপডেট',
   'Invite friends, climb the board and win real rewards': 'বন্ধুদের আমন্ত্রণ জানান, তালিকায় উঠুন, আসল পুরস্কার জিতুন', 'Your name here': 'এখানে আপনার নাম', 'Invite to win': 'আমন্ত্রণ করে জিতুন', 'Be the first!': 'প্রথম হোন!',
   'Close': 'বন্ধ করুন', 'Yes': 'হ্যাঁ', 'No': 'না', 'Save': 'সেভ করুন', 'Submit': 'জমা দিন', 'Back': 'ফিরে যান', 'Next': 'পরবর্তী', 'Done': 'সম্পন্ন', 'Error': 'ত্রুটি', 'Success': 'সফল',
   'Track your application': 'আবেদন ট্র্যাক করুন', 'Get updates on your phone': 'ফোনেই আপডেট পান', 'Turn on': 'চালু করুন', 'Later': 'পরে', 'How to install': 'কীভাবে ইনস্টল করবেন',
@@ -89,8 +89,8 @@ const BN = {
   'We received your application.': 'আমরা আপনার আবেদন পেয়েছি।', 'Your payment is waiting for verification.': 'আপনার পেমেন্ট যাচাইয়ের অপেক্ষায়।', 'Our team is checking your details.': 'আমাদের টিম আপনার তথ্য যাচাই করছে।', 'Your loan was approved.': 'আপনার লোন অনুমোদিত হয়েছে।',
   'The loan was sent to your account.': 'লোন আপনার অ্যাকাউন্টে পাঠানো হয়েছে।', 'Your fee payment was confirmed.': 'আপনার ফি পেমেন্ট নিশ্চিত হয়েছে।', 'Under review': 'যাচাই চলছে', 'Payment verified': 'পেমেন্ট যাচাই হয়েছে', 'Money sent': 'টাকা পাঠানো হয়েছে', 'Usually takes': 'সাধারণত লাগে',
   'Application not approved': 'আবেদন অনুমোদিত হয়নি', 'What our users say': 'ব্যবহারকারীরা যা বলেন', 'Rate your experience': 'আপনার অভিজ্ঞতা রেট করুন', 'Send review': 'রিভিউ পাঠান',
-  'Thank you! Your review will appear after approval.': 'ধন্যবাদ! অনুমোদনের পর আপনার রিভিউ দেখা যাবে।', 'Install app': 'অ্যাপ ইনস্টল', 'Install': 'ইনস্টল', 'Not now': 'এখন না', 'Share Credit Up': 'ক্রেডিট আপ শেয়ার করুন',
-  'Love Credit Up? Tell your friends': 'ক্রেডিট আপ ভালো লাগলে বন্ধুদের জানান', 'Copy link': 'লিংক কপি', 'Link copied': 'লিংক কপি হয়েছে', 'reviews': 'রিভিউ', 'Live tracking': 'লাইভ ট্র্যাকিং',
+  'Thank you! Your review will appear after approval.': 'ধন্যবাদ! অনুমোদনের পর আপনার রিভিউ দেখা যাবে।', 'Install app': 'অ্যাপ ইনস্টল', 'Install': 'ইনস্টল', 'Not now': 'এখন না', 'Share Creditfy': 'ক্রেডিফাই শেয়ার করুন',
+  'Love Creditfy? Tell your friends': 'ক্রেডিফাই ভালো লাগলে বন্ধুদের জানান', 'Copy link': 'লিংক কপি', 'Link copied': 'লিংক কপি হয়েছে', 'reviews': 'রিভিউ', 'Live tracking': 'লাইভ ট্র্যাকিং',
   'Fee for this application': 'এই আবেদনের ফি', 'Pay Fee': 'ফি দিন', 'View Verification Status': 'যাচাইয়ের অবস্থা দেখুন', 'View Loan Details': 'লোনের বিবরণ দেখুন', 'Loan Amount': 'লোনের পরিমাণ', 'Fee TrxID': 'ফি TrxID', 'Applied On': 'আবেদনের তারিখ'
 };
 const BN_RE = [
@@ -219,7 +219,7 @@ function _pwIosHelp(){
   if(typeof showAlert === 'function') showAlert('Add to Home Screen', 'Tap the Share button in Safari, then choose “Add to Home Screen”. The app opens full screen like a normal app.', 'info');
 }
 function _pwInit(cfg){
-  const P = { on: true, prompt: true, promptText: 'Install the Credit Up app — opens faster and works like a real app.', btn: 'Install', delay: 15, iosHint: true, ...((cfg || {}).pwa || {}) };
+  const P = { on: true, prompt: true, promptText: 'Install the Creditfy app — opens faster and works like a real app.', btn: 'Install', delay: 15, iosHint: true, ...((cfg || {}).pwa || {}) };
   if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('/sw.js').catch(() => {});
   if(P.on === false || P.prompt === false || _standalone()) return;
   let last = 0; try{ last = Number(localStorage.getItem('cu_pw_dismiss') || 0); }catch(e){}
@@ -252,11 +252,11 @@ function _rvRender(d){
   blk.innerHTML = `${items.length ? `<div class="sx-head"><div class="live-title">${_ae(C.title || 'What our users say')}</div><span class="rvw-avg">${_stars(R.avg)} <b>${R.avg}</b> · ${R.count} reviews</span></div>
     <div class="rvw-row">${items.map(r => `<div class="rvw-c${r.featured ? ' ft' : ''}">${_stars(r.rating)}<p>“${_ae(r.text)}”</p><div class="rvw-n"><span>${_ae(String(r.name || 'U').charAt(0))}</span>${_ae(r.name)}</div></div>`).join('')}</div>` : ''}
     <div id="rvwAsk"></div>
-    <div class="rvw-share"><div><b>Love Credit Up? Tell your friends</b><small>Sharing helps more people find a fair loan.</small></div>
+    <div class="rvw-share"><div><b>Love Creditfy? Tell your friends</b><small>Sharing helps more people find a fair loan.</small></div>
       <div class="rvw-sb"><a class="s-wa" target="_blank" rel="noopener" id="shWa"><i class="fa-brands fa-whatsapp"></i></a><a class="s-fb" target="_blank" rel="noopener" id="shFb"><i class="fa-brands fa-facebook-f"></i></a><a class="s-ms" target="_blank" rel="noopener" id="shMs"><i class="fa-brands fa-facebook-messenger"></i></a><a class="s-cp" role="button" id="shCp"><i class="fa-solid fa-link"></i></a></div></div>`;
   const u = (typeof _getUser === 'function' && _getUser()) || null;
   const link = location.origin + '/?utm_source=share&utm_medium=user' + (u && u.phone ? '&ref=0' + String(u.phone).replace(/^0+/, '') : '');
-  const msg = 'I use Credit Up for fast, transparent loans from my phone. Try it: ' + link;
+  const msg = 'I use Creditfy for fast, transparent loans from my phone. Try it: ' + link;
   _ap('shWa').href = 'https://wa.me/?text=' + encodeURIComponent(msg);
   _ap('shFb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link);
   _ap('shMs').href = 'fb-messenger://share/?link=' + encodeURIComponent(link);
@@ -347,7 +347,7 @@ function _deskInit(cfg){
   if(_ap('deskSide')) return;
   const P = (cfg || {}).pwa || {};
   const d = document.createElement('aside'); d.id = 'deskSide'; d.setAttribute('aria-hidden', 'true');
-  d.innerHTML = `<div class="ds-logo">${_ae((typeof _bt === 'function' && _bt('name', 'Credit Up')) || 'Credit Up')}</div><p>${_ae(P.desc || 'Smart credit, made simple — fast, transparent and secure loans from your phone.')}</p>
+  d.innerHTML = `<div class="ds-logo">${_ae((typeof _bt === 'function' && _bt('name', 'Creditfy')) || 'Creditfy')}</div><p>${_ae(P.desc || 'Smart credit, made simple — fast, transparent and secure loans from your phone.')}</p>
     <ul><li><i class="fa-solid fa-bolt"></i>Apply in minutes</li><li><i class="fa-solid fa-shield-halved"></i>Fees shown before you apply</li><li><i class="fa-solid fa-mobile-screen"></i>Money to bKash, Nagad or Rocket</li></ul>
     <button type="button" onclick="cuInstall()"><i class="fa-solid fa-download"></i>Install app</button>`;
   document.body.appendChild(d);
