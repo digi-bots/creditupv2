@@ -94,7 +94,7 @@ function buildSvc(){
       <select id="odFilter" onchange="odRender()" style="margin-left:auto;height:32px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting for check</option><option value="all">All</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
       <button class="btn btn-sm btn-s ro-ok" onclick="odLoad()"><i class="fa-solid fa-rotate-right"></i></button></div>
       <div id="odList"></div>
-      <div class="hint" style="margin-top:6px">Find the payment in your bKash / Nagad app (amount, TrxID, sender number), then Approve. For verification any sender number is fine — check the ৳ amount and TrxID. Approving VIP switches it on at once and starts the plan's days.</div>
+      <div class="hint" style="margin-top:6px">Find the payment in your bKash / Nagad app (amount, TrxID, sender number), then Approve. For verification any sender number is fine — check the ৳ amount and TrxID. Approving VIP switches it on at once and starts the plan's days. Verification needs only the TrxID — check the ৳ amount in your wallet app.</div>
     </div>
   </div>
   <div class="pro-pane" data-k="vipq">
@@ -197,7 +197,7 @@ function odRender(){
     const own = String(o.sender) === String(o.uid);
     return `<div class="od-row"><div><b>${o.kind === 'vip' ? '👑 ' : '<i class="fa-solid fa-circle-check" style="color:#46b0ff"></i> '}${ep(o.planName || o.kind)}</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
       <div><b>৳${fa(o.price)}</b><small>${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
-      <div><span class="mono">${ep(o.trxId)}</span><small>from 0${ep(o.sender)} </small></div>
+      <div><span class="mono">${ep(o.trxId)}</span><small>${o.sender ? 'from 0' + ep(o.sender) : 'TrxID only'}</small></div>
       <div>${sb(o.status === 'Approved' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${fd(o.createdAt)}</small></div>
       <div class="acts">${o.status === 'Pending' ? `<button class="ab ab-ok" title="Approve" onclick="odAct('${ep(o._id)}','approve')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" title="Reject" onclick="odAct('${ep(o._id)}','reject')"><i class="fa-solid fa-xmark"></i></button>` : `<small>${o.reason ? ep(o.reason) : ''}</small>`}</div></div>`;
   }).join('') : '<div class="hint">Nothing here.</div>';

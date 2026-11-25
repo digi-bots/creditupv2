@@ -130,8 +130,10 @@ function limitOf(u, views, vip, L, maxBorrow) {
   if (onTime) parts.push({ label: `${onTime} loan${onTime > 1 ? 's' : ''} repaid`, amount: onTime * num(C.step) });
   if (u.phoneVerified === true) parts.push({ label: 'Verified number', amount: num(C.verifiedBonus) });
   if (vip) parts.push({ label: 'VIP member', amount: num(C.vipBonus) });
-  const raw = parts.reduce((x, p) => x + p.amount, 0);
-  const limit = Math.min(cap, Math.max(0, raw));
+  // each part only counts up to the highest loan amount, so the list always adds up to the limit shown
+  let run = 0;
+  parts.forEach(p => { const room = Math.max(0, cap - run); p.full = p.amount; p.amount = Math.min(p.amount, room); p.capped = p.amount < p.full; run += p.amount; });
+  const limit = Math.min(cap, Math.max(0, run));
   const tips = [];
   if (u.phoneVerified !== true && num(C.verifiedBonus)) tips.push({ label: 'Verify your number', amount: num(C.verifiedBonus), go: 'verify' });
   if (num(C.step)) tips.push({ label: 'Repay your loan on time', amount: num(C.step), go: 'loans' });
@@ -435,7 +437,8 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
       const trxId = String(b.trxId || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 40);
       if (trxId.length < 6) return [400, { error: 'Please enter the Transaction ID from your payment SMS.' }];
       const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
-      if (!isPhone(sender)) return [400, { error: 'Please enter the number you paid from.' }];
+      // verification needs only the TrxID; VIP also asks which number paid
+      if (kind === 'vip' && !isPhone(sender)) return [400, { error: 'Please enter the number you paid from.' }];
       const [dupO, dupT] = await Promise.all([db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get(), db().collection('transactions').doc('trx_' + trxId).get()]);
       if (!dupO.empty || dupT.exists) return [400, { error: 'This Transaction ID has already been used.' }];
       const mine = await db().collection('serviceOrders').where('uid', '==', uid).get();
@@ -446,6 +449,42 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
         `We received your payment of ৳${price} (TrxID ${trxId}). Our team will check it and switch it on shortly.`, 'transaction');
       return [200, { ok: true, id: ref.id }];
     }),
+
+    // admin: give or remove the Verified badge by hand
+    async adminSetVerified(b, user) {
+      if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admin login required.' }];
+      if (!(await adminCan(user, ['users', 'services']))) return [403, { error: 'Your admin role does not allow this.' }];
+      const phone = String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+      const ud = isPhone(phone) && await findUserDoc(phone);
+      if (!ud) return [404, { error: 'User not found.' }];
+      const on = b.on === true;
+      await ud.ref.update(on ? { phoneVerified: true, verifiedAt: iso(), verifiedBy: user.uid, verifiedManually: true } : { phoneVerified: false, unverifiedAt: iso(), unverifiedBy: user.uid });
+      if (on) await notifyUser(phone, 'Account verified ✅', 'Your account is now Verified. You can join every offer, event and reward on Creditfy.', 'success');
+      else await notifyUser(phone, 'Verified badge removed', 'The Verified badge was removed from your account. Please contact support if you have questions.', 'warning');
+      return [200, { ok: true, verified: on }];
+    },
+
+    // admin: switch VIP on (a plan, or custom days, 0 = lifetime) or off by hand
+    async adminSetVip(b, user) {
+      if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admin login required.' }];
+      if (!(await adminCan(user, ['users', 'services']))) return [403, { error: 'Your admin role does not allow this.' }];
+      const phone = String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+      const ud = isPhone(phone) && await findUserDoc(phone);
+      if (!ud) return [404, { error: 'User not found.' }];
+      const now = Date.now();
+      if (b.on !== true) {
+        await ud.ref.update({ 'vip.active': false, 'vip.endedAt': iso(now), 'vip.endedReason': 'Switched off by admin', 'vip.endedBy': user.uid });
+        await notifyUser(phone, 'VIP ended', 'Your VIP membership has been switched off. Please contact support if you have questions.', 'warning');
+        return [200, { ok: true, vip: null }];
+      }
+      const C = await cfg();
+      const plan = C.vip.plans.find(p => p.id === b.plan) || C.vip.plans[0] || { id: 'vip', name: 'VIP', days: 90, price: 0 };
+      const days = b.days !== undefined && b.days !== '' && b.days !== null ? Math.max(0, Math.round(Number(b.days) || 0)) : plan.days;
+      const until = days > 0 ? iso(now + days * 864e5) : '';
+      await ud.ref.update({ vip: { plan: plan.id, name: plan.name, since: iso(now), until, active: true, price: 0, manual: true, by: user.uid } });
+      await notifyUser(phone, `Welcome to ${plan.name}! 👑`, `${plan.name} is active${until ? ' until ' + new Date(until).toDateString() : ' for life'}. Your next loan is reviewed first.`, 'success');
+      return [200, { ok: true, vip: { plan: plan.id, name: plan.name, until } }];
+    },
 
     // admin: approve / reject an order
     async adminServiceOrder(b, user) {

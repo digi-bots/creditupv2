@@ -2147,7 +2147,11 @@ function viewUser(id){
   document.getElementById('uBal').innerText='৳ '+fa(u.balance||0);
   { const v=u.vip, vipOn=v&&v.plan&&v.active!==false&&(!v.until||new Date(v.until)>new Date())&&!['banned','suspended'].includes(u.status);
     document.getElementById('uSvc').innerHTML=(u.phoneVerified?'<span class="b b-active" style="background:rgba(29,161,242,.15);color:#46b0ff"><i class="fa-solid fa-circle-check"></i> Verified number</span>':'<span class="b b-inactive">Number not verified</span>')
-      +(vipOn?`<span class="b" style="background:rgba(255,215,106,.15);color:#ffd76a">👑 ${_escA(v.name||v.plan)} · ${v.until?'till '+fd(v.until):'lifetime'}</span>`:(v&&v.plan?`<span class="b b-inactive">VIP ended${v.endedReason?' ('+_escA(v.endedReason)+')':''}</span>`:'')); }
+      +(vipOn?`<span class="b" style="background:rgba(255,215,106,.15);color:#ffd76a">👑 ${_escA(v.name||v.plan)} · ${v.until?'till '+fd(v.until):'lifetime'}</span>`:(v&&v.plan?`<span class="b b-inactive">VIP ended${v.endedReason?' ('+_escA(v.endedReason)+')':''}</span>`:''))
+      // set by hand: Verified badge and VIP
+      +`<div style="display:flex;gap:6px;flex-wrap:wrap;width:100%;margin-top:6px">
+        <button class="btn btn-sm ${u.phoneVerified?'btn-d':'btn-p'}" type="button" onclick="uSetVerified(${u.phoneVerified?'false':'true'})"><i class="fa-solid fa-circle-check"></i>${u.phoneVerified?'Remove verified':'Mark verified'}</button>
+        ${vipOn?`<button class="btn btn-sm btn-d" type="button" onclick="uSetVip(false)"><i class="fa-solid fa-crown"></i>End VIP</button>`:`<select id="uVipPlan" style="height:30px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="vip">VIP</option><option value="super">Super VIP</option><option value="supreme">Supreme VIP</option></select><input id="uVipDays" type="number" min="0" placeholder="days (empty = plan, 0 = lifetime)" style="height:30px;width:170px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border);padding:0 8px"><button class="btn btn-sm btn-o" type="button" onclick="uSetVip(true)"><i class="fa-solid fa-crown"></i>Give VIP</button>`}</div>`; }
   document.getElementById('uStat').value=u.status||'active';
   document.getElementById('uNote').value=u.adminNote||'';
   document.getElementById('uReason').value='';
@@ -2158,6 +2162,24 @@ function viewUser(id){
   document.getElementById('uTimeline').innerHTML=logs.length?logs.slice(-5).reverse().map(l=>`<div class="tl-i"><div class="tl-a">${l.action||''} → <span style="color:var(--orange)">${l.status||''}</span>${l.reason?` (${l.reason})`:''}</div><div class="tl-t">${fd(l.at)}</div></div>`).join(''):'<div style="font-size:12px;color:var(--txt2)">No activity yet.</div>';
   openMo('moUser');
   loadBalOffer(u.phone);
+}
+// Verified badge and VIP by hand (server checks the admin's role and tells the user)
+async function uSetVerified(on){
+  const u=findById('users',_userId); if(!u) return;
+  if(!confirm(on?`Mark 0${u.phone} as Verified? They can join all offers and rewards.`:`Remove the Verified badge from 0${u.phone}?`)) return;
+  showL(true); const r=await window._accountApi('adminSetVerified',{phone:String(u.phone),on}); showL(false);
+  if(!r.ok){ toast(r.data.error||'Failed','e'); return; }
+  u.phoneVerified=on; await logAct(`Verified badge ${on?'given':'removed'} by hand`,'user',_userId); toast(on?'Marked verified ✓':'Verified badge removed', on?'s':'e'); viewUser(_userId); loadUsers();
+}
+async function uSetVip(on){
+  const u=findById('users',_userId); if(!u) return;
+  const plan=on?document.getElementById('uVipPlan').value:'', days=on?document.getElementById('uVipDays').value:'';
+  if(!confirm(on?`Give ${plan==='supreme'?'Supreme VIP':plan==='super'?'Super VIP':'VIP'} to 0${u.phone}${days!==''?' for '+(Number(days)?days+' days':'life'):''}?`:`End VIP for 0${u.phone}?`)) return;
+  showL(true); const r=await window._accountApi('adminSetVip',{phone:String(u.phone),on,plan,days}); showL(false);
+  if(!r.ok){ toast(r.data.error||'Failed','e'); return; }
+  await logAct(on?`VIP given by hand: ${r.data.vip.name}${r.data.vip.until?' till '+fd(r.data.vip.until):' (lifetime)'}`:'VIP ended by hand','user',_userId);
+  toast(on?'VIP switched on ✓':'VIP ended', on?'s':'e');
+  const fresh=await window._getDoc('users',_userId); if(fresh){ const i=(_D.users||[]).findIndex(x=>x._id===_userId); if(i>=0) _D.users[i]=fresh; } viewUser(_userId);
 }
 async function adjBal(action){
   const amt=parseFloat(document.getElementById('uAmt').value); if(!amt||amt<=0){toast('Valid amount required','w');return;}
