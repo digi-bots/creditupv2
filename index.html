@@ -5589,19 +5589,32 @@ const _isBn = () => document.documentElement.lang === 'bn';
 function _inviteBody(){
   const bonus = Number(window._newUserBonus) || 0, bn = _isBn();
   const bnum = n => String(n).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+  // the loan stays the main message; the other services come after it in one short block
   const V = bn ? [
-    ['ক্রেডিটফাই-তে আমার সাথে যোগ দিন!', 'মোবাইল থেকেই কয়েক মিনিটে লোনের আবেদন করা যায়। টাকা আসে নিজের বিকাশ, নগদ বা রকেট অ্যাকাউন্টে।', ['✅ সহজ অনলাইন আবেদন', '✅ আবেদনের আগেই সব ফি দেখানো হয়', '✅ অ্যাপে আবেদনের অবস্থা দেখা যায়']],
-    ['আমি ক্রেডিটফাই ব্যবহার করছি 👋', 'লোন লাগলে ঘরে বসেই আবেদন করতে পারো — কাগজপত্রের ঝামেলা কম, সব খরচ আগেই জানা যায়।', ['📱 পুরোটাই মোবাইলে', '💳 বিকাশ / নগদ / রকেটে টাকা', '🔍 লুকানো চার্জ নেই']],
-    ['দরকারে কাজে লাগতে পারে — ক্রেডিটফাই', 'অনলাইনে লোনের আবেদন, ফি আগেই দেখায়, আর আবেদনের প্রতিটি ধাপ অ্যাপে ট্র্যাক করা যায়।', ['✔️ দ্রুত আবেদন', '✔️ স্বচ্ছ ফি', '✔️ নিজের অ্যাকাউন্টে টাকা']]
+    ['ক্রেডিটফাই-তে আমার সাথে যোগ দিন!', 'মোবাইল থেকেই কয়েক মিনিটে লোনের আবেদন — টাকা আসে নিজের বিকাশ, নগদ বা রকেটে। সব ফি আবেদনের আগেই দেখানো হয়।',
+      ['✅ সহজ অনলাইন লোন আবেদন ও লাইভ ট্র্যাকিং', '✅ লোন ক্যালকুলেটর, কিস্তি ও লোন লিমিট টুল'],
+      ['📱 মোবাইল রিচার্জ', '🎁 গিফট কার্ড, ভাউচার ও এক্সচেঞ্জ', '💼 মাইক্রো জব ও ডেইলি রিওয়ার্ডে আয়']],
+    ['আমি ক্রেডিটফাই ব্যবহার করছি 👋', 'লোন লাগলে ঘরে বসেই আবেদন করা যায় — কাগজপত্রের ঝামেলা কম, খরচ আগেই জানা যায়, প্রতিটি ধাপ অ্যাপে দেখা যায়।',
+      ['💳 টাকা বিকাশ / নগদ / রকেটে', '🔍 লুকানো চার্জ নেই'],
+      ['⚡ মোবাইল রিচার্জ ও এমএফএস এক্সচেঞ্জ', '🎮 গুগল প্লে, স্টিম গিফট কার্ড', '🎡 ডেইলি চেক-ইন, স্পিন ও মাইক্রো জব']],
+    ['দরকারে কাজে লাগবে — ক্রেডিটফাই', 'এক অ্যাপেই অনলাইন লোন আর দরকারি ডিজিটাল সার্ভিস। লোনের আবেদন সহজ, ফি স্বচ্ছ, টাকা নিজের অ্যাকাউন্টে।',
+      ['✔️ দ্রুত লোন আবেদন', '✔️ ভেরিফায়েড সদস্যদের জন্য বিশেষ সুবিধা'],
+      ['📱 রিচার্জ, গিফট কার্ড, ভার্চুয়াল কার্ড', '💱 কারেন্সি ও এমএফএস এক্সচেঞ্জ', '💼 টাস্ক করে আয়']]
   ] : [
-    ['Join me on Creditfy!', 'Apply for a loan from your phone in a few minutes. The money comes to your own bKash, Nagad or Rocket account.', ['✅ Easy online application', '✅ All fees shown before you apply', '✅ Track your application in the app']],
-    ["I'm using Creditfy 👋", 'If you ever need a loan, you can apply from home — little paperwork and every cost is shown upfront.', ['📱 All on your phone', '💳 Money to bKash / Nagad / Rocket', '🔍 No hidden charges']],
-    ['This might help you — Creditfy', 'Online loan application, fees shown before you apply, and every step tracked in the app.', ['✔️ Quick to apply', '✔️ Clear fees', '✔️ Money to your own account']]
+    ['Join me on Creditfy!', 'Apply for a loan from your phone in a few minutes — the money comes to your own bKash, Nagad or Rocket. Every fee is shown before you apply.',
+      ['✅ Easy online loan application with live tracking', '✅ Loan calculator, installment & loan-limit tools'],
+      ['📱 Mobile recharge', '🎁 Gift cards, vouchers & exchange', '💼 Earn with micro jobs & daily rewards']],
+    ["I'm using Creditfy 👋", 'If you ever need a loan, you can apply from home — little paperwork, costs shown upfront and every step visible in the app.',
+      ['💳 Money to bKash / Nagad / Rocket', '🔍 No hidden charges'],
+      ['⚡ Mobile recharge & MFS exchange', '🎮 Google Play & Steam gift cards', '🎡 Daily check-in, spin & micro jobs']],
+    ['This might help you — Creditfy', 'Online loans plus everyday digital services in one app. Simple loan application, clear fees, money to your own account.',
+      ['✔️ Quick loan application', '✔️ Extra perks for Verified members'],
+      ['📱 Recharge, gift cards & virtual cards', '💱 Currency & MFS exchange', '💼 Earn by doing tasks']]
   ];
   const k = Math.floor(Math.random() * V.length); window._invVar = k;
-  const [h, b, list] = V[k];
+  const [h, b, loan, more] = V[k];
   const bonusLine = bonus > 0 ? (bn ? `🎁 আমার লিংক দিয়ে যোগ দিলে পাবে ৳${bnum(bonus)} সাইন-আপ বোনাস` : `🎁 Join with my link and get a ৳${bonus} sign-up bonus`) : '';
-  return [h, '', b, '', ...list].concat(bonusLine ? [bonusLine] : []).join('\n');
+  return [h, '', b, '', ...loan, '', bn ? 'আরও আছে:' : 'Also in the app:', ...more].concat(bonusLine ? ['', bonusLine] : []).join('\n');
 }
 function _inviteText(phone){ return _inviteBody() + '\n\n' + (_isBn() ? 'এখানে যোগ দিন: ' : 'Join here: ') + _refLink(phone); }
 function openReferModal() {
