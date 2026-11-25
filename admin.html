@@ -840,6 +840,11 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <label class="tog" title="Show online payment to users"><input type="checkbox" id="gwEn" onchange="markDirty('wallets','gw')"><span class="tog-sl"></span></label>
       </div>
       <div id="gwStatus" class="gw-st"><i class="fa-solid fa-circle-notch fa-spin"></i> Checking the server…</div>
+      <div class="gw-test" style="margin:8px 0 4px;padding:10px 12px;border-radius:10px;border:1px dashed rgba(77,143,255,.45);background:rgba(77,143,255,.06)">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:200px;font-size:12.5px"><b><i class="fa-solid fa-vial" style="color:#7fb0ff"></i> Connection test (৳10)</b><br><span style="color:var(--txt2);font-size:11.5px">A real ৳10 payment that is not linked to any user or loan. It checks the whole chain: create → pay → webhook → verify.</span></div>
+        <button class="btn btn-sm btn-s ro-ok" type="button" onclick="gwTest()"><i class="fa-solid fa-play"></i>Start ৳10 test</button></div>
+        <div id="gwTestOut" style="margin-top:8px;font-size:12.5px;line-height:1.9"></div>
+      </div>
       <div class="wsub">Methods users can pay with on the gateway page</div>
       <div class="gwm" id="gwMethods"></div>
       <div class="hint" style="font-size:11px;color:var(--txt2);margin-top:6px">On the gateway the user pays directly (no Send Money / Cash Out choice). Turn off a group to hide it on the payment page.</div>
@@ -1865,6 +1870,39 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <div id="loader"><div class="lr"></div><div class="lt">Loading...</div></div>
 
 <script>
+// ══ ONLINE PAYMENT CONNECTION TEST (৳10, TZPayWay) ══
+let _gwT = null;
+async function gwTest(){
+  const out = document.getElementById('gwTestOut'); out.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Creating a ৳10 test payment…';
+  const r = await window._accountApi('adminPayTest', {});
+  if(!r.ok){ out.innerHTML = `<span class="pro-bad">✕ ${_escA(r.data.error || 'Could not start the test')}</span>`; return; }
+  try{ localStorage.setItem('cf_gwtest', r.data.tranId); }catch(e){}
+  window.open(r.data.url, '_blank', 'noopener');
+  gwTestWatch(r.data.tranId);
+}
+function gwTestWatch(tranId){
+  clearInterval(_gwT); let n = 0;
+  const tick = async () => {
+    n++;
+    const r = await window._accountApi('adminPayTestStatus', { tranId });
+    const out = document.getElementById('gwTestOut'); if(!out) return;
+    if(!r.ok){ out.innerHTML = `<span class="pro-bad">✕ ${_escA(r.data.error || 'Check failed')}</span>`; clearInterval(_gwT); return; }
+    const d = r.data, ok = t => `<span class="pro-ok">✓</span> ${t}`, wait = t => `<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--orange)"></i> ${t}`, no = t => `<span class="pro-bad">✕</span> ${t}`;
+    const paid = d.status === 'Paid';
+    out.innerHTML = [
+      d.gwTrxId ? ok(`Payment created at TZPayWay (<span class="mono">${_escA(d.gwTrxId)}</span>) — the payment page opened in a new tab`) : no('Payment was not created' + (d.error ? ': ' + _escA(d.error) : '')),
+      paid ? ok(`TZPayWay says <b>completed</b>${d.method ? ' · ' + _escA(d.method) : ''}`) : d.status === 'Failed' || d.status === 'Invalid' ? no(`TZPayWay says: ${_escA((d.lastCheck && d.lastCheck.status) || d.status)}`) : wait(`Waiting for you to pay ৳10 on the TZPayWay page${d.lastCheck && d.lastCheck.status ? ' (now: ' + _escA(d.lastCheck.status) + ')' : ''}…`),
+      d.webhookAt ? ok(`Webhook from TZPayWay reached your site (${fd(d.webhookAt)})`) : paid ? `<span class="pro-warn">!</span> Paid, but no webhook yet — the site found it by asking TZPayWay. Check TZPayWay → Webhook Logs.` : wait('Waiting for TZPayWay’s webhook…'),
+      paid ? `<b class="pro-ok">All working — users can now pay their fee online. 🎉</b>` : ''
+    ].filter(Boolean).join('<br>');
+    if(paid && d.webhookAt || n > 120 || d.status === 'Failed' || d.status === 'Invalid' || !d.gwTrxId){ clearInterval(_gwT); try{ localStorage.removeItem('cf_gwtest'); }catch(e){} }
+  };
+  tick(); _gwT = setInterval(tick, 5000);
+}
+// back from the TZPayWay test page
+(function(){ try{ const q = new URLSearchParams(location.search); const t = q.get('tran'); if(q.get('paytest') && t){ history.replaceState(null, '', location.pathname); localStorage.setItem('cf_gwtest', t); } }catch(e){} })();
+function gwTestResume(){ let t = ''; try{ t = localStorage.getItem('cf_gwtest') || ''; }catch(e){} if(t && document.getElementById('gwTestOut')) gwTestWatch(t); }
+
 // ══ ONLINE GATEWAY (SSLCommerz) ══
 async function loadGateway(){
   const cfg = (await window._getDoc('siteConfig','main')) || {};
@@ -1877,6 +1915,7 @@ async function loadGateway(){
   const on = Array.isArray(gw.methods) ? gw.methods : GW_GROUPS.map(x=>x.k);
   g('gwMethods').innerHTML = GW_GROUPS.map(x=>`<label class="gwm-i"><input type="checkbox" value="${x.k}" ${on.includes(x.k)?'checked':''} onchange="markDirty('wallets','gw')"><span><b>${x.t}</b>${x.s}</span></label>`).join('');
   _snapTake('wallets'); _paintSave();
+  gwTestResume();
   const st = g('gwStatus');
   try{
     const r = await fetch('/api/pay/status', {cache:'no-store'});
@@ -4610,7 +4649,8 @@ const FB={
   messagingSenderId: "360643553761",
   appId: "1:360643553761:web:330a92a39e15e281e6caa0"
 };
-const app=initializeApp(FB); const db=getFirestore(app); window._db=db; const fbAuth=getAuth(app);
+// its own Firebase app name: the admin login is kept apart from a user login on the same domain
+const app=initializeApp(FB,'creditfy-admin'); const db=getFirestore(app); window._db=db; const fbAuth=getAuth(app);
 
 // ══ CLOUDINARY (wallet logos) ══
 // All images go to Cloudinary (same account and unsigned preset as the NID uploads in index.html).
