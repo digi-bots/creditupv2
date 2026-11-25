@@ -175,8 +175,8 @@ function buildSvc(){
     </div>
   </div>
   <div class="pro-pane" data-k="jobs">
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-briefcase"></i>Micro Jobs — tasks users do to earn Extra Balance</div>
-      <div class="hint" style="margin-bottom:8px">Add a task (join a Telegram / WhatsApp group or channel, visit a link, sign up, fill a form, a survey, share, refer…), its link, the reward and what proof you want. Users send the proof, you check it below and approve — the reward goes to their Extra Balance. Rewards are for Verified &amp; VIP members. Slots = how many people can do it (0 = no limit). Press <b>Save changes</b> after editing tasks.</div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-briefcase"></i>Micro Jobs — tasks users do to earn (paid to the Creditfy balance)</div>
+      <div class="hint" style="margin-bottom:8px">Add a task (join a Telegram / WhatsApp group or channel, visit a link, sign up, fill a form, a survey, share, refer…), its link, the reward and what proof you want. Users send the proof, you check it below and approve — the reward goes to their <b>Creditfy balance</b> (Micro Jobs is a Quick Service). Rewards are for Verified &amp; VIP members. Slots = how many people can do it (0 = no limit). Press <b>Save changes</b> after editing tasks.</div>
       <div class="fgrid fgrid3">${tog('mj-on', 'Micro Jobs on', true)}</div>
       <div id="mjTasks"></div>
       <button class="btn btn-sm btn-s ro-ok" onclick="mjAdd()"><i class="fa-solid fa-plus"></i>Add a task</button>
@@ -204,7 +204,7 @@ function buildSvc(){
       <div class="hint">The best matching tier is used. Example: ৳2,500 deposit with “2000 = 3” → ৳75 bonus. The bonus is added when you approve the deposit, as its own line in the user's history. Users see the tiers on the Add balance page.</div>
       <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-mobile-screen-button"></i>Mobile Recharge (Quick Services · Verified &amp; VIP only)</div>
       <div class="fgrid fgrid3">${tog('xs-rc-on', 'Mobile recharge on', true)}${inp('xs-rc-min', 'Smallest (৳)', '20', 'type="number" min="10"')}${inp('xs-rc-max', 'Largest (৳)', '1000', 'type="number" min="10"')}${area('xs-rc-ops', 'Operators — one per line', 'Grameenphone\nRobi\nAirtel\nBanglalink\nTeletalk', 3)}</div>
-      <div class="hint">Paid from Extra Balance. Recharges come into the Orders tab as “Mobile Recharge” — send it, then press ✓. Rejecting refunds the user's Extra Balance.</div>
+      <div class="hint">A Quick Service, so it is paid from the user's <b>Creditfy balance</b> (not Extra Balance). Recharges come into the Orders tab as “Mobile Recharge” — send it, then press ✓. Rejecting refunds the Creditfy balance.</div>
       <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-bolt"></i>Live orders list (under Extra Services)</div>
       <div class="fgrid fgrid3">${tog('xs-l-on', 'Show the live list', true)}${inp('xs-l-count', 'How many to show', '12', 'type="number" min="3" max="30"')}</div>
       <div class="hint">Shows real orders and deposits only, with the number masked (017****013).</div>
@@ -476,7 +476,7 @@ function xsRender(){
   }).join('');
   const g = { r: numv('xs-g-reward', 1, 0, 1e5), d: numv('xs-g-perday', 5, 0, 1e3) };
   if(typeof xsDealsRender === 'function') xsDealsRender();
-  if($p('xsCost')) $p('xsCost').innerHTML = `Most a Verified user can win from games: <b>৳${fa(g.r * g.d)} a day</b> (about ৳${fa(g.r * g.d * 30)} a month).`;
+  if($p('xsCost')) $p('xsCost').innerHTML = `Game wins go to the Extra Balance. Most a Verified user can win: <b>৳${fa(g.r * g.d)} a day</b> (about ৳${fa(g.r * g.d * 30)} a month).`;
 }
 const xsDirty = () => markDirty('services', 'extra');
 const XS_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

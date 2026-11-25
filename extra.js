@@ -155,6 +155,20 @@ const css = `
 .mj-t .r{text-align:right;flex:none}.rw{display:inline-block;font-weight:900;font-size:14px;color:#1ddb80}
 .mj-st{display:block;margin-top:3px;font-size:10px;font-weight:900}.mj-st.ok{color:var(--p)}.mj-st.wait{color:#ffae6b}.mj-st.no{color:#ff8fa3}.mj-st.full{color:var(--txt3)}
 .mj-dh{display:flex;gap:13px;align-items:center;margin-bottom:12px}.mj-dh .xs-lg{width:56px;height:56px;font-size:24px;flex:none}.mj-dh h4{margin:0 0 5px;font-size:16px;color:var(--txt)}
+/* one slim-bordered box per home section */
+.hs-box{position:relative;border-radius:24px;padding:4px 12px 14px;margin:22px 0 18px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(170deg,rgba(255,255,255,.035),rgba(255,255,255,.008));box-shadow:0 12px 30px rgba(0,0,0,.22)}
+.hs-box .quick-actions-title{margin-top:16px}
+.hs-box .qa-grid{margin-bottom:6px}
+.hs-box.qs{border-color:rgba(29,219,128,.22)}
+.hs-box.xs{border-color:rgba(255,215,106,.26);padding-top:14px}
+.hs-box.xs .xs-head{margin-top:0}
+.hs-box.xs .xs-grid{margin-bottom:12px}
+.hs-box.xs #xsLive .xs-live{margin:0}
+.hs-tag{position:absolute;top:-10px;left:16px;z-index:2;display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:900;letter-spacing:.3px;padding:3px 9px;border-radius:9px;background:#0b1424;border:1px solid rgba(29,219,128,.35);color:var(--p)}
+.hs-box.xs>.hs-tag{border-color:rgba(255,215,106,.4);color:#ffd76a}
+#liveBlock,#statsBlock,#winBlock{border-radius:24px;padding:12px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(170deg,rgba(255,255,255,.035),rgba(255,255,255,.008))}
+#liveBlock{margin-bottom:18px}
+#xsBlock.hs-box::before{display:none}
 /* premium section v2 */
 .xs-head{position:relative;overflow:hidden;border-radius:22px;padding:15px 14px 13px;margin:22px 0 12px;background:radial-gradient(120% 120% at 0% 0%,rgba(255,215,106,.20),transparent 55%),radial-gradient(120% 140% at 100% 100%,rgba(77,143,255,.22),transparent 55%),linear-gradient(150deg,#141b30,#0b1222);border:1px solid rgba(255,215,106,.28);box-shadow:0 16px 36px rgba(0,0,0,.35)}
 .xs-head::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.08),transparent);animation:xsSweep 5s ease-in-out infinite}
@@ -288,7 +302,7 @@ function loanNote(){
 }
 function placeNotes(){
   const html = loanNote(); if(!html) return;
-  const spots = [['#screen-home .home-body', el => el.querySelector('.quick-actions-title'), 'before'], ['#screen-review-progress', el => el.querySelector('.rv-foot'), 'before'],
+  const spots = [['#screen-home .home-body', el => $x('qsBox') || el.querySelector(':scope > .quick-actions-title'), 'before'], ['#screen-review-progress', el => el.querySelector('.rv-foot'), 'before'],
     ['#screen-waiting', el => el.querySelector('.btn-home'), 'before'], ['#statusModalContent', el => el.firstChild, 'first']];
   spots.forEach(([sel, at, how]) => { const el = document.querySelector(sel); if(!el || el.querySelector(':scope > .ln-note')) return;
     const box = document.createElement('div'); box.innerHTML = html; const n = box.firstChild;
@@ -327,16 +341,24 @@ function register(){
   T.x_orders = { l: 'My orders', cat: '', login: true, page: 'x_orders' }; P.x_orders = ordersPage;
   T.x_wallet = { l: 'Extra Balance', cat: '', login: true, page: 'x_wallet' }; P.x_wallet = walletPage; T.x_dep = { l: 'Add balance', cat: '', login: true, page: 'x_dep' }; P.x_dep = depPage;
 }
+// every home section sits in its own slim-bordered box; Quick Services (title + tiles) are wrapped together
+function boxQuick(){
+  const hb = document.querySelector('#screen-home .home-body'); if(!hb) return null; if($x('qsBox')) return $x('qsBox');
+  const t = hb.querySelector(':scope > .quick-actions-title'), g = hb.querySelector(':scope > .qa-grid'); if(!t || !g) return null;
+  const box = document.createElement('div'); box.id = 'qsBox'; box.className = 'hs-box qs';
+  box.insertAdjacentHTML('beforeend', '<div class="hs-tag"><i class="fa-solid fa-wallet"></i>Uses your Creditfy balance</div>');
+  hb.insertBefore(box, t); box.appendChild(t); box.appendChild(g); return box;
+}
 function render(){
-  const g = document.querySelector('.home-body .qa-grid') || document.querySelector('.qa-grid'); if(!g) return;
+  const g = boxQuick() || document.querySelector('.home-body .qa-grid') || document.querySelector('.qa-grid'); if(!g) return;
   let box = $x('xsBlock');
   const Ls = svcs();
   if(!X.cfg || !X.cfg.on || !Ls.length){ if(box) box.remove(); return; }
-  if(!box){ box = document.createElement('div'); box.id = 'xsBlock'; g.insertAdjacentElement('afterend', box); }
+  if(!box){ box = document.createElement('div'); box.id = 'xsBlock'; box.className = 'hs-box xs'; g.insertAdjacentElement('afterend', box); }
   const W = X.cfg.wallet || {};
   const tile = s => `<div class="xs-t${s.soon ? ' soon' : ''}" onclick="xsOpen('${E(s.id)}')">${s.badge || s.soon ? `<span class="bd">${E(s.soon ? 'SOON' : s.badge)}</span>` : s.items.some(i => i.on && priceNow(s, i).kind) ? '<span class="bd sale">SALE</span>' : ''}${logo(s)}<b>${E(s.short || s.name)}</b></div>`;
-  box.innerHTML = `<div class="xs-head">
-      <div class="t"><div><div class="xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em></div><small>Gift cards, exchange, social &amp; digital services — delivered by our team</small></div></div>
+  box.innerHTML = `<div class="hs-tag"><i class="fa-solid fa-wallet"></i>Uses your Extra Balance</div><div class="xs-head">
+      <div class="t"><div><div class="xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em></div><small>Gift cards, exchange, social &amp; digital services — paid from your Extra Balance</small></div></div>
       <div class="a">${W.on !== false ? `<button class="xs-bal" onclick="svGo('x_wallet')"><i class="fa-solid fa-wallet"></i><span><small>Extra Balance</small>${user() && X.xb ? tk(X.xb.xbal) : 'Open'}</span><i class="p fa-solid fa-plus"></i></button>` : ''}<button class="xs-ord" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button></div>
     </div>
     ${perkBanner()}
@@ -568,18 +590,18 @@ async function rechargePage(){
   await load(); const x = await loadXb(); const R = (X.cfg && X.cfg.recharge) || {};
   if(!R.on){ show('Mobile Recharge', '<div class="sv-empty">Mobile recharge is switched off right now.</div>'); return; }
   if(!x || !(x.verified || x.vip)){
-    show('Mobile Recharge', `<div class="rc-lock"><div class="big"><i class="fa-solid fa-mobile-screen-button"></i></div><h3>For Verified &amp; VIP members</h3><p>Recharge any Bangladeshi number from your Extra Balance — a members-only service.</p>
+    show('Mobile Recharge', `<div class="rc-lock"><div class="big"><i class="fa-solid fa-mobile-screen-button"></i></div><h3>For Verified &amp; VIP members</h3><p>Recharge any Bangladeshi number from your Creditfy balance — a members-only service.</p>
       <button class="vbtn" onclick="svGo('verify')">${sealHtml()}Get Verified</button><button class="sv-btn gold" style="margin-top:8px" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>Join VIP</button></div>`); return; }
   const me = (user() || {}).phone || '';
   window._rc = window._rc || { op: R.ops[0], type: 'prepaid' };
-  show('Mobile Recharge', `<div class="rc-hero"><div><small>EXTRA BALANCE</small><b>${tk(x.xbal)}</b></div><button onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Add</button></div>
+  show('Mobile Recharge', `<div class="rc-hero"><div><small>CREDITFY BALANCE</small><b>${tk(x.balance)}</b></div><button onclick="svGo('wallet')"><i class="fa-solid fa-wallet"></i>Wallet</button></div>
     <span class="sv-lbl">Operator</span><div class="rc-ops">${R.ops.map(o => `<button class="${window._rc.op === o ? 'on' : ''}" onclick="window._rc.op=this.dataset.o;document.querySelectorAll('.rc-ops button').forEach(b=>b.classList.toggle('on',b===this))" data-o="${E(o)}">${E(o)}</button>`).join('')}</div>
     <span class="sv-lbl">Number</span><input class="sv-in" id="rcNum" type="tel" inputmode="numeric" value="${me ? '0' + E(me) : ''}" placeholder="01XXXXXXXXX">
     <div class="rc-type"><button class="${window._rc.type === 'prepaid' ? 'on' : ''}" onclick="window._rc.type='prepaid';svPage('recharge')">Prepaid</button><button class="${window._rc.type === 'postpaid' ? 'on' : ''}" onclick="window._rc.type='postpaid';svPage('recharge')">Postpaid</button></div>
     <span class="sv-lbl">Amount (৳${R.min} – ৳${R.max})</span><div class="xb-chips">${[20, 50, 100, 200, 500].filter(a => a >= R.min && a <= R.max).map(a => `<button onclick="document.getElementById('rcAmt').value=${a};document.querySelectorAll('.xb-chips button').forEach(b=>b.classList.toggle('on',b===this))">${tk(a)}</button>`).join('')}</div>
     <input class="sv-in" id="rcAmt" type="number" inputmode="numeric" placeholder="Amount">
     <button class="sv-btn gold" style="margin-top:12px" id="rcBtn" onclick="rcSubmit()"><i class="fa-solid fa-bolt"></i>Recharge now</button>
-    <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> Paid from your Extra Balance. Our team sends the recharge by hand — you can follow it in My orders. If it cannot be done, the money goes back to your Extra Balance.</div>`);
+    <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> Paid from your Creditfy balance (Quick Services use your Creditfy balance). Our team sends the recharge by hand — you can follow it in My orders. If it cannot be done, the money goes back to your Creditfy balance.</div>`);
 }
 window._xsRecharge = () => rechargePage(); window._xsJobs = () => jobsPage();
 window.rcSubmit = async function(){
@@ -588,8 +610,8 @@ window.rcSubmit = async function(){
   const b = $x('rcBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Sending…';
   const r = await api('rechargeOrder', { op: window._rc.op, type: window._rc.type, number, amount });
   b.disabled = false; b.innerHTML = '<i class="fa-solid fa-bolt"></i>Recharge now';
-  if(!r.ok){ toast(r.data.error || 'Could not recharge', true); if(r.data.code === 'xbal_low') svGo('x_dep'); return; }
-  if(X.xb) X.xb.xbal = r.data.xbal; render(); loadLive();
+  if(!r.ok){ toast(r.data.error || 'Could not recharge', true); return; }
+  if(X.xb) X.xb.balance = r.data.balance; try { if(window._setBalance) window._setBalance(r.data.balance); } catch (e) {} loadLive();
   toast('Recharge request sent — you will get it shortly'); svGo('x_orders');
 };
 
@@ -604,7 +626,7 @@ async function jobsPage(){
   if(!d.on){ show('Micro Jobs', '<div class="sv-empty">Micro jobs are switched off right now.</div>'); return; }
   const types = [...new Set(d.tasks.map(t => t.type))];
   const open = d.tasks.filter(t => !t.mine || t.mine.status === 'Rejected').length;
-  show('Micro Jobs', `<div class="mj-hero"><div><small>EARNED FROM TASKS</small><b>${tk(d.earned)}</b><span>${open} task${open === 1 ? '' : 's'} open · rewards go to your Extra Balance</span></div><i class="fa-solid fa-briefcase"></i></div>
+  show('Micro Jobs', `<div class="mj-hero"><div><small>EARNED FROM TASKS</small><b>${tk(d.earned)}</b><span>${open} task${open === 1 ? '' : 's'} open · rewards go to your Creditfy balance</span></div><i class="fa-solid fa-briefcase"></i></div>
     ${d.needVerify ? `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Get Verified to earn</b><p>Task rewards are for Verified and VIP members. You can look at the tasks now.</p></div><span class="go">Get Verified</span></div>` : ''}
     ${types.length > 1 ? `<div class="xs-chips"><button class="${!X.jf ? 'on' : ''}" onclick="X_jf('')">All</button>${types.map(t => `<button class="${X.jf === t ? 'on' : ''}" onclick="X_jf('${t}')">${(JT[t] || JT.other)[2]}</button>`).join('')}</div>` : ''}
     <div id="mjList"></div>`);
@@ -627,7 +649,7 @@ function jobPage(){
   show(t.title, `<div class="mj-dh"><div class="xs-lg ${m[1]}"><i class="${m[0]}"></i></div><div><h4>${E(t.title)}</h4><span class="rw">Reward +${tk(t.reward)}</span></div></div>
     ${t.steps ? `<div class="sv-card"><h4>What to do</h4><p style="white-space:pre-line">${E(t.steps)}</p></div>` : ''}
     ${t.link ? `<a class="sv-btn ghost" href="${E(t.link)}" target="_blank" rel="noopener nofollow" style="display:flex;text-decoration:none"><i class="fa-solid fa-arrow-up-right-from-square"></i>Open the task</a>` : ''}
-    ${done ? '<div class="sv-card" style="text-align:center"><h4 style="color:var(--p)">Done ✓</h4><p>The reward is in your Extra Balance.</p></div>'
+    ${done ? '<div class="sv-card" style="text-align:center"><h4 style="color:var(--p)">Done ✓</h4><p>The reward is in your Creditfy balance.</p></div>'
       : wait ? '<div class="sv-card" style="text-align:center"><h4 style="color:#ffae6b">Being checked</h4><p>We are checking your proof. The reward is added as soon as it is approved.</p></div>'
       : t.left === 0 ? '<div class="sv-empty">All places for this task are taken.</div>'
       : `${t.mine && t.mine.reason ? `<div class="sv-card"><p style="color:#ff8fa3">Last time: ${E(t.mine.reason)}</p></div>` : ''}<span class="sv-lbl" style="margin-top:12px">Proof: ${E(t.proof)}</span><textarea class="sv-in" id="mjProof" rows="3" maxlength="400" style="height:auto;padding:12px" placeholder="${E(t.proof)}"></textarea>
@@ -679,14 +701,14 @@ function drawGame(r){
     <div class="tt-msg">${msg}</div>
     <div class="tt-b">${b.map((v, k) => `<button class="tt-c ${v === '.' ? '' : v}" ${live && v === '.' ? `onclick="xsMove(${k})"` : 'disabled'}>${v === '.' ? '' : v === 'X' ? '✕' : '○'}</button>`).join('')}</div>
     ${live ? '' : `<button class="sv-btn gold" onclick="xsNew()" ${g.plays >= g.maxPlays ? 'disabled' : ''}><i class="fa-solid fa-play"></i>${g.b ? 'Play again' : 'Start game'}</button>`}
-    <div class="sv-card" style="margin-top:14px"><h4>How it works</h4><p>Get three ✕ in a row before the computer does. Each win adds ${tk(g.prize)} to your wallet — up to ${g.perDay} paid wins a day. The game runs on our server, so every result is fair.</p></div>
+    <div class="sv-card" style="margin-top:14px"><h4>How it works</h4><p>Get three ✕ in a row before the computer does. Each win adds ${tk(g.prize)} to your Extra Balance — up to ${g.perDay} paid wins a day. The game runs on our server, so every result is fair.</p></div>
     <div class="xs-soon"><i class="fa-solid fa-dice" style="font-size:20px;color:#ffd76a"></i>More games are coming soon.</div>`);
 }
 window.xsNew = async () => drawGame(await api('ttt', { op: 'new' }));
 window.xsMove = async k => {
   document.querySelectorAll('.tt-c').forEach(c => c.disabled = true);
   const r = await api('ttt', { op: 'move', cell: k });
-  if(r.ok && r.data.balance !== null && r.data.balance !== undefined){ try { if(window._setBalance) window._setBalance(r.data.balance); } catch (e) {} }
+  if(r.ok && r.data.xbal !== null && r.data.xbal !== undefined && X.xb){ X.xb.xbal = r.data.xbal; render(); }
   drawGame(r);
 };
 

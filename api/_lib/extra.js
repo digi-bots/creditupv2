@@ -237,7 +237,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const log = lg.docs.map(x => x.data()).sort((a, c) => String(c.at).localeCompare(String(a.at))).slice(0, 40);
       const deposits = od.docs.map(x => ({ id: x.id, ...x.data() })).filter(o => o.kind === 'xdeposit').sort((a, c) => String(c.createdAt).localeCompare(String(a.createdAt))).slice(0, 10)
         .map(o => ({ id: o.id, amount: o.price, trxId: o.trxId, status: o.status, reason: o.reason || '', createdAt: o.createdAt }));
-      return [200, { xbal: Number(u.xbal) || 0, log, deposits, verified: u.phoneVerified === true, vip: !!SVC.vipState(u) }];
+      return [200, { xbal: Number(u.xbal) || 0, balance: Number(u.balance) || 0, log, deposits, verified: u.phoneVerified === true, vip: !!SVC.vipState(u) }];
     }),
     xbalDeposit: wrap(async (b, uid) => {
       await me(uid);
@@ -306,9 +306,11 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       } else if (b.op === 'reject') {
         const reason = str(b.reason, 200);
         // paid from the Extra Balance: the money goes straight back
-        if (o.paidWith === 'xbal' && o.price > 0 && ud) await xcredit(ud.ref, o.uid, o.price, 'refund', `Refund · ${what}`, { orderId: s.id }, t => t.update(ref, { status: 'Rejected', reason, refunded: true, decidedAt: iso(), decidedBy: user.uid }));
+        // paid from the Creditfy balance (Quick Services, e.g. Mobile Recharge): back to the Creditfy balance
+        if (o.paidWith === 'main' && o.price > 0 && ud) { await ref.update({ status: 'Rejected', reason, refunded: true, decidedAt: iso(), decidedBy: user.uid }); await SVC.credit(ud.ref, o.uid, o.price, 'refund', `Refund · ${what}`); }
+        else if (o.paidWith === 'xbal' && o.price > 0 && ud) await xcredit(ud.ref, o.uid, o.price, 'refund', `Refund · ${what}`, { orderId: s.id }, t => t.update(ref, { status: 'Rejected', reason, refunded: true, decidedAt: iso(), decidedBy: user.uid }));
         else await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
-        await notifyUser(o.uid, 'Order not completed', `Your order ${what} could not be completed.${reason ? ' Reason: ' + reason : ''} ${o.paidWith === 'xbal' ? `৳${o.price} is back in your Extra Balance.` : 'Please contact support if you paid.'}`, 'warning');
+        await notifyUser(o.uid, 'Order not completed', `Your order ${what} could not be completed.${reason ? ' Reason: ' + reason : ''} ${o.paidWith === 'xbal' ? `৳${o.price} is back in your Extra Balance.` : o.paidWith === 'main' ? `৳${o.price} is back in your Creditfy balance.` : 'Please contact support if you paid.'}`, 'warning');
       } else return [400, { error: 'Unknown action.' }];
       return [200, { ok: true }];
     },
@@ -330,11 +332,15 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const ref = db().collection('serviceOrders').doc();
       const order = { uid, kind: 'extra', sid: 'recharge', sname: 'Mobile Recharge', iid: op, iname: `${op} ${type} · 0${number}`, planName: `Mobile Recharge · ${op} 0${number}`, unit: '৳', flow: 'buy',
         amount, price: amount, get: amount, base: amount, fee: 0, fields: [{ label: 'Number', value: '0' + number }, { label: 'Operator', value: op }, { label: 'Type', value: type }],
-        trxId: 'XB' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase(), paidWith: 'xbal', sender: '', payMethod: 'Extra Balance', toNumber: '', status: 'Processing', createdAt: iso() };
-      const xbal = await xcredit(d.ref, uid, -amount, 'order', `Recharge ${op} 0${number}`, { orderId: ref.id }, t => t.set(ref, order));
+        trxId: 'CB' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase(), paidWith: 'main', sender: '', payMethod: 'Creditfy Balance', toNumber: '', status: 'Processing', createdAt: iso() };
+      // Quick Services use the Creditfy balance (not the Extra Balance)
+      let balance;
+      try { balance = await SVC.credit(d.ref, uid, -amount, 'recharge', `Recharge ${op} 0${number}`, { orderId: ref.id }); }
+      catch (e) { if (e.status) return [400, { error: 'Not enough Creditfy balance for this recharge.', code: 'bal_low' }]; throw e; }
+      try { await ref.set(order); } catch (e) { await SVC.credit(d.ref, uid, amount, 'refund', 'Recharge could not be saved'); throw e; }
       await feed(uid, `recharged ৳${amount} ${op}`, { icon: 'fa-solid fa-mobile-screen', color: 'g-green' });
       await notifyUser(uid, 'Recharge received 📱', `৳${amount} ${op} recharge to 0${number} is in progress. You will get it shortly.`, 'transaction');
-      return [200, { ok: true, xbal }];
+      return [200, { ok: true, balance }];
     }),
 
     // micro jobs: the list with this user's status, a proof submission, and the admin's check
@@ -346,7 +352,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const used = {}; all.docs.forEach(x => { used[x.data().tid] = (used[x.data().tid] || 0) + 1; });
       const tasks = C.jobs.tasks.filter(t => t.on && (!t.until || new Date(t.until).getTime() > now)).map(t => ({ ...t, left: t.slots ? Math.max(0, t.slots - (used[t.id] || 0)) : null, mine: my[t.id] || null }));
       const earned = mine.docs.filter(x => x.data().status === 'Approved').reduce((a, x) => a + (Number(x.data().reward) || 0), 0);
-      return [200, { on: C.jobs.on, tasks, earned, needVerify: S.bonus.requireVerified !== false && u.phoneVerified !== true && !SVC.vipState(u), xbal: Number(u.xbal) || 0 }];
+      return [200, { on: C.jobs.on, tasks, earned, needVerify: S.bonus.requireVerified !== false && u.phoneVerified !== true && !SVC.vipState(u), balance: Number(u.balance) || 0 }];
     }),
     jobSubmit: wrap(async (b, uid) => {
       const { u } = await me(uid);
@@ -375,9 +381,11 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const o = s.data(); if (o.status !== 'Pending') return [400, { error: 'Already ' + o.status + '.' }];
       if (b.op === 'approve') {
         const ud = await findUserDoc(o.uid); if (!ud) return [404, { error: 'The user no longer exists.' }];
-        await xcredit(ud.ref, o.uid, o.reward, 'task', `Task: ${o.title}`, { taskId: o.tid }, t => t.update(ref, { status: 'Approved', decidedAt: iso(), decidedBy: user.uid }));
+        // Micro Jobs is a Quick Service: the reward goes to the Creditfy balance
+        await ref.update({ status: 'Approved', decidedAt: iso(), decidedBy: user.uid });
+        await SVC.credit(ud.ref, o.uid, o.reward, 'task', `Task: ${o.title}`, { taskId: o.tid });
         await feed(o.uid, `earned ৳${o.reward} from a task`, { icon: 'fa-solid fa-briefcase', color: 'g-orange' });
-        await notifyUser(o.uid, 'Task approved 💼', `“${o.title}” is approved — ৳${o.reward} is added to your Extra Balance.`, 'success');
+        await notifyUser(o.uid, 'Task approved 💼', `“${o.title}” is approved — ৳${o.reward} is added to your Creditfy balance.`, 'success');
       } else if (b.op === 'reject') {
         const reason = str(b.reason, 200);
         await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
@@ -434,9 +442,10 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
         t.update(d.ref, { ttt: g });
         out = g;
       });
-      let balance = null;
-      if (b.op === 'move' && out.result === 'win' && out.reward > 0) balance = await SVC.credit(d.ref, uid, out.reward, 'game', 'Tic-Tac-Toe win');
-      return [200, { b: out.b || '', over: out.over !== false, result: out.result || '', reward: b.op === 'move' ? (out.reward || 0) : 0, balance,
+      // Play & Earn is an Extra Service: wins go to the Extra Balance
+      let xbal = null;
+      if (b.op === 'move' && out.result === 'win' && out.reward > 0) xbal = await xcredit(d.ref, uid, out.reward, 'game', 'Tic-Tac-Toe win');
+      return [200, { b: out.b || '', over: out.over !== false, result: out.result || '', reward: b.op === 'move' ? (out.reward || 0) : 0, xbal,
         wins: out.wins || 0, plays: out.plays || 0, perDay: G.perDay, maxPlays: G.plays, prize: money(G.reward) }];
     })
   };
