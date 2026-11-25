@@ -103,7 +103,9 @@ async function runDaily(db, { force = false, only = null } = {}) {
   }
   const want = k => (only ? only.includes(k) : D[k]);
   try { await cleanupDaily(db); } catch (e) {}
-  const tc = D.code.on ? await todaysCode(db, D, out.day) : null;
+  // today's code; if it cannot be made, the reminder still goes out (without a code)
+  let tc = null;
+  if (D.code.on) { try { tc = await todaysCode(db, D, out.day); } catch (e) { out.codeError = e.message; console.error('daily code', e.message); } }
   if (tc) out.code = tc.code;
   const sent = [];   // [chat, message id] of everything sent today, deleted after midnight
   const codeTxt = tc ? `\n\n🎟️ Today's bonus code: ${tc.code}  (৳${tc.amount})\nHow to redeem: copy the code → open Creditfy → Quick Services → Redeem Code → paste → Redeem.\n⏳ Valid until midnight tonight · one use per person · for Verified members.` : '';

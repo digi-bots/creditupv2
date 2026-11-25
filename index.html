@@ -21,6 +21,10 @@
 <meta property="og:title" content="You're invited to Creditfy ✨">
 <meta property="og:description" content="Apply for a personal loan online in minutes and receive it in your bKash, Nagad or Rocket account. All fees are shown before you apply.">
 <meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
@@ -5581,6 +5585,8 @@ function _calcRoll(id, val, fmt){
   el._raf = requestAnimationFrame(step);
 }
 // invite links always use the main domain — links to *.vercel.app look suspicious to Facebook / WhatsApp spam filters
+// a random id kept on this phone (used only to spot many accounts on one device)
+function _devId(){ try{ let d = localStorage.getItem('cf_dev'); if(!d){ d = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)); localStorage.setItem('cf_dev', d); } return d; }catch(e){ return ''; } }
 function _siteOrigin(){ const h = location.hostname; return (/\.vercel\.app$/i.test(h) || h === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(h)) ? 'https://www.creditfy.online' : location.origin; }
 function _refLink(phone){ return `${_siteOrigin()}/?ref=0${String(phone).replace(/^0+/,'')}`; }
 const _isBn = () => document.documentElement.lang === 'bn';
@@ -6896,7 +6902,7 @@ window.submitLoginPassword=async function(){
   _loggingIn = true; showLoader(true);
   try{
     // the server checks the password and counts wrong tries (5 tries, then a lock: 5 min → 30 min → 1 h → 6 h → 12 h → suspended)
-    const r = await _api('login', { phone: ph, password: pw });
+    const r = await _api('login', { phone: ph, password: pw, deviceId: _devId() });
     if(!r.ok || !r.data.token){
       showLoader(false);
       const c = r.data.code, m = r.data.error || 'Could not log in. Please try again.';
@@ -6943,7 +6949,7 @@ window.registerUser=async function(){
   try{
     // the account, the sign-up bonus and the referral are created on the server
     const referrer = localStorage.getItem('referrerPhone') || '';
-    const r = await _api('register', { phone: ph, password: pw, referrer });
+    const r = await _api('register', { phone: ph, password: pw, referrer, deviceId: _devId() });
     if(!r.ok){
       showLoader(false);
       if(r.data.code === 'exists'){ showAlert('Already Registered','This number is already registered.','error'); nav('screen-login'); return; }
@@ -7046,6 +7052,7 @@ window.saveTransactionToFirebase = async function(data){
     try{ await setDoc(refDoc, data); }
     catch(e){ if(e && e.code === 'permission-denied') throw new Error('This Transaction ID has already been used.'); throw e; }
   } else refDoc = await addDoc(collection(db,'transactions'), data);
+  if(data.trxId && data.trxId !== 'BALANCE_PAYMENT') _api('alertTrx', { trxId: data.trxId }, true).catch(() => {});   // tell the admins on Telegram
   const ref = data.appId ? ' for CU-' + String(data.appId).slice(-6).toUpperCase() : '';
   _pushMyNotif(data.uid, 'Payment Submitted ⏳', data.trxId && data.trxId !== 'BALANCE_PAYMENT'
     ? `We received your TrxID ${data.trxId} (৳${Number(data.amount||0).toLocaleString('en-US')} via ${data.payMethod||'wallet'})${ref}. Our team will verify it shortly.`
@@ -7672,12 +7679,13 @@ setTimeout(async () => {
 <script src="app-pro.js?v=5"></script>
 <script>/* inside Telegram (Mini App): load Telegram's helper first; normal browsers skip it */
 if(/tgWebApp/.test(location.hash + location.search) || window.TelegramWebviewProxy) document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>');</script>
-<script src="services.js?v=14"></script>
+<script src="services.js?v=15"></script>
 <script src="loans.js?v=3"></script>
-<script src="help.js?v=2"></script>
-<script src="extra.js?v=17"></script>
+<script src="help.js?v=3"></script>
+<script src="extra.js?v=18"></script>
 <script src="tgapp.js?v=4"></script>
 <script src="dock.js?v=2"></script>
-<script src="i18n-bn.js?v=17"></script>
+<script src="ux.js?v=2"></script>
+<script src="i18n-bn.js?v=18"></script>
 </body>
 </html>

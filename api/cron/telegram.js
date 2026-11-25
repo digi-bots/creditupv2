@@ -12,6 +12,8 @@ module.exports = async (req, res) => {
   if (!process.env.FIREBASE_SERVICE_ACCOUNT || !TG.configured()) return res.status(200).json({ skipped: 'not configured' });
   // just after midnight: yesterday's daily code stops and its posts / messages are deleted
   try { await require('../_lib/daily').cleanupDaily(db); } catch (e) { console.error('daily cleanup', e.message); }
+  // the day that just ended, in numbers, to every linked admin
+  try { await require('../_lib/alerts').sendSummary(db, new Date(Date.now() + 6 * 3600e3 - 864e5).toISOString().slice(0, 10)); } catch (e) { console.error('summary', e.message); }
   let sched = null;
   try { sched = await TG.runSchedule(db, true); } catch (e) { console.error('tg schedule', e.message); }
   try {

@@ -44,6 +44,16 @@ async function onPrivate(m, S) {
   const chat = m.chat.id, text = String(m.text || '').trim(), cmd = text.split(/[\s@]/)[0].toLowerCase();
   if (cmd === '/start') {
     const arg = text.split(/\s+/)[1] || '';
+    // an admin linking their Telegram for alerts: /start A<code> (made in the admin panel, 15 minutes)
+    if (/^A[\w-]{8,}$/.test(arg)) {
+      const ref = db().collection('tgLinks').doc(arg.slice(1)); const s = await ref.get();
+      if (s.exists && s.data().adminUid && s.data().exp > Date.now()) {
+        await db().collection('tgAdmins').doc(String(chat)).set({ uid: s.data().adminUid, name: String(m.from.first_name || '').slice(0, 60), username: String(m.from.username || '').slice(0, 40), at: new Date().toISOString() });
+        await ref.delete().catch(() => {});
+        return TG.call('sendMessage', { chat_id: chat, text: '🛡️ <b>Admin alerts are on</b>\nYou will get new payments and orders here with Approve / Reject buttons, and a summary of each day after midnight.\n\n/summary — today so far', parse_mode: 'HTML' });
+      }
+      return TG.call('sendMessage', { chat_id: chat, text: 'This admin link has expired. Make a new one in Admin → Telegram → Admin alerts.' });
+    }
     if (/^L[\w-]{8,}$/.test(arg)) {
       const ref = db().collection('tgLinks').doc(arg.slice(1)); const s = await ref.get();
       if (s.exists && s.data().exp > Date.now()) {
@@ -62,6 +72,10 @@ async function onPrivate(m, S) {
     return say(chat, S, `👋 <b>Welcome to Creditfy</b>, ${TG.esc(m.from.first_name || 'friend')}!\n\n• Tap <b>Open Creditfy</b> to use the app right here\n• /offers — today’s offers\n• /balance — your balances (after you connect your account)\n\n🔒 We will never ask for your PIN, OTP or password.`, true);
   }
   if (cmd === '/offers') return say(chat, S, await offersText(), true);
+  if (cmd === '/summary') {
+    const a = await db().collection('tgAdmins').doc(String(chat)).get();
+    if (a.exists) return TG.call('sendMessage', { chat_id: chat, text: await require('./_lib/alerts').summary(db, new Date(Date.now() + 6 * 3600e3).toISOString().slice(0, 10)), parse_mode: 'HTML' });
+  }
   if (cmd === '/balance') {
     const q = await db().collection('users').where('tgChatId', '==', String(chat)).limit(1).get();
     if (q.empty) return say(chat, S, 'Your account is not connected yet. Open Creditfy → Telegram → <b>Connect</b>.', true);
@@ -70,6 +84,8 @@ async function onPrivate(m, S) {
   }
   if (cmd === '/rules') return say(chat, S, `📜 <b>Community rules</b>\n\n${TG.esc(S.rules)}`, true);
   if (cmd === '/app') return say(chat, S, 'Open the Creditfy app 👇', true);
+  // a question: answer it from the FAQ when there is a good match
+  if (text && !text.startsWith('/')) { const f = await require('./_lib/faq').answer(db, text); if (f) return say(chat, S, `💡 <b>${TG.esc(f.q)}</b>\n\n${TG.esc(f.a)}\n\n<i>Not what you asked? Open the app → Support, our team will help.</i>`, true); }
   return say(chat, S, 'I can help with:\n/offers — today’s offers\n/balance — your balances\n/app — open Creditfy\n/rules — community rules\n\nFor account help, open the app → Support.', true);
 }
 
@@ -107,6 +123,8 @@ module.exports = async (req, res) => {
   let u = req.body; if (typeof u === 'string') { try { u = JSON.parse(u); } catch (e) { u = {}; } }
   try {
     const S = await TG.settings(db);
+    // Approve / Reject buttons on admin alerts
+    if (u && u.callback_query) { await require('./_lib/alerts').onButton(db, u.callback_query, require('./account').actions); return res.status(200).json({ ok: true }); }
     const m = u && (u.message || u.edited_message);
     if (S.on && m && m.chat) {
       if (m.chat.type === 'private') {

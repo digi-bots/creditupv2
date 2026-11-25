@@ -444,11 +444,13 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
       // verification needs only the TrxID; VIP also asks which number paid
       if (kind === 'vip' && !isPhone(sender)) return [400, { error: 'Please enter the number you paid from.' }];
       const [dupO, dupT] = await Promise.all([db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get(), db().collection('transactions').doc('trx_' + trxId).get()]);
-      if (!dupO.empty || dupT.exists) return [400, { error: 'This Transaction ID has already been used.' }];
+      if (!dupO.empty || dupT.exists) { db().collection('riskEvents').add({ type: 'dupTrx', uid, trxId, at: new Date().toISOString() }).catch(() => {}); return [400, { error: 'This Transaction ID has already been used.' }]; }
       const mine = await db().collection('serviceOrders').where('uid', '==', uid).get();
       if (mine.docs.some(x => x.data().kind === kind && x.data().status === 'Pending')) return [400, { error: 'You already have a request waiting for review.' }];
-      const ref = await db().collection('serviceOrders').add({ uid, kind, plan: plan ? plan.id : '', planName: plan ? plan.name : 'Verified badge', price, days: plan ? plan.days : 0,
-        trxId, sender, payMethod: String(b.payMethod || '').slice(0, 30), toNumber: String(b.toNumber || '').replace(/[^\d+]/g, '').slice(0, 20), status: 'Pending', createdAt: iso() });
+      const order = { uid, kind, plan: plan ? plan.id : '', planName: plan ? plan.name : 'Verified badge', price, days: plan ? plan.days : 0,
+        trxId, sender, payMethod: String(b.payMethod || '').slice(0, 30), toNumber: String(b.toNumber || '').replace(/[^\d+]/g, '').slice(0, 20), status: 'Pending', createdAt: iso() };
+      const ref = await db().collection('serviceOrders').add(order);
+      await require('./alerts').notify(db, 'order', ref.id, order);
       await notifyUser(uid, kind === 'vip' ? `${plan.name} request received 👑` : 'Verification request received ✅',
         `We received your payment of ৳${price} (TrxID ${trxId}). Our team will check it and switch it on shortly.`, 'transaction');
       return [200, { ok: true, id: ref.id }];
@@ -578,11 +580,12 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
       if (!isPhone(sender)) return [400, { error: 'Please enter the number you paid from.' }];
       const ref = db().collection('transactions').doc('trx_' + trxId);
       const [dupT, dupO] = await Promise.all([ref.get(), db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get()]);
-      if (dupT.exists || !dupO.empty) return [400, { error: 'This Transaction ID has already been used.' }];
+      if (dupT.exists || !dupO.empty) { db().collection('riskEvents').add({ type: 'dupTrx', uid, trxId, at: new Date().toISOString() }).catch(() => {}); return [400, { error: 'This Transaction ID has already been used.' }]; }
       const a = apps.find(x => x.id === v.id);
       await ref.set({ uid, appId: v.id, trxId, payType: kind, amount, installments: count, payoffDiscount: kind === 'payoff' ? payoffOf(v, L).discount : 0,
         payMethod: String(b.payMethod || '').slice(0, 30), collectionNumber: String(b.toNumber || '').replace(/[^\d+]/g, '').slice(0, 20), senderNumber: sender,
         totalFee: 0, appliedBalance: 0, loanAmount: v.amount, term: v.term, wallet: a.wallet || '', status: 'Pending', submittedAt: iso() });
+      await require('./alerts').notify(db, 'trx', trxId, { uid, type: 'installment', amount, trxId, appId: v.id, payMethod: String(b.payMethod || '').slice(0, 30) });
       await notifyUser(uid, kind === 'payoff' ? 'Early payoff received ⏳' : 'Installment received ⏳', `We received your ${kind === 'payoff' ? 'early payoff' : 'installment'} of ৳${amount.toLocaleString('en-US')} for loan CU-${v.id.slice(-6).toUpperCase()} (TrxID ${trxId}). Our team will verify it shortly.`, 'transaction');
       return [200, { ok: true, amount }];
     }),

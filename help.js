@@ -25,6 +25,7 @@ const css = `
 .fq{border-radius:14px;margin-bottom:8px;background:rgba(255,255,255,.035);border:1px solid var(--bord);overflow:hidden}
 .fq .q{padding:13px 14px;display:flex;gap:10px;align-items:center;font-size:13.5px;font-weight:800;color:var(--txt);cursor:pointer}
 .fq .q i{margin-left:auto;color:var(--txt2);transition:.2s}.fq.open .q i{transform:rotate(180deg)}
+.fq.best{border-color:rgba(29,219,128,.5);box-shadow:0 0 0 3px rgba(29,219,128,.08)}.fq-best{display:inline-flex;gap:5px;align-items:center;margin:10px 0 -4px 14px;font-size:10px;font-weight:900;color:var(--p);letter-spacing:.3px}
 .fq .a{display:none;padding:0 14px 14px;font-size:12.5px;color:var(--txt2);line-height:1.7;white-space:pre-line}.fq.open .a{display:block}
 .fe-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed var(--bord);font-size:13px;color:var(--txt2)}
 .fe-row b{color:var(--txt)}.fe-row small{display:block;font-size:11px;color:var(--txt3)}
@@ -53,7 +54,7 @@ const TIPS = [
   { ic: 'shield-halved', g: 'g-red', t: 'Never share your password', x: 'Creditfy will never ask for your password or PIN. Pay only to the numbers shown inside the app.', go: 'safety', btn: 'Stay safe' }
 ];
 const FAQ = [
-  { cat: 'Loans', q: 'How long does approval take?', a: 'Normal applications are reviewed in 7–15 days. VIP Express members get a decision and the money within 72 hours, or their VIP fee back.' },
+  { cat: 'Loans', q: 'How long does approval take?', a: 'Loan money is processed through the bank, so approval and disbursement can take up to 7–14 working days. VIP Express members get a decision and the money within 72 hours, or their VIP fee back.' },
   { cat: 'Loans', q: 'How much can I borrow?', a: 'Up to the maximum shown on the home page. Your personal limit grows as you repay loans on time, verify your number or join VIP — see Loan Limit.' },
   { cat: 'Fees', q: 'What fees do I pay?', a: 'All fees and the upfront interest are shown before you apply and again on the fee page. See “Fees Explained” for the full list.' },
   { cat: 'Fees', q: 'Can I use a promo code on my fee?', a: 'No — fees take no promo code or coupon. The only reduction is your one-time ৳100 sign-up bonus from your balance.' },
@@ -72,6 +73,7 @@ Object.assign(window._svcTiles, {
   sponsors: { l: 'Partners & Sites', ic: 'handshake', g: 'g-blue', cat: 'help', page: 'sponsors' },
   faq:      { l: 'Help Center', ic: 'circle-question', g: 'g-purple', cat: 'help', page: 'faq' },
   fees:     { l: 'Fees Explained', ic: 'receipt', g: 'g-teal', cat: 'help', page: 'fees' },
+  terms:    { l: 'Loan Terms', ic: 'file-contract', g: 'g-blue', cat: 'help', page: 'terms' },
   safety:   { l: 'Stay Safe', ic: 'shield-halved', g: 'g-red', cat: 'help', page: 'safety' },
   callback: { l: 'Call Me Back', ic: 'phone-volume', g: 'g-green', cat: 'help', page: 'callback' },
   offices:  { l: 'Our Offices', ic: 'location-dot', g: 'g-orange', cat: 'help', page: 'offices' }
@@ -100,16 +102,28 @@ P.faq = async function(){
   const all = [...own, ...((H().seoFaq || []).filter(f => !own.some(o => o.q === f.q)))];
   window._fqAll = all; window._fqCat = 'All';
   const cats = ['All', ...new Set(all.map(f => f.cat || 'General'))];
-  show('Help Center', `<div class="fq-s"><i class="fa-solid fa-magnifying-glass"></i><input class="sv-in" id="fqQ" placeholder="Search questions" oninput="hpFaq()"></div>
+  show('Help Center', `<div class="fq-s"><i class="fa-solid fa-magnifying-glass"></i><input class="sv-in" id="fqQ" placeholder="Ask a question — e.g. how long does approval take?" oninput="hpFaq()"></div>
     <div class="fq-cats">${cats.map(c => `<button class="${c === 'All' ? 'on' : ''}" onclick="window._fqCat='${E(c)}';document.querySelectorAll('.fq-cats button').forEach(b=>b.classList.toggle('on',b.textContent==='${E(c)}'));hpFaq()">${E(c)}</button>`).join('')}</div>
     <div id="fqList"></div>
     <div class="sv-card" style="margin-top:14px;text-align:center"><h4>Still need help?</h4><p>Our team is happy to help.</p><div class="sv-two" style="margin-top:10px"><button class="sv-btn ghost" onclick="svClose();window.toggleCS&&toggleCS()"><i class="fa-solid fa-headset"></i>Support</button><button class="sv-btn ghost" onclick="svGo('callback')"><i class="fa-solid fa-phone-volume"></i>Call me</button></div></div>`);
   hpFaq();
 };
+// smart search: every word counts (in English or Bangla, with common other words for the same thing),
+// the best matches come first and the top one opens by itself
+const SYN = [['loan', 'লোন', 'ঋণ', 'borrow', 'credit'], ['fee', 'ফি', 'charge', 'চার্জ', 'cost', 'খরচ', 'টাকা'], ['verify', 'verified', 'ভেরিফাই', 'ভেরিফায়েড', 'badge', 'ব্যাজ'],
+  ['vip', 'ভিআইপি', 'priority', 'fast', 'দ্রুত'], ['refund', 'ফেরত', 'return', 'back'], ['pay', 'payment', 'পেমেন্ট', 'trxid', 'transaction', 'ট্রানজেকশন'], ['bkash', 'বিকাশ', 'nagad', 'নগদ', 'rocket', 'রকেট', 'wallet'],
+  ['installment', 'কিস্তি', 'emi', 'repay', 'পরিশোধ'], ['late', 'overdue', 'দেরি', 'বাকি'], ['approve', 'approval', 'অনুমোদন', 'time', 'সময়', 'days', 'দিন'], ['reject', 'rejected', 'বাতিল'],
+  ['invite', 'refer', 'রেফার', 'ইনভাইট', 'friend', 'বন্ধু'], ['bonus', 'বোনাস', 'reward', 'পুরস্কার', 'redeem', 'রিডিম', 'code', 'কোড'], ['recharge', 'রিচার্জ', 'mobile'], ['balance', 'ব্যালেন্স'],
+  ['password', 'পাসওয়ার্ড', 'login', 'লগইন'], ['nid', 'এনআইডি', 'document', 'কাগজ'], ['limit', 'লিমিট', 'সীমা', 'max', 'maximum']];
+const norm = w => { w = w.toLowerCase(); const g = SYN.find(l => l.some(x => w === x || (x.length > 3 && w.startsWith(x)))); return g ? g[0] : w; };
+const words = t => String(t || '').toLowerCase().split(/[^a-z0-9ঀ-৿]+/).filter(w => w.length > 1).map(norm);
+window._faqScore = (f, qw) => { const qs = new Set(words(f.q)), as = new Set(words(f.a)); return qw.reduce((n, w) => n + (qs.has(w) ? 3 : 0) + (as.has(w) ? 1 : 0), 0); };
 window.hpFaq = function(){
-  const q = ($h('fqQ') ? $h('fqQ').value : '').toLowerCase().trim(), c = window._fqCat || 'All';
-  const L = (window._fqAll || []).filter(f => (c === 'All' || (f.cat || 'General') === c) && (!q || (f.q + ' ' + f.a).toLowerCase().includes(q)));
-  $h('fqList').innerHTML = L.length ? L.map(f => `<div class="fq" onclick="this.classList.toggle('open')"><div class="q">${E(f.q)}<i class="fa-solid fa-chevron-down"></i></div><div class="a">${E(f.a)}</div></div>`).join('') : '<div class="sv-empty">No answer found. Try other words or contact support.</div>';
+  const raw = ($h('fqQ') ? $h('fqQ').value : '').trim(), c = window._fqCat || 'All', qw = [...new Set(words(raw))];
+  let L = (window._fqAll || []).filter(f => c === 'All' || (f.cat || 'General') === c);
+  if(qw.length){ L = L.map(f => ({ f, n: window._faqScore(f, qw) + ((f.q + ' ' + f.a).toLowerCase().includes(raw.toLowerCase()) ? 4 : 0) })).filter(x => x.n > 0).sort((a, b) => b.n - a.n).map(x => x.f); }
+  $h('fqList').innerHTML = L.length ? L.map((f, k) => `<div class="fq${qw.length && k === 0 ? ' open best' : ''}" onclick="this.classList.toggle('open')">${qw.length && k === 0 ? '<span class="fq-best"><i class="fa-solid fa-wand-magic-sparkles"></i> Best answer</span>' : ''}<div class="q">${E(f.q)}<i class="fa-solid fa-chevron-down"></i></div><div class="a">${E(f.a)}</div></div>`).join('')
+    : `<div class="sv-empty">No answer found for “${E(raw)}”.<br>Ask our team — tap Support below.</div>`;
 };
 P.fees = async function(){
   await ready();
@@ -131,6 +145,42 @@ P.fees = async function(){
     ${H().feesNote ? `<div class="sv-card"><p>${E(H().feesNote)}</p></div>` : ''}
     <div class="sv-two"><button class="sv-btn ghost" onclick="svGo('compare')"><i class="fa-solid fa-table-columns"></i>Compare terms</button><button class="sv-btn ghost" onclick="svClose();window.openCalculator&&openCalculator()"><i class="fa-solid fa-calculator"></i>Calculator</button></div>`);
 };
+// Loan Terms: the key facts of a loan on one page — amounts, terms, every cost, the yearly cost, repayment,
+// late payment, early payoff, refund and how to complain. Numbers come from Site Config; texts from Admin → Help & Info.
+P.terms = async function(){
+  await ready();
+  const A = typeof ADMIN === 'object' ? ADMIN : {}, L = C().loans || {}, T = H().terms || {};
+  const O = typeof OPTS === 'object' ? OPTS : {};
+  const amts = (O.loanAmount || []).map(a => Number(String(a).replace(/,/g, '')) || 0).filter(Boolean), terms = (O.term || []).map(Number).filter(Boolean);
+  const maxB = Number(window._maxBorrow) || Math.max(0, ...amts);
+  const minA = amts.length ? Math.min(...amts) : 0, minT = terms.length ? Math.min(...terms) : 0, maxT = terms.length ? Math.max(...terms) : 0;
+  // a worked example and the cost per year: (fees + interest) ÷ amount, spread over the term
+  const exA = amts.includes(10000) ? 10000 : (amts[Math.floor(amts.length / 2)] || 10000), exT = terms.includes(6) ? 6 : (terms[0] || 6);
+  const ex = typeof _feeBreak === 'function' ? _feeBreak(exA, exT) : null;
+  const cost = ex ? ex.fees + ex.interest + ex.extraInterest : 0;
+  const yearly = ex && exA ? Math.round(cost / exA * 12 / exT * 1000) / 10 : 0;
+  const repaid = exA + cost;
+  const row = (k, v, sub) => `<div class="fe-row"><div>${E(k)}${sub ? `<small>${E(sub)}</small>` : ''}</div><b>${v}</b></div>`;
+  const po = L.payoff || {};
+  show('Loan Terms', `<div class="sv-card" style="text-align:center;background:radial-gradient(130% 120% at 50% 0%,rgba(77,143,255,.22),rgba(6,13,26,0) 70%),var(--surf)"><div style="font-size:30px">📄</div><h4>Loan terms — key facts</h4><p>Read this before you apply. Your exact numbers are shown again on the fee page before you pay anything.</p></div>
+    <span class="sv-lbl">The loan</span><div class="sv-card">
+      ${row('Loan amount', `${tk(minA)} – ${tk(maxB)}`)}${row('Term', minT ? `${minT} – ${maxT} months` : '—')}
+      ${row('Interest', `${A.annualRate || 0}% per year`, 'Paid upfront with the fee')}${A.extraInterest && A.extraInterest.on ? row(A.extraInterest.label || 'Additional interest', `${A.extraInterest.rate || 0}% per year`, 'Paid upfront') : ''}
+      ${row('Fees', tk((A.orgFee || 0) + (A.serviceCharge || 0) + (A.processingFee || 0)), 'Origination, service and processing — see Fees Explained')}
+      ${row('Paid to', 'Your own bKash / Nagad / Rocket', 'Only after approval')}</div>
+    ${ex ? `<span class="sv-lbl">Example: ${tk(exA)} for ${exT} months</span><div class="sv-card">
+      ${row('You receive', tk(exA))}${row('Fees + interest (paid before review)', tk(cost))}${row('Monthly installment', tk(window._svcEmi ? window._svcEmi(exA, exT) : Math.ceil(exA / exT)), `${exT} installments`)}
+      <div class="fe-tot"><span>Total you pay</span><span>${tk(repaid)}</span></div>
+      <div class="fe-row" style="border:0"><div>Cost per year (approx.)<small>All fees and interest as a yearly % of the loan</small></div><b>${yearly}%</b></div></div>` : ''}
+    <span class="sv-lbl">Repayment</span><div class="sv-card"><p>${E(T.repay || 'Pay each installment by its due date from your bKash, Nagad or Rocket to the numbers shown in the app, and enter the Transaction ID. Your loan page shows every due date and what is left.')}</p></div>
+    <span class="sv-lbl">Late payment</span><div class="sv-card" style="border-color:rgba(255,140,66,.4)"><p>${E(T.late || 'If an installment is late, your loan is marked overdue, we remind you, and your trust level and future loan limit go down. Talk to us early if you cannot pay on time.')}</p></div>
+    ${po.on !== false ? `<span class="sv-lbl">Paying early</span><div class="sv-card"><p>You can pay off the whole loan at any time${Number(po.discountPct) ? ` and get ${po.discountPct}% off what is left` : ''}${Number(po.fee) ? `, with a ${tk(po.fee)} fee` : ' with no extra fee'}. See Early Payoff in Quick Services.</p></div>` : ''}
+    <span class="sv-lbl">If your application is rejected</span><div class="sv-card" style="border-color:rgba(29,219,128,.35)"><p>${E((window._refundPolicy && String(window._refundPolicy).trim()) || 'The full fee you paid is refunded to the number you paid from.')}</p></div>
+    <span class="sv-lbl">Questions or complaints</span><div class="sv-card"><p style="white-space:pre-line">${E(T.complaint || '1. Open Support in the app (headset icon) and describe the problem — include your Transaction ID if it is about a payment.\n2. Our team replies within 24 hours.\n3. Not solved? Ask for a call back in Quick Services → Call Me Back and a senior team member will call you.')}</p></div>
+    ${T.extra ? `<div class="sv-card"><p style="white-space:pre-line">${E(T.extra)}</p></div>` : ''}
+    <div class="sv-two"><button class="sv-btn ghost" onclick="svGo('fees')"><i class="fa-solid fa-receipt"></i>Fees explained</button><button class="sv-btn ghost" onclick="svClose();window.openCalculator&&openCalculator()"><i class="fa-solid fa-calculator"></i>Calculator</button></div>`);
+};
+
 P.safety = async function(){
   await ready();
   const S = H().safety || {};

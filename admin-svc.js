@@ -7,14 +7,17 @@
 .sv-st{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
 .sv-k{border-radius:12px;border:1px solid var(--border);background:var(--card);padding:12px}
 .sv-k b{display:block;font-size:20px;font-weight:900}.sv-k span{font-size:11px;color:var(--txt2)}
-.od-row{display:grid;grid-template-columns:1.1fr 1fr 1fr .9fr auto;gap:10px;align-items:center;padding:11px;border-radius:11px;border:1px solid var(--border);background:rgba(255,255,255,.02);margin-bottom:7px;font-size:12.5px}
+.ir-t{width:100%;border-collapse:collapse;font-size:12px;min-width:860px}.ir-t th{text-align:left;font-size:10.5px;color:var(--txt2);padding:7px 8px;border-bottom:1px solid var(--border);white-space:nowrap}.ir-t td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap}.ir-t small{color:var(--txt2)}
+.bk-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0 10px;font-size:12.5px}.bk-bar label{display:inline-flex;gap:6px;align-items:center;font-weight:700}.bk-bar span{color:var(--txt2);margin-right:auto}
+.bk-ck{width:17px;height:17px;accent-color:var(--p);cursor:pointer}.bk-sp{width:17px}
+.od-row{display:grid;grid-template-columns:22px 1.1fr 1fr 1fr .9fr auto;gap:10px;align-items:center;padding:11px;border-radius:11px;border:1px solid var(--border);background:rgba(255,255,255,.02);margin-bottom:7px;font-size:12.5px}
 .od-row small{display:block;color:var(--txt2);font-size:11px;margin-top:2px}
 .od-row .mono{font-family:monospace}
-@media(max-width:900px){.od-row{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.od-row{grid-template-columns:22px 1fr 1fr}}
 .cd-row{display:grid;grid-template-columns:auto 1.1fr .8fr .9fr 1fr 1fr auto;gap:8px;align-items:center;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.02);margin-bottom:6px;font-size:12.5px}
 .cd-row.off{opacity:.5}.cd-row .c{font-family:monospace;font-weight:800;letter-spacing:.5px}
 .cd-k{font-size:10px;font-weight:900;padding:2px 7px;border-radius:7px;text-transform:uppercase}
-.cd-k.promo{background:rgba(168,85,247,.15);color:#c085ff}.cd-k.redeem{background:rgba(29,219,128,.14);color:var(--p)}.cd-k.voucher{background:rgba(255,77,106,.14);color:#ff8fa3}
+.cd-k.promo{background:rgba(168,85,247,.15);color:#c085ff}.cd-k.deposit{background:rgba(255,215,106,.15);color:#ffd76a}.cd-k.redeem{background:rgba(29,219,128,.14);color:var(--p)}.cd-k.voucher{background:rgba(255,77,106,.14);color:#ff8fa3}
 @media(max-width:1000px){.cd-row{grid-template-columns:auto 1fr 1fr}}
 .vq-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 1.1fr auto;gap:10px;align-items:center;padding:11px;border-radius:11px;border:1px solid var(--border);margin-bottom:7px;font-size:12.5px}
 .vq-row small{display:block;color:var(--txt2);font-size:11px;margin-top:2px}
@@ -49,14 +52,17 @@ const SVD = {
 const SV_TILES = [['vip', 'VIP Express'], ['verify', 'Verify Number'], ['checkin', 'Daily Check-in'], ['spin', 'Spin & Win'], ['wallet', 'Wallet'], ['redeem', 'Redeem Code'], ['voucher', 'Gift Voucher'],
   ['recharge', 'Mobile Recharge'], ['telegram', 'Telegram'], ['calc', 'Calculator'], ['refer', 'Refer & Earn'], ['history', 'History'], ['profile', 'Profile'],
   ['loans', 'My Loans'], ['repay', 'Pay Installment'], ['payoff', 'Early Payoff'], ['limit', 'Loan Limit'], ['trust', 'Trust Level'], ['statement', 'Statement (PDF)'], ['budget', 'Budget Planner'], ['compare', 'EMI Compare'],
-  ['tips', 'Smart Tips'], ['sponsors', 'Partners & Sites'], ['faq', 'Help Center'], ['fees', 'Fees Explained'], ['safety', 'Stay Safe'], ['callback', 'Call Me Back'], ['offices', 'Our Offices']];
+  ['tips', 'Smart Tips'], ['sponsors', 'Partners & Sites'], ['faq', 'Help Center'], ['fees', 'Fees Explained'], ['safety', 'Stay Safe'], ['callback', 'Call Me Back'], ['terms', 'Loan Terms'], ['offices', 'Our Offices']];
 let _SV = clone(SVD), _ORD = [], _CODES = [], _USES = [];
 
 function buildSvc(){
   const s = $p('sec-services'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Services &amp; Rewards</h2>${svBtn('services')}</div>${roBanner}
-  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['help', 'circle-question', 'Help & Info'], ['hub', 'grip', 'Quick Services tiles'], ['extra', 'store', 'Extra services'], ['jobs', 'briefcase', 'Micro jobs']], 'orders')}
+  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['help', 'circle-question', 'Help & Info'], ['hub', 'grip', 'Quick Services tiles'], ['extra', 'store', 'Extra services'], ['jobs', 'briefcase', 'Micro jobs'], ['report', 'chart-line', 'Income report']], 'orders')}
   <div class="pro-pane" data-k="help">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-file-contract"></i>Loan Terms page (Quick Services → Loan Terms)</div>
+      <div class="hint" style="margin-bottom:8px">Amounts, terms, fees, interest and the yearly cost are taken from Site Config automatically. Write the parts below in your own words (empty = a clear default text).</div>
+      <div class="fgrid">${area('ht-repay', 'Repayment', '', 2)}${area('ht-late', 'Late payment (what happens, any late fee)', '', 3)}${area('ht-complaint', 'How to complain / get help', '', 3)}${area('ht-extra', 'Anything else (optional)', '', 2)}</div></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-phone-volume"></i>Call-back requests <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="cbLoad()"><i class="fa-solid fa-rotate-right"></i></button></div><div id="cbList"></div></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-lightbulb"></i>Smart Tips <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="heAdd('tips')"><i class="fa-solid fa-plus"></i>Add tip</button></div>
       <div class="hint" style="margin-bottom:6px">Empty list = the built-in tips. “Opens” = a service key such as compare, budget, verify, vip, loans, payoff, safety.</div><div id="he-tips"></div></div>
@@ -93,6 +99,8 @@ function buildSvc(){
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Orders — VIP, verification &amp; extra services
       <select id="odFilter" onchange="odRender()" style="margin-left:auto;height:32px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting for check</option><option value="Processing">In progress (extra)</option><option value="Delivered">Delivered (extra)</option><option value="all">All</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
       <button class="btn btn-sm btn-s ro-ok" onclick="odLoad()"><i class="fa-solid fa-rotate-right"></i></button></div>
+      <div class="bk-bar" id="odBulk"><label><input type="checkbox" id="odAll" onchange="odSelAll(this.checked)"> Select all</label><span id="odSelN">0 selected</span>
+        <button class="btn btn-sm btn-p ro-ok" onclick="odBulk('approve')"><i class="fa-solid fa-check-double"></i>Approve selected</button><button class="btn btn-sm btn-s ro-ok" onclick="odBulk('process')" title="Extra orders: payment checked"><i class="fa-solid fa-hourglass-half"></i>Payment OK</button><button class="btn btn-sm btn-d ro-ok" onclick="odBulk('reject')"><i class="fa-solid fa-xmark"></i>Reject selected</button></div>
       <div id="odList"></div>
       <div class="hint" style="margin-top:6px">Find the payment in your bKash / Nagad app (amount, TrxID, sender number), then Approve. For verification any sender number is fine — check the ৳ amount and TrxID. Approving VIP switches it on at once and starts the plan's days. Verification needs only the TrxID — check the ৳ amount in your wallet app.</div>
     </div>
@@ -107,9 +115,12 @@ function buildSvc(){
   <div class="pro-pane" data-k="codes">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-plus"></i>New code</div>
       <div class="fgrid fgrid3">
-        <div class="fg"><label>Kind</label><select id="cd-kind" onchange="cdKind()"><option value="redeem">Redeem — adds balance</option><option value="voucher">Gift voucher — adds balance, single use</option></select></div>
+        <div class="fg"><label>Kind</label><select id="cd-kind" onchange="cdKind()"><option value="redeem">Redeem — adds balance</option><option value="voucher">Gift voucher — adds balance, single use</option><option value="deposit">Deposit coupon — extra bonus on an Extra Balance deposit</option></select></div>
         <div class="fg"><label>Code (empty = random)</label><input id="cd-code" maxlength="24" placeholder="e.g. EID50" style="text-transform:uppercase"></div>
         <div class="fg cd-promo"><label>Discount type</label><select id="cd-type"><option value="flat">Fixed taka (৳)</option><option value="percent">Percent of the fee (%)</option></select></div>
+        <div class="fg cd-dep" style="display:none"><label>Bonus type</label><select id="cd-dtype"><option value="percent">Percent of the deposit (%)</option><option value="flat">Fixed taka (৳)</option></select></div>
+        <div class="fg cd-dep" style="display:none"><label>Max bonus ৳ (for %, 0 = no limit)</label><input id="cd-dmax" type="number" min="0" placeholder="200"></div>
+        <div class="fg cd-dep" style="display:none"><label>Minimum deposit ৳</label><input id="cd-dmin" type="number" min="0" placeholder="500"></div>
         <div class="fg"><label id="cd-vlbl">Discount</label><input id="cd-value" type="number" min="1" placeholder="50"></div>
         <div class="fg cd-promo"><label>Max discount ৳ (for %, optional)</label><input id="cd-max" type="number" min="0" placeholder="0 = no limit"></div>
         <div class="fg"><label>Total uses (0 = unlimited)</label><input id="cd-uses" type="number" min="0" placeholder="100"></div>
@@ -174,6 +185,12 @@ function buildSvc(){
       <div id="hbList"></div>
     </div>
   </div>
+  <div class="pro-pane" data-k="report">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-chart-line"></i>Income report <select id="irMonths" data-nodirty="1" onchange="irRender()" style="margin-left:auto;height:30px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="3">Last 3 months</option><option value="6" selected>Last 6 months</option><option value="12">Last 12 months</option></select>
+      <button class="btn btn-sm btn-s ro-ok" onclick="irLoad()"><i class="fa-solid fa-rotate-right"></i>Load</button><button class="btn btn-sm btn-p ro-ok" onclick="irCsv()"><i class="fa-solid fa-file-csv"></i>Download CSV</button></div>
+      <div class="hint" style="margin-bottom:10px">Money in, by month (Bangladesh time), from approved / verified records only. <b>Extra Services sales</b> is what users paid (the cost of the cards / recharge is not known to the app); <b>service charges</b> is the part that is pure income. <b>Deposits</b> are users' money held as Extra Balance — not income. <b>Rewards given</b> is what check-in, spin, codes, games, tasks and bonuses added to users' balances.</div>
+      <div id="irOut" class="hint">Press Load.</div></div>
+  </div>
   <div class="pro-pane" data-k="jobs">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-briefcase"></i>Micro Jobs — tasks users do to earn (in Extra Services, paid to the Extra Balance)</div>
       <div class="hint" style="margin-bottom:8px">Add a task (join a Telegram / WhatsApp group or channel, visit a link, sign up, fill a form, a survey, share, refer…), its link, the reward and what proof you want. Users send the proof, you check it below and approve — the reward goes to their <b>Extra Balance</b> (Micro Jobs is in Extra Services). Rewards are for Verified &amp; VIP members. Slots = how many people can do it (0 = no limit). Press <b>Save changes</b> after editing tasks.</div>
@@ -181,7 +198,7 @@ function buildSvc(){
       <div id="mjTasks"></div>
       <button class="btn btn-sm btn-s ro-ok" onclick="mjAdd()"><i class="fa-solid fa-plus"></i>Add a task</button>
     </div>
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-check"></i>Proofs to check <select id="mjFilter" onchange="mjSubsRender()" style="margin-left:auto;height:30px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option><option value="all">All</option></select><button class="btn btn-sm btn-s ro-ok" onclick="mjLoad()"><i class="fa-solid fa-rotate-right"></i></button></div><div id="mjSubs"></div></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-check"></i>Proofs to check <select id="mjFilter" onchange="mjSubsRender()" style="margin-left:auto;height:30px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option><option value="all">All</option></select><button class="btn btn-sm btn-s ro-ok" onclick="mjLoad()"><i class="fa-solid fa-rotate-right"></i></button></div><div class="bk-bar"><label><input type="checkbox" onchange="document.querySelectorAll('#mjSubs .bk-ck').forEach(c=>c.checked=this.checked)"> Select all</label><button class="btn btn-sm btn-p ro-ok" onclick="mjBulk('approve')"><i class="fa-solid fa-check-double"></i>Approve selected</button><button class="btn btn-sm btn-d ro-ok" onclick="mjBulk('reject')"><i class="fa-solid fa-xmark"></i>Reject selected</button></div><div id="mjSubs"></div></div>
   </div>
   <div class="pro-pane" data-k="extra">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-store"></i>Extra Services (the section under Quick Services)</div>
@@ -233,15 +250,41 @@ async function odLoad(){
     ['Earned (approved)', '৳' + fa(ok.reduce((a, x) => a + (Number(x.price) || 0), 0)), 'var(--p)']].map(([l, v, c]) => `<div class="sv-k"><b style="color:${c}">${v}</b><span>${l}</span></div>`).join('');
   odRender();
 }
+// bulk actions: tick several orders and approve / mark in progress / reject them at once
+const _odSel = new Set();
+const odLive = o => o.status === 'Pending' || (o.kind === 'extra' && o.status === 'Processing');
+const odCk = o => odLive(o) ? `<input type="checkbox" class="bk-ck" ${_odSel.has(o._id) ? 'checked' : ''} onchange="odSel('${ep(o._id)}',this.checked)">` : '<span class="bk-sp"></span>';
+function odSel(id, on){ on ? _odSel.add(id) : _odSel.delete(id); const n = $p('odSelN'); if(n) n.textContent = `${_odSel.size} selected`; }
+function odSelAll(on){ document.querySelectorAll('#odList .bk-ck').forEach(c => { c.checked = on; c.dispatchEvent(new Event('change')); }); }
+async function odBulk(op){
+  const L = [..._odSel].map(id => _ORD.find(o => o._id === id)).filter(o => o && odLive(o));
+  if(!L.length){ toast('Tick the orders first', 'w'); return; }
+  // what each kind allows: approve = Verified / VIP / deposits; payment OK = extra orders waiting; reject = all
+  const ok = L.filter(o => op === 'reject' || (op === 'approve' ? ['verify', 'vip', 'xdeposit'].includes(o.kind) : o.kind === 'extra' && o.status === 'Pending'));
+  if(!ok.length){ toast(op === 'approve' ? 'Approve works for Verified, VIP and deposits — extra orders are delivered one by one' : 'Payment OK is for extra orders that are waiting', 'w'); return; }
+  let reason = '';
+  if(op === 'reject'){ reason = prompt(`Reject ${ok.length} order(s). Reason (the users see it):`, 'We could not find this payment.'); if(reason === null) return; }
+  else if(!confirm(`${op === 'approve' ? 'Approve' : 'Mark as payment OK'} ${ok.length} order(s)? Check each payment arrived first.${ok.length < L.length ? `\n(${L.length - ok.length} selected order(s) do not fit this action and are skipped.)` : ''}`)) return;
+  showL(true); let done = 0, fail = [];
+  for(const o of ok){
+    const r = ['extra', 'xdeposit'].includes(o.kind) ? await window._accountApi('adminExtraOrder', { id: o._id, op, text: '', reason }) : await window._accountApi('adminServiceOrder', { id: o._id, op, reason });
+    if(r.ok){ done++; _odSel.delete(o._id); } else fail.push(`${o.planName || o.kind}: ${r.data.error || 'failed'}`);
+  }
+  showL(false);
+  await logAct(`Bulk ${op}: ${done} order(s)${fail.length ? `, ${fail.length} failed` : ''}`, 'user', 'bulk');
+  toast(`${done} done${fail.length ? ` · ${fail.length} failed (${fail[0]})` : ' ✓'}`, fail.length ? 'w' : 's'); odLoad();
+}
 function odRender(){
   const f = $p('odFilter') ? $p('odFilter').value : 'Pending';
   const L = _ORD.filter(x => f === 'all' || x.status === f || (f === 'Pending' && x.kind === 'extra' && x.status === 'Processing'));
   const el = $p('odList'); if(!el) return;
+  [..._odSel].forEach(id => { const o = _ORD.find(x => x._id === id); if(!o || !odLive(o)) _odSel.delete(id); }); odSel('', false);
+  const all = $p('odAll'); if(all) all.checked = false;
   el.innerHTML = L.length ? L.map(o => {
     const u = (_D.users || []).find(x => String(x.phone) === String(o.uid)) || {};
     const own = String(o.sender) === String(o.uid);
     if(o.kind === 'xdeposit'){
-      return `<div class="od-row"><div><b><i class="fa-solid fa-wallet" style="color:var(--p)"></i> Extra Balance deposit</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
+      return `<div class="od-row">${odCk(o)}<div><b><i class="fa-solid fa-wallet" style="color:var(--p)"></i> Extra Balance deposit</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
       <div><b>৳${fa(o.price)}</b><small>${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
       <div><span class="mono">${ep(o.trxId)}</span><small>TrxID</small></div>
       <div>${sb(o.status === 'Approved' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${fd(o.createdAt)}</small></div>
@@ -250,13 +293,13 @@ function odRender(){
     if(o.kind === 'extra'){
       const live = ['Pending', 'Processing'].includes(o.status);
       const info = (o.fields || []).filter(f => f.value).map(f => `${ep(f.label)}: <b>${ep(f.value)}</b>`).join('<br>');
-      return `<div class="od-row"><div><b><i class="fa-solid fa-store" style="color:#ffd76a"></i> ${ep(o.iname)}</b><small>${ep(o.sname)} · ${ep(u.name || '')} · 0${ep(o.uid)}</small>${info ? `<small>${info}</small>` : ''}</div>
+      return `<div class="od-row">${odCk(o)}<div><b><i class="fa-solid fa-store" style="color:#ffd76a"></i> ${ep(o.iname)}</b><small>${ep(o.sname)} · ${ep(u.name || '')} · 0${ep(o.uid)}</small>${info ? `<small>${info}</small>` : ''}</div>
       <div><b>${o.flow === 'sell' ? 'Pay user ৳' + fa(o.get) : '৳' + fa(o.price)}</b>${o.feeWaived ? '<small style="color:#46b0ff">Verified · fee waived</small>' : o.fee ? `<small>incl. fee ৳${fa(o.fee)}</small>` : ''}<small>${o.amount ? ep(o.amount) + ' ' + ep(o.unit) + ' · ' : ''}${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
       <div>${o.paidWith === 'xbal' ? '<b style="color:var(--p)">Paid from Extra Balance</b><small>no TrxID needed</small>' : `<span class="mono">${ep(o.trxId)}</span><small>${o.sender ? 'from 0' + ep(o.sender) : 'TrxID only'}</small>`}</div>
       <div>${sb(o.status === 'Delivered' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${ep(o.status)} · ${fd(o.createdAt)}</small></div>
       <div class="acts">${live ? `${o.status === 'Pending' ? `<button class="ab" title="Payment OK — start working" onclick="xsOrder('${ep(o._id)}','process')"><i class="fa-solid fa-hourglass-half"></i></button>` : ''}<button class="ab ab-ok" title="Deliver" onclick="xsOrder('${ep(o._id)}','deliver')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" title="Reject" onclick="xsOrder('${ep(o._id)}','reject')"><i class="fa-solid fa-xmark"></i></button>` : `<small>${ep(o.delivery || o.reason || '')}</small>`}</div></div>`;
     }
-    return `<div class="od-row"><div><b>${o.kind === 'vip' ? '👑 ' : '<i class="fa-solid fa-circle-check" style="color:#46b0ff"></i> '}${ep(o.planName || o.kind)}</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
+    return `<div class="od-row">${odCk(o)}<div><b>${o.kind === 'vip' ? '👑 ' : '<i class="fa-solid fa-circle-check" style="color:#46b0ff"></i> '}${ep(o.planName || o.kind)}</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
       <div><b>৳${fa(o.price)}</b><small>${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
       <div><span class="mono">${ep(o.trxId)}</span><small>${o.sender ? 'from 0' + ep(o.sender) : 'TrxID only'}</small></div>
       <div>${sb(o.status === 'Approved' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${fd(o.createdAt)}</small></div>
@@ -311,7 +354,7 @@ async function vqRefund(appId, price){
 }
 
 /* ═════════ codes ═════════ */
-function cdKind(){ const k = val('cd-kind'); document.querySelectorAll('.cd-promo').forEach(e => e.style.display = k === 'promo' ? '' : 'none'); $p('cd-vlbl').textContent = k === 'promo' ? 'Discount' : 'Balance to add (৳)'; if(k === 'voucher'){ $p('cd-uses').value = 1; $p('cd-per').value = 1; } }
+function cdKind(){ const k = val('cd-kind'); document.querySelectorAll('.cd-promo').forEach(e => e.style.display = k === 'promo' ? '' : 'none'); document.querySelectorAll('.cd-dep').forEach(e => e.style.display = k === 'deposit' ? '' : 'none'); $p('cd-vlbl').textContent = k === 'promo' ? 'Discount' : k === 'deposit' ? 'Bonus (% or ৳)' : 'Balance to add (৳)'; if(k === 'voucher'){ $p('cd-uses').value = 1; $p('cd-per').value = 1; } }
 const rndCode = (pre, n = 8) => { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const b = new Uint32Array(n); crypto.getRandomValues(b); return (pre ? pre + '-' : '') + [...b].map(x => a[x % a.length]).join(''); };
 async function cdCreate(){
   const kind = val('cd-kind'), value = Number(val('cd-value')), count = Math.min(200, Math.max(1, Number(val('cd-count')) || 1));
@@ -320,6 +363,7 @@ async function cdCreate(){
   const base = { kind, value, on: true, uses: 0, maxUses: kind === 'voucher' ? 1 : Math.max(0, Number(val('cd-uses')) || 0), perUser: Math.max(1, Number(val('cd-per')) || 1),
     start: val('cd-start') ? new Date(val('cd-start') + 'T00:00:00+06:00').toISOString() : '', end: val('cd-end') ? new Date(val('cd-end') + 'T23:59:59+06:00').toISOString() : '',
     audience: val('cd-aud') || 'all', label: val('cd-label'), note: val('cd-note'), createdAt: new Date().toISOString(), createdBy: 'admin' };
+  if(kind === 'deposit'){ base.type = val('cd-dtype') || 'percent'; if(base.type === 'percent' && value > 100){ toast('Percent must be 100 or less', 'w'); return; } base.maxBonus = Math.max(0, Number(val('cd-dmax')) || 0); base.minDeposit = Math.max(0, Number(val('cd-dmin')) || 0); }
   if(kind === 'promo'){ base.type = val('cd-type') || 'flat'; base.maxDiscount = Math.max(0, Number(val('cd-max')) || 0); base.minLoan = Math.max(0, Number(val('cd-min')) || 0); }
   const own = val('cd-code').toUpperCase().replace(/[^A-Z0-9-]/g, '');
   const pre = val('cd-prefix').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -556,6 +600,51 @@ async function xsOrder(id, op){
   toast(op === 'approve' ? 'Balance added ✓' : op === 'deliver' ? 'Delivered ✓' : op === 'process' ? 'Marked in progress' : 'Rejected', op === 'reject' ? 'e' : 's'); odLoad();
 }
 
+/* ═════════ income report ═════════ */
+let _IR = null;
+const irMonth = t => new Date(new Date(t).getTime() + 6 * 3600e3).toISOString().slice(0, 7);
+async function irLoad(){
+  const el = $p('irOut'); el.innerHTML = 'Loading…';
+  const [trx, ord, wl, xl] = await Promise.all([window._getDocs('transactions', 'submittedAt'), window._getDocs('serviceOrders'), window._getDocs('walletLog', 'at').catch(() => []), window._getDocs('xbalLog', 'at').catch(() => [])]);
+  _IR = { trx, ord, wl, xl }; irRender();
+}
+function irRender(){
+  if(!_IR) return; const el = $p('irOut');
+  const n = Number(val('irMonths')) || 6, months = [];
+  for(let i = n - 1; i >= 0; i--){ const d = new Date(Date.now() + 6 * 3600e3); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - i); months.push(d.toISOString().slice(0, 7)); }
+  const R = {}; months.forEach(m => { R[m] = { fees: 0, feeN: 0, inst: 0, verify: 0, vip: 0, extra: 0, charge: 0, extraN: 0, dep: 0, rewards: 0 }; });
+  const add = (t, k, v) => { if(!t) return; const m = irMonth(t); if(R[m]) R[m][k] += Number(String(v || 0).replace(/,/g, '')) || 0; };
+  _IR.trx.filter(t => t.status === 'Verified' && !t.removed).forEach(t => {
+    const when = t.verifiedAt || t.submittedAt;
+    if(['installment', 'payoff'].includes(t.type)) add(when, 'inst', t.amount); else { add(when, 'fees', t.amount); add(when, 'feeN', 1); } });
+  _IR.ord.forEach(o => { const when = o.decidedAt || o.createdAt;
+    if(o.kind === 'verify' && o.status === 'Approved') add(when, 'verify', o.price);
+    if(o.kind === 'vip' && o.status === 'Approved') add(when, 'vip', o.price);
+    if(o.kind === 'xdeposit' && o.status === 'Approved') add(when, 'dep', o.price);
+    if(o.kind === 'extra' && o.status === 'Delivered' && o.flow !== 'sell'){ add(when, 'extra', o.price); add(when, 'charge', o.fee); add(when, 'extraN', 1); } });
+  const RW = ['checkin', 'spin', 'redeem', 'voucher', 'referral', 'bonus', 'cashback', 'game', 'task'];
+  _IR.wl.filter(x => RW.includes(x.type) && Number(x.amount) > 0).forEach(x => add(x.at, 'rewards', x.amount));
+  _IR.xl.filter(x => ['game', 'task', 'bonus'].includes(x.type) && Number(x.amount) > 0).forEach(x => add(x.at, 'rewards', x.amount));
+  const T = months.reduce((a, m) => { Object.keys(R[m]).forEach(k => a[k] = (a[k] || 0) + R[m][k]); return a; }, {});
+  const inc = r => r.fees + r.verify + r.vip + r.charge;
+  const head = ['Month', 'Loan fees & interest', 'Verified', 'VIP', 'Extra sales', 'of which charges', 'Income*', 'Installments back', 'Deposits held', 'Rewards given'];
+  const row = (lbl, r, b) => `<tr${b ? ' style="font-weight:900;border-top:2px solid var(--border)"' : ''}><td>${lbl}</td><td>৳${fa(r.fees)}<small> (${r.feeN})</small></td><td>৳${fa(r.verify)}</td><td>৳${fa(r.vip)}</td><td>৳${fa(r.extra)}<small> (${r.extraN})</small></td><td>৳${fa(r.charge)}</td><td style="color:var(--p);font-weight:900">৳${fa(inc(r))}</td><td>৳${fa(r.inst)}</td><td>৳${fa(r.dep)}</td><td style="color:var(--orange)">−৳${fa(r.rewards)}</td></tr>`;
+  const max = Math.max(1, ...months.map(m => inc(R[m])));
+  el.className = '';
+  el.innerHTML = `<div class="sv-st">${[['Income*', '৳' + fa(inc(T)), 'var(--p)'], ['Loan fees & interest', '৳' + fa(T.fees), '#46b0ff'], ['Verified + VIP', '৳' + fa(T.verify + T.vip), '#ffd76a'], ['Extra Services sales', '৳' + fa(T.extra), '#c085ff'], ['Rewards given', '৳' + fa(T.rewards), 'var(--orange)']].map(([l, v, c]) => `<div class="sv-k"><b style="color:${c}">${v}</b><span>${l}</span></div>`).join('')}</div>
+    <div style="display:flex;align-items:flex-end;gap:8px;height:120px;margin:6px 0 14px;padding:0 4px">${months.map(m => `<div style="flex:1;text-align:center"><div title="৳${fa(inc(R[m]))}" style="height:${Math.round(inc(R[m]) / max * 92) + 2}px;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,#1ddb80,#0e9a5a)"></div><small style="font-size:10px;color:var(--txt2)">${m.slice(2)}</small></div>`).join('')}</div>
+    <div style="overflow-x:auto"><table class="ir-t"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${months.slice().reverse().map(m => row(m, R[m])).join('')}${row('Total', T, true)}</tbody></table></div>
+    <div class="hint" style="margin-top:8px">* Income = loan fees &amp; interest + Verified + VIP + Extra Services charges. Installments are loan money coming back (not income).</div>`;
+  _IR.months = months; _IR.R = R; _IR.T = T;
+}
+function irCsv(){
+  if(!_IR || !_IR.R){ toast('Press Load first', 'w'); return; }
+  const k = ['fees', 'feeN', 'verify', 'vip', 'extra', 'extraN', 'charge', 'inst', 'dep', 'rewards'];
+  const lines = [['month', 'loan_fees_interest', 'fee_payments', 'verified', 'vip', 'extra_sales', 'extra_orders', 'extra_charges', 'income', 'installments_back', 'deposits_held', 'rewards_given'].join(',')]
+    .concat(_IR.months.map(m => [m, ...k.slice(0, 7).map(x => _IR.R[m][x]), _IR.R[m].fees + _IR.R[m].verify + _IR.R[m].vip + _IR.R[m].charge, _IR.R[m].inst, _IR.R[m].dep, _IR.R[m].rewards].join(',')));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv' })); a.download = `creditfy-income-${_IR.months[0]}-to-${_IR.months[_IR.months.length - 1]}.csv`; a.click();
+}
+
 /* ═════════ Micro jobs ═════════ */
 const MJ_TYPES = [['join', 'Join group / channel'], ['visit', 'Visit link'], ['signup', 'Sign up'], ['form', 'Form fill-up'], ['survey', 'Survey'], ['share', 'Share'], ['refer', 'Refer'], ['other', 'Other']];
 let _MJS = [];
@@ -580,9 +669,19 @@ function mjSubsRender(){
   const el = $p('mjSubs'); if(!el) return; const f = $p('mjFilter') ? $p('mjFilter').value : 'Pending';
   const L = _MJS.filter(x => f === 'all' || x.status === f);
   el.innerHTML = L.length ? L.map(x => { const u = (_D.users || []).find(y => String(y.phone) === String(x.uid)) || {};
-    return `<div class="od-row"><div><b>${ep(x.title)}</b><small>${ep(u.name || '')} · 0${ep(x.uid)}</small></div><div><b style="color:var(--p)">+৳${fa(x.reward)}</b><small>${ep(x.type)}</small></div>
+    return `<div class="od-row">${x.status === 'Pending' ? `<input type="checkbox" class="bk-ck" value="${ep(x.id)}">` : '<span class="bk-sp"></span>'}<div><b>${ep(x.title)}</b><small>${ep(u.name || '')} · 0${ep(x.uid)}</small></div><div><b style="color:var(--p)">+৳${fa(x.reward)}</b><small>${ep(x.type)}</small></div>
       <div style="grid-column:span 2"><small>Proof</small><div style="word-break:break-word">${ep(x.proof)}</div></div>
       <div class="acts">${x.status === 'Pending' ? `<button class="ab ab-ok" title="Approve — add the reward" onclick="mjAct('${ep(x.id)}','approve')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" title="Reject" onclick="mjAct('${ep(x.id)}','reject')"><i class="fa-solid fa-xmark"></i></button>` : `<small>${ep(x.status)}${x.reason ? ' · ' + ep(x.reason) : ''}</small>`}</div></div>`; }).join('') : '<div class="hint">Nothing here.</div>';
+}
+async function mjBulk(op){
+  const ids = [...document.querySelectorAll('#mjSubs .bk-ck:checked')].map(c => c.value); if(!ids.length){ toast('Tick the proofs first', 'w'); return; }
+  let reason = '';
+  if(op === 'reject'){ reason = prompt(`Reject ${ids.length} proof(s). Reason (the users see it):`, 'We could not confirm this task.'); if(reason === null) return; }
+  else if(!confirm(`Approve ${ids.length} proof(s)? Each user gets the task reward in their Extra Balance.`)) return;
+  showL(true); let done = 0, fail = 0;
+  for(const id of ids){ const r = await window._accountApi('adminJobs', { op, id, reason }); r.ok ? done++ : fail++; }
+  showL(false); await logAct(`Bulk micro job ${op}: ${done}${fail ? `, ${fail} failed` : ''}`, 'user', 'bulk');
+  toast(`${done} done${fail ? ` · ${fail} failed` : ' ✓'}`, fail ? 'w' : 's'); mjLoad();
 }
 async function mjAct(id, op){
   const x = _MJS.find(y => y.id === id); if(!x) return; let reason = '';
@@ -612,6 +711,7 @@ async function loadSvc(){
     'lm-on': LL.limit.on !== false, 'lm-enf': LL.limit.enforce === true, 'lm-start': LL.limit.start, 'lm-step': LL.limit.step, 'lm-vf': LL.limit.verifiedBonus, 'lm-vip': LL.limit.vipBonus, 'lm-max': LL.limit.max, 'bd-pct': LL.budget.safePct });
   trRender(); ['tips', 'sponsors', 'faq', 'offices'].forEach(heRender);
   fillIn({ 'hp-seofaq': _SV.help.useSeoFaq, 'hp-feesnote': _SV.help.feesNote, 'hp-safetips': _SV.help.safety.tips.join('\n'), 'hp-nums': _SV.help.safety.numbers.map(n => `${n.label || ''} | ${n.number}`).join('\n'),
+    'ht-repay': (Hd.terms || {}).repay || '', 'ht-late': (Hd.terms || {}).late || '', 'ht-complaint': (Hd.terms || {}).complaint || '', 'ht-extra': (Hd.terms || {}).extra || '',
     'cb-on': _SV.help.callback.on !== false, 'cb-text': _SV.help.callback.text, 'cb-topics': (_SV.help.callback.topics || []).join('\n'), 'cb-slots': (_SV.help.callback.slots || []).join('\n') });
   if($p('cd-kind')) $p('cd-kind').value = 'redeem';
   fillIn({ 'vp-on': _SV.vip.on !== false, 'vp-hours': _SV.vip.hours, 'vp-normal': _SV.vip.normal, 'vf-on': _SV.verify.on !== false, 'vf-price': _SV.verify.price, 'vf-title': _SV.verify.title, 'vf-text': _SV.verify.text,
@@ -648,6 +748,7 @@ async function saveSvc(){
   data.tips = clean(_SV.tips, 'title'); data.sponsors = clean(_SV.sponsors, 'name');
   data.help = { useSeoFaq: chk('hp-seofaq'), faq: clean(_SV.help.faq, 'q').filter(f => f.a), feesNote: val('hp-feesnote'),
     safety: { tips: lines('hp-safetips'), numbers: lines('hp-nums').map(l => { const [a, b] = l.includes('|') ? l.split('|') : ['Official', l]; return { label: a.trim().slice(0, 40), number: String(b || '').trim().slice(0, 30) }; }).filter(n => n.number) },
+    terms: { repay: $p('ht-repay').value.trim(), late: $p('ht-late').value.trim(), complaint: $p('ht-complaint').value.trim(), extra: $p('ht-extra').value.trim() },
     offices: clean(_SV.help.offices, 'name'), callback: { on: chk('cb-on'), text: val('cb-text'), topics: lines('cb-topics'), slots: lines('cb-slots') } };
   if(_SV.extra) data.extra = xsData();
   await window._setDoc('siteConfig', 'services', data);

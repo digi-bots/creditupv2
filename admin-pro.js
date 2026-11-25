@@ -439,7 +439,7 @@ function rvRemove(id){ askRemove('Remove review', 'This user review.', () => rvS
 window._SAVERS.seo = { load: loadSeo, save: saveSeo, data: () => ({ 'Business & FAQ › FAQ': _SEO.faq }) };
 
 /* ═════════ RISK CENTER (adminConfig/risk + riskReviews) ═════════ */
-const RISK_DEF = { nid: { on: true }, payout: { on: true, min: 2 }, trx: { on: true }, rapid: { on: true, count: 3, hours: 24 }, refBurst: { on: true, count: 10, hours: 2 }, rejected: { on: true, min: 2 }, newBig: { on: true, days: 3, amount: 30000 } };
+const RISK_DEF = { nid: { on: true }, payout: { on: true, min: 2 }, trx: { on: true }, rapid: { on: true, count: 3, hours: 24 }, refBurst: { on: true, count: 10, hours: 2 }, rejected: { on: true, min: 2 }, newBig: { on: true, days: 3, amount: 30000 }, device: { on: true, min: 2 }, selfRef: { on: true }, trxTry: { on: true, min: 2 } };
 let _RK = clone(RISK_DEF), _RKA = [], _RKR = {};
 function buildRisk(){
   const s = $p('sec-risk'); if(!s || s.dataset.built) return; s.dataset.built = 1;
@@ -453,6 +453,9 @@ function buildRisk(){
       ${tog('rk-rapid', 'Many applications in a short time', 1)}${inp('rk-rapid-n', 'Applications', '3', 'type="number" min="2" max="20"')}${inp('rk-rapid-h', 'Within hours', '24', 'type="number" min="1" max="720"')}
       ${tog('rk-ref', 'Invite burst (many sign-ups for one inviter)', 1)}${inp('rk-ref-n', 'Sign-ups', '10', 'type="number" min="3" max="200"')}${inp('rk-ref-h', 'Within hours', '2', 'type="number" min="1" max="72"')}
       ${tog('rk-rej', 'Several rejected payments', 1)}${inp('rk-rej-n', 'Rejected payments', '2', 'type="number" min="1" max="20"')}
+      ${tog('rk-dev', 'Several accounts from one phone (device)', 1)}${inp('rk-dev-n', '…at least (accounts)', '2', 'type="number" min="2" max="20"')}
+      ${tog('rk-self', 'Invited from the same phone as the inviter (self-referral)', 1)}
+      ${tog('rk-try', 'Tries a Transaction ID that was already used', 1)}${inp('rk-try-n', 'Tries', '2', 'type="number" min="1" max="20"')}
       ${tog('rk-new', 'New account asking for a big loan', 1)}${inp('rk-new-d', 'Account younger than (days)', '3', 'type="number" min="1" max="60"')}${inp('rk-new-a', 'Loan of at least (৳)', '30000', 'type="number" min="0"')}
     </div>
   </details>
@@ -465,14 +468,16 @@ async function loadRisk(){
   _RK = clone(RISK_DEF); Object.keys(_RK).forEach(k => Object.assign(_RK[k], (d.rules || {})[k] || {}));
   const R = _RK;
   fillIn({ 'rk-nid': R.nid.on, 'rk-payout': R.payout.on, 'rk-payout-min': R.payout.min, 'rk-trx': R.trx.on, 'rk-rapid': R.rapid.on, 'rk-rapid-n': R.rapid.count, 'rk-rapid-h': R.rapid.hours,
-    'rk-ref': R.refBurst.on, 'rk-ref-n': R.refBurst.count, 'rk-ref-h': R.refBurst.hours, 'rk-rej': R.rejected.on, 'rk-rej-n': R.rejected.min, 'rk-new': R.newBig.on, 'rk-new-d': R.newBig.days, 'rk-new-a': R.newBig.amount });
+    'rk-ref': R.refBurst.on, 'rk-ref-n': R.refBurst.count, 'rk-ref-h': R.refBurst.hours, 'rk-rej': R.rejected.on, 'rk-rej-n': R.rejected.min, 'rk-new': R.newBig.on, 'rk-new-d': R.newBig.days, 'rk-new-a': R.newBig.amount,
+    'rk-dev': R.device.on, 'rk-dev-n': R.device.min, 'rk-self': R.selfRef.on, 'rk-try': R.trxTry.on, 'rk-try-n': R.trxTry.min });
   afterLoad('risk');
   await rkScan();
 }
 async function saveRisk(){
   const rules = { nid: { on: chk('rk-nid') }, payout: { on: chk('rk-payout'), min: numv('rk-payout-min', 2, 2, 20) }, trx: { on: chk('rk-trx') },
     rapid: { on: chk('rk-rapid'), count: numv('rk-rapid-n', 3, 2, 20), hours: numv('rk-rapid-h', 24, 1, 720) }, refBurst: { on: chk('rk-ref'), count: numv('rk-ref-n', 10, 3, 200), hours: numv('rk-ref-h', 2, 1, 72) },
-    rejected: { on: chk('rk-rej'), min: numv('rk-rej-n', 2, 1, 20) }, newBig: { on: chk('rk-new'), days: numv('rk-new-d', 3, 1, 60), amount: numv('rk-new-a', 30000, 0) } };
+    rejected: { on: chk('rk-rej'), min: numv('rk-rej-n', 2, 1, 20) }, newBig: { on: chk('rk-new'), days: numv('rk-new-d', 3, 1, 60), amount: numv('rk-new-a', 30000, 0) },
+    device: { on: chk('rk-dev'), min: numv('rk-dev-n', 2, 2, 20) }, selfRef: { on: chk('rk-self') }, trxTry: { on: chk('rk-try'), min: numv('rk-try-n', 2, 1, 20) } };
   await window._setDoc('adminConfig', 'risk', { rules, updatedAt: new Date().toISOString() });
   await logAct('Risk rules saved', 'config', 'risk');
   _RK = rules; rkScan();
@@ -480,7 +485,7 @@ async function saveRisk(){
 const _num = v => Number(String(v ?? '').replace(/,/g, '')) || 0;
 const _dig = v => String(v || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
 async function rkScan(){
-  const [users, apps, trx, rev] = await Promise.all([_get('users'), _get('applications', 'submittedAt'), _get('transactions', 'submittedAt'), _get('riskReviews', 'at')]);
+  const [users, apps, trx, rev, evs] = await Promise.all([_get('users'), _get('applications', 'submittedAt'), _get('transactions', 'submittedAt'), _get('riskReviews', 'at'), _get('riskEvents', 'at').catch(() => [])]);
   _RKR = {}; rev.forEach(r => { _RKR[r._id] = r; });
   const U = {}; users.forEach(u => { U[String(u.phone)] = u; });
   const A = apps.filter(a => !a.removed), T = trx.filter(t => !t.removed), R = _RK, out = [];
@@ -493,6 +498,11 @@ async function rkScan(){
   if(R.refBurst.on) Object.entries(group(users, u => String(u.referredBy || ''))).forEach(([ref, l]) => { const ts = l.map(u => new Date(u.createdAt || 0).getTime()).filter(Boolean).sort((a, b) => a - b); for(let i = 0; i + R.refBurst.count - 1 < ts.length; i++){ if(ts[i + R.refBurst.count - 1] - ts[i] <= R.refBurst.hours * 36e5){ push('ref', ref, 'med', `Invite burst: ${R.refBurst.count}+ sign-ups in ${R.refBurst.hours} h`, `Many accounts joined with 0${ref}'s link very quickly — they may be fake accounts made for rewards.`, [ref, ...l.slice(0, 8).map(u => String(u.phone))]); break; } } });
   if(R.rejected.on) Object.entries(group(T.filter(t => t.status === 'Rejected'), t => String(t.uid || ''))).forEach(([ph, l]) => { if(l.length >= R.rejected.min) push('rej', ph, 'med', `${l.length} rejected payments`, `0${ph} sent Transaction IDs that could not be verified ${l.length} times.`, [ph]); });
   if(R.newBig.on) A.forEach(a => { const u = U[String(a.uid)]; if(!u || !u.createdAt || !a.submittedAt) return; const age = (new Date(a.submittedAt) - new Date(u.createdAt)) / 864e5; if(age >= 0 && age <= R.newBig.days && _num(a.loanAmount) >= R.newBig.amount) push('new', a._id, 'low', `New account, big loan (৳${fa(a.loanAmount)})`, `Account was ${Math.max(0, Math.round(age))} day(s) old when CU-${String(a._id).slice(-6).toUpperCase()} was submitted.`, [String(a.uid)]); });
+  // fraud signals (devices are random ids the app keeps on each phone)
+  if(R.device && R.device.on){ const m = {}; users.forEach(u => (u.devices || []).forEach(d => { (m[d] = m[d] || new Set()).add(String(u.phone)); }));
+    Object.entries(m).forEach(([d, set]) => { const ph = [...set]; if(ph.length >= R.device.min) push('device', d.slice(0, 20), ph.length >= 3 ? 'high' : 'med', `${ph.length} accounts on one phone`, `These accounts signed up or logged in from the same device. It can be family members sharing a phone — or one person with many accounts (bonus / referral abuse).`, ph); }); }
+  if(R.selfRef && R.selfRef.on) users.filter(u => u.riskSelfRef && u.referredBy).forEach(u => push('selfref', u.phone, 'high', 'Invited from the inviter’s own phone', `0${u.phone} signed up with 0${u.referredBy}’s invite link on the same device 0${u.referredBy} uses — likely a self-referral for the invite reward.`, [u.phone, u.referredBy]));
+  if(R.trxTry && R.trxTry.on) Object.entries(group(evs.filter(e => e.type === 'dupTrx'), e => String(e.uid || ''))).forEach(([ph, l]) => { if(l.length >= R.trxTry.min) push('trxtry', ph, l.length >= 4 ? 'high' : 'med', `${l.length} tries with used Transaction IDs`, `0${ph} entered Transaction IDs that were already used: ${[...new Set(l.map(e => e.trxId))].slice(0, 5).join(', ')}.`, [ph]); });
   const rank = { high: 0, med: 1, low: 2 };
   _RKA = out.sort((a, b) => rank[a.sev] - rank[b.sev]);
   rkRender();
@@ -505,7 +515,7 @@ function rkRender(){
   const b = $p('nb-risk'); const hm = n('high') + n('med'); if(b){ b.textContent = hm; b.style.display = hm ? '' : 'none'; }
   const f = $p('rkF').value, sv = $p('rkS').value;
   const L = _RKA.filter(a => (f === 'all' || (f === 'open') === !(_RKR[a.id] && _RKR[a.id].status === 'reviewed')) && (!sv || a.sev === sv));
-  const ic = { nid: 'id-card', payout: 'wallet', trx: 'receipt', rapid: 'bolt', ref: 'user-plus', rej: 'ban', new: 'user-clock' };
+  const ic = { nid: 'id-card', payout: 'wallet', trx: 'receipt', rapid: 'bolt', ref: 'user-plus', rej: 'ban', new: 'user-clock', device: 'mobile-screen', selfref: 'user-secret', trxtry: 'receipt' };
   $p('rkList').innerHTML = L.length ? L.map(a => { const r = _RKR[a.id], done = r && r.status === 'reviewed'; return `<div class="rk-card ${a.sev} ${done ? 'done' : ''}"><div class="rk-ic"><i class="fa-solid fa-${ic[a.rule] || 'flag'}"></i></div>
     <div class="rk-m"><b>${ep(a.title)}</b><p>${ep(a.detail)}${done ? `<br><span class="pro-ok"><i class="fa-solid fa-circle-check"></i> Reviewed ${fd(r.at)}${r.note ? ' — ' + ep(r.note) : ''}</span>` : ''}</p>
     <div class="rk-ppl">${a.phones.map(p => `<a onclick="rkUser('${ep(p)}')" title="Open user">0${ep(p)}</a>`).join('')}</div></div>
