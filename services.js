@@ -206,6 +206,17 @@ const css = `
   background:linear-gradient(135deg,#fff3c4,#ffd76a 40%,#f2a91d);box-shadow:0 12px 28px rgba(242,169,29,.35),inset 0 1px 0 rgba(255,255,255,.6)}
 .vbtn::after{content:"";position:absolute;top:0;left:-50%;width:35%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);animation:vSweep 2.8s ease-in-out infinite}
 .sv-dim{opacity:.45;filter:grayscale(.3);pointer-events:none}
+.rd-hero{text-align:center;border-radius:22px;padding:18px 16px;margin-bottom:12px;background:radial-gradient(120% 120% at 50% 0%,rgba(168,85,247,.28),rgba(6,13,26,0) 70%),var(--surf);border:1px solid rgba(168,85,247,.4)}
+.rd-hero h4{margin:0 0 6px;font-size:17px;color:var(--txt)}.rd-hero p{margin:0;font-size:12.5px;color:var(--txt2);line-height:1.55}
+.rd-live{display:inline-block;margin-top:10px;font-size:11px;font-weight:900;padding:4px 10px;border-radius:10px;background:rgba(255,255,255,.06);color:var(--txt2)}.rd-live.on{background:rgba(29,219,128,.14);color:var(--p)}
+.rd-v{display:flex;align-items:center;gap:10px;border-radius:16px;padding:10px 12px;margin-bottom:12px;cursor:pointer;background:rgba(185,130,40,.12);border:1px solid rgba(214,160,72,.5)}
+.rd-v .vf-seal{width:30px;height:30px;flex:none}.rd-v b{display:block;font-size:12.5px;color:#f3c46b}.rd-v small{font-size:11px;color:var(--txt2)}
+.rd-v span{margin-left:auto;flex:none;font-size:11.5px;font-weight:900;padding:6px 10px;border-radius:10px;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
+.rd-step{display:flex;gap:11px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--bord)}.rd-step:last-child{border-bottom:0}
+.rd-step b{display:block;font-size:13px;color:var(--txt)}.rd-step small{font-size:11.5px;color:var(--txt2)}
+.rd-tg{display:flex;gap:11px;align-items:center;border-radius:16px;padding:12px;margin:14px 0 8px;background:linear-gradient(135deg,rgba(55,187,254,.16),rgba(29,142,216,.06));border:1px solid rgba(55,187,254,.45)}
+.rd-tg>i{font-size:28px;color:#37bbfe}.rd-tg b{display:block;font-size:13px;color:var(--txt)}.rd-tg small{font-size:11.5px;color:var(--txt2)}
+.rd-tgb{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rd-tgb .sv-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;font-size:13px}
 /* premium Get Verified chip (profile) */
 .vf-chip.off{gap:6px;padding:4px 11px 4px 5px;border-radius:22px;background:linear-gradient(135deg,#0f1f45,#1b3a7a) padding-box,conic-gradient(from var(--va,0deg),#60a5fa,#ffd76a,#fff4c2,#60a5fa) border-box;border:1.5px solid transparent;
   box-shadow:0 0 16px rgba(96,165,250,.35),0 0 4px rgba(255,215,106,.35);animation:vRot 3.5s linear infinite;position:relative;overflow:hidden}
@@ -296,7 +307,7 @@ const CATS = [['premium', 'Premium', 'crown'], ['rewards', 'Rewards', 'gift'], [
 const HOME_DEF = ['vip', 'checkin', 'spin', 'wallet', 'recharge', 'calc', 'refer', 'history', 'all'];
 
 // offers, events and rewards are for Verified members (Admin → Services & Rewards); the sign-up bonus stays for everyone
-const VONLY = ['checkin', 'spin', 'redeem', 'voucher'];
+const VONLY = ['checkin', 'spin', 'voucher'];   // Redeem Code is open to all (redeeming asks for the badge)
 function needsV(){ const B = (SV.cfg && SV.cfg.bonus) || {}; return B.requireVerified !== false && !!user() && !!SV.st && SV.st.verified !== true; }
 window._svNeedsV = needsV; window._svSeal = () => seal('', '');
 function lockCard(what){
@@ -434,12 +445,30 @@ const PAGES = {
 
   async redeem(){
     await loadCfg(); if(!SV.st) await loadState();
-    if(needsV()){ show('Redeem Code', lockCard('Redeem codes')); return; }
-    show('Redeem Code', `<div class="sv-card" style="text-align:center;background:radial-gradient(120% 120% at 50% 0%,rgba(168,85,247,.25),rgba(6,13,26,0) 70%),var(--surf);border-color:rgba(168,85,247,.35)">
-      <div class="sv-ic g-purple" style="width:60px;height:60px;margin:0 auto 10px;font-size:26px;border-radius:18px"><i class="fa-solid fa-ticket"></i></div><h4>Got a code?</h4><p>Enter a redeem code or a gift voucher from a friend. The amount goes straight to your balance.</p></div>
-      <input class="sv-in code" id="rdIn" placeholder="ENTER CODE" maxlength="24" autocomplete="off">
+    // everyone can open it and see how codes work; only redeeming needs the Verified badge (the server checks)
+    const unv = needsV();
+    let I = {}; try { I = await (await fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'dailyInfo' }) })).json(); } catch (e) {}
+    const amt = I && I.amount ? tk(I.amount) : '';
+    const row = (ic, g, t, d) => `<div class="rd-step"><div class="sv-ic ${g}" style="width:38px;height:38px;font-size:15px;border-radius:12px;flex:none"><i class="${ic}"></i></div><div><b>${t}</b><small>${d}</small></div></div>`;
+    show('Redeem Code', `<div class="rd-hero"><div class="sv-ic g-purple" style="width:62px;height:62px;margin:0 auto 10px;font-size:26px;border-radius:18px"><i class="fa-solid fa-ticket"></i></div>
+        <h4>${I && I.on ? `Daily bonus code${amt ? ' · ' + amt : ''}` : 'Got a code?'}</h4>
+        <p>${I && I.on ? `A new code every morning at ${E(I.time || '9:00 AM')}. Redeem it before midnight and ${amt || 'the bonus'} goes to your Creditfy balance.` : 'Enter a redeem code or a gift voucher from a friend. The amount goes straight to your balance.'}</p>
+        ${I && I.on ? `<span class="rd-live ${I.live ? 'on' : ''}">${I.live ? '● Today’s code is live' : '○ Today’s code comes at ' + E(I.time || '9:00 AM')}</span>` : ''}</div>
+      ${unv ? `<div class="rd-v" onclick="svGo('verify')">${seal('', 'off')}<div><b>Verified members can redeem</b><small>Get your Verified badge once and claim the bonus every day.</small></div><span>Verify</span></div>` : ''}
+      <input class="sv-in code" id="rdIn" placeholder="PASTE THE CODE" maxlength="24" autocomplete="off">
       <button class="sv-btn" style="margin-top:12px" id="rdBtn" onclick="svRedeem()"><i class="fa-solid fa-gift"></i>Redeem</button>
-      <div class="sv-card" style="margin-top:14px"><p><i class="fa-solid fa-circle-info"></i> Promo codes that give a discount on your fee are entered on the fee payment page.</p></div>`);
+      ${I && I.on ? `<span class="sv-lbl" style="margin-top:16px">Where to find today’s code</span>
+      <div class="sv-card" style="padding:6px 14px">
+        ${row('fa-solid fa-bell', 'g-gold', 'Notification bell', 'In the app every morning, with a Redeem button')}
+        ${row('fa-solid fa-mobile-screen', 'g-green', 'Phone notification', 'If notifications are on for this phone')}
+        ${row('fa-brands fa-telegram', 'g-blue', 'Telegram channel & bot', 'Tap the code there to copy it')}</div>
+      <span class="sv-lbl" style="margin-top:14px">How to redeem</span>
+      <div class="sv-card" style="padding:6px 14px">
+        ${row('fa-regular fa-copy', 'g-purple', '1. Copy the code', 'From the notification or Telegram')}
+        ${row('fa-solid fa-paste', 'g-teal', '2. Paste it above', 'Quick Services → Redeem Code')}
+        ${row('fa-solid fa-coins', 'g-orange', '3. Tap Redeem', `${amt || 'The bonus'} goes to your Creditfy balance — once per person, until midnight`)}</div>
+      ${I.channelLink || I.bot ? `<div class="rd-tg"><i class="fa-brands fa-telegram"></i><div><b>Never miss the daily bonus</b><small>Join our Telegram — the code is posted there every morning.</small></div></div>
+        <div class="rd-tgb">${I.channelLink ? `<a class="sv-btn" style="background:linear-gradient(135deg,#37bbfe,#1d8ed8);color:#fff;text-decoration:none" href="${E(I.channelLink)}" target="_blank" rel="noopener"><i class="fa-solid fa-bullhorn"></i>Join channel</a>` : ''}${I.bot ? `<a class="sv-btn ghost" style="text-decoration:none" href="https://t.me/${E(I.bot)}" target="_blank" rel="noopener"><i class="fa-solid fa-robot"></i>Open the bot</a>` : ''}</div>` : ''}` : ''}`);
   },
 
   async voucher(){

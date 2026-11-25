@@ -8,19 +8,19 @@
 const css = `
 :root{--dock-r:max(0px,calc((100vw - 400px) / 2));--dock-tab:54px}
 /* open bar: one place, bottom of the app column */
-.hot-offer-floating[data-dock="open"],.pw-bar[data-dock="open"]{bottom:calc(14px + env(safe-area-inset-bottom))!important;transition:transform .45s cubic-bezier(.22,1,.36,1),bottom .35s ease,opacity .25s,box-shadow .3s!important}
+.hot-offer-floating[data-dock="open"],.pw-bar[data-dock="open"]{bottom:calc(14px + env(safe-area-inset-bottom))!important;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .25s,box-shadow .3s!important}
 /* tabs: equal size, stacked in one column on the right edge */
 .hot-offer-floating[data-dock="tab"]{bottom:var(--dock-b)!important;right:var(--dock-r)!important;transform:translateX(calc(100% - var(--dock-tab)))!important;
   clip-path:inset(-24px calc(100% - var(--dock-tab)) -24px -24px)!important;border-radius:18px 0 0 18px!important;padding-top:12px!important;padding-bottom:12px!important;
-  box-shadow:-8px 10px 26px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.35),inset 1px 0 0 rgba(255,255,255,.25)!important;transition:transform .45s cubic-bezier(.22,1,.36,1),bottom .35s ease!important}
+  box-shadow:-8px 10px 26px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.35),inset 1px 0 0 rgba(255,255,255,.25)!important;transition:transform .45s cubic-bezier(.22,1,.36,1)!important}
 .hot-offer-floating[data-dock="tab"] .hot-close,.hot-offer-floating[data-dock="tab"] .hot-text,.hot-offer-floating[data-dock="tab"] .offer-bar,.hot-offer-floating[data-dock="tab"] .offer-left{display:none!important}
-.hot-offer-floating[data-dock="tab"]{min-height:58px;box-sizing:border-box;padding:0!important;display:flex!important;align-items:center}
+.hot-offer-floating[data-dock="tab"]{min-height:58px;height:58px;box-sizing:border-box;padding:0!important;display:flex!important;align-items:center}
 .hot-offer-floating[data-dock="tab"] .hot-offer-content{width:var(--dock-tab);justify-content:center;padding:0!important}
 .hot-offer-floating[data-dock="tab"] .hot-icon{font-size:24px;margin:0!important}
 .hot-offer-floating[data-dock="tab"] .hot-icon{animation:fire-shake 1.6s infinite;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}
 .pw-bar[data-dock="tab"]{bottom:var(--dock-b)!important;right:var(--dock-r)!important;left:auto!important;transform:none!important;width:auto!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
 .pw-bar[data-dock="tab"]>*:not(.pw-tab){display:none!important}
-.pw-bar[data-dock="tab"] .pw-tab{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:var(--dock-tab);min-height:58px;box-sizing:border-box;cursor:pointer;font-family:inherit;
+.pw-bar[data-dock="tab"] .pw-tab{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:var(--dock-tab);min-height:58px;height:58px;box-sizing:border-box;cursor:pointer;font-family:inherit;
   border:1px solid rgba(29,219,128,.5);border-right:0;border-radius:18px 0 0 18px;padding:7px 4px 6px;color:#bff5d8;font-size:9.5px;font-weight:900;letter-spacing:.4px;
   background:linear-gradient(160deg,rgba(18,64,44,.97),rgba(8,22,40,.97));box-shadow:-8px 10px 26px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.18);animation:dockPeek .45s cubic-bezier(.2,.8,.2,1)}
 .pw-bar[data-dock="tab"] .pw-tab img{width:26px;height:26px;border-radius:8px;box-shadow:0 3px 8px rgba(0,0,0,.4)}
@@ -61,22 +61,11 @@ function layout(){
       open.filter(b => b !== keep).forEach(b => b.fold(b.el));
       open = [keep];
     }
-    const home = (document.querySelector('.screen.active') || {}).id === 'screen-home';
-    const o = open[0];
-    // tabs start above the open bar, or above the page's own buttons on inner pages
-    let base = home ? 22 : 96;
-    if(o){ const r = o.el.getBoundingClientRect(); base = Math.max(base, Math.round(window.innerHeight - r.top) + 12); }
-    // stack the tabs by their real height (the offer tab is taller than the app tab), 10px apart
-    let y = base;
-    live.forEach(b => {
-      const isOpen = b === o;
-      b.el.dataset.dock = isOpen ? 'open' : 'tab';
-      if(!isOpen){
-        b.el.style.setProperty('--dock-b', `calc(${y}px + env(safe-area-inset-bottom))`);
-        const t = b.id === 'pwBar' ? b.el.querySelector('.pw-tab') : b.el;
-        y += Math.max(54, Math.round((t && t.getBoundingClientRect().height) || 58)) + 10;
-      }
-    });
+    // fixed spots: every bar always folds to its own place (offer: first spot, app: second), the same on every page —
+    // so nothing moves up or down when another bar opens or folds
+    const BASE = 112, STEP = 68;
+    BARS.forEach((b, k) => { const el = $(b.id), v = `calc(${BASE + k * STEP}px + env(safe-area-inset-bottom))`; if(el && el.style.getPropertyValue('--dock-b') !== v) el.style.setProperty('--dock-b', v); });
+    live.forEach(b => { const v = b === open[0] ? 'open' : 'tab'; if(b.el.dataset.dock !== v) b.el.dataset.dock = v; });
   } finally { busy = false; }
 }
 // watch the bars' classes / visibility and the screen changes
