@@ -6857,7 +6857,7 @@ window._startNotifListener = async function(phone){
   _notifUnsubs.push(onSnapshot(query(collection(db,'user_notifications'), where('uid','==',phone)),
     snap => _onNotifSnap('personal', snap.docs), err => console.warn('notif listener:', err)));
   _notifUnsubs.push(onSnapshot(query(collection(db,'broadcasts'), orderBy('createdAt','desc')),
-    snap => _onNotifSnap('broadcast', snap.docs.filter(d => d.data().removed !== true)), err => console.warn('broadcast listener:', err)));
+    snap => _onNotifSnap('broadcast', snap.docs.filter(d => d.data().removed !== true && !(d.data().expiresAt && new Date(d.data().expiresAt).getTime() < Date.now()))), err => console.warn('broadcast listener:', err)));
 };
 window._markNotifsSeen = async function(){
   if(!_notifPhone) return;
@@ -7296,7 +7296,7 @@ window.loadTicker = async function() {
       .map(x => ({ text: x.text, link: x.link, type: x.type || 'info', pin: !!x.pin }));
     if(cfg.broadcasts !== false){
       const gSnap = await getDocs(query(collection(db, 'broadcasts'), orderBy('createdAt', 'desc')));
-      list = list.concat(gSnap.docs.slice(0, 3).map(d => d.data()).map(n => ({ text: (n.title ? n.title + ': ' : '') + (n.subject || n.message || ''), type: n.type || 'info', link: n.buttonUrl || '' })));
+      list = list.concat(gSnap.docs.map(d => d.data()).filter(n => n.removed !== true && !(n.expiresAt && new Date(n.expiresAt).getTime() < Date.now())).slice(0, 3).map(n => ({ text: (n.title ? n.title + ': ' : '') + (n.subject || n.message || ''), type: n.type || 'info', link: n.buttonUrl || '' })));
     }
     if(cfg.own === true && user && user.phone){
       const pSnap = await getDocs(query(collection(db, 'user_notifications'), where('uid', '==', user.phone)));
@@ -7675,8 +7675,8 @@ if(/tgWebApp/.test(location.hash + location.search) || window.TelegramWebviewPro
 <script src="services.js?v=13"></script>
 <script src="loans.js?v=3"></script>
 <script src="help.js?v=2"></script>
-<script src="extra.js?v=15"></script>
-<script src="tgapp.js?v=3"></script>
+<script src="extra.js?v=16"></script>
+<script src="tgapp.js?v=4"></script>
 <script src="dock.js?v=1"></script>
 <script src="i18n-bn.js?v=17"></script>
 </body>

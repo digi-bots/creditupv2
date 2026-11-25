@@ -37,5 +37,10 @@
       "path": "/api/cron/telegram",
       "schedule": "5 18 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "api/cron/*.js": {
+      "maxDuration": 60
+    }
+  }
 }

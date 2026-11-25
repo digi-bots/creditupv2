@@ -235,6 +235,20 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
       return [200, { list: s.docs.map(x => ({ id: x.id, ...x.data() })) }];
     }),
     // user: the Telegram card (links, connected or not, a one-time link code)
+    // the daily reminder: send now (all, or only some channels) and the last result
+    adminDaily: wrapE(async (b, user) => {
+      const no = await admin(user, ['appset', 'broadcast']); if (no) return no;
+      const D = require('./daily');
+      if (b.op === 'send') { const only = Array.isArray(b.only) && b.only.length ? b.only.filter(k => ['site', 'push', 'channel', 'bot'].includes(k)) : null; return [200, { ok: true, result: await D.runDaily(db, { force: true, only }) }]; }
+      const m = await db().collection('tgMeta').doc('daily').get(); const n = (await D.botChats(db)).length;
+      return [200, { last: m.exists ? m.data() : null, botUsers: n }];
+    }),
+    // someone opened the Mini App: remember them for the bot messages if Telegram allows writing to them
+    tgSeen: async (b) => {
+      const t = verifyInitData(b.initData); if (!t || !t.id) return [200, { ok: false }];
+      await db().collection('tgUsers').doc(String(t.id)).set({ name: str(t.first_name, 60), username: str(t.username, 40), lastAt: iso(), via: 'miniapp', ...(t.allows_write_to_pm === true ? { canWrite: true, blocked: false } : {}) }, { merge: true });
+      return [200, { ok: true }];
+    },
     // visits keep the schedule running between the daily jobs (rate-limited by a lock)
     tgTick: async () => { try { const r = await runSchedule(db); return [200, { ok: true, ran: r.ran || 0 }]; } catch (e) { return [200, { ok: false }]; } },
     tgState: async (b, user) => {

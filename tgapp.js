@@ -59,6 +59,8 @@ if(inTg){
     back.onClick(() => { const sh = document.getElementById('svSheet'); if(sh && sh.classList.contains('on') && window.svBack) return window.svBack(); if(window.nav) window.nav('screen-home'); else history.back(); });
     setInterval(() => { try { needBack() ? back.show() : back.hide(); } catch (e) {} }, 400);
   }
+  // count this Telegram user for the daily reminder (once a day per phone)
+  try { const k = 'cf_tg_seen', d = new Date().toISOString().slice(0, 10); if(localStorage.getItem(k) !== d){ localStorage.setItem(k, d); fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'tgSeen', initData: W.initData }) }).catch(() => {}); } } catch (e) {}
   // link this Telegram to the logged-in account (once per login on this phone)
   let tried = '';
   setInterval(async () => {
