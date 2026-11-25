@@ -47,11 +47,15 @@ async function todaysCode(db, D, day) {
   const m = await meta.get();
   if (m.exists && m.data().day === day && m.data().code) return m.data();
   const ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  // never the same code twice: 8 random characters (about a trillion choices), and every code ever made is
+  // registered in dailyCodes — creating a register entry fails if that code was ever used before
   let code = '';
-  for (let k = 0; k < 6 && !code; k++) {
-    const c = 'CF-' + Array.from(require('crypto').randomBytes(6)).map(b => ABC[b % ABC.length]).join('');
-    if (!(await db().collection('promoCodes').doc(c).get()).exists) code = c;
+  for (let k = 0; k < 8 && !code; k++) {
+    const c = 'CF-' + Array.from(require('crypto').randomBytes(8)).map(b => ABC[b % ABC.length]).join('');
+    if ((await db().collection('promoCodes').doc(c).get()).exists) continue;
+    try { await db().collection('dailyCodes').doc(c).create({ day, at: iso() }); code = c; } catch (e) { /* taken: try another */ }
   }
+  if (!code) throw new Error('Could not make a new code');
   const end = iso(bdMidnight());
   await db().collection('promoCodes').doc(code).set({ code, kind: 'redeem', value: D.code.amount, maxUses: D.code.maxUses, perUser: 1, uses: 0, on: true, audience: 'all',
     start: iso(), end, daily: true, note: 'Daily bonus code', createdAt: iso(), createdBy: '' });
@@ -102,8 +106,8 @@ async function runDaily(db, { force = false, only = null } = {}) {
   const tc = D.code.on ? await todaysCode(db, D, out.day) : null;
   if (tc) out.code = tc.code;
   const sent = [];   // [chat, message id] of everything sent today, deleted after midnight
-  const codeTxt = tc ? `\n\n🎟️ Today's bonus code: ${tc.code}\nRedeem it in the app (Quick Services → Redeem Code) for ৳${tc.amount} in your Creditfy balance. Valid until midnight tonight — one use per person.` : '';
-  const codeHtml = tc ? `\n\n🎟️ <b>Today's bonus code:</b> <code>${tc.code}</code>  <i>(tap to copy)</i>\nRedeem it in the app → Quick Services → <b>Redeem Code</b> for <b>৳${tc.amount}</b> in your Creditfy balance.\n⏳ Valid until midnight tonight — one use per person.` : '';
+  const codeTxt = tc ? `\n\n🎟️ Today's bonus code: ${tc.code}  (৳${tc.amount})\nHow to redeem: copy the code → open Creditfy → Quick Services → Redeem Code → paste → Redeem.\n⏳ Valid until midnight tonight · one use per person · for Verified members.` : '';
+  const codeHtml = tc ? `\n\n🎟️ <b>Today's bonus code:</b> <code>${tc.code}</code>  (৳${tc.amount}, tap to copy)\n<b>How to redeem:</b> open Creditfy → Quick Services → <b>Redeem Code</b> → paste → Redeem.\n⏳ Valid until midnight tonight · one use per person · for Verified members.` : '';
   // 1. in-app notification for 24 hours (yesterday's one is taken down)
   if (want('site')) {
     try {

@@ -255,6 +255,13 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
     },
     // visits keep the schedule running between the daily jobs (rate-limited by a lock)
     tgTick: async () => { try { const r = await runSchedule(db); return [200, { ok: true, ran: r.ran || 0 }]; } catch (e) { return [200, { ok: false }]; } },
+    // the Redeem page: is there a daily code, how much, and where to get it (the code itself is shared in the reminder)
+    dailyInfo: async () => {
+      const D = await require('./daily').settings(db), S = await settings(db);
+      const c = await db().collection('tgMeta').doc('dailyCode').get().catch(() => null);
+      const today = new Date(Date.now() + 6 * 3600e3).toISOString().slice(0, 10);
+      return [200, { on: D.on && D.code.on, amount: D.code.amount, live: !!(c && c.exists && c.data().day === today), time: '9:00 AM', channelLink: S.channelLink, groupLink: S.groupLink, bot: configured() ? S.botUsername : '' }];
+    },
     tgState: async (b, user) => {
       const S = await settings(db);
       const pub = { on: S.on && configured(), channelLink: S.channelLink, groupLink: S.groupLink, bot: S.botUsername, dm: S.dm };
