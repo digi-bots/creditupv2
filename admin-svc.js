@@ -196,6 +196,8 @@ function buildSvc(){
     </div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-bolt" style="color:#ffd76a"></i>Weekday deals (a special price on chosen days)</div>
       <div class="hint" style="margin-bottom:8px">Pick an option, a deal price and the days. On those days (Bangladesh time, 12:00am – 11:59pm) users see “Today's deal” with a countdown to midnight; on other days they see the next deal and when it starts. Example: tick only Friday for a Friday special. For a one-time offer instead, use the <b>Offer ৳</b> and <b>Offer ends</b> columns of an option below — when that time passes, the regular price comes back.</div>
+      <div class="fgrid fgrid3" style="margin-bottom:10px">${tog('xs-r-on', 'Show the Red Friday tile', true)}${inp('xs-r-title', 'Tile name', 'Red Friday')}<div class="fg"><label>Its day</label><select id="xs-r-day">${['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((d, n) => `<option value="${n}">${d}</option>`).join('')}</select></div>${inp('xs-r-text', 'Short text', 'Our biggest prices of the week — one day only.', 'full')}</div>
+      <div class="hint" style="margin-bottom:8px">The Red Friday tile shows every deal below that has its day ticked. On that day it is LIVE with a countdown to midnight; on other days users see the deals locked with a countdown to when it opens. With no deal on that day, the tile is hidden.</div>
       <div id="xsDeals"></div>
       <button class="btn btn-sm btn-s ro-ok" onclick="xsAddDeal()"><i class="fa-solid fa-plus"></i>Add a deal</button>
     </div>
@@ -426,15 +428,15 @@ function xsRender(){
   el.innerHTML = X.services.map((s, n) => {
     const amt = s.mode === 'amount';
     const head = amt ? ['Option', 'Unit', 'Rate ৳/unit', 'Fee %', 'Fee ৳', 'Min', 'Max', 'Buy / Sell', 'Pay-to number / address (blank = payment wallets)', 'On', '']
-      : ['Option', 'Price ৳', 'Offer ৳', 'Offer ends (date & time)', 'Note for the user', 'Pay-to (blank = wallets)', 'On', ''];
-    const cols = amt ? '1.4fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.4fr .55fr .55fr 1.15fr 1.2fr 1fr 34px 34px';
+      : ['Option', 'Category', 'Price ৳', 'Offer ৳', 'Offer ends (date & time)', 'Note for the user', 'Pay-to (blank = wallets)', 'Popular', 'On', ''];
+    const cols = amt ? '1.4fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.3fr .8fr .55fr .55fr 1.15fr 1.1fr .9fr 44px 34px 34px';
     const row = (i, k) => { const f = (key, ph, t) => xsInp(i[key], `xsItem(${n},${k},'${key}',this.value)`, ph, t);
       return `<div style="display:grid;grid-template-columns:${cols};gap:6px;align-items:center;margin-bottom:5px">${amt
         ? f('name', 'bKash → Nagad') + f('unit', '৳') + f('rate', '1', 'number') + f('pct', '0', 'number') + f('fee', '0', 'number') + f('min', '0', 'number') + f('max', '0', 'number')
           + `<select onchange="xsItem(${n},${k},'flow',this.value)" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border)"><option value="buy"${i.flow !== 'sell' ? ' selected' : ''}>User pays</option><option value="sell"${i.flow === 'sell' ? ' selected' : ''}>User sells</option></select>` + f('to', 'e.g. bKash 017XXXXXXXX')
-        : f('name', 'Google Play $10') + f('price', '0', 'number') + f('offer', 'none', 'number')
+        : f('name', 'Google Play $10') + f('cat', 'e.g. Steam') + f('price', '0', 'number') + f('offer', 'none', 'number')
           + `<input type="datetime-local" value="${ep(xsLocal(i.offerEnd))}" onchange="xsItem(${n},${k},'offerEnd',this.value?new Date(this.value).toISOString():'');xsRender()" style="height:34px;padding:0 6px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid ${xsOfferLive(i) ? 'rgba(255,215,106,.7)' : 'var(--border)'};color:var(--txt);font-size:12px;min-width:0;width:100%;box-sizing:border-box;color-scheme:dark">`
-          + f('note', 'optional') + f('to', 'optional')}
+          + f('note', 'optional') + f('to', 'optional') + `<input type="checkbox" title="Popular" ${i.hot ? 'checked' : ''} onchange="xsItem(${n},${k},'hot',this.checked)">`}
         <input type="checkbox" ${i.on !== false ? 'checked' : ''} onchange="xsItem(${n},${k},'on',this.checked)"><button class="ab ab-no ro-ok" title="Remove" onclick="xsDelItem(${n},${k})"><i class="fa-solid fa-trash"></i></button></div>`; };
     const lg = s.logo ? `<img src="${ep(s.logo)}" style="width:40px;height:40px;border-radius:12px;object-fit:cover;background:#fff">` : `<div class="${ep(s.color)}" style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;background:#345"><i class="${ep(s.icon)}"></i></div>`;
     return `<div class="cfg-blk" style="${s.on === false ? 'opacity:.6' : ''}"><div class="cfg-t" style="gap:10px">${lg}<span>${ep(s.name || 'New service')}</span><small style="color:var(--txt2);font-weight:600">${s.mode === 'game' ? 'game' : amt ? 'amount (exchange)' : 'fixed price'}</small>
@@ -451,7 +453,7 @@ function xsRender(){
         <div class="fg full"><label>Description</label>${xsInp(s.desc, `xsSet(${n},'desc',this.value)`, 'What this service gives')}</div>
         <div class="fg full"><label>Questions for the user — one per line, add <b>*</b> at the end if required</label><textarea rows="2" oninput="xsFields(${n},this.value)" style="width:100%;box-sizing:border-box">${ep((s.fields || []).map(f => f.label + (f.req ? ' *' : '')).join('\n'))}</textarea></div>
       </div>
-      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 980 : 900}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
+      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 980 : 1080}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
         ${(s.items || []).map(row).join('')}</div></div>
         <button class="btn btn-sm btn-s ro-ok" onclick="xsAddItem(${n})"><i class="fa-solid fa-plus"></i>Add option</button>
         ${amt ? '<div class="hint" style="margin-top:6px">User pays = amount × rate + fee % + fee ৳. “User sells” = the user sends to the pay-to address and gets amount × rate − fee.</div>' : ''}`}
@@ -497,7 +499,7 @@ function xsData(){
     items: (s.items || []).filter(i => String(i.name || '').trim()).map(i => ({ ...i, id: i.id || 'o' + hid(), name: String(i.name).trim().slice(0, 60) })) }));
   if(services.some(s => s.logo && !/^https:\/\//i.test(s.logo))) throw new Error('Extra services: a logo link must start with https://');
   const deals = (X.deals || []).filter(d => d.sid && d.iid && Number(d.price) > 0 && (d.days || []).length).map(d => ({ id: d.id || 'd' + hid(), sid: d.sid, iid: d.iid, price: Math.round(Number(d.price)), days: d.days, on: d.on !== false }));
-  return { on: chk('xs-on'), deals, title: val('xs-title') || 'Extra Services', services,
+  return { on: chk('xs-on'), deals, redFriday: { on: chk('xs-r-on'), title: val('xs-r-title') || 'Red Friday', day: Number(val('xs-r-day') || 5), text: val('xs-r-text') }, title: val('xs-title') || 'Extra Services', services,
     perk: { on: chk('xs-p-on'), chargePct: numv('xs-p-pct', 5, 0, 50), chargeMin: numv('xs-p-min', 10, 0, 1e5) },
     loanNotice: { on: chk('xs-n-on'), days: val('xs-n-days') || '7–14' },
     wallet: { on: chk('xs-w-on'), direct: chk('xs-w-direct'), min: numv('xs-w-min', 50, 1, 1e7), max: numv('xs-w-max', 50000, 0, 1e8) },
@@ -510,6 +512,7 @@ async function xsLoad(){
   fillIn({ 'xs-on': _SV.extra.on !== false, 'xs-title': _SV.extra.title, 'xs-g-on': _SV.extra.games.on !== false, 'xs-g-reward': _SV.extra.games.reward, 'xs-g-perday': _SV.extra.games.perDay, 'xs-g-plays': _SV.extra.games.plays, 'xs-g-level': _SV.extra.games.level,
     'xs-w-on': (_SV.extra.wallet || {}).on !== false, 'xs-w-direct': (_SV.extra.wallet || {}).direct !== false, 'xs-w-min': (_SV.extra.wallet || {}).min ?? 50, 'xs-w-max': (_SV.extra.wallet || {}).max ?? 50000,
     'xs-p-on': (_SV.extra.perk || {}).on !== false, 'xs-p-pct': (_SV.extra.perk || {}).chargePct ?? 5, 'xs-p-min': (_SV.extra.perk || {}).chargeMin ?? 10,
+    'xs-r-on': (_SV.extra.redFriday || {}).on !== false, 'xs-r-title': (_SV.extra.redFriday || {}).title || 'Red Friday', 'xs-r-day': String((_SV.extra.redFriday || {}).day ?? 5), 'xs-r-text': (_SV.extra.redFriday || {}).text || '',
     'xs-n-on': (_SV.extra.loanNotice || {}).on !== false, 'xs-n-days': (_SV.extra.loanNotice || {}).days || '7–14',
     'xs-l-on': (_SV.extra.live || {}).on !== false, 'xs-l-count': (_SV.extra.live || {}).count || 12 });
   ['xs-g-reward', 'xs-g-perday'].forEach(id => { const e = $p(id); if(e) e.oninput = xsRender; });
