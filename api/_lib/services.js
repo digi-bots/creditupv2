@@ -28,6 +28,8 @@ const DEF = {
   ] },
   voucher: { on: true, min: 50, max: 1000, days: 30 },
   codes: { promo: false, redeem: true },
+  // offers, events and rewards are for Verified members only (the sign-up bonus stays for everyone)
+  bonus: { requireVerified: true },
   // loan tools: how installments are counted, early payoff, the personal loan limit and trust levels
   loans: {
     emiMode: 'principal',            // principal = loan ÷ months (interest is paid upfront with the fee) · flat = (loan + interest) ÷ months · amortized = bank EMI
@@ -56,6 +58,7 @@ function merge(d) {
     spin: { ...DEF.spin, ...(d.spin || {}), prizes: (Array.isArray(d.spin?.prizes) && d.spin.prizes.length ? d.spin.prizes : DEF.spin.prizes).slice(0, 12) },
     voucher: { ...DEF.voucher, ...(d.voucher || {}) },
     codes: { ...DEF.codes, ...(d.codes || {}), promo: false },
+    bonus: { ...DEF.bonus, ...(d.bonus || {}) },
     hub: d.hub || {}, tips: d.tips || null, sponsors: d.sponsors || null, help: d.help || null,
     loans: loansCfg(d.loans)
   };
@@ -206,10 +209,14 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
     return { c, p, ref: s.ref };
   }
 
+  // offers, events and rewards need the Verified badge (Admin → Services & Rewards → Check-in · Spin · Voucher)
+  const VERIFY_MSG = 'This reward is for Verified members. Get your Verified badge to join offers, events and Spin & Win.';
+  function needVerified(u, C) { if (C.bonus.requireVerified !== false && u.phoneVerified !== true) throw Object.assign(new Error(VERIFY_MSG), { status: 403, code: 'verify_required' }); }
+
   const wrap = fn => async (b, user) => {
     if (!user) return [401, { error: 'Please login again.' }];
     try { return await fn(b, user.uid, user); }
-    catch (e) { if (e.status) return [e.status, { error: e.message }]; throw e; }
+    catch (e) { if (e.status) return [e.status, { error: e.message, ...(e.code ? { code: e.code } : {}) }]; throw e; }
   };
 
   const actions = {
@@ -220,7 +227,7 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
       let seoFaq = [];
       if (!C.help || C.help.useSeoFaq !== false) { try { const s = await db().collection('siteConfig').doc('seo').get(); seoFaq = ((s.exists && s.data().faq) || []).filter(f => f && f.q && f.a && f.on !== false).map(f => ({ q: f.q, a: f.a, cat: 'General' })); } catch (e) {} }
       return [200, { vip: C.vip, verify: C.verify, checkin: { on: C.checkin.on, rewards: C.checkin.rewards }, spin: { on: C.spin.on, period: C.spin.period, prizes: C.spin.prizes.map(p => ({ id: p.id, label: p.label, color: p.color })) },
-        voucher: C.voucher, codes: C.codes, hub: C.hub, tips: C.tips, sponsors: C.sponsors, help: { ...(C.help || {}), seoFaq }, loans: C.loans }];
+        voucher: C.voucher, codes: C.codes, bonus: C.bonus, hub: C.hub, tips: C.tips, sponsors: C.sponsors, help: { ...(C.help || {}), seoFaq }, loans: C.loans }];
     },
 
     // "Call me back": the user picks a topic and a time, the team calls
@@ -261,9 +268,10 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
     }),
 
     checkin: wrap(async (b, uid) => {
-      const { d } = await me(uid);
+      const { d, u } = await me(uid);
       const C = await cfg();
       if (!C.checkin.on) return [400, { error: 'Daily check-in is switched off right now.' }];
+      needVerified(u, C);
       const today = bdDay(), y = bdDay(Date.now() - 864e5);
       let reward = 0, streak = 1;
       await db().runTransaction(async t => {
@@ -279,9 +287,10 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
     }),
 
     spin: wrap(async (b, uid) => {
-      const { d } = await me(uid);
+      const { d, u } = await me(uid);
       const C = await cfg();
       if (!C.spin.on) return [400, { error: 'Spin & Win is switched off right now.' }];
+      needVerified(u, C);
       const key = periodKey(C.spin.period);
       const prizes = C.spin.prizes.filter(p => Number(p.weight) > 0);
       if (!prizes.length) return [400, { error: 'No prizes are set up yet.' }];
@@ -304,6 +313,7 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
       const { d, u } = await me(uid);
       const C = await cfg();
       if (!C.codes.redeem) return [400, { error: 'Redeem codes are switched off right now.' }];
+      needVerified(u, C);
       const { c, p, ref } = await codeCheck(b.code, ['redeem', 'voucher'], uid, u);
       const value = money(p.value);
       if (value <= 0) return [400, { error: 'This code has no value.' }];
@@ -372,6 +382,7 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
       const { d, u } = await me(uid);
       const C = await cfg();
       if (!C.voucher.on) return [400, { error: 'Gift vouchers are switched off right now.' }];
+      needVerified(u, C);
       const amount = money(b.amount);
       if (amount < money(C.voucher.min) || amount > money(C.voucher.max)) return [400, { error: `Choose an amount from ৳${C.voucher.min} to ৳${C.voucher.max}.` }];
       if ((Number(u.balance) || 0) < amount) return [400, { error: 'Not enough balance for this voucher.' }];

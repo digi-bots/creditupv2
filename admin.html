@@ -3934,7 +3934,7 @@ async function hpLoadShowcase(){
   const d=r.data||{}, st=d.stats||{};
   if(sp) sp.innerHTML=Object.entries(SX_METRICS).filter(([k])=>k!=='text').map(([k,[l,f]])=>`<div class="sxp"><b>${f==='money'?'৳':''}${fa(st[k]||0)}</b><span>${l}</span></div>`).join('');
   if(!wp||!_H) return;
-  window._wxElig=d.targets||[]; wxPickRender();
+  window._wxElig=d.targets||[]; window._wxReqV=d.requireVerified!==false; wxPickRender();
   const H=new Set(_H.winners.hidden);
   const row=(id,ic,title,sub)=>{ const h=H.has(id); return `<div class="hp-row ${h?'off':''}"><div class="hp-ic"><i class="fa-solid fa-${ic}"></i></div><div class="hp-main"><div class="hp-t">${title}${h?'<span class="hp-badge off">Hidden</span>':''}</div><div class="hp-s">${sub}</div></div><button class="btn btn-sm ${h?'btn-p':'btn-s'}" onclick="wxHide('${_he(id)}')"><i class="fa-solid fa-${h?'eye':'eye-slash'}"></i>${h?'Show':'Hide'}</button></div>`; };
   const people=new Map();
@@ -3955,9 +3955,10 @@ function wxPickRender(){
   if(!T.length){ el.innerHTML='<div class="hint">No invite targets yet. Add targets above.</div>'; return; }
   el.innerHTML=T.map(t=>{
     const k=String(t.need), P=new Set(W.picked[k]||[]), E=t.eligible||[];
-    const rows=E.map(p=>`<label class="hp-row" style="cursor:pointer;gap:10px"><input type="checkbox" ${P.has(p.phone)?'checked':''} onchange="wxPickSet('${k}','${_he(p.phone)}',this.checked)">
-      <div class="hp-main"><div class="hp-t">${_he(p.name||'(no name)')} <span style="color:var(--txt2);font-weight:600">· 0${_he(p.phone)}</span>${P.has(p.phone)?'<span class="hp-badge" style="background:rgba(29,219,128,.15);color:var(--p)">Winner</span>':''}</div>
-      <div class="hp-s">${p.count} active friends${p.at?' · reached on '+fd(p.at):''}</div></div></label>`).join('');
+    const reqV=window._wxReqV!==false;
+    const rows=E.map(p=>{ const blocked=reqV&&p.verified===false&&!P.has(p.phone); return `<label class="hp-row" style="cursor:${blocked?'not-allowed':'pointer'};gap:10px;${blocked?'opacity:.55':''}" title="${blocked?'Not verified — only Verified members can win':''}"><input type="checkbox" ${P.has(p.phone)?'checked':''} ${blocked?'disabled':''} onchange="wxPickSet('${k}','${_he(p.phone)}',this.checked)">
+      <div class="hp-main"><div class="hp-t">${_he(p.name||'(no name)')} <span style="color:var(--txt2);font-weight:600">· 0${_he(p.phone)}</span>${p.verified?'<span class="hp-badge" style="background:rgba(96,165,250,.15);color:#7fb0ff">✔ Verified</span>':'<span class="hp-badge" style="background:rgba(255,255,255,.07);color:var(--txt2)">Not verified</span>'}${P.has(p.phone)?'<span class="hp-badge" style="background:rgba(29,219,128,.15);color:var(--p)">Winner</span>':''}</div>
+      <div class="hp-s">${p.count} active friends${p.at?' · reached on '+fd(p.at):''}</div></div></label>`; }).join('');
     return `<div class="man-sub" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">Target ${t.level}: ${t.need} friends — ${_he(t.prize)}
       <span style="color:var(--txt2);font-weight:600">(${E.length} reached · ${[...P].filter(x=>E.some(e=>e.phone===x)).length} chosen)</span>
       <span style="margin-left:auto;display:flex;gap:6px;align-items:center"><input id="wxN-${k}" type="number" min="1" value="1" style="width:64px;padding:5px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg2,var(--card));color:var(--txt)" title="How many">
@@ -3970,7 +3971,7 @@ function wxPickSet(k,phone,on){ const W=_H.winners; const L=new Set(W.picked[k]|
 function wxPickRandom(k){
   const t=(window._wxElig||[]).find(x=>String(x.need)===k); if(!t) return;
   const W=_H.winners, have=new Set(W.picked[k]||[]);
-  const pool=(t.eligible||[]).map(p=>p.phone).filter(p=>!have.has(p));
+  const pool=(t.eligible||[]).filter(p=>window._wxReqV===false||p.verified!==false).map(p=>p.phone).filter(p=>!have.has(p));
   if(!pool.length){ toast('Everyone who reached this target is already chosen','w'); return; }
   let n=Math.max(1,Math.round(Number(document.getElementById('wxN-'+k)?.value)||1)); n=Math.min(n,pool.length);
   const rnd=()=>{ const a=new Uint32Array(1); crypto.getRandomValues(a); return a[0]/4294967296; };

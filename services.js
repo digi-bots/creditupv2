@@ -172,6 +172,54 @@ const css = `
 .pr-ok{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--txt)}
 .pr-ok b{font-family:monospace;letter-spacing:1px;color:#d9b8ff}.pr-ok span{color:var(--p);font-weight:800}.pr-ok button{margin-left:auto;border:0;background:none;color:var(--txt2);font-size:12px;text-decoration:underline;cursor:pointer}
 .sv-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ═══ premium layer (v3) ═══ */
+/* service pages stay inside the 400px app column on big screens, like every other pop-up */
+.sv-sheet{left:var(--app-gut,0);right:var(--app-gut,0);background:radial-gradient(120% 60% at 50% -10%,rgba(29,219,128,.10),transparent 60%),var(--bg)}
+@media (min-width:600px){.sv-sheet{border-left:1px solid rgba(255,255,255,.06);border-right:1px solid rgba(255,255,255,.06)}}
+.sv-wrap{max-width:100%}
+.sv-body{overflow-x:hidden}
+.sv-body *{max-width:100%;box-sizing:border-box}
+.sv-head{background:linear-gradient(180deg,rgba(12,30,24,.95),rgba(6,13,26,.9));border-bottom:1px solid rgba(29,219,128,.18)}
+.sv-head h3{letter-spacing:-.2px;background:linear-gradient(90deg,#fff,#9ff5cf);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sv-head button{border-color:rgba(29,219,128,.3);background:rgba(29,219,128,.08)}
+/* tiles: glass card, gradient edge, glossy icon */
+.qa-grid.sv-hub{gap:11px}
+.sv-tile{border:0;background:linear-gradient(160deg,rgba(255,255,255,.085),rgba(255,255,255,.02));box-shadow:0 12px 26px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);padding:14px 4px 11px;transition:transform .18s,box-shadow .18s}
+.sv-tile::before{content:"";position:absolute;inset:0;border-radius:18px;padding:1px;background:linear-gradient(150deg,rgba(255,255,255,.28),rgba(255,255,255,.04) 45%,rgba(29,219,128,.28));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+@media (hover:hover){.sv-tile:hover{transform:translateY(-3px);box-shadow:0 18px 34px rgba(0,0,0,.42),0 0 0 1px rgba(29,219,128,.18)}}
+.sv-ic{position:relative;width:46px;height:46px;border-radius:15px;font-size:18px;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,.35),inset 0 -3px 6px rgba(0,0,0,.18)}
+.sv-ic::after{content:"";position:absolute;left:-20%;right:-20%;top:-55%;height:75%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,0));pointer-events:none}
+.sv-tile span{font-size:10.8px;letter-spacing:.1px}
+.sv-lockb{position:absolute;top:-6px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;font-size:8.5px;font-weight:900;letter-spacing:.3px;padding:2px 7px;border-radius:8px;color:#1a1200;background:linear-gradient(135deg,#ffe9a8,#f2b33d);box-shadow:0 3px 10px rgba(242,179,61,.45)}
+.sv-tile.locked .sv-ic{filter:saturate(.75) brightness(.9)}
+.qa-see{float:right;font-size:12px;font-weight:800;color:var(--p);cursor:pointer;margin-top:3px}
+/* verified-only lock card */
+.vlock{position:relative;overflow:hidden;border-radius:22px;padding:22px 18px 18px;margin:4px 0 14px;text-align:center;background:radial-gradient(140% 120% at 50% 0%,rgba(59,130,246,.28),rgba(6,13,26,0) 65%),linear-gradient(160deg,#0f1c38,#0a1226);border:1px solid rgba(147,197,253,.35);box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.vlock::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.10),transparent);animation:vSweep 3.6s ease-in-out infinite}
+@keyframes vSweep{0%{left:-60%}60%,100%{left:130%}}
+.vlock .big{font-size:62px;line-height:1;display:block}.vlock .big .vf-seal{width:1em;height:1em;margin:0}
+.vlock h4{margin:10px 0 4px;font-size:17px;background:linear-gradient(90deg,#fff,#bfe0ff,#ffe9a8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.vlock p{margin:0 0 14px;font-size:12.5px;color:#a9bcdc;line-height:1.6}
+.vlock ul{list-style:none;padding:0;margin:0 0 14px;text-align:left;display:inline-block}.vlock li{font-size:12.5px;color:#dbe7ff;padding:3px 0}.vlock li i{color:#ffd76a;width:18px}
+.vbtn{position:relative;overflow:hidden;width:100%;border:0;border-radius:14px;padding:14px;font-size:15px;font-weight:900;font-family:inherit;cursor:pointer;color:#0b1430;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(135deg,#fff3c4,#ffd76a 40%,#f2a91d);box-shadow:0 12px 28px rgba(242,169,29,.35),inset 0 1px 0 rgba(255,255,255,.6)}
+.vbtn::after{content:"";position:absolute;top:0;left:-50%;width:35%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);animation:vSweep 2.8s ease-in-out infinite}
+.sv-dim{opacity:.45;filter:grayscale(.3);pointer-events:none}
+/* premium Get Verified chip (profile) */
+.vf-chip.off{gap:6px;padding:4px 11px 4px 5px;border-radius:22px;background:linear-gradient(135deg,#0f1f45,#1b3a7a) padding-box,conic-gradient(from var(--va,0deg),#60a5fa,#ffd76a,#fff4c2,#60a5fa) border-box;border:1.5px solid transparent;
+  box-shadow:0 0 16px rgba(96,165,250,.35),0 0 4px rgba(255,215,106,.35);animation:vRot 3.5s linear infinite;position:relative;overflow:hidden}
+@property --va{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes vRot{to{--va:360deg}}
+.vf-chip.off::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);animation:vSweep 2.6s ease-in-out infinite}
+.vf-chip.off .vf-seal{width:17px;height:17px}
+.vf-chip.off b{font-size:10.5px;letter-spacing:.6px;background:linear-gradient(90deg,#fff7d6,#ffd76a,#ffffff,#bfe0ff,#fff7d6);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:vfShine 2.4s linear infinite}
+.vf-chip.off em{color:#ffd76a;font-size:11px}
+.vf-chip.off .tw{color:#ffe9a8;font-size:8px;animation:vTw 1.6s ease-in-out infinite}
+@keyframes vTw{50%{opacity:.25;transform:scale(.6)}}
+#appBar .ab-name .vf-seal.off{width:20px;height:20px;animation:vfAsk 2.2s ease-in-out infinite}
+.vf-seal svg,.vf-seal svg .ck{animation:none!important}
+@media (prefers-reduced-motion:reduce){.vlock::after,.vbtn::after,.vf-chip.off,.vf-chip.off::after,.vf-chip.off b,.vf-chip.off .tw{animation:none}}
 `;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -211,6 +259,17 @@ window._svcPages = window._svcPages || {};
 const CATS = [['premium', 'Premium', 'crown'], ['rewards', 'Rewards', 'gift'], ['loans', 'Loans', 'hand-holding-dollar'], ['help', 'Help & Info', 'circle-question'], ['account', 'Account', 'user']];
 const HOME_DEF = ['vip', 'checkin', 'spin', 'wallet', 'calc', 'refer', 'history', 'all'];
 
+// offers, events and rewards are for Verified members (Admin → Services & Rewards); the sign-up bonus stays for everyone
+const VONLY = ['checkin', 'spin', 'redeem', 'voucher'];
+function needsV(){ const B = (SV.cfg && SV.cfg.bonus) || {}; return B.requireVerified !== false && !!user() && !!SV.st && SV.st.verified !== true; }
+window._svNeedsV = needsV;
+function lockCard(what){
+  const pend = SV.st && (SV.st.orders || []).some(o => o.kind === 'verify' && o.status === 'Pending');
+  return `<div class="vlock"><span class="big">${seal('', pend ? 'wait' : 'off')}</span><h4>${pend ? 'Verification in progress' : 'For Verified members'}</h4>
+    <p>${pend ? 'We are checking your verification payment. ' + E(what) + ' opens as soon as your badge is active.' : E(what) + ' and all offers, events and rewards are for Verified members. Get your Verified badge once and join everything.'}</p>
+    ${pend ? '' : `<ul><li><i class="fa-solid fa-gift"></i>Daily check-in &amp; Spin &amp; Win rewards</li><li><i class="fa-solid fa-fire"></i>Hot offers, events &amp; prizes</li><li><i class="fa-solid fa-ticket"></i>Redeem codes &amp; gift vouchers</li><li><i class="fa-solid fa-circle-check"></i>Premium badge &amp; better approval chance</li></ul>
+    <button class="vbtn" onclick="svGo('verify')">${seal()}Get Verified</button>`}</div>`;
+}
 function tileCfg(k){ const h = (SV.cfg && SV.cfg.hub && SV.cfg.hub.tiles) || {}; return h[k] || {}; }
 function tileOn(k){ const t = T[k]; if(!t) return false; if(k === 'all') return true; const c = tileCfg(k); if(c.on === false) return false;
   const C = SV.cfg || {}; if(k === 'vip' && C.vip && C.vip.on === false) return false; if(k === 'verify' && C.verify && C.verify.on === false) return false;
@@ -218,8 +277,9 @@ function tileOn(k){ const t = T[k]; if(!t) return false; if(k === 'all') return 
   if(k === 'voucher' && C.voucher && C.voucher.on === false) return false; if(k === 'redeem' && C.codes && C.codes.redeem === false) return false; return true; }
 function tileHtml(k){
   const t = T[k], c = tileCfg(k), badge = c.badge !== undefined ? c.badge : (t.badge || '');
-  const dot = (k === 'checkin' && SV.st && SV.st.checkin && !SV.st.checkin.doneToday) || (k === 'spin' && SV.st && SV.st.spin && SV.st.spin.canSpin);
-  return `<div class="sv-tile" onclick="svGo('${k}')">${badge ? `<em class="sv-bdg${t.gold ? ' gold' : ''}">${E(badge)}</em>` : dot ? '<em class="sv-dot"></em>' : ''}<div class="sv-ic ${t.g}"><i class="fa-solid fa-${t.ic}"></i></div><span>${E(c.label || t.l)}</span></div>`;
+  const lk = VONLY.includes(k) && needsV();
+  const dot = !lk && ((k === 'checkin' && SV.st && SV.st.checkin && !SV.st.checkin.doneToday) || (k === 'spin' && SV.st && SV.st.spin && SV.st.spin.canSpin));
+  return `<div class="sv-tile${lk ? ' locked' : ''}" onclick="svGo('${k}')">${lk ? '<em class="sv-lockb"><i class="fa-solid fa-lock"></i>VERIFIED</em>' : badge ? `<em class="sv-bdg${t.gold ? ' gold' : ''}">${E(badge)}</em>` : dot ? '<em class="sv-dot"></em>' : ''}<div class="sv-ic ${t.g}"><i class="fa-solid fa-${t.ic}"></i></div><span>${E(c.label || t.l)}</span></div>`;
 }
 function renderHub(){
   const g = document.querySelector('.qa-grid'); if(!g) return;
@@ -228,6 +288,8 @@ function renderHub(){
   keys.push('all');
   g.classList.add('sv-hub');
   g.innerHTML = keys.map(tileHtml).join('');
+  const ttl = document.querySelector('.quick-actions-title');
+  if(ttl && !ttl.querySelector('.qa-see')) ttl.insertAdjacentHTML('beforeend', '<span class="qa-see" onclick="svGo(\'all\')">See all ›</span>');
 }
 window.svRenderHub = renderHub;
 
@@ -277,6 +339,7 @@ const PAGES = {
     const c = s.checkin, done = c.doneToday, streak = c.streak;
     const days = R.map((v, i) => { const n = i + 1, isDone = done ? n <= streak : n <= streak, isNow = !done && n === streak + 1;
       return `<div class="ck-d ${isDone ? 'done' : ''} ${isNow ? 'now' : ''} ${n === 7 ? 'big' : ''}">Day ${n}<b>${isDone ? '<i class="fa-solid fa-check"></i>' : tk(v)}</b></div>`; }).join('');
+    if(needsV()){ show('Daily Check-in', lockCard('Daily check-in') + `<div class="sv-dim"><div class="ck-days">${R.map((v, i) => `<div class="ck-d ${i === 6 ? 'big' : ''}">Day ${i + 1}<b>${tk(v)}</b></div>`).join('')}</div></div>`); return; }
     show('Daily Check-in', `<div class="ck-hero"><div style="font-size:13px;color:var(--txt2);font-weight:700">Your streak</div><div class="n">${streak} <span style="font-size:16px">day${streak === 1 ? '' : 's'}</span></div><small>${done ? 'Checked in today ✓ Come back tomorrow to keep the streak.' : `Check in today and get <b style="color:#ffd76a">${tk(c.next)}</b> in your balance.`}</small></div>
       <div class="ck-days">${days}</div>
       <button class="sv-btn ${done ? 'ghost' : 'gold'}" id="ckBtn" ${done ? 'disabled' : ''} onclick="svCheckin()"><i class="fa-solid fa-${done ? 'check' : 'hand-sparkles'}"></i>${done ? 'Checked in today' : 'Check in now'}</button>
@@ -292,6 +355,7 @@ const PAGES = {
     const grad = P.map((p, i) => `${p.color || ['#1ddb80', '#4d8fff', '#ff8c42', '#a855f7', '#ff6fa5', '#ffc94d'][i % 6]} ${i * seg}deg ${(i + 1) * seg}deg`).join(',');
     const labels = P.map((p, i) => `<div style="position:absolute;inset:0;transform:rotate(${i * seg + seg / 2}deg)"><span style="position:absolute;left:50%;top:8%;transform:translateX(-50%);font-size:${n > 8 ? 10 : 12.5}px;font-weight:900;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);white-space:nowrap;max-width:34%;overflow:hidden;text-overflow:ellipsis">${E(p.label)}</span></div>`).join('');
     const per = { day: 'once a day', week: 'once a week', month: 'once a month' }[SV.cfg.spin.period] || 'once a month';
+    if(needsV()){ show('Spin & Win', lockCard('Spin & Win') + `<div class="sv-dim"><div class="sp-wrap"><div class="sp-pin"></div><div class="sp-wheel" style="background:conic-gradient(${grad})">${labels}</div><div class="sp-hub">SPIN</div></div></div>`); return; }
     const can = s.spin.canSpin;
     show('Spin & Win', `<div style="text-align:center;color:var(--txt2);font-size:12.5px;margin-bottom:6px">Spin <b style="color:var(--txt)">${per}</b> for a chance to win balance rewards.</div>
       <div class="sp-wrap"><div class="sp-pin"></div><div class="sp-wheel" id="spW" style="background:conic-gradient(${grad})">${labels}</div><div class="sp-hub">SPIN</div></div>
@@ -320,7 +384,9 @@ const PAGES = {
       <div style="font-size:11px;color:var(--txt3);text-align:center;margin-top:12px">History is shown from when the wallet started.</div>`);
   },
 
-  redeem(){
+  async redeem(){
+    await loadCfg(); if(!SV.st) await loadState();
+    if(needsV()){ show('Redeem Code', lockCard('Redeem codes')); return; }
     show('Redeem Code', `<div class="sv-card" style="text-align:center;background:radial-gradient(120% 120% at 50% 0%,rgba(168,85,247,.25),rgba(6,13,26,0) 70%),var(--surf);border-color:rgba(168,85,247,.35)">
       <div class="sv-ic g-purple" style="width:60px;height:60px;margin:0 auto 10px;font-size:26px;border-radius:18px"><i class="fa-solid fa-ticket"></i></div><h4>Got a code?</h4><p>Enter a redeem code or a gift voucher from a friend. The amount goes straight to your balance.</p></div>
       <input class="sv-in code" id="rdIn" placeholder="ENTER CODE" maxlength="24" autocomplete="off">
@@ -331,6 +397,7 @@ const PAGES = {
   async voucher(){
     show('Gift Voucher', loading);
     await loadCfg(); const s = await loadState();
+    if(needsV()){ show('Gift Voucher', lockCard('Gift vouchers')); return; }
     const V = SV.cfg.voucher || { min: 50, max: 1000, days: 30 };
     const chips = [50, 100, 200, 500].filter(v => v >= V.min && v <= V.max);
     const r = await api('myVouchers'); const mine = r.ok ? r.data.list : [];
@@ -411,9 +478,11 @@ window.svPage = k => { const P = PAGES[k] || window._svcPages[k]; if(P) P(); };
 window.svToastOk = m => toast(m);
 
 /* ───────── actions ───────── */
+function vGate(r){ if(r && !r.ok && r.data && r.data.code === 'verify_required'){ toast(r.data.error, true); setTimeout(() => svGo('verify'), 900); return true; } return false; }
 window.svCheckin = async function(){
   const b = $s('ckBtn'); if(b){ b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Checking in…'; }
   const r = await api('checkin');
+  if(vGate(r)) return;
   if(!r.ok){ toast(r.data.error || 'Could not check in', true); PAGES.checkin(); return; }
   if(r.data.reward > 0){ coin('+' + tk(r.data.reward)); confetti(); setBal(r.data.balance); }
   toast(`Day ${r.data.streak} done${r.data.reward ? ' · +' + tk(r.data.reward) : ''}!`);
@@ -422,6 +491,7 @@ window.svCheckin = async function(){
 window.svSpin = async function(){
   const b = $s('spBtn'); if(!b || b.disabled) return; b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Spinning…';
   const r = await api('spin');
+  if(vGate(r)) return;
   if(!r.ok){ toast(r.data.error || 'Could not spin', true); PAGES.spin(); return; }
   const P = window._spinP || [], n = window._spinN || 1, i = Math.max(0, P.findIndex(p => p.id === r.data.prize.id)), seg = 360 / n;
   const target = 360 * 6 + (360 - (i * seg + seg / 2)) + (Math.random() * seg * .5 - seg * .25);
@@ -439,6 +509,7 @@ window.svRedeem = async function(){
   const b = $s('rdBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Checking…';
   const r = await api('redeemCode', { code });
   b.disabled = false; b.innerHTML = '<i class="fa-solid fa-gift"></i>Redeem';
+  if(vGate(r)) return;
   if(!r.ok){ toast(r.data.error || 'Code not valid', true); return; }
   confetti(); coin('+' + tk(r.data.amount)); setBal(r.data.balance); $s('rdIn').value = '';
   toast(`${tk(r.data.amount)} added to your balance!${r.data.message ? ' “' + r.data.message + '”' : ''}`);
@@ -447,6 +518,7 @@ window.svVcAmt = (v, el) => { $s('vcAmt').value = v; $s('vcPrev').textContent = 
 window.svVoucher = async function(){
   const amount = Number($s('vcAmt').value) || 0;
   const r = await api('giftVoucher', { amount, message: $s('vcMsg').value });
+  if(vGate(r)) return;
   if(!r.ok){ toast(r.data.error || 'Could not create', true); return; }
   setBal(null); loadState();
   const msg = `🎁 A Creditfy gift for you: ${tk(r.data.amount)}! Open Creditfy → Redeem Code and enter ${r.data.code} (valid till ${fdate(r.data.end)}). ${location.origin}`;
@@ -478,12 +550,22 @@ window.svPaySubmit = async function(){
 const SEAL_PATH = (() => { let d = ''; for(let i = 0; i < 24; i++){ const a = i * Math.PI / 12, r = i % 2 ? 9.6 : 11.6; d += (i ? 'L' : 'M') + (12 + r * Math.cos(a)).toFixed(2) + ' ' + (12 + r * Math.sin(a)).toFixed(2); } return d + 'Z'; })();
 // kind: '' = verified (blue, tick) · 'off' = not verified (grey, outline) · 'wait' = request being checked (orange, clock)
 function seal(cls, kind){ const id = 'vg' + Math.random().toString(36).slice(2, 7);
-  const C = kind === 'off' ? ['#2a4f86', '#173561', '#0f2445', '#7fd3ff'] : kind === 'wait' ? ['#ffc48a', '#ff8c42', '#d9601a', '#ffd9b8'] : ['#7fd3ff', '#1d8cf2', '#0b4fc4', '#bfe6ff'];
-  const mark = kind === 'off' ? '<path class="ck" d="M7.4 12.3l3 3 6.2-6.4" fill="none" stroke="#ffd76a" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 2.2"/>'
-    : kind === 'wait' ? '<path class="ck" d="M12 7.5v4.7l3 1.8" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>'
-    : '<path class="ck" d="M7.4 12.3l3 3 6.2-6.4" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>';
+  // body colours (top, middle, bottom), rim, tick
+  const C = kind === 'off' ? ['#60a5fa', '#2453c9', '#142a6b', '#ffd76a', '#ffffff']
+    : kind === 'wait' ? ['#ffc48a', '#ff8c42', '#c2501a', '#ffe1c4', '#ffffff']
+    : ['#8fd8ff', '#1d8cf2', '#0b47b8', '#e3f4ff', '#ffffff'];
+  const mark = kind === 'wait' ? `<path class="ck" d="M12 7.5v4.7l3 1.8" fill="none" stroke="${C[4]}" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>`
+    : `<path class="ck" d="M7.4 12.3l3 3 6.2-6.4" fill="none" stroke="${C[4]}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"${kind === 'off' ? ' opacity=".95"' : ''}/>`;
   const title = kind === 'off' ? 'Get Verified' : kind === 'wait' ? 'Verification is being checked' : 'Verified';
-  return `<span class="vf-seal ${kind || ''} ${cls || ''}" data-noi18n title="${title}" ${kind ? `onclick="event.stopPropagation();svGo('verify')"` : ''}><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${C[0]}"/><stop offset=".5" stop-color="${C[1]}"/><stop offset="1" stop-color="${C[2]}"/></linearGradient></defs><path d="${SEAL_PATH}" fill="url(#${id})" stroke="${C[3]}" stroke-width=".7"/>${mark}</svg></span>`; }
+  return `<span class="vf-seal ${kind || ''} ${cls || ''}" data-noi18n title="${title}" ${kind ? `onclick="event.stopPropagation();svGo('verify')"` : ''}><svg viewBox="0 0 24 24" aria-hidden="true"><defs>
+    <linearGradient id="${id}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C[0]}"/><stop offset=".55" stop-color="${C[1]}"/><stop offset="1" stop-color="${C[2]}"/></linearGradient>
+    <radialGradient id="${id}h" cx=".35" cy=".25" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="${id}s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <clipPath id="${id}c"><path d="${SEAL_PATH}"/></clipPath></defs>
+    <path d="${SEAL_PATH}" fill="url(#${id}b)" stroke="${C[3]}" stroke-width="${kind === 'off' ? 1.1 : .8}"/>
+    <g clip-path="url(#${id}c)"><ellipse cx="9" cy="6.5" rx="9" ry="6" fill="url(#${id}h)"/>
+      <rect x="-12" y="-4" width="6" height="32" fill="url(#${id}s)" transform="rotate(22 12 12)"><animate attributeName="x" values="-12;30;30" keyTimes="0;.55;1" dur="${kind === 'off' ? 2.6 : 3.6}s" repeatCount="indefinite"/></rect></g>
+    ${kind === 'off' ? `<circle cx="12" cy="12" r="7.2" fill="none" stroke="${C[3]}" stroke-width=".55" opacity=".8"/>` : ''}${mark}</svg></span>`; }
 // verified · pending · not verified (only when the Verified badge is offered)
 function vfKind(s){ if(!s) return null; if(s.verified) return ''; if(((SV.cfg || {}).verify || {}).on === false) return null; return (s.orders || []).some(o => o.kind === 'verify' && o.status === 'Pending') ? 'wait' : 'off'; }
 window._vfSeal = seal;
@@ -494,7 +576,7 @@ function badges(){
     const k = vfKind(s);
     if(k === '') ph.insertAdjacentHTML('beforeend', `<span class="vf-chip" data-noi18n>${seal()}VERIFIED</span>`);
     else if(k === 'wait') ph.insertAdjacentHTML('beforeend', `<span class="vf-chip wait" data-noi18n onclick="svGo('verify')">${seal('', 'wait')}PENDING</span>`);
-    else if(k === 'off') ph.insertAdjacentHTML('beforeend', `<span class="vf-chip off" data-noi18n onclick="closeModal&&closeModal('profileModal');svGo('verify')">${seal('', 'off')}<b>GET VERIFIED</b><em>→</em></span>`);
+    else if(k === 'off') ph.insertAdjacentHTML('beforeend', `<span class="vf-chip off" onclick="closeModal&&closeModal('profileModal');svGo('verify')">${seal('', 'off')}<b>Get Verified</b><span class="tw">✦</span><em>›</em></span>`);
     if(s.vip) ph.insertAdjacentHTML('beforeend', `<span class="vip-badge" data-noi18n>👑 ${E(s.vip.name)}</span>`); }
   // the profile picture and the top-bar picture get a turning ring and a corner seal
   ['pfAv', 'abAv'].forEach(id => { const a = $s(id); if(!a) return; a.classList.toggle('vf-ring', !!s.verified); a.querySelectorAll('.vf-corner').forEach(x => x.remove()); if(s.verified) a.insertAdjacentHTML('beforeend', seal('vf-corner')); });
