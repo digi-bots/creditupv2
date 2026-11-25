@@ -145,6 +145,7 @@ Object.assign(BN, {
   'Unlock offers & rewards': 'অফার ও পুরস্কার আনলক করুন', 'On Creditfy, offers, events and rewards are for Verified members. Get your Verified badge once to join them all.': 'ক্রেডিটফাই-তে অফার, ইভেন্ট ও পুরস্কার শুধু ভেরিফায়েড সদস্যদের জন্য। একবার ভেরিফায়েড ব্যাজ নিন, সবকিছুতে অংশ নিন।',
   'Daily check-in & Spin & Win': 'ডেইলি চেক-ইন ও স্পিন অ্যান্ড উইন', 'Win balance rewards every day and every month': 'প্রতিদিন ও প্রতি মাসে ব্যালেন্স পুরস্কার জিতুন', 'Join contests and win invite prizes': 'প্রতিযোগিতায় অংশ নিন, ইনভাইট পুরস্কার জিতুন',
   'Add codes and send gifts to friends': 'কোড ব্যবহার করুন, বন্ধুকে গিফট পাঠান', 'Your sign-up bonus is already yours': 'আপনার সাইন-আপ বোনাস আপনারই', 'Use it on your loan fee — no verification needed': 'লোনের ফি-তে ব্যবহার করুন — ভেরিফিকেশন লাগবে না', 'Maybe later': 'পরে দেখব',
+  'Language': 'ভাষা',
   'Number copied': 'নম্বর কপি হয়েছে', 'Code copied': 'কোড কপি হয়েছে', 'Copied': 'কপি হয়েছে', 'Could not submit': 'জমা দেওয়া যায়নি', 'Could not send': 'পাঠানো যায়নি', 'Could not load.': 'লোড করা যায়নি।'
 });
 const M = { Jan: 'জানু', Feb: 'ফেব্রু', Mar: 'মার্চ', Apr: 'এপ্রিল', May: 'মে', Jun: 'জুন', Jul: 'জুলাই', Aug: 'আগস্ট', Sep: 'সেপ্টে', Sept: 'সেপ্টে', Oct: 'অক্টো', Nov: 'নভে', Dec: 'ডিসে' };

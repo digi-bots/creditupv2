@@ -170,7 +170,7 @@ function buildSvc(){
   </div>
   <div class="pro-pane" data-k="hub">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-grip"></i>Quick Services on the home page</div>
-      <div class="hint" style="margin-bottom:8px">Tick “Home” for up to 7 tiles (the 8th is always “All Services”). Use the arrows to set the order. “Show” off hides a service everywhere. Badge = a small label like NEW or HOT.</div>
+      <div class="hint" style="margin-bottom:8px">Tick “Home” for up to 6 tiles (the last two are always “Language” and “All Services”). Use the arrows to set the order. “Show” off hides a service everywhere. Badge = a small label like NEW or HOT.</div>
       <div id="hbList"></div>
     </div>
   </div>`;
@@ -371,7 +371,7 @@ function hbRender(){
       <div style="display:flex;gap:4px"><button class="ab ab-v" onclick="hbMove('${k}',-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="ab ab-v" onclick="hbMove('${k}',1)"><i class="fa-solid fa-arrow-down"></i></button></div></div>`; }).join('');
 }
 function hbSet(k, f, v){ _SV.hub.tiles = _SV.hub.tiles || {}; _SV.hub.tiles[k] = { ...(_SV.hub.tiles[k] || {}), [f]: v }; markDirty('services', 'hub'); }
-function hbHome(k, on){ let h = (_SV.hub.home || []).filter(x => x !== 'all' && x !== k); if(on){ if(h.length >= 7){ toast('Up to 7 tiles on the home page', 'w'); hbRender(); return; } h.push(k); } _SV.hub.home = [...h, 'all']; markDirty('services', 'hub'); hbRender(); }
+function hbHome(k, on){ let h = (_SV.hub.home || []).filter(x => x !== 'all' && x !== k); if(on){ if(h.length >= 6){ toast('Up to 6 tiles on the home page (Language and All Services are always last)', 'w'); hbRender(); return; } h.push(k); } _SV.hub.home = [...h, 'all']; markDirty('services', 'hub'); hbRender(); }
 function hbMove(k, d){ const h = (_SV.hub.home || []).filter(x => x !== 'all'); const i = h.indexOf(k), j = i + d; if(i < 0 || j < 0 || j >= h.length) return; [h[i], h[j]] = [h[j], h[i]]; _SV.hub.home = [...h, 'all']; markDirty('services', 'hub'); hbRender(); }
 
 /* ═════════ load / save ═════════ */
