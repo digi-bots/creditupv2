@@ -109,7 +109,11 @@ module.exports = async (req, res) => {
     const S = await TG.settings(db);
     const m = u && (u.message || u.edited_message);
     if (S.on && m && m.chat) {
-      if (m.chat.type === 'private') await onPrivate(m, S);
+      if (m.chat.type === 'private') {
+        // remember who uses the bot (for the daily reminder); a new message also lifts an old 'blocked' mark
+        db().collection('tgUsers').doc(String(m.chat.id)).set({ name: String(m.from.first_name || '').slice(0, 60), username: String(m.from.username || '').slice(0, 40), lastAt: new Date().toISOString(), blocked: false, canWrite: true }, { merge: true }).catch(() => {});
+        await onPrivate(m, S);
+      }
       else if (sameChat(S.group, m.chat)) await onGroup(m, S);
     }
   } catch (e) { console.error('telegram', e.message); }

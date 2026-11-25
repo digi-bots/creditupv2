@@ -165,6 +165,41 @@ const css = `
 .sv-tile .sv-ic,.xs-t .xs-lg{transition:transform .2s}
 @media (hover:hover){.sv-tile:hover .sv-ic,.xs-t:hover .xs-lg{transform:translateY(-2px) rotate(-2deg)}}
 .xs-t .bd.earn{background:linear-gradient(135deg,#ffb35c,#ff7a2f);color:#2a1300}
+/* living 3D icons: each glows in its own colour, floats gently, and a light sweep passes over the glass */
+.sv-ic,.xs-lg{--glow:rgba(29,219,128,.55)}
+.g-green{--glow:rgba(29,219,128,.6)}.g-teal{--glow:rgba(47,214,208,.55)}.g-cyan{--glow:rgba(56,189,248,.55)}.g-blue{--glow:rgba(77,143,255,.6)}
+.g-purple{--glow:rgba(168,85,247,.6)}.g-pink{--glow:rgba(255,111,165,.6)}.g-red{--glow:rgba(255,90,110,.6)}.g-orange{--glow:rgba(255,140,66,.6)}
+.g-gold{--glow:rgba(255,201,77,.6)}.g-slate{--glow:rgba(148,170,210,.45)}.g-dark{--glow:rgba(148,170,210,.35)}
+.sv-tile .sv-ic,.xs-t .xs-lg{animation:icFloat 4.6s ease-in-out infinite,icGlow 4.6s ease-in-out infinite;will-change:transform}
+.sv-tile:nth-child(4n+2) .sv-ic,.xs-t:nth-child(4n+2) .xs-lg{animation-delay:-1.1s,-1.1s}
+.sv-tile:nth-child(4n+3) .sv-ic,.xs-t:nth-child(4n+3) .xs-lg{animation-delay:-2.3s,-2.3s}
+.sv-tile:nth-child(4n) .sv-ic,.xs-t:nth-child(4n) .xs-lg{animation-delay:-3.4s,-3.4s}
+@keyframes icFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-1.5deg)}}
+@keyframes icGlow{0%,100%{box-shadow:0 10px 18px -6px rgba(0,0,0,.55),0 0 14px -4px var(--glow),inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -4px 8px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.18)}
+  50%{box-shadow:0 14px 22px -6px rgba(0,0,0,.5),0 0 22px 0 var(--glow),inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.25),inset 0 0 0 1px rgba(255,255,255,.22)}}
+/* the light sweep (a moving band on the glass layer) */
+.sv-ic::before,.xs-lg::before{background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.5) 50%,transparent 65%) no-repeat,linear-gradient(160deg,rgba(255,255,255,.38) 0%,rgba(255,255,255,.10) 38%,rgba(255,255,255,0) 52%,rgba(0,0,0,.10) 100%)!important;
+  background-size:250% 100%,100% 100%!important;background-position:160% 0,0 0!important;animation:icSweep 6s ease-in-out infinite}
+.sv-tile:nth-child(odd) .sv-ic::before,.xs-t:nth-child(odd) .xs-lg::before{animation-delay:-3s}
+@keyframes icSweep{0%,70%{background-position:160% 0,0 0}100%{background-position:-60% 0,0 0}}
+/* the symbol itself looks embossed */
+.sv-ic i,.xs-lg i{text-shadow:0 1px 0 rgba(255,255,255,.25),0 2px 0 rgba(0,0,0,.14),0 3px 0 rgba(0,0,0,.1),0 5px 8px rgba(0,0,0,.35)}
+/* a little tilt when touched / hovered */
+.sv-tile:active .sv-ic,.xs-t:active .xs-lg{transform:scale(.94)!important}
+@media (hover:hover){.sv-tile:hover .sv-ic,.xs-t:hover .xs-lg{animation-play-state:paused;transform:translateY(-4px) rotate(-4deg) scale(1.05)!important;box-shadow:0 16px 26px -6px rgba(0,0,0,.5),0 0 26px 2px var(--glow),inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.25)!important}}
+/* the tile itself picks up a faint coloured light from its icon */
+.sv-tile,.xs-t{background-image:radial-gradient(70% 55% at 50% 30%,color-mix(in srgb,var(--tglow,transparent) 22%,transparent),transparent 70%),linear-gradient(160deg,rgba(255,255,255,.085),rgba(255,255,255,.02))!important}
+.sv-tile:has(.g-green),.xs-t:has(.g-green){--tglow:#1ddb80}
+.sv-tile:has(.g-teal),.xs-t:has(.g-teal){--tglow:#2fd6d0}
+.sv-tile:has(.g-cyan),.xs-t:has(.g-cyan){--tglow:#38bdf8}
+.sv-tile:has(.g-blue),.xs-t:has(.g-blue){--tglow:#4d8fff}
+.sv-tile:has(.g-purple),.xs-t:has(.g-purple){--tglow:#a855f7}
+.sv-tile:has(.g-pink),.xs-t:has(.g-pink){--tglow:#ff6fa5}
+.sv-tile:has(.g-red),.xs-t:has(.g-red){--tglow:#ff5a6e}
+.sv-tile:has(.g-orange),.xs-t:has(.g-orange){--tglow:#ff8c42}
+.sv-tile:has(.g-gold),.xs-t:has(.g-gold){--tglow:#ffc94d}
+.sv-tile:has(.g-slate),.xs-t:has(.g-slate){--tglow:#94aad2}
+@media (prefers-reduced-motion:reduce){.sv-tile .sv-ic,.xs-t .xs-lg{animation:icGlow 6s ease-in-out infinite}}
 /* Extra Balance notice */
 .xb-note{display:flex;align-items:center;gap:10px;border-radius:16px;padding:10px 10px 10px 12px;margin:0 0 12px;background:linear-gradient(135deg,rgba(255,215,106,.16),rgba(242,169,29,.06));border:1px solid rgba(255,215,106,.55)}
 .xb-note>i{flex:none;font-size:18px;color:#ffd76a}
@@ -759,7 +794,9 @@ window.xsMove = async k => {
   drawGame(r);
 };
 
-load().then(() => { loadLive(); loadXb(); });
+load().then(() => { loadLive(); loadXb();
+  // ?go=extra (from the daily reminder) opens the home page at Extra Services
+  if(new URLSearchParams(location.search).get('go') === 'extra') setTimeout(() => { const b = $x('xsBlock'); if(b) b.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 1200); });
 setInterval(loadLive, 30e3);
 // redraw the section after the language changes or the home page is rebuilt; reload the balance after login / logout
 let _ph = (user() || {}).phone || '';

@@ -26,7 +26,7 @@ let _TG = clone(TGD);
 function buildTg(){
   const s = $p('sec-telegram'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Telegram</h2>${svBtn('telegram')}</div>${roBanner}
-  ${proTabs('telegram', [['conn', 'plug', 'Connection'], ['post', 'paper-plane', 'Post to channel'], ['auto', 'bolt', 'Auto posts'], ['group', 'comments', 'Group & bot'], ['sched', 'calendar-days', 'Scheduled posts'], ['log', 'clock-rotate-left', 'Recent posts']], 'conn')}
+  ${proTabs('telegram', [['conn', 'plug', 'Connection'], ['post', 'paper-plane', 'Post to channel'], ['auto', 'bolt', 'Auto posts'], ['group', 'comments', 'Group & bot'], ['daily', 'sun', 'Daily reminder'], ['sched', 'calendar-days', 'Scheduled posts'], ['log', 'clock-rotate-left', 'Recent posts']], 'conn')}
   <div class="pro-pane" data-k="conn">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-plug"></i>Status <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="tgStatus()"><i class="fa-solid fa-rotate-right"></i>Check</button></div><div id="tgStatus" class="hint">Checking…</div></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-check"></i>How to connect (one time)</div>
@@ -64,6 +64,16 @@ function buildTg(){
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-robot"></i>Bot &amp; Mini App</div>
       <div class="fgrid">${tog('tg-dm', 'Send each user’s notifications to their Telegram too (after they connect)', true)}${tog('tg-mini', '“Open app” button opens Creditfy inside Telegram (Mini App)', true)}</div>
       <div class="hint">Users connect in the app: Quick Services → Telegram → Connect (or automatically when they open Creditfy inside Telegram while logged in). Commands: /start, /offers, /balance, /app, /rules, /help.</div></div>
+  </div>
+  <div class="pro-pane" data-k="daily">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sun" style="color:#ffd76a"></i>Daily reminder — one message, everywhere, every morning at 9am (Bangladesh)</div>
+      <div class="hint" style="margin-bottom:10px">Sent automatically by the daily 9am job, to all of these at the same time. Press <b>Save changes</b> after editing.</div>
+      <div class="fgrid fgrid3">${tog('dr-on', 'Daily reminder on', true)}${tog('dr-site', 'In-app notification for every user (shows for 24 hours)', true)}${tog('dr-push', 'Phone push to every device', true)}
+        ${tog('dr-channel', 'Post in the Telegram channel', true)}${tog('dr-bot', 'Message from the bot to everyone who started it / opened the Mini App', true)}${tog('dr-pin', 'Pin the channel post', false)}</div>
+      <div class="fgrid">${inp('dr-title', 'Title', '☀️ Good morning from Creditfy', 'full')}${area('dr-text', 'Message (channel, bot and in-app)', '', 14)}${inp('dr-pushText', 'Short text for the phone push (max 230)', '', 'full maxlength="230"')}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn btn-s ro-ok" onclick="drReset()"><i class="fa-solid fa-rotate-left"></i>Use the default text</button>
+        <button class="btn btn-s ro-ok" onclick="drSend(['channel'])"><i class="fa-brands fa-telegram"></i>Test: channel only</button><button class="btn btn-p ro-ok" onclick="drSend(null)"><i class="fa-solid fa-paper-plane"></i>Send to everyone now</button></div>
+      <div id="drLast" class="hint" style="margin-top:10px"></div></div>
   </div>
   <div class="pro-pane" data-k="sched">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-calendar-plus"></i><span id="scFormT">New scheduled post</span></div>
@@ -184,6 +194,43 @@ async function scToggle(id, on){ const r = await window._accountApi('adminTgSche
 function scDel(id){ confirm2('Delete this scheduled post? (Posts already sent stay on Telegram.)', async () => { const r = await window._accountApi('adminTgSchedule', { op: 'delete', id }); if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; } await logAct('Telegram scheduled post deleted', 'broadcast', id); toast('Deleted'); scLoad(); }); }
 async function scRun(){ showL(true); const r = await window._accountApi('adminTgSchedule', { op: 'run' }); showL(false); if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; } toast(r.data.ran ? `Posted ${r.data.ran} due post${r.data.ran > 1 ? 's' : ''} ✓` : 'Nothing is due right now'); scLoad(); tgLog(); }
 
+/* ═════════ daily reminder ═════════ */
+const DR_DEF = { title: '☀️ Good morning from Creditfy', pushText: 'Loans are running smoothly ✅ Recharge, gift cards, exchange & more in Extra Services. Invite friends for bigger offers, get Verified and try VIP.',
+  text: `✅ Loans are running smoothly — applications are reviewed and processed every day, and you can follow every step in the app.
+
+🛍️ Extra Services, all in one place:
+• 📱 Mobile recharge for every operator
+• 🎁 Gift cards — Google Play, iTunes, Steam
+• 💱 Currency & MFS exchange (bKash ⇄ Nagad ⇄ Rocket)
+• 📣 SMM & Telegram Premium
+• 💳 Virtual cards & gift vouchers
+• 💼 Micro jobs — earn by doing simple tasks
+• 🎮 Play & Earn, daily check-in and Spin & Win
+
+🎁 Bonus & referrals: share your invite link — the more friends join, the bigger the offers you can unlock.
+
+✔️ Get Verified today for a smoother review, full access to every service and no service charge on Extra Services.
+
+👑 Need it sooner? VIP applications are reviewed first.
+
+Open Creditfy and make the most of it today 👇` };
+function drReset(){ fillIn({ 'dr-title': DR_DEF.title, 'dr-text': DR_DEF.text, 'dr-pushText': DR_DEF.pushText }); markDirty('telegram', 'daily'); }
+async function drLast(){
+  const el = $p('drLast'); if(!el) return;
+  const r = await window._accountApi('adminDaily', { op: 'status' }); if(!r.ok){ el.textContent = ''; return; }
+  const L = r.data.last && r.data.last.last, f = x => typeof x === 'object' && x ? (x.sent !== undefined ? `${x.sent} sent${x.failed ? ', ' + x.failed + ' failed' : ''}${x.total !== undefined ? ' of ' + x.total : ''}` : JSON.stringify(x)) : (x || '—');
+  el.innerHTML = `Bot audience: <b>${fa(r.data.botUsers)}</b> people.` + (L ? `<br>Last sent ${ep(L.day || '')}: in-app <b>${ep(f(L.site))}</b> · push <b>${ep(f(L.push))}</b> · channel <b>${ep(f(L.channel))}</b> · bot <b>${ep(f(L.bot))}</b>` : '<br>Not sent yet.');
+}
+async function drSend(only){
+  if(window._isDirty && _isDirty('telegram')){ toast('Press Save changes first', 'w'); return; }
+  confirm2(only ? 'Post today\'s reminder in the channel now (test)?' : 'Send today\'s reminder now to everyone — in-app notification, phone push, Telegram channel and all bot users?', async () => {
+    showL(true); const r = await window._accountApi('adminDaily', { op: 'send', only }); showL(false);
+    if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; }
+    await logAct(`Daily reminder sent now${only ? ' (' + only.join(', ') + ')' : ''}`, 'broadcast', 'daily');
+    toast('Reminder sent ✓'); drLast(); tgLog();
+  });
+}
+
 async function loadTg(){
   buildTg();
   const d = (await window._getDoc('siteConfig', 'app')) || {}; const t = d.telegram || {};
@@ -192,7 +239,10 @@ async function loadTg(){
     'tg-button': _TG.button, 'tg-footer': _TG.footer, 'ta-broadcast': _TG.auto.broadcast !== false, 'ta-offers': _TG.auto.offers !== false, 'ta-deals': _TG.auto.deals !== false, 'ta-tasks': _TG.auto.tasks !== false,
     'ta-services': _TG.auto.services !== false, 'tw-on': _TG.welcome.on !== false, 'tw-del': _TG.welcome.deleteJoin !== false, 'tw-text': _TG.welcome.text, 'tg-rules': _TG.rules, 'tm-links': _TG.mod.links !== false,
     'tm-words': (_TG.mod.words || []).join('\n'), 'tg-dm': _TG.dm !== false, 'tg-mini': _TG.miniApp !== false });
-  proTabStart('telegram', 'conn'); afterLoad('telegram'); tgPrev(); tgStatus(); tgLog(); scLoad();
+  const D = d.daily || {};
+  fillIn({ 'dr-on': D.on !== false, 'dr-site': D.site !== false, 'dr-push': D.push !== false, 'dr-channel': D.channel !== false, 'dr-bot': D.bot !== false, 'dr-pin': D.pin === true,
+    'dr-title': D.title || DR_DEF.title, 'dr-text': D.text || DR_DEF.text, 'dr-pushText': D.pushText || DR_DEF.pushText });
+  proTabStart('telegram', 'conn'); afterLoad('telegram'); tgPrev(); tgStatus(); tgLog(); scLoad(); drLast();
 }
 async function saveTg(){
   const link = id => { const v = val(id); if(v && !/^https:\/\//i.test(v)) throw new Error('Links must start with https://'); return v; };
@@ -201,7 +251,9 @@ async function saveTg(){
     auto: { broadcast: chk('ta-broadcast'), offers: chk('ta-offers'), deals: chk('ta-deals'), tasks: chk('ta-tasks'), services: chk('ta-services') },
     welcome: { on: chk('tw-on'), deleteJoin: chk('tw-del'), text: $p('tw-text').value.trim() || TGD.welcome.text }, rules: $p('tg-rules').value.trim(),
     mod: { links: chk('tm-links'), words: lines('tm-words').map(w => w.toLowerCase()).slice(0, 100) }, dm: chk('tg-dm'), miniApp: chk('tg-mini'), updatedAt: new Date().toISOString() };
-  await window._setDoc('siteConfig', 'app', { telegram: data });
+  const daily = { on: chk('dr-on'), site: chk('dr-site'), push: chk('dr-push'), channel: chk('dr-channel'), bot: chk('dr-bot'), pin: chk('dr-pin'),
+    title: val('dr-title') || DR_DEF.title, text: $p('dr-text').value.trim() || DR_DEF.text, pushText: val('dr-pushText') || DR_DEF.pushText };
+  await window._setDoc('siteConfig', 'app', { telegram: data, daily });
   await logAct('Telegram settings saved', 'config', 'telegram');
 }
 window._SAVERS.telegram = { load: loadTg, save: saveTg };
