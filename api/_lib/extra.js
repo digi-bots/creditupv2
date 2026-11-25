@@ -47,7 +47,11 @@ const DEF = {
   games: { on: true, reward: 1, perDay: 5, plays: 30, level: 75 },
   // Extra Balance: deposit once, pay for orders from it; direct = also allow paying each order with a TrxID
   wallet: { on: true, min: 50, max: 50000, direct: true },
-  live: { on: true, count: 12 }
+  live: { on: true, count: 12 },
+  // Verified exclusive: no service charge on fixed-price services and no transaction fee on exchanges
+  perk: { on: true, chargePct: 5, chargeMin: 10 },
+  // shown on the home page, after applying and in the application details
+  loanNotice: { on: true, days: '7–14' }
 };
 
 function norm(x) {
@@ -66,15 +70,22 @@ function norm(x) {
     })),
     games: { ...DEF.games, ...(x.games || {}) },
     wallet: { ...DEF.wallet, ...(x.wallet || {}), min: Math.max(1, money((x.wallet || {}).min ?? DEF.wallet.min)), max: money((x.wallet || {}).max ?? DEF.wallet.max) },
+    perk: { ...DEF.perk, ...(x.perk || {}), on: (x.perk || {}).on !== false, chargePct: Math.max(0, Math.min(50, Number((x.perk || {}).chargePct ?? DEF.perk.chargePct) || 0)), chargeMin: money((x.perk || {}).chargeMin ?? DEF.perk.chargeMin) },
+    loanNotice: { on: (x.loanNotice || {}).on !== false, days: str((x.loanNotice || {}).days || DEF.loanNotice.days, 20) },
     live: { ...DEF.live, ...(x.live || {}), count: Math.max(3, Math.min(30, money((x.live || {}).count) || DEF.live.count)) }
   };
 }
 // what the user pays (buy) or gets (sell) for an amount
-function quote(s, i, amount) {
-  if (s.mode !== 'amount') return { pay: i.price, get: 0 };
-  const base = amount * i.rate;
-  if (i.flow === 'sell') return { pay: 0, get: Math.max(0, Math.floor(base * (1 - i.pct / 100) - i.fee)) };
-  return { pay: Math.ceil(base * (1 + i.pct / 100) + i.fee), get: amount };
+// Verified members pay no service charge and no transaction fee (the perk; Admin → Extra services)
+function quote(s, i, amount, verified, P) {
+  const free = !!(P && P.on && verified);
+  if (s.mode !== 'amount') {
+    const fee = P && P.on && !verified ? Math.max(money(P.chargeMin), Math.ceil(i.price * (Number(P.chargePct) || 0) / 100)) : 0;
+    return { base: i.price, fee, saved: free ? Math.max(money(P.chargeMin), Math.ceil(i.price * (Number(P.chargePct) || 0) / 100)) : 0, pay: i.price + fee, get: 0, waived: free };
+  }
+  const base = amount * i.rate, f = base * i.pct / 100 + i.fee;
+  if (i.flow === 'sell') return { base: Math.floor(base), fee: free ? 0 : Math.ceil(f), saved: free ? Math.ceil(f) : 0, pay: 0, get: Math.max(0, Math.floor(free ? base : base - f)), waived: free };
+  return { base: Math.ceil(base), fee: free ? 0 : Math.ceil(f), saved: free ? Math.ceil(f) : 0, pay: Math.ceil(free ? base : base + f), get: amount, waived: free };
 }
 
 // tic-tac-toe
@@ -120,14 +131,14 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
   }
   const mask = p => { p = String(p || ''); return p.length >= 6 ? '0' + p.slice(0, 2) + '****' + p.slice(-3) : 'A user'; };
   async function feed(uid, text, s) { try { await db().collection('extraFeed').add({ who: mask(uid), text: str(text, 80), icon: s ? s.icon : 'fa-solid fa-wallet', color: s ? s.color : 'g-green', at: iso() }); _live = null; } catch (e) {} }
-  const pubOrder = o => ({ id: o.id, sid: o.sid, sname: o.sname, iname: o.iname, unit: o.unit, amount: o.amount, price: o.price, get: o.get, flow: o.flow, fields: o.fields || [], trxId: o.trxId,
+  const pubOrder = o => ({ id: o.id, sid: o.sid, sname: o.sname, iname: o.iname, unit: o.unit, amount: o.amount, price: o.price, get: o.get, fee: o.fee || 0, feeWaived: o.feeWaived === true, saved: o.saved || 0, flow: o.flow, fields: o.fields || [], trxId: o.trxId,
     status: o.status, reason: o.reason || '', delivery: o.status === 'Delivered' ? (o.delivery || '') : '', createdAt: o.createdAt, decidedAt: o.decidedAt || '' });
 
   const actions = {
     extraConfig: async () => [200, await cfg()],
 
     extraOrder: wrap(async (b, uid) => {
-      const { d } = await me(uid);
+      const { d, u } = await me(uid);
       const C = await cfg();
       if (!C.on) return [400, { error: 'Extra services are switched off right now.' }];
       const s = C.services.find(x => x.id === b.sid && x.on && !x.soon && x.mode !== 'game');
@@ -141,7 +152,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
         if (i.min && amount < i.min) return [400, { error: `The smallest amount is ${i.min} ${i.unit}.` }];
         if (i.max && amount > i.max) return [400, { error: `The largest amount is ${i.max} ${i.unit}.` }];
       }
-      const q = quote(s, i, amount);
+      const q = quote(s, i, amount, u.phoneVerified === true, C.perk);
       const vals = Array.isArray(b.fields) ? b.fields : [];
       const fields = s.fields.map((f, k) => ({ label: f.label, value: str(vals[k], 300) }));
       const miss = s.fields.find((f, k) => f.req && !fields[k].value);
@@ -164,7 +175,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
       const ref = db().collection('serviceOrders').doc();
       const order = { uid, kind: 'extra', sid: s.id, sname: s.name, iid: i.id, iname: i.name, planName: `${s.name} · ${i.name}`, unit: i.unit, flow: i.flow,
-        amount, price: q.pay, get: q.get, fields, trxId, paidWith: useBal ? 'xbal' : 'trx', sender: isPhone(sender) ? sender : '', payMethod: useBal ? 'Extra Balance' : str(b.payMethod, 30),
+        amount, price: q.pay, get: q.get, base: q.base, fee: q.fee, feeWaived: q.waived, saved: q.saved, fields, trxId, paidWith: useBal ? 'xbal' : 'trx', sender: isPhone(sender) ? sender : '', payMethod: useBal ? 'Extra Balance' : str(b.payMethod, 30),
         toNumber: useBal ? '' : str(b.toNumber || i.to, 120), status: useBal ? 'Processing' : 'Pending', createdAt: iso() };
       let xbal = null;
       if (useBal) xbal = await xcredit(d.ref, uid, -q.pay, 'order', `${s.name} · ${i.name}`, { orderId: ref.id }, t => t.set(ref, order));
@@ -187,7 +198,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const log = lg.docs.map(x => x.data()).sort((a, c) => String(c.at).localeCompare(String(a.at))).slice(0, 40);
       const deposits = od.docs.map(x => ({ id: x.id, ...x.data() })).filter(o => o.kind === 'xdeposit').sort((a, c) => String(c.createdAt).localeCompare(String(a.createdAt))).slice(0, 10)
         .map(o => ({ id: o.id, amount: o.price, trxId: o.trxId, status: o.status, reason: o.reason || '', createdAt: o.createdAt }));
-      return [200, { xbal: Number(u.xbal) || 0, log, deposits }];
+      return [200, { xbal: Number(u.xbal) || 0, log, deposits, verified: u.phoneVerified === true, vip: !!SVC.vipState(u) }];
     }),
     xbalDeposit: wrap(async (b, uid) => {
       await me(uid);

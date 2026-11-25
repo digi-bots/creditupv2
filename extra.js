@@ -72,11 +72,64 @@ const css = `
 .xb-chips button.on{border-color:var(--p);background:rgba(29,219,128,.12);color:var(--p)}
 .xs-pm{display:flex;gap:8px;margin:6px 0 10px}.xs-pm button{flex:1;border-radius:13px;padding:11px 8px;border:1.5px solid var(--gbord);background:var(--glass);color:var(--txt);font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit;line-height:1.35}
 .xs-pm button.on{border-color:var(--p);background:rgba(29,219,128,.12)}.xs-pm button small{display:block;font-size:11px;color:var(--txt2);font-weight:700}
+.xs-perk{position:relative;overflow:hidden;display:flex;gap:12px;align-items:center;border-radius:18px;padding:13px 14px;margin:0 0 12px;cursor:pointer;
+  background:radial-gradient(120% 140% at 0% 0%,rgba(70,176,255,.28),transparent 60%),linear-gradient(135deg,#0f1f45,#132a5c 60%,#2a2208);border:1px solid rgba(120,180,255,.35);box-shadow:0 10px 26px rgba(0,0,0,.3)}
+.xs-perk::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.12),transparent);animation:xsSweep 3.4s ease-in-out infinite}
+@keyframes xsSweep{0%{left:-60%}60%,100%{left:130%}}
+.xs-perk .sl{flex:none;font-size:34px;line-height:1}.xs-perk .sl .vf-seal{width:1em;height:1em;margin:0}
+.xs-perk b{display:block;font-size:13.5px;background:linear-gradient(90deg,#fff,#bfe0ff,#ffe9a8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.xs-perk p{margin:2px 0 0;font-size:11.5px;color:#b9cbea;line-height:1.5}
+.xs-perk .go{flex:none;margin-left:auto;font-size:11.5px;font-weight:900;padding:7px 11px;border-radius:11px;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d);white-space:nowrap}
+.xs-perk.on{background:radial-gradient(120% 140% at 0% 0%,rgba(29,219,128,.25),transparent 60%),linear-gradient(135deg,#0b2a22,#0f2f45);border-color:rgba(29,219,128,.45);cursor:default}
+.xs-perk.on .go{background:rgba(29,219,128,.18);color:var(--p)}
+.xs-brk{border-radius:14px;padding:10px 14px;margin:10px 0;background:rgba(255,255,255,.035);border:1px solid var(--bord);font-size:12.5px;color:var(--txt2)}
+.xs-brk div{display:flex;justify-content:space-between;gap:8px;padding:4px 0}.xs-brk s{opacity:.6}.xs-brk .ok{color:var(--p);font-weight:800}
+.xs-brk .tot{border-top:1px dashed var(--bord);margin-top:4px;padding-top:8px;font-size:14px;color:var(--txt);font-weight:900}.xs-brk .tot b{font-size:19px}
+.xs-it .pr .vp{display:block;font-size:10.5px;font-weight:800;color:#7fc3ff}
+.ln-note{display:flex;gap:11px;align-items:flex-start;text-align:left;border-radius:16px;padding:12px 13px;margin:12px 0;background:linear-gradient(135deg,rgba(255,215,106,.10),rgba(255,140,66,.06));border:1px solid rgba(255,200,90,.35);font-size:12px;color:var(--txt2);line-height:1.55}
+.ln-note .ic{flex:none;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(255,200,90,.16);color:#ffd76a;font-size:15px}
+.ln-note b{display:block;color:var(--txt);font-size:13px;margin-bottom:2px}
+.ln-note .vb{display:inline-flex;align-items:center;gap:5px;margin-top:7px;border:0;border-radius:10px;padding:7px 11px;font-weight:900;font-size:11.5px;cursor:pointer;font-family:inherit;color:#3a2500;background:linear-gradient(135deg,#ffe08a,#f2a91d)}
+.ln-note.vip{background:linear-gradient(135deg,rgba(255,215,106,.16),rgba(29,219,128,.06))}
 @media (max-width:360px){.xs-grid{gap:8px}.xs-lg{width:46px;height:46px;font-size:20px}}`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
 function logo(s){ return s.logo ? `<div class="xs-lg img"><img src="${E(s.logo)}" alt="${E(s.name)}" loading="lazy"></div>` : `<div class="xs-lg ${E(s.color)}"><i class="${E(s.icon)}"></i></div>`; }
 const svcs = () => ((X.cfg && X.cfg.services) || []).filter(s => s.on);
+const isV = () => !!(X.xb && X.xb.verified);
+const PK = () => (X.cfg && X.cfg.perk) || { on: false };
+// the same price rule as the server: Verified members pay no service charge and no transaction fee
+function quote(s, i, amount, ver){
+  const P = PK(), free = !!(P.on && ver);
+  const ch = Math.max(Math.round(P.chargeMin || 0), Math.ceil(i.price * (Number(P.chargePct) || 0) / 100));
+  if(s.mode !== 'amount') return { base: i.price, fee: P.on && !ver ? ch : 0, saved: free ? ch : 0, pay: i.price + (P.on && !ver ? ch : 0), get: 0, waived: free };
+  const base = amount * i.rate, f = base * i.pct / 100 + i.fee;
+  if(i.flow === 'sell') return { base: Math.floor(base), fee: free ? 0 : Math.ceil(f), saved: free ? Math.ceil(f) : 0, pay: 0, get: Math.max(0, Math.floor(free ? base : base - f)), waived: free };
+  return { base: Math.ceil(base), fee: free ? 0 : Math.ceil(f), saved: free ? Math.ceil(f) : 0, pay: Math.ceil(free ? base : base + f), get: amount, waived: free };
+}
+const sealHtml = () => { try { return window._svSeal ? window._svSeal() : '<i class="fa-solid fa-circle-check" style="color:#46b0ff"></i>'; } catch (e) { return ''; } };
+// the Verified exclusive banner
+function perkBanner(){
+  const P = PK(); if(!P.on) return '';
+  if(user() && isV()) return `<div class="xs-perk on"><span class="sl">${sealHtml()}</span><div><b>Verified Exclusive is active</b><p>You pay no service charge and no transaction fee on every Extra Service.</p></div><span class="go">0% fee ✓</span></div>`;
+  return `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Verified Exclusive: 0% charge · 0 fee</b><p>Verified members pay no service charge${P.chargePct ? ` (${P.chargePct}%)` : ''} and no transaction fee on exchange, gift cards, SMM and every Extra Service.</p></div><span class="go">Get Verified</span></div>`;
+}
+// processing-time notice for loans (home page, after applying, application details)
+function loanNote(){
+  const N = (X.cfg && X.cfg.loanNotice) || {}; if(N.on === false) return '';
+  const days = E(N.days || '7–14');
+  if(X.xb && X.xb.vip) return `<div class="ln-note vip"><div class="ic"><i class="fa-solid fa-crown"></i></div><div><b>Your application has VIP priority</b>Loan money is processed through the bank, which normally takes ${days} working days. As a VIP member, your application is reviewed first with high priority.</div></div>`;
+  return `<div class="ln-note"><div class="ic"><i class="fa-solid fa-building-columns"></i></div><div><b>Processing time: ${days} working days</b>Loan money is processed through the bank, so approval and disbursement can take up to ${days} working days. Want it sooner? VIP applications get high priority and are reviewed first — a better chance of early approval and disbursement.<br><button class="vb" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>Get VIP priority</button></div></div>`;
+}
+function placeNotes(){
+  const html = loanNote(); if(!html) return;
+  const spots = [['#screen-home .home-body', el => el.querySelector('.quick-actions-title'), 'before'], ['#screen-review-progress', el => el.querySelector('.rv-foot'), 'before'],
+    ['#screen-waiting', el => el.querySelector('.btn-home'), 'before'], ['#statusModalContent', el => el.firstChild, 'first']];
+  spots.forEach(([sel, at, how]) => { const el = document.querySelector(sel); if(!el || el.querySelector(':scope > .ln-note')) return;
+    const box = document.createElement('div'); box.innerHTML = html; const n = box.firstChild;
+    if(how === 'first') el.insertBefore(n, el.firstChild); else { const ref = at(el); if(ref) el.insertBefore(n, ref); else el.appendChild(n); } });
+}
+function refreshNotes(){ document.querySelectorAll('.ln-note').forEach(n => n.remove()); placeNotes(); }
 
 async function load(){
   if(X.p) return X.p;
@@ -100,6 +153,7 @@ function render(){
   const W = X.cfg.wallet || {};
   box.innerHTML = `<div class="quick-actions-title xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em>${W.on !== false ? `<span class="xs-bal" onclick="svGo('x_wallet')" title="Extra Balance">${user() && X.xb ? tk(X.xb.xbal) : 'Balance'}<i class="p fa-solid fa-plus"></i></span>` : ''}</div>
     <div class="xs-sub"><span style="color:var(--txt2);font-weight:600">${W.on !== false ? 'Pay with your Extra Balance' : 'Paid services, delivered by our team'}</span><span onclick="svGo('x_orders')">My orders ›</span></div>
+    ${perkBanner()}
     <div class="xs-grid">${L.map(s => `<div class="xs-t${s.soon ? ' soon' : ''}" onclick="xsOpen('${E(s.id)}')">${s.badge || s.soon ? `<span class="bd">${E(s.soon ? 'SOON' : s.badge)}</span>` : ''}${logo(s)}<b>${E(s.short || s.name)}</b></div>`).join('')}</div>
     <div id="xsLive"></div>`;
   drawLive();
@@ -118,7 +172,7 @@ function drawLive(){
 async function loadLive(){
   try { const r = await fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'extraLive' }) }); const d = await r.json(); X.live = d.list || []; drawLive(); } catch (e) {}
 }
-async function loadXb(){ if(!user()) { X.xb = null; return null; } const r = await api('xbalState'); if(r.ok){ X.xb = r.data; render(); } return X.xb; }
+async function loadXb(){ if(!user()) { X.xb = null; refreshNotes(); return null; } const r = await api('xbalState'); if(r.ok){ X.xb = r.data; render(); refreshNotes(); } return X.xb; }
 window.xsOpen = id => { const s = svcs().find(x => x.id === id); if(!s) return; if(s.soon){ toast('Coming soon — stay tuned!'); return; } svGo('x_' + id); };
 
 /* ───────── one service: its options ───────── */
@@ -128,13 +182,15 @@ function svcPage(id){
   const items = s.items.filter(i => i.on);
   const row = i => {
     if(s.mode === 'amount'){
-      const rate = i.unit === '৳' ? (i.pct ? `Fee ${num(i.pct)}%${i.fee ? ' + ' + tk(i.fee) : ''}` : i.fee ? 'Fee ' + tk(i.fee) : 'No fee')
-        : `1 ${E(i.unit)} = ${tk(i.rate)}${i.pct ? ` · fee ${num(i.pct)}%` : ''}`;
+      const hasFee = i.pct || i.fee, free = PK().on && isV();
+      const feeTxt = !hasFee ? 'No fee' : free ? '<span style="color:var(--p);font-weight:800">No fee — Verified ✓</span>' : `Fee ${i.pct ? num(i.pct) + '%' : ''}${i.pct && i.fee ? ' + ' : ''}${i.fee ? tk(i.fee) : ''}${PK().on ? ' · <span style="color:#7fc3ff">Verified: no fee</span>' : ''}`;
+      const rate = i.unit === '৳' ? feeTxt : `1 ${E(i.unit)} = ${tk(i.rate)} · ${feeTxt}`;
       return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b><small>${rate}${i.min || i.max ? ` · ${num(i.min)}–${num(i.max)} ${E(i.unit)}` : ''}</small></div><div class="pr"><i class="fa-solid fa-chevron-right" style="color:var(--txt2)"></i></div></div>`;
     }
-    return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b>${i.note ? `<small>${E(i.note)}</small>` : ''}</div><div class="pr">${tk(i.price)}</div></div>`;
+    return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b>${i.note ? `<small>${E(i.note)}</small>` : ''}</div><div class="pr">${(() => { const q = quote(s, i, 0, isV()); return q.fee ? `${tk(q.pay)}<span class="vp">Verified ${tk(q.base)}</span>` : `${tk(q.pay)}${q.waived ? '<span class="vp">No charge ✓</span>' : ''}`; })()}</div></div>`;
   };
   show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(s.name)}</h4><p>${E(s.desc)}</p></div></div>
+    ${perkBanner()}
     ${items.length ? `<span class="sv-lbl">Choose an option</span>${items.map(row).join('')}` : '<div class="sv-empty">Nothing is available here right now. Please check back soon.</div>'}
     ${s.note ? `<div class="sv-card"><p>${E(s.note)}</p></div>` : ''}
     <div class="sv-card" style="margin-top:12px"><h4><i class="fa-solid fa-shield-halved" style="color:var(--p)"></i> How it works</h4><p>Pick an option, send the payment and enter the Transaction ID. Our team checks the payment and delivers your order by hand — usually within a few hours. You can follow it in My orders.</p></div>
@@ -156,7 +212,7 @@ function orderPage(){
   const W = X.cfg.wallet || {}, bal = X.xb ? X.xb.xbal : 0;
   const canBal = !sell && W.on !== false, canDirect = sell || W.direct !== false;
   if(!canDirect) window._xsPm = 'xbal'; else if(!canBal) window._xsPm = 'trx'; else if(!window._xsPm) window._xsPm = 'xbal';
-  const pm = window._xsPm, price = amt ? 0 : i.price;
+  const pm = window._xsPm, q0 = quote(s, i, 0, isV()), price = amt ? 0 : q0.pay;
   const payBlock = pm === 'xbal' ? `<div class="pay-num" style="border-style:solid"><div><small>Extra Balance</small><b>${tk(bal)}</b></div><button onclick="svGo('x_dep')">+ Add</button></div>
       <div style="font-size:11.5px;color:var(--txt2);margin:6px 2px" id="xsBalNote">${!amt && price > bal ? `<span style="color:#ff8fa3">You need ${tk(price - bal)} more. Add balance first.</span>` : 'The price is taken from your Extra Balance when you place the order.'}</div>`
     : `<span class="sv-lbl">${sell ? `Send the ${E(i.unit)} here` : 'Send the payment'}</span>
@@ -168,21 +224,25 @@ function orderPage(){
   show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(i.name)}</h4><p>${E(i.note || s.desc)}</p></div></div>
     ${amt ? `<span class="sv-lbl">${sell ? 'How much will you send?' : 'How much do you want?'} (${E(i.unit)})</span>
       <input class="sv-in" id="xsAmt" type="number" inputmode="decimal" min="${i.min || 0}" ${i.max ? `max="${i.max}"` : ''} placeholder="${i.min ? 'Min ' + num(i.min) : 'Amount'}${i.max ? ' · max ' + num(i.max) : ''}" oninput="xsCalc()">
-      <div class="xs-sum"><span id="xsLbl">${sell ? 'You get' : 'You pay'}</span><b id="xsPay">৳0</b></div>`
-    : `<div class="xs-sum"><span>You pay</span><b>${tk(i.price)}</b></div>`}
+      <div class="xs-brk" id="xsBrk"></div>`
+    : `<div class="xs-brk" id="xsBrk"></div>`}
+    ${PK().on && !isV() ? `<div class="xs-perk" onclick="svGo('verify')" style="margin-top:-2px"><span class="sl">${sealHtml()}</span><div><b>Pay no charge with Verified</b><p>Verified members skip the ${amt ? 'transaction fee' : 'service charge'} on every order — a one-time badge that keeps saving.</p></div><span class="go">Get Verified</span></div>` : ''}
     ${s.fields.map((f, k) => `<span class="sv-lbl">${E(f.label)}${f.req ? '' : ' <small style="color:var(--txt3)">(optional)</small>'}</span><input class="sv-in" id="xsF${k}" maxlength="300" autocomplete="off">`).join('')}
     ${canBal && canDirect ? `<span class="sv-lbl">How do you want to pay?</span><div class="xs-pm"><button class="${pm === 'xbal' ? 'on' : ''}" onclick="xsPm('xbal')"><i class="fa-solid fa-wallet"></i> Extra Balance<small>${tk(bal)}</small></button><button class="${pm === 'trx' ? 'on' : ''}" onclick="xsPm('trx')"><i class="fa-solid fa-mobile-screen"></i> bKash / Nagad<small>Send &amp; give TrxID</small></button></div>` : ''}
     ${payBlock}
     <button class="sv-btn gold" style="margin-top:12px" id="xsBtn" onclick="xsSubmit()" ${pm === 'xbal' || w ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Place order</button>
     <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> Orders are checked and delivered by hand. If we cannot complete it, your money is returned.</div>`);
   window._xsCur = { s, i, w, pm };
+  xsCalc();
 }
 window.xsPm = v => { window._xsPm = v; window.svPage('x_order'); };
 window.xsCalc = () => {
-  const c = window._xsCur; if(!c) return; const { i } = c; const a = Number(($x('xsAmt') || {}).value) || 0;
-  const base = a * i.rate;
-  const v = i.flow === 'sell' ? Math.max(0, Math.floor(base * (1 - i.pct / 100) - i.fee)) : a > 0 ? Math.ceil(base * (1 + i.pct / 100) + i.fee) : 0;
-  $x('xsPay').textContent = tk(v);
+  const c = window._xsCur; if(!c) return; const { s, i } = c; const amt = s.mode === 'amount', sell = i.flow === 'sell';
+  const a = Number(($x('xsAmt') || {}).value) || 0, q = quote(s, i, a, isV());
+  const v = sell ? q.get : (amt && !(a > 0)) ? 0 : q.pay;
+  const lbl = amt ? 'Transaction fee' : 'Service charge';
+  const feeRow = !PK().on && !q.fee ? '' : q.waived ? `<div><span>${lbl}</span><span><s>${tk(q.saved)}</s> <span class="ok">Waived — Verified ✓</span></span></div>` : q.fee ? `<div><span>${lbl}</span><span>${sell ? '−' : '+'}${tk(q.fee)}</span></div>` : `<div><span>${lbl}</span><span class="ok">৳0</span></div>`;
+  const b = $x('xsBrk'); if(b) b.innerHTML = `<div><span>${amt ? (sell ? 'Value' : 'Amount') : 'Price'}</span><span>${tk(amt ? (a > 0 ? q.base : 0) : q.base)}</span></div>${feeRow}<div class="tot"><span>${sell ? 'You get' : 'You pay'}</span><b>${tk(v)}</b></div>`;
   const n = $x('xsBalNote'); if(n && i.flow !== 'sell'){ const bal = X.xb ? X.xb.xbal : 0; n.innerHTML = v > bal ? `<span style="color:#ff8fa3">You need ${tk(v - bal)} more. Add balance first.</span>` : 'The price is taken from your Extra Balance when you place the order.'; }
 };
 window.xsSubmit = async function(){
@@ -298,5 +358,5 @@ load().then(() => { loadLive(); loadXb(); });
 setInterval(loadLive, 30e3);
 // redraw the section after the language changes or the home page is rebuilt; reload the balance after login / logout
 let _ph = (user() || {}).phone || '';
-setInterval(() => { if(X.cfg && !$x('xsBlock')) render(); const ph = (user() || {}).phone || ''; if(ph !== _ph){ _ph = ph; X.xb = null; loadXb().then(render); } }, 1500);
+setInterval(() => { if(X.cfg) placeNotes(); if(X.cfg && !$x('xsBlock')) render(); const ph = (user() || {}).phone || ''; if(ph !== _ph){ _ph = ph; X.xb = null; loadXb().then(render); } }, 1500);
 })();
