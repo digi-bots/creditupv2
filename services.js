@@ -280,6 +280,8 @@ const T = {
   wallet:   { l: 'Wallet', ic: 'wallet', g: 'g-teal', cat: 'rewards', login: true, page: 'wallet' },
   redeem:   { l: 'Redeem Code', ic: 'ticket', g: 'g-purple', cat: 'rewards', login: true, page: 'redeem' },
   voucher:  { l: 'Gift Voucher', ic: 'gift', g: 'g-red', cat: 'rewards', login: true, page: 'voucher' },
+  recharge: { l: 'Mobile Recharge', ic: 'mobile-screen-button', g: 'g-green', cat: 'account', login: true, page: 'recharge', badge: 'VIP' },
+  jobs:     { l: 'Micro Jobs', ic: 'briefcase', g: 'g-orange', cat: 'rewards', login: true, page: 'jobs', badge: 'EARN' },
   lang:     { l: 'Language', ic: 'language', g: 'g-teal', cat: 'account', page: 'lang' },
   all:      { l: 'All Services', ic: 'grip', g: 'g-slate', cat: '', page: 'all' }
 };
@@ -287,7 +289,7 @@ const T = {
 window._svcTiles = T;
 window._svcPages = window._svcPages || {};
 const CATS = [['premium', 'Premium', 'crown'], ['rewards', 'Rewards', 'gift'], ['loans', 'Loans', 'hand-holding-dollar'], ['help', 'Help & Info', 'circle-question'], ['account', 'Account', 'user']];
-const HOME_DEF = ['vip', 'checkin', 'spin', 'wallet', 'calc', 'refer', 'history', 'all'];
+const HOME_DEF = ['vip', 'checkin', 'spin', 'wallet', 'recharge', 'jobs', 'calc', 'refer', 'history', 'all'];
 
 // offers, events and rewards are for Verified members (Admin → Services & Rewards); the sign-up bonus stays for everyone
 const VONLY = ['checkin', 'spin', 'redeem', 'voucher'];
@@ -307,7 +309,9 @@ function tileOn(k){ const t = T[k]; if(!t) return false; if(k === 'all') return 
   if(k === 'voucher' && C.voucher && C.voucher.on === false) return false; if(k === 'redeem' && C.codes && C.codes.redeem === false) return false; return true; }
 function tileHtml(k){
   const t = T[k], c = tileCfg(k), badge = c.badge !== undefined ? c.badge : (t.badge || '');
-  const lk = VONLY.includes(k) && needsV();
+  // Mobile Recharge and Micro Jobs: Verified or VIP members
+  const vv = !!user() && !!SV.st && SV.st.verified !== true && !SV.st.vip;
+  const lk = (VONLY.includes(k) && needsV()) || (k === 'recharge' && vv) || (k === 'jobs' && vv && needsV());
   const dot = !lk && ((k === 'checkin' && SV.st && SV.st.checkin && !SV.st.checkin.doneToday) || (k === 'spin' && SV.st && SV.st.spin && SV.st.spin.canSpin));
   return `<div class="sv-tile${lk ? ' locked' : ''}" onclick="svGo('${k}')">${lk ? '<em class="sv-lockb"><i class="fa-solid fa-lock"></i>VERIFIED</em>' : badge ? `<em class="sv-bdg${t.gold ? ' gold' : ''}">${E(badge)}</em>` : dot ? '<em class="sv-dot"></em>' : ''}<div class="sv-ic ${t.g}"><i class="fa-solid fa-${t.ic}"></i></div><span>${E(c.label || t.l)}</span></div>`;
 }

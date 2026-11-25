@@ -47,6 +47,12 @@ const DEF = {
   games: { on: true, reward: 1, perDay: 5, plays: 30, level: 75 },
   // Extra Balance: deposit once, pay for orders from it; direct = also allow paying each order with a TrxID
   wallet: { on: true, min: 50, max: 50000, direct: true },
+  // deposit bonus: the best matching tier (by deposit amount) adds a % on top, up to a cap
+  depBonus: { on: false, tiers: [{ min: 500, pct: 2 }, { min: 2000, pct: 3 }, { min: 5000, pct: 5 }], max: 500 },
+  // mobile recharge (Quick Services): Verified and VIP members only, paid from Extra Balance, done by hand
+  recharge: { on: true, min: 20, max: 1000, ops: ['Grameenphone', 'Robi', 'Airtel', 'Banglalink', 'Teletalk'] },
+  // micro jobs: tasks a user finishes and proves; the admin checks and adds the reward to Extra Balance
+  jobs: { on: true, tasks: [] },
   live: { on: true, count: 12 },
   // Verified exclusive: no service charge on fixed-price services and no transaction fee on exchanges
   perk: { on: true, chargePct: 5, chargeMin: 10 },
@@ -56,6 +62,8 @@ const DEF = {
   redFriday: { on: true, title: 'Red Friday', day: 5, text: 'Our biggest prices of the week — one day only.' }
 };
 
+const JOB_TYPES = ['join', 'visit', 'signup', 'form', 'survey', 'share', 'refer', 'other'];
+function bonusFor(B, amount) { if (!B || !B.on) return 0; const t = [...B.tiers].reverse().find(x => amount >= x.min); return t ? Math.min(B.max || Infinity, Math.floor(amount * t.pct / 100)) : 0; }
 function norm(x) {
   x = x || {};
   const list = Array.isArray(x.services) ? x.services : DEF.services;
@@ -74,6 +82,13 @@ function norm(x) {
     deals: (Array.isArray(x.deals) ? x.deals : []).filter(d => d && d.sid && d.iid && money(d.price) > 0).slice(0, 30).map(d => ({ id: str(d.id || d.sid + d.iid, 30), sid: str(d.sid, 30), iid: str(d.iid, 30),
       price: money(d.price), on: d.on !== false, days: (Array.isArray(d.days) ? d.days : []).map(Number).filter(n => n >= 0 && n <= 6) })),
     games: { ...DEF.games, ...(x.games || {}) },
+    depBonus: { on: (x.depBonus || {}).on === true, max: money((x.depBonus || {}).max ?? DEF.depBonus.max),
+      tiers: (Array.isArray((x.depBonus || {}).tiers) ? x.depBonus.tiers : DEF.depBonus.tiers).map(t => ({ min: money(t.min), pct: Math.max(0, Math.min(100, Number(t.pct) || 0)) })).filter(t => t.min > 0 && t.pct > 0).sort((a, b) => a.min - b.min).slice(0, 8) },
+    recharge: { on: (x.recharge || {}).on !== false, min: Math.max(10, money((x.recharge || {}).min ?? DEF.recharge.min)), max: Math.max(10, money((x.recharge || {}).max ?? DEF.recharge.max)),
+      ops: (Array.isArray((x.recharge || {}).ops) && x.recharge.ops.length ? x.recharge.ops : DEF.recharge.ops).map(o => str(o, 24)).filter(Boolean).slice(0, 10) },
+    jobs: { on: (x.jobs || {}).on !== false, tasks: (Array.isArray((x.jobs || {}).tasks) ? x.jobs.tasks : []).filter(t => t && t.id && t.title).slice(0, 100).map(t => ({
+      id: str(t.id, 30), title: str(t.title, 80), type: JOB_TYPES.includes(t.type) ? t.type : 'other', link: /^https?:\/\//i.test(String(t.link || '')) ? str(t.link, 400) : '',
+      reward: money(t.reward), steps: str(t.steps, 800), proof: str(t.proof || 'Your username, email or a screenshot link', 120), slots: money(t.slots), on: t.on !== false, until: str(t.until, 40) })) },
     wallet: { ...DEF.wallet, ...(x.wallet || {}), min: Math.max(1, money((x.wallet || {}).min ?? DEF.wallet.min)), max: money((x.wallet || {}).max ?? DEF.wallet.max) },
     perk: { ...DEF.perk, ...(x.perk || {}), on: (x.perk || {}).on !== false, chargePct: Math.max(0, Math.min(50, Number((x.perk || {}).chargePct ?? DEF.perk.chargePct) || 0)), chargeMin: money((x.perk || {}).chargeMin ?? DEF.perk.chargeMin) },
     redFriday: { on: (x.redFriday || {}).on !== false, title: str((x.redFriday || {}).title || DEF.redFriday.title, 24), day: Math.max(0, Math.min(6, Math.round(Number((x.redFriday || {}).day ?? DEF.redFriday.day)))), text: str((x.redFriday || {}).text ?? DEF.redFriday.text, 160) },
@@ -268,9 +283,11 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       if (o.kind === 'xdeposit') {
         if (b.op === 'deliver' || b.op === 'approve') {
           if (!ud) return [404, { error: 'The user no longer exists.' }];
-          await xcredit(ud.ref, o.uid, o.price, 'deposit', `Deposit · TrxID ${o.trxId}`, { orderId: s.id }, t => t.update(ref, { status: 'Approved', decidedAt: iso(), decidedBy: user.uid }));
+          const C = await cfg(), bonus = bonusFor(C.depBonus, o.price);
+          await xcredit(ud.ref, o.uid, o.price, 'deposit', `Deposit · TrxID ${o.trxId}`, { orderId: s.id }, t => t.update(ref, { status: 'Approved', bonus, decidedAt: iso(), decidedBy: user.uid }));
+          if (bonus > 0) await xcredit(ud.ref, o.uid, bonus, 'bonus', `Deposit bonus on ৳${o.price}`, { orderId: s.id });
           await feed(o.uid, `added ৳${o.price} Extra Balance`, null);
-          await notifyUser(o.uid, 'Extra Balance added ✅', `৳${o.price} is added to your Extra Balance. You can order any Extra Service now.`, 'success');
+          await notifyUser(o.uid, 'Extra Balance added ✅', `৳${o.price} is added to your Extra Balance${bonus ? ` + ৳${bonus} deposit bonus` : ''}. You can order any Extra Service now.`, 'success');
         } else if (b.op === 'reject') {
           const reason = str(b.reason, 200);
           await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
@@ -292,6 +309,79 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
         if (o.paidWith === 'xbal' && o.price > 0 && ud) await xcredit(ud.ref, o.uid, o.price, 'refund', `Refund · ${what}`, { orderId: s.id }, t => t.update(ref, { status: 'Rejected', reason, refunded: true, decidedAt: iso(), decidedBy: user.uid }));
         else await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
         await notifyUser(o.uid, 'Order not completed', `Your order ${what} could not be completed.${reason ? ' Reason: ' + reason : ''} ${o.paidWith === 'xbal' ? `৳${o.price} is back in your Extra Balance.` : 'Please contact support if you paid.'}`, 'warning');
+      } else return [400, { error: 'Unknown action.' }];
+      return [200, { ok: true }];
+    },
+
+    // mobile recharge: Verified and VIP members only; paid from Extra Balance; the team sends it by hand
+    rechargeOrder: wrap(async (b, uid) => {
+      const { d, u } = await me(uid);
+      const C = await cfg(), R = C.recharge;
+      if (!R.on) return [400, { error: 'Mobile recharge is switched off right now.' }];
+      if (u.phoneVerified !== true && !SVC.vipState(u)) return [403, { error: 'Mobile recharge is for Verified and VIP members.', code: 'verify_required' }];
+      const op = R.ops.find(o => o === b.op); if (!op) return [400, { error: 'Please choose the operator.' }];
+      const number = String(b.number || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+      if (!isPhone(number)) return [400, { error: 'Please enter a valid mobile number.' }];
+      const amount = money(b.amount);
+      if (amount < R.min || amount > R.max) return [400, { error: `Recharge between ৳${R.min} and ৳${R.max}.` }];
+      const type = b.type === 'postpaid' ? 'Postpaid' : 'Prepaid';
+      const mine = await db().collection('serviceOrders').where('uid', '==', uid).get();
+      if (mine.docs.filter(x => x.data().sid === 'recharge' && ['Pending', 'Processing'].includes(x.data().status)).length >= 3) return [400, { error: 'You have 3 recharges in progress. Please wait a little.' }];
+      const ref = db().collection('serviceOrders').doc();
+      const order = { uid, kind: 'extra', sid: 'recharge', sname: 'Mobile Recharge', iid: op, iname: `${op} ${type} · 0${number}`, planName: `Mobile Recharge · ${op} 0${number}`, unit: '৳', flow: 'buy',
+        amount, price: amount, get: amount, base: amount, fee: 0, fields: [{ label: 'Number', value: '0' + number }, { label: 'Operator', value: op }, { label: 'Type', value: type }],
+        trxId: 'XB' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase(), paidWith: 'xbal', sender: '', payMethod: 'Extra Balance', toNumber: '', status: 'Processing', createdAt: iso() };
+      const xbal = await xcredit(d.ref, uid, -amount, 'order', `Recharge ${op} 0${number}`, { orderId: ref.id }, t => t.set(ref, order));
+      await feed(uid, `recharged ৳${amount} ${op}`, { icon: 'fa-solid fa-mobile-screen', color: 'g-green' });
+      await notifyUser(uid, 'Recharge received 📱', `৳${amount} ${op} recharge to 0${number} is in progress. You will get it shortly.`, 'transaction');
+      return [200, { ok: true, xbal }];
+    }),
+
+    // micro jobs: the list with this user's status, a proof submission, and the admin's check
+    jobsState: wrap(async (b, uid) => {
+      const { u } = await me(uid);
+      const C = await cfg(), S = await SVC.cfg(), now = Date.now();
+      const [mine, all] = await Promise.all([db().collection('taskSubs').where('uid', '==', uid).get(), db().collection('taskSubs').where('status', 'in', ['Pending', 'Approved']).get()]);
+      const my = {}; mine.docs.forEach(x => { my[x.data().tid] = { status: x.data().status, reason: x.data().reason || '', at: x.data().at }; });
+      const used = {}; all.docs.forEach(x => { used[x.data().tid] = (used[x.data().tid] || 0) + 1; });
+      const tasks = C.jobs.tasks.filter(t => t.on && (!t.until || new Date(t.until).getTime() > now)).map(t => ({ ...t, left: t.slots ? Math.max(0, t.slots - (used[t.id] || 0)) : null, mine: my[t.id] || null }));
+      const earned = mine.docs.filter(x => x.data().status === 'Approved').reduce((a, x) => a + (Number(x.data().reward) || 0), 0);
+      return [200, { on: C.jobs.on, tasks, earned, needVerify: S.bonus.requireVerified !== false && u.phoneVerified !== true && !SVC.vipState(u), xbal: Number(u.xbal) || 0 }];
+    }),
+    jobSubmit: wrap(async (b, uid) => {
+      const { u } = await me(uid);
+      const C = await cfg(), S = await SVC.cfg();
+      if (!C.jobs.on) return [400, { error: 'Micro jobs are switched off right now.' }];
+      if (S.bonus.requireVerified !== false && u.phoneVerified !== true && !SVC.vipState(u)) return [403, { error: 'Task rewards are for Verified members. Get your Verified badge to earn.', code: 'verify_required' }];
+      const t = C.jobs.tasks.find(x => x.id === b.tid && x.on && (!x.until || new Date(x.until).getTime() > Date.now()));
+      if (!t) return [400, { error: 'This task is not available any more.' }];
+      const proof = str(b.proof, 400); if (proof.length < 3) return [400, { error: 'Please add your proof.' }];
+      const ref = db().collection('taskSubs').doc(`${t.id}_${uid}`);
+      const old = await ref.get();
+      if (old.exists && old.data().status !== 'Rejected') return [400, { error: old.data().status === 'Approved' ? 'You have already done this task.' : 'Your proof is being checked.' }];
+      if (t.slots) { const n = await db().collection('taskSubs').where('tid', '==', t.id).get(); if (n.docs.filter(x => ['Pending', 'Approved'].includes(x.data().status)).length >= t.slots) return [400, { error: 'All places for this task are taken.' }]; }
+      await ref.set({ tid: t.id, title: t.title, type: t.type, reward: t.reward, uid, proof, status: 'Pending', at: iso() });
+      return [200, { ok: true }];
+    }),
+    async adminJobs(b, user) {
+      if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admin login required.' }];
+      if (!(await adminCan(user, ['services']))) return [403, { error: 'Your admin role does not allow this.' }];
+      if (b.op === 'list') {
+        const s = await db().collection('taskSubs').get();
+        return [200, { list: s.docs.map(x => ({ id: x.id, ...x.data() })).sort((a, c) => String(c.at).localeCompare(String(a.at))).slice(0, 300) }];
+      }
+      const ref = db().collection('taskSubs').doc(String(b.id || ''));
+      const s = await ref.get(); if (!s.exists) return [404, { error: 'Not found.' }];
+      const o = s.data(); if (o.status !== 'Pending') return [400, { error: 'Already ' + o.status + '.' }];
+      if (b.op === 'approve') {
+        const ud = await findUserDoc(o.uid); if (!ud) return [404, { error: 'The user no longer exists.' }];
+        await xcredit(ud.ref, o.uid, o.reward, 'task', `Task: ${o.title}`, { taskId: o.tid }, t => t.update(ref, { status: 'Approved', decidedAt: iso(), decidedBy: user.uid }));
+        await feed(o.uid, `earned ৳${o.reward} from a task`, { icon: 'fa-solid fa-briefcase', color: 'g-orange' });
+        await notifyUser(o.uid, 'Task approved 💼', `“${o.title}” is approved — ৳${o.reward} is added to your Extra Balance.`, 'success');
+      } else if (b.op === 'reject') {
+        const reason = str(b.reason, 200);
+        await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
+        await notifyUser(o.uid, 'Task not approved', `“${o.title}” could not be approved.${reason ? ' Reason: ' + reason : ''} You can try again.`, 'warning');
       } else return [400, { error: 'Unknown action.' }];
       return [200, { ok: true }];
     },
@@ -356,3 +446,4 @@ module.exports.DEF = DEF;
 module.exports.norm = norm;
 module.exports.quote = quote;
 module.exports.priceNow = priceNow;
+module.exports.bonusFor = bonusFor;

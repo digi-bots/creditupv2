@@ -44,10 +44,10 @@ const SVD = {
   loans: { emiMode: 'principal', pay: { on: true }, payoff: { on: true, discountPct: 0, fee: 0 }, limit: { on: true, enforce: false, start: 20000, step: 10000, verifiedBonus: 5000, vipBonus: 10000, max: 0 },
     trust: { on: true, levels: [{ name: 'Bronze', min: 0, perk: 'Welcome to Creditfy' }, { name: 'Silver', min: 30, perk: 'Faster review' }, { name: 'Gold', min: 60, perk: 'Higher loan limit and priority review' }, { name: 'Platinum', min: 85, perk: 'Our best limits and the fastest service' }] },
     budget: { safePct: 40 }, statement: { on: true } },
-  hub: { home: ['vip', 'checkin', 'spin', 'wallet', 'calc', 'refer', 'history', 'all'], tiles: {} }
+  hub: { home: ['vip', 'checkin', 'spin', 'wallet', 'recharge', 'jobs', 'calc', 'refer', 'history', 'all'], tiles: {} }
 };
 const SV_TILES = [['vip', 'VIP Express'], ['verify', 'Verify Number'], ['checkin', 'Daily Check-in'], ['spin', 'Spin & Win'], ['wallet', 'Wallet'], ['redeem', 'Redeem Code'], ['voucher', 'Gift Voucher'],
-  ['calc', 'Calculator'], ['refer', 'Refer & Earn'], ['history', 'History'], ['profile', 'Profile'],
+  ['recharge', 'Mobile Recharge'], ['jobs', 'Micro Jobs'], ['calc', 'Calculator'], ['refer', 'Refer & Earn'], ['history', 'History'], ['profile', 'Profile'],
   ['loans', 'My Loans'], ['repay', 'Pay Installment'], ['payoff', 'Early Payoff'], ['limit', 'Loan Limit'], ['trust', 'Trust Level'], ['statement', 'Statement (PDF)'], ['budget', 'Budget Planner'], ['compare', 'EMI Compare'],
   ['tips', 'Smart Tips'], ['sponsors', 'Partners & Sites'], ['faq', 'Help Center'], ['fees', 'Fees Explained'], ['safety', 'Stay Safe'], ['callback', 'Call Me Back'], ['offices', 'Our Offices']];
 let _SV = clone(SVD), _ORD = [], _CODES = [], _USES = [];
@@ -55,7 +55,7 @@ let _SV = clone(SVD), _ORD = [], _CODES = [], _USES = [];
 function buildSvc(){
   const s = $p('sec-services'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Services &amp; Rewards</h2>${svBtn('services')}</div>${roBanner}
-  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['help', 'circle-question', 'Help & Info'], ['hub', 'grip', 'Quick Services tiles'], ['extra', 'store', 'Extra services']], 'orders')}
+  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['help', 'circle-question', 'Help & Info'], ['hub', 'grip', 'Quick Services tiles'], ['extra', 'store', 'Extra services'], ['jobs', 'briefcase', 'Micro jobs']], 'orders')}
   <div class="pro-pane" data-k="help">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-phone-volume"></i>Call-back requests <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="cbLoad()"><i class="fa-solid fa-rotate-right"></i></button></div><div id="cbList"></div></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-lightbulb"></i>Smart Tips <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="heAdd('tips')"><i class="fa-solid fa-plus"></i>Add tip</button></div>
@@ -174,6 +174,15 @@ function buildSvc(){
       <div id="hbList"></div>
     </div>
   </div>
+  <div class="pro-pane" data-k="jobs">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-briefcase"></i>Micro Jobs — tasks users do to earn Extra Balance</div>
+      <div class="hint" style="margin-bottom:8px">Add a task (join a Telegram / WhatsApp group or channel, visit a link, sign up, fill a form, a survey, share, refer…), its link, the reward and what proof you want. Users send the proof, you check it below and approve — the reward goes to their Extra Balance. Rewards are for Verified &amp; VIP members. Slots = how many people can do it (0 = no limit). Press <b>Save changes</b> after editing tasks.</div>
+      <div class="fgrid fgrid3">${tog('mj-on', 'Micro Jobs on', true)}</div>
+      <div id="mjTasks"></div>
+      <button class="btn btn-sm btn-s ro-ok" onclick="mjAdd()"><i class="fa-solid fa-plus"></i>Add a task</button>
+    </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-check"></i>Proofs to check <select id="mjFilter" onchange="mjSubsRender()" style="margin-left:auto;height:30px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option><option value="all">All</option></select><button class="btn btn-sm btn-s ro-ok" onclick="mjLoad()"><i class="fa-solid fa-rotate-right"></i></button></div><div id="mjSubs"></div></div>
+  </div>
   <div class="pro-pane" data-k="extra">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-store"></i>Extra Services (the section under Quick Services)</div>
       <div class="hint" style="margin-bottom:10px">Paid services the team delivers by hand. Orders come into the <b>Orders</b> tab: press <i class="fa-solid fa-hourglass-half"></i> when you start, <i class="fa-solid fa-check"></i> to deliver (write the code or details — only that user sees it), or <i class="fa-solid fa-xmark"></i> to reject. Logo = an image link (square, e.g. 200×200); without one the icon is shown.</div>
@@ -190,6 +199,12 @@ function buildSvc(){
       <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-wallet"></i>Extra Balance (separate from loans and loan fees)</div>
       <div class="fgrid fgrid3">${tog('xs-w-on', 'Extra Balance on', true)}${tog('xs-w-direct', 'Also allow paying each order with a TrxID', true)}${inp('xs-w-min', 'Smallest deposit (৳)', '50', 'type="number" min="1"')}${inp('xs-w-max', 'Largest deposit (৳, 0 = no limit)', '50000', 'type="number" min="0"')}</div>
       <div class="hint">Deposits come into the Orders tab — press ✓ when the money arrived. An order paid from Extra Balance that you reject is refunded to the user's Extra Balance automatically. Users → open a user → “Extra Balance” to add or take money by hand.</div>
+      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-gift"></i>Deposit bonus (Extra Balance)</div>
+      <div class="fgrid fgrid3">${tog('xs-b-on', 'Give a bonus on deposits', false)}${inp('xs-b-max', 'Largest bonus per deposit (৳, 0 = no limit)', '500', 'type="number" min="0"')}${area('xs-b-tiers', 'Tiers — one per line: deposit from = bonus %', '500 = 2\n2000 = 3\n5000 = 5', 3)}</div>
+      <div class="hint">The best matching tier is used. Example: ৳2,500 deposit with “2000 = 3” → ৳75 bonus. The bonus is added when you approve the deposit, as its own line in the user's history. Users see the tiers on the Add balance page.</div>
+      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-mobile-screen-button"></i>Mobile Recharge (Quick Services · Verified &amp; VIP only)</div>
+      <div class="fgrid fgrid3">${tog('xs-rc-on', 'Mobile recharge on', true)}${inp('xs-rc-min', 'Smallest (৳)', '20', 'type="number" min="10"')}${inp('xs-rc-max', 'Largest (৳)', '1000', 'type="number" min="10"')}${area('xs-rc-ops', 'Operators — one per line', 'Grameenphone\nRobi\nAirtel\nBanglalink\nTeletalk', 3)}</div>
+      <div class="hint">Paid from Extra Balance. Recharges come into the Orders tab as “Mobile Recharge” — send it, then press ✓. Rejecting refunds the user's Extra Balance.</div>
       <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-bolt"></i>Live orders list (under Extra Services)</div>
       <div class="fgrid fgrid3">${tog('xs-l-on', 'Show the live list', true)}${inp('xs-l-count', 'How many to show', '12', 'type="number" min="3" max="30"')}</div>
       <div class="hint">Shows real orders and deposits only, with the number masked (017****013).</div>
@@ -504,6 +519,9 @@ function xsData(){
     loanNotice: { on: chk('xs-n-on'), days: val('xs-n-days') || '7–14' },
     wallet: { on: chk('xs-w-on'), direct: chk('xs-w-direct'), min: numv('xs-w-min', 50, 1, 1e7), max: numv('xs-w-max', 50000, 0, 1e8) },
     live: { on: chk('xs-l-on'), count: numv('xs-l-count', 12, 3, 30) },
+    depBonus: { on: chk('xs-b-on'), max: numv('xs-b-max', 500, 0, 1e7), tiers: lines('xs-b-tiers').map(l => { const [a, b] = l.split('='); return { min: Math.round(Number(String(a).replace(/[^\d.]/g, '')) || 0), pct: Number(String(b || '').replace(/[^\d.]/g, '')) || 0 }; }).filter(t => t.min > 0 && t.pct > 0) },
+    recharge: { on: chk('xs-rc-on'), min: numv('xs-rc-min', 20, 10, 1e5), max: numv('xs-rc-max', 1000, 10, 1e6), ops: lines('xs-rc-ops') },
+    jobs: { on: chk('mj-on'), tasks: (_SV.extra.jobs.tasks || []).filter(t => String(t.title || '').trim()).map(t => ({ ...t, id: t.id || 't' + hid(), title: String(t.title).trim().slice(0, 80), reward: Math.max(0, Math.round(Number(t.reward) || 0)), slots: Math.max(0, Math.round(Number(t.slots) || 0)) })) },
     games: { on: chk('xs-g-on'), reward: numv('xs-g-reward', 1, 0, 1e5), perDay: numv('xs-g-perday', 5, 0, 1e3), plays: numv('xs-g-plays', 30, 1, 1e3), level: numv('xs-g-level', 75, 0, 100) } };
 }
 async function xsLoad(){
@@ -514,7 +532,11 @@ async function xsLoad(){
     'xs-p-on': (_SV.extra.perk || {}).on !== false, 'xs-p-pct': (_SV.extra.perk || {}).chargePct ?? 5, 'xs-p-min': (_SV.extra.perk || {}).chargeMin ?? 10,
     'xs-r-on': (_SV.extra.redFriday || {}).on !== false, 'xs-r-title': (_SV.extra.redFriday || {}).title || 'Red Friday', 'xs-r-day': String((_SV.extra.redFriday || {}).day ?? 5), 'xs-r-text': (_SV.extra.redFriday || {}).text || '',
     'xs-n-on': (_SV.extra.loanNotice || {}).on !== false, 'xs-n-days': (_SV.extra.loanNotice || {}).days || '7–14',
-    'xs-l-on': (_SV.extra.live || {}).on !== false, 'xs-l-count': (_SV.extra.live || {}).count || 12 });
+    'xs-l-on': (_SV.extra.live || {}).on !== false, 'xs-l-count': (_SV.extra.live || {}).count || 12,
+    'xs-b-on': (_SV.extra.depBonus || {}).on === true, 'xs-b-max': (_SV.extra.depBonus || {}).max ?? 500, 'xs-b-tiers': ((_SV.extra.depBonus || {}).tiers || []).map(t => `${t.min} = ${t.pct}`).join('\n'),
+    'xs-rc-on': (_SV.extra.recharge || {}).on !== false, 'xs-rc-min': (_SV.extra.recharge || {}).min ?? 20, 'xs-rc-max': (_SV.extra.recharge || {}).max ?? 1000, 'xs-rc-ops': ((_SV.extra.recharge || {}).ops || []).join('\n'),
+    'mj-on': (_SV.extra.jobs || {}).on !== false });
+  _SV.extra.jobs = _SV.extra.jobs || { on: true, tasks: [] }; mjRender(); mjLoad();
   ['xs-g-reward', 'xs-g-perday'].forEach(id => { const e = $p(id); if(e) e.oninput = xsRender; });
   _SV.extra.deals = _SV.extra.deals || [];
   xsRender(); xsDealsRender();
@@ -530,6 +552,43 @@ async function xsOrder(id, op){
   if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; }
   await logAct(`Extra order ${o.planName} → ${op} for ${o.uid} (TrxID ${o.trxId})`, 'user', o.uid);
   toast(op === 'approve' ? 'Balance added ✓' : op === 'deliver' ? 'Delivered ✓' : op === 'process' ? 'Marked in progress' : 'Rejected', op === 'reject' ? 'e' : 's'); odLoad();
+}
+
+/* ═════════ Micro jobs ═════════ */
+const MJ_TYPES = [['join', 'Join group / channel'], ['visit', 'Visit link'], ['signup', 'Sign up'], ['form', 'Form fill-up'], ['survey', 'Survey'], ['share', 'Share'], ['refer', 'Refer'], ['other', 'Other']];
+let _MJS = [];
+function mjRender(){
+  const el = $p('mjTasks'); if(!el || !_SV.extra) return; const L = _SV.extra.jobs.tasks;
+  const sel = 'height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border);min-width:0;width:100%';
+  el.innerHTML = L.map((t, k) => `<div style="border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px;${t.on === false ? 'opacity:.6' : ''}">
+    <div style="display:grid;grid-template-columns:1.6fr 1fr .6fr .6fr 1fr 34px 34px;gap:6px;align-items:center">
+      ${xsInp(t.title, `mjSet(${k},'title',this.value)`, 'Join our Telegram channel')}
+      <select style="${sel}" onchange="mjSet(${k},'type',this.value)">${MJ_TYPES.map(([v, l]) => `<option value="${v}"${t.type === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
+      ${xsInp(t.reward, `mjSet(${k},'reward',this.value)`, 'reward ৳', 'number')}${xsInp(t.slots, `mjSet(${k},'slots',this.value)`, 'slots', 'number')}
+      <input type="datetime-local" value="${ep(xsLocal(t.until))}" title="Ends (optional)" onchange="mjSet(${k},'until',this.value?new Date(this.value).toISOString():'')" style="${sel};padding:0 6px;color-scheme:dark">
+      <input type="checkbox" ${t.on !== false ? 'checked' : ''} onchange="mjSet(${k},'on',this.checked)" title="On"><button class="ab ab-no ro-ok" onclick="mjDel(${k})"><i class="fa-solid fa-trash"></i></button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">${xsInp(t.link, `mjSet(${k},'link',this.value)`, 'https://t.me/… (task link)')}${xsInp(t.proof, `mjSet(${k},'proof',this.value)`, 'Proof: your Telegram username')}</div>
+    <textarea rows="2" oninput="mjSet(${k},'steps',this.value)" placeholder="Steps for the user (one per line)" style="width:100%;box-sizing:border-box;margin-top:6px">${ep(t.steps || '')}</textarea></div>`).join('') || '<div class="hint">No tasks yet.</div>';
+}
+function mjSet(k, f, v){ const t = _SV.extra.jobs.tasks[k]; if(!t) return; t[f] = v; markDirty('services', 'jobs'); }
+function mjAdd(){ _SV.extra.jobs.tasks.push({ id: 't' + hid(), title: '', type: 'join', link: '', reward: 5, slots: 0, proof: 'Your username', steps: '', on: true, until: '' }); markDirty('services', 'jobs'); mjRender(); }
+function mjDel(k){ confirm2('Remove this task? Proofs already sent stay in the list.', () => { _SV.extra.jobs.tasks.splice(k, 1); markDirty('services', 'jobs'); mjRender(); }); }
+async function mjLoad(){ const r = await window._accountApi('adminJobs', { op: 'list' }); _MJS = r.ok ? r.data.list || [] : []; mjSubsRender(); }
+function mjSubsRender(){
+  const el = $p('mjSubs'); if(!el) return; const f = $p('mjFilter') ? $p('mjFilter').value : 'Pending';
+  const L = _MJS.filter(x => f === 'all' || x.status === f);
+  el.innerHTML = L.length ? L.map(x => { const u = (_D.users || []).find(y => String(y.phone) === String(x.uid)) || {};
+    return `<div class="od-row"><div><b>${ep(x.title)}</b><small>${ep(u.name || '')} · 0${ep(x.uid)}</small></div><div><b style="color:var(--p)">+৳${fa(x.reward)}</b><small>${ep(x.type)}</small></div>
+      <div style="grid-column:span 2"><small>Proof</small><div style="word-break:break-word">${ep(x.proof)}</div></div>
+      <div class="acts">${x.status === 'Pending' ? `<button class="ab ab-ok" title="Approve — add the reward" onclick="mjAct('${ep(x.id)}','approve')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" title="Reject" onclick="mjAct('${ep(x.id)}','reject')"><i class="fa-solid fa-xmark"></i></button>` : `<small>${ep(x.status)}${x.reason ? ' · ' + ep(x.reason) : ''}</small>`}</div></div>`; }).join('') : '<div class="hint">Nothing here.</div>';
+}
+async function mjAct(id, op){
+  const x = _MJS.find(y => y.id === id); if(!x) return; let reason = '';
+  if(op === 'reject'){ reason = prompt('Reason (the user sees it):', 'We could not confirm this task.'); if(reason === null) return; }
+  showL(true); const r = await window._accountApi('adminJobs', { op, id, reason }); showL(false);
+  if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; }
+  await logAct(`Micro job “${x.title}” ${op === 'approve' ? 'approved (+৳' + x.reward + ')' : 'rejected'} for ${x.uid}`, 'user', x.uid);
+  toast(op === 'approve' ? 'Approved — reward added ✓' : 'Rejected', op === 'approve' ? 's' : 'e'); mjLoad();
 }
 
 /* ═════════ load / save ═════════ */
