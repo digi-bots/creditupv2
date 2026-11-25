@@ -136,8 +136,8 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
       await call('setMyCommands', { commands: cmds.filter(c => ['offers', 'app', 'rules', 'help'].includes(c.command)), scope: { type: 'all_group_chats' } });
       if (S.miniApp) await call('setChatMenuButton', { menu_button: { type: 'web_app', text: 'Open app', web_app: { url: S.siteUrl } } });
       else await call('setChatMenuButton', { menu_button: { type: 'commands' } });
-      await call('setMyShortDescription', { short_description: 'Creditfy — smart digital loans, offers & services. Open the app right here.' }).catch(() => {});
-      await call('setMyDescription', { description: 'Creditfy official bot 🤝\n• Open the Creditfy app inside Telegram\n• Get your loan & order updates here\n• See today’s offers\nWe will never ask for your PIN, OTP or password.' }).catch(() => {});
+      await call('setMyShortDescription', { short_description: 'Creditfy official bot — online loans, recharge, gift cards & digital services. Open the app right here.' }).catch(() => {});
+      await call('setMyDescription', { description: 'Creditfy official bot 🤝\n\n💰 Apply for a loan from your phone — money to bKash, Nagad or Rocket, every fee shown upfront.\n📱 Mobile recharge, gift cards, vouchers, currency & MFS exchange.\n💼 Earn with micro jobs, daily check-in and Spin & Win.\n🔔 Get your loan, payment and order updates here.\n\nTap “Open app” to start. We will never ask for your PIN, OTP or password.' }).catch(() => {});
       const ref = db().collection('siteConfig').doc('app');
       await ref.update({ 'telegram.botUsername': me.username }).catch(() => ref.set({ telegram: { botUsername: me.username } }, { merge: true }));
       return [200, { ok: true, bot: me.username, webhook: S.siteUrl + '/api/telegram' }];
