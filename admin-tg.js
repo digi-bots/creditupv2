@@ -70,6 +70,10 @@ function buildTg(){
       <div class="hint" style="margin-bottom:10px">Sent automatically by the daily 9am job, to all of these at the same time. Press <b>Save changes</b> after editing.</div>
       <div class="fgrid fgrid3">${tog('dr-on', 'Daily reminder on', true)}${tog('dr-site', 'In-app notification for every user (shows for 24 hours)', true)}${tog('dr-push', 'Phone push to every device', true)}
         ${tog('dr-channel', 'Post in the Telegram channel', true)}${tog('dr-bot', 'Message from the bot to everyone who started it / opened the Mini App', true)}${tog('dr-pin', 'Pin the channel post', false)}</div>
+      <div class="cfg-t" style="margin-top:4px;font-size:13px"><i class="fa-solid fa-ticket" style="color:#ffd76a"></i>Today’s bonus code (inside the reminder)</div>
+      <div class="fgrid fgrid3">${tog('dr-code', 'Add a new random redeem code every day', true)}${inp('dr-amt', 'Amount per user (৳, to the Creditfy balance)', '5', 'type="number" min="1"')}${inp('dr-max', 'Most people who can use it (0 = everyone)', '0', 'type="number" min="0"')}</div>
+      <div class="hint" style="margin-bottom:10px">A code like <b>CF-7K3QX9</b> is made at 9am and added to the reminder (on Telegram, tapping it copies it). Users enter it in Quick Services → Redeem Code: the amount goes to their Creditfy balance, once per person. It stops working at midnight, and at midnight the reminder's in-app notification, channel post and bot messages are deleted. Redeem codes follow the “rewards are for Verified members” rule (Services &amp; Rewards).</div>
+      <div id="drCode" class="hint" style="margin-bottom:10px"></div>
       <div class="fgrid">${inp('dr-title', 'Title', '☀️ Good morning from Creditfy', 'full')}${area('dr-text', 'Message (channel, bot and in-app)', '', 14)}${inp('dr-pushText', 'Short text for the phone push (max 230)', '', 'full maxlength="230"')}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn btn-s ro-ok" onclick="drReset()"><i class="fa-solid fa-rotate-left"></i>Use the default text</button>
         <button class="btn btn-s ro-ok" onclick="drSend(['channel'])"><i class="fa-brands fa-telegram"></i>Test: channel only</button><button class="btn btn-p ro-ok" onclick="drSend(null)"><i class="fa-solid fa-paper-plane"></i>Send to everyone now</button></div>
@@ -219,6 +223,8 @@ async function drLast(){
   const el = $p('drLast'); if(!el) return;
   const r = await window._accountApi('adminDaily', { op: 'status' }); if(!r.ok){ el.textContent = ''; return; }
   const L = r.data.last && r.data.last.last, f = x => typeof x === 'object' && x ? (x.sent !== undefined ? `${x.sent} sent${x.failed ? ', ' + x.failed + ' failed' : ''}${x.total !== undefined ? ' of ' + x.total : ''}` : JSON.stringify(x)) : (x || '—');
+  const c = r.data.code, ce = $p('drCode');
+  if(ce) ce.innerHTML = c && c.code ? `Today’s code: <b style="font-family:monospace;font-size:14px;color:#ffd76a">${ep(c.code)}</b> = ৳${fa(c.amount)} · used by <b>${fa(c.uses || 0)}</b> · ${c.live ? '<span style="color:var(--p)">active until midnight</span>' : '<span style="color:var(--txt2)">expired</span>'}` : 'No code yet today — it is made with the 9am reminder (or “Send to everyone now”).';
   el.innerHTML = `Bot audience: <b>${fa(r.data.botUsers)}</b> people.` + (L ? `<br>Last sent ${ep(L.day || '')}: in-app <b>${ep(f(L.site))}</b> · push <b>${ep(f(L.push))}</b> · channel <b>${ep(f(L.channel))}</b> · bot <b>${ep(f(L.bot))}</b>` : '<br>Not sent yet.');
 }
 async function drSend(only){
@@ -240,6 +246,8 @@ async function loadTg(){
     'ta-services': _TG.auto.services !== false, 'tw-on': _TG.welcome.on !== false, 'tw-del': _TG.welcome.deleteJoin !== false, 'tw-text': _TG.welcome.text, 'tg-rules': _TG.rules, 'tm-links': _TG.mod.links !== false,
     'tm-words': (_TG.mod.words || []).join('\n'), 'tg-dm': _TG.dm !== false, 'tg-mini': _TG.miniApp !== false });
   const D = d.daily || {};
+  const DC = D.code || {};
+  fillIn({ 'dr-code': DC.on !== false, 'dr-amt': DC.amount ?? 5, 'dr-max': DC.maxUses ?? 0 });
   fillIn({ 'dr-on': D.on !== false, 'dr-site': D.site !== false, 'dr-push': D.push !== false, 'dr-channel': D.channel !== false, 'dr-bot': D.bot !== false, 'dr-pin': D.pin === true,
     'dr-title': D.title || DR_DEF.title, 'dr-text': D.text || DR_DEF.text, 'dr-pushText': D.pushText || DR_DEF.pushText });
   proTabStart('telegram', 'conn'); afterLoad('telegram'); tgPrev(); tgStatus(); tgLog(); scLoad(); drLast();
@@ -252,7 +260,8 @@ async function saveTg(){
     welcome: { on: chk('tw-on'), deleteJoin: chk('tw-del'), text: $p('tw-text').value.trim() || TGD.welcome.text }, rules: $p('tg-rules').value.trim(),
     mod: { links: chk('tm-links'), words: lines('tm-words').map(w => w.toLowerCase()).slice(0, 100) }, dm: chk('tg-dm'), miniApp: chk('tg-mini'), updatedAt: new Date().toISOString() };
   const daily = { on: chk('dr-on'), site: chk('dr-site'), push: chk('dr-push'), channel: chk('dr-channel'), bot: chk('dr-bot'), pin: chk('dr-pin'),
-    title: val('dr-title') || DR_DEF.title, text: $p('dr-text').value.trim() || DR_DEF.text, pushText: val('dr-pushText') || DR_DEF.pushText };
+    title: val('dr-title') || DR_DEF.title, text: $p('dr-text').value.trim() || DR_DEF.text, pushText: val('dr-pushText') || DR_DEF.pushText,
+    code: { on: chk('dr-code'), amount: numv('dr-amt', 5, 1, 10000), maxUses: numv('dr-max', 0, 0, 1e7) } };
   await window._setDoc('siteConfig', 'app', { telegram: data, daily });
   await logAct('Telegram settings saved', 'config', 'telegram');
 }
