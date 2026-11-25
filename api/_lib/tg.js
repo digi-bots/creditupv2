@@ -115,6 +115,8 @@ function isDue(x, n) {
   return false;
 }
 async function runSchedule(db, force) {
+  // a visit after midnight also tidies up yesterday's daily reminder (one small read when there is nothing to do)
+  try { await require('./daily').cleanupDaily(db); } catch (e) {}
   if (!configured()) return { ran: 0 };
   const n = bdNow();
   // one runner at a time: a short lock in tgMeta/tick
@@ -240,8 +242,10 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
       const no = await admin(user, ['appset', 'broadcast']); if (no) return no;
       const D = require('./daily');
       if (b.op === 'send') { const only = Array.isArray(b.only) && b.only.length ? b.only.filter(k => ['site', 'push', 'channel', 'bot'].includes(k)) : null; return [200, { ok: true, result: await D.runDaily(db, { force: true, only }) }]; }
-      const m = await db().collection('tgMeta').doc('daily').get(); const n = (await D.botChats(db)).length;
-      return [200, { last: m.exists ? m.data() : null, botUsers: n }];
+      const [m, c] = await Promise.all([db().collection('tgMeta').doc('daily').get(), db().collection('tgMeta').doc('dailyCode').get()]); const n = (await D.botChats(db)).length;
+      let code = c.exists ? c.data() : null;
+      if (code && code.code) { const p = await db().collection('promoCodes').doc(code.code).get(); code = { ...code, uses: p.exists ? p.data().uses || 0 : 0, live: p.exists && p.data().on !== false && new Date(p.data().end).getTime() > Date.now() }; }
+      return [200, { last: m.exists ? m.data() : null, botUsers: n, code }];
     }),
     // someone opened the Mini App: remember them for the bot messages if Telegram allows writing to them
     tgSeen: async (b) => {

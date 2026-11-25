@@ -322,8 +322,12 @@ module.exports = function services({ db, admin, findUserDoc, isAdmin, adminCan, 
       await db().runTransaction(async t => {
         const s = await t.get(ref); const x = s.data() || {};
         if (Number(x.maxUses) > 0 && (Number(x.uses) || 0) >= Number(x.maxUses)) throw Object.assign(new Error('This code has been fully used.'), { status: 400 });
+        // one use per person: a fixed record id, so two taps at the same moment cannot both count
+        const one = Math.max(1, Number(x.perUser) || 1) === 1;
+        const useRef = one ? db().collection('promoUses').doc(`${c}_${uid}`) : db().collection('promoUses').doc();
+        if (one && (await t.get(useRef)).exists) throw Object.assign(new Error('You have already used this code.'), { status: 400 });
         t.update(ref, { uses: (Number(x.uses) || 0) + 1, lastUsedAt: iso(), ...(x.kind === 'voucher' ? { usedBy: uid, usedAt: iso() } : {}) });
-        t.set(db().collection('promoUses').doc(), { code: c, uid, kind: x.kind || 'redeem', amount: value, at: iso() });
+        t.set(useRef, { code: c, uid, kind: x.kind || 'redeem', amount: value, at: iso() });
       });
       const balance = await credit(d.ref, uid, value, p.kind === 'voucher' ? 'voucher' : 'redeem', `${p.kind === 'voucher' ? 'Gift voucher' : 'Redeem code'} ${c}`);
       if (p.kind === 'voucher' && p.createdBy) await notifyUser(p.createdBy, 'Your gift was used 🎁', `Your gift voucher ${c} (৳${value}) was redeemed by a friend.`, 'bonus');

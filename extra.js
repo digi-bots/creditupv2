@@ -796,7 +796,10 @@ window.xsMove = async k => {
 
 load().then(() => { loadLive(); loadXb();
   // ?go=extra (from the daily reminder) opens the home page at Extra Services
-  if(new URLSearchParams(location.search).get('go') === 'extra') setTimeout(() => { const b = $x('xsBlock'); if(b) b.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 1200); });
+  const go = new URLSearchParams(location.search).get('go');
+  if(go === 'extra') setTimeout(() => { const b = $x('xsBlock'); if(b) b.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 1200);
+  // ?go=redeem (the daily code): open Redeem Code
+  if(go === 'redeem') setTimeout(() => { if(user() && window.svGo) window.svGo('redeem'); }, 1500); });
 setInterval(loadLive, 30e3);
 // redraw the section after the language changes or the home page is rebuilt; reload the balance after login / logout
 let _ph = (user() || {}).phone || '';
