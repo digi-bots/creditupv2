@@ -10,12 +10,14 @@ module.exports = async (req, res) => {
   const secret = process.env.CRON_SECRET, auth = req.headers.authorization || '';
   if (secret ? auth !== `Bearer ${secret}` : !/vercel-cron/i.test(req.headers['user-agent'] || '')) return res.status(401).json({ error: 'Not allowed' });
   if (!process.env.FIREBASE_SERVICE_ACCOUNT || !TG.configured()) return res.status(200).json({ skipped: 'not configured' });
+  let sched = null;
+  try { sched = await TG.runSchedule(db, true); } catch (e) { console.error('tg schedule', e.message); }
   try {
     const s = await db().collection('siteConfig').doc('services').get();
     const C = X.norm(s.exists ? s.data().extra : null);
     const t = Date.now() + 60e3, lines = [];
     C.services.filter(x => x.on && !x.soon && x.mode === 'items').forEach(sv => sv.items.filter(i => i.on).forEach(i => { const p = X.priceNow(C, sv, i, t); if (p.kind === 'deal') lines.push(`• ${TG.esc(i.name)} — <s>${tk(p.was)}</s> ${tk(p.price)}`); }));
-    if (!lines.length) return res.status(200).json({ sent: 0, reason: 'no deals today' });
+    if (!lines.length) return res.status(200).json({ sent: 0, reason: 'no deals today', sched });
     const wd = new Date(t + 6 * 3600e3).getUTCDay(), red = C.redFriday && C.redFriday.on && C.redFriday.day === wd;
     const r = await TG.publish(db, { title: red ? `🔴 ${C.redFriday.title} is LIVE — today only!` : '⚡ Today’s deals are live', text: `${lines.slice(0, 15).join('\n')}\n\nPrices end at midnight (Bangladesh time). Verified & VIP members pay no service charge.`.replace(/<s>|<\/s>/g, ''), pin: red }, 'deals');
     return res.status(200).json(r);

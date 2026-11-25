@@ -15,6 +15,8 @@ const E = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&
 // or t.me/<bot>?startapp=r01XXXXXXXXX (Telegram opens the Mini App with start_param)
 const normRef = v => { const d = String(v || '').replace(/\D/g, '').replace(/^(880)?0*/, ''); return /^1\d{9}$/.test(d) ? d : ''; };
 if(inTg){ const sp = (W.initDataUnsafe || {}).start_param || ''; const rc = /^r/i.test(sp) ? normRef(sp) : ''; if(rc && !(user() || {}).phone) try { localStorage.setItem('referrerPhone', rc); } catch (e) {} }
+// visits keep scheduled Telegram posts on time (each phone asks at most every 10 minutes; the server has its own lock)
+try { const last = Number(localStorage.getItem('cf_tg_tick') || 0); if(Date.now() - last > 10 * 60e3){ localStorage.setItem('cf_tg_tick', String(Date.now())); setTimeout(() => fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'tgTick' }) }).catch(() => {}), 6000); } } catch (e) {}
 let BOT = '';
 fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'tgState' }) }).then(r => r.json()).then(d => { if(d && d.on && d.bot) BOT = d.bot; }).catch(() => {});
 const tgInvite = phone => BOT ? `https://t.me/${BOT}?start=r0${String(phone).replace(/^0+/, '')}` : '';

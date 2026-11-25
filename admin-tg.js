@@ -26,7 +26,7 @@ let _TG = clone(TGD);
 function buildTg(){
   const s = $p('sec-telegram'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Telegram</h2>${svBtn('telegram')}</div>${roBanner}
-  ${proTabs('telegram', [['conn', 'plug', 'Connection'], ['post', 'paper-plane', 'Post to channel'], ['auto', 'bolt', 'Auto posts'], ['group', 'comments', 'Group & bot'], ['log', 'clock-rotate-left', 'Recent posts']], 'conn')}
+  ${proTabs('telegram', [['conn', 'plug', 'Connection'], ['post', 'paper-plane', 'Post to channel'], ['auto', 'bolt', 'Auto posts'], ['group', 'comments', 'Group & bot'], ['sched', 'calendar-days', 'Scheduled posts'], ['log', 'clock-rotate-left', 'Recent posts']], 'conn')}
   <div class="pro-pane" data-k="conn">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-plug"></i>Status <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="tgStatus()"><i class="fa-solid fa-rotate-right"></i>Check</button></div><div id="tgStatus" class="hint">Checking…</div></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-check"></i>How to connect (one time)</div>
@@ -65,8 +65,25 @@ function buildTg(){
       <div class="fgrid">${tog('tg-dm', 'Send each user’s notifications to their Telegram too (after they connect)', true)}${tog('tg-mini', '“Open app” button opens Creditfy inside Telegram (Mini App)', true)}</div>
       <div class="hint">Users connect in the app: Quick Services → Telegram → Connect (or automatically when they open Creditfy inside Telegram while logged in). Commands: /start, /offers, /balance, /app, /rules, /help.</div></div>
   </div>
+  <div class="pro-pane" data-k="sched">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-calendar-plus"></i><span id="scFormT">New scheduled post</span></div>
+      <div class="tg-tpl"><button onclick="tgTpl('news','sc')">📰 News</button><button onclick="tgTpl('offer','sc')">🔥 Offer</button><button onclick="tgTpl('tips','sc')">💡 Tip</button><button onclick="tgTpl('feature','sc')">🚀 Feature</button></div>
+      <div class="fgrid">${inp('sc-title', 'Title', '💡 Tip of the day', 'full')}${area('sc-text', 'Message', '', 4)}${inp('sc-image', 'Image link (optional, https://…)', '')}
+        <div class="fg"><label>Send to</label><select id="sc-to"><option value="channel">Channel</option><option value="group">Group</option><option value="both">Channel + group</option></select></div>
+        ${inp('sc-bt', 'Button text (optional)', 'Open offer')}${inp('sc-bl', 'Button link (optional, https://…)', '')}
+        <div class="fg"><label>Repeat</label><select id="sc-rep" onchange="scRep()"><option value="daily">Every day</option><option value="days">On chosen days</option><option value="once">Once, on a date</option></select></div>
+        <div class="fg"><label>Time (Bangladesh)</label><input id="sc-time" type="time" value="10:00" style="color-scheme:dark"></div>
+        <div class="fg full" id="sc-daysW" style="display:none"><label>Days</label><div id="sc-days" style="display:flex;gap:6px;flex-wrap:wrap">${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d, n) => `<label style="display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-size:12.5px"><input type="checkbox" value="${n}">${d}</label>`).join('')}</div></div>
+        <div class="fg" id="sc-dateW" style="display:none"><label>Date</label><input id="sc-date" type="date" style="color-scheme:dark"></div>
+        ${tog('sc-pin', 'Pin it', false)}</div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn btn-p ro-ok" onclick="scSave()"><i class="fa-solid fa-floppy-disk"></i><span id="scSaveL">Add to schedule</span></button><button class="btn btn-s ro-ok" id="scCancel" style="display:none" onclick="scReset()">Cancel</button></div>
+      <div class="hint" style="margin-top:8px">Scheduled posts go out at the time you set (Bangladesh time). They run when people use the site (checked every few minutes) and twice a day by our server (12:05am and 9am), so on very quiet hours a post can go out a little later — never twice.</div></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list"></i>Schedule <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="scRun()"><i class="fa-solid fa-play"></i>Run due posts now</button><button class="btn btn-sm btn-s ro-ok" onclick="scLoad()"><i class="fa-solid fa-rotate-right"></i></button></div><div id="scList" class="hint">Loading…</div></div>
+  </div>
   <div class="pro-pane" data-k="log"><div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-clock-rotate-left"></i>Recent posts <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="tgLog()"><i class="fa-solid fa-rotate-right"></i></button></div><div id="tgLog"></div></div></div>`;
   ['tp-title', 'tp-text', 'tp-bt', 'tp-bl'].forEach(id => { const e = $p(id); if(e) e.addEventListener('input', tgPrev); });
+  // the post composer and the schedule form are not settings: they do not need “Save changes”
+  s.querySelectorAll('[id^="tp-"],[id^="sc-"]').forEach(e => { e.dataset.nodirty = '1'; });
 }
 
 const TPL = {
@@ -77,7 +94,7 @@ const TPL = {
   maint: ['⏳ Short maintenance', 'Creditfy will be under maintenance on … from … to … (Bangladesh time). Your data and balance are safe. Thank you for your patience!'],
   tips: ['💡 Tip of the day', '…\n\n🔒 Remember: our team will never ask for your PIN, OTP or password.']
 };
-function tgTpl(k){ const [t, m] = TPL[k]; $p('tp-title').value = t; $p('tp-text').value = m; tgPrev(); }
+function tgTpl(k, f){ const [t, m] = TPL[k]; const P = f || 'tp'; $p(P + '-title').value = t; $p(P + '-text').value = m; if(!f) tgPrev(); }
 function tgPrev(){
   const esc = x => String(x || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   const p = $p('tpPrev'); if(!p) return;
@@ -120,8 +137,52 @@ async function tgLog(){
   const r = await window._accountApi('adminTgPosts', {});
   const L = r.ok ? r.data.list || [] : [];
   el.innerHTML = L.length ? L.map(p => `<div class="tg-post"><div><b>${ep(p.title || '(no title)')}</b><small> · ${ep(p.kind)} · ${fd(p.at)}</small><br><small>${ep(String(p.text || '').slice(0, 140))}</small></div>
-    <div style="text-align:right">${(p.result || []).map(x => `<small style="color:${x.ok ? 'var(--p)' : 'var(--red)'}">${ep(x.where)} ${x.ok ? '✓' : '✗ ' + ep(x.error || '')}</small>`).join('<br>') || '<small>not sent</small>'}</div></div>`).join('') : '<div class="hint">No posts yet.</div>';
+    <div style="text-align:right">${(p.result || []).map(x => `<small style="color:${x.deleted ? 'var(--txt2)' : x.ok ? 'var(--p)' : 'var(--red)'}">${ep(x.where)} ${x.deleted ? 'deleted' : x.ok ? '✓' : '✗ ' + ep(x.error || '')}</small>`).join('<br>') || '<small>not sent</small>'}
+      <div style="margin-top:6px;display:flex;gap:5px;justify-content:flex-end">${(p.result || []).some(x => x.ok && !x.deleted) ? `<button class="btn btn-sm btn-d ro-ok" title="Delete it from the channel / group" onclick="tgDel('${ep(p.id)}',true)"><i class="fa-brands fa-telegram"></i>Delete post</button>` : ''}<button class="btn btn-sm btn-s ro-ok" title="Remove from this list only" onclick="tgDel('${ep(p.id)}',false)"><i class="fa-solid fa-xmark"></i></button></div></div></div>`).join('') : '<div class="hint">No posts yet.</div>';
 }
+function tgDel(id, tg){
+  confirm2(tg ? 'Delete this post from the Telegram channel / group too? (Telegram may not allow deleting posts older than 48 hours — then delete it by hand in Telegram.)' : 'Remove this post from the list? It stays on Telegram.', async () => {
+    showL(true); const r = await window._accountApi('adminTgDelete', { id, fromTelegram: tg, fromList: true }); showL(false);
+    if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; }
+    if(r.data.errors && r.data.errors.length){ toast('Could not delete: ' + r.data.errors.join('; '), 'e'); }
+    else { toast(tg ? 'Deleted from Telegram ✓' : 'Removed from the list'); await logAct(`Telegram post ${tg ? 'deleted' : 'removed from list'}`, 'broadcast', id); }
+    tgLog();
+  });
+}
+
+/* ═════════ scheduled posts ═════════ */
+let _SC = [], _scEdit = '';
+const SC_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+function scRep(){ const r = val('sc-rep'); $p('sc-daysW').style.display = r === 'days' ? '' : 'none'; $p('sc-dateW').style.display = r === 'once' ? '' : 'none'; }
+function scReset(){ _scEdit = ''; ['sc-title', 'sc-text', 'sc-image', 'sc-bt', 'sc-bl', 'sc-date'].forEach(id => { const e = $p(id); if(e) e.value = ''; }); $p('sc-time').value = '10:00'; $p('sc-rep').value = 'daily'; $p('sc-to').value = 'channel'; $p('sc-pin').checked = false;
+  document.querySelectorAll('#sc-days input').forEach(c => c.checked = false); scRep(); $p('scFormT').textContent = 'New scheduled post'; $p('scSaveL').textContent = 'Add to schedule'; $p('scCancel').style.display = 'none'; }
+async function scSave(){
+  const item = { id: _scEdit || undefined, title: val('sc-title'), text: $p('sc-text').value.trim(), image: val('sc-image'), to: val('sc-to'), pin: chk('sc-pin'), buttonText: val('sc-bt'), buttonUrl: val('sc-bl'),
+    repeat: val('sc-rep'), days: [...document.querySelectorAll('#sc-days input:checked')].map(c => Number(c.value)), date: val('sc-date'), time: val('sc-time'), on: true };
+  if(item.image && !/^https:\/\//i.test(item.image)){ toast('The image link must start with https://', 'w'); return; }
+  if(item.buttonUrl && !/^https:\/\//i.test(item.buttonUrl)){ toast('The button link must start with https://', 'w'); return; }
+  showL(true); const r = await window._accountApi('adminTgSchedule', { op: 'save', item }); showL(false);
+  if(!r.ok){ toast(r.data.error || 'Could not save', 'e'); return; }
+  await logAct(`Telegram scheduled post ${_scEdit ? 'updated' : 'added'}: "${item.title || item.text.slice(0, 40)}"`, 'broadcast', 'telegram');
+  toast(_scEdit ? 'Schedule updated ✓' : 'Added to schedule ✓'); scReset(); scLoad();
+}
+const scWhen = x => x.repeat === 'daily' ? `Every day · ${x.time}` : x.repeat === 'days' ? `${(x.days || []).map(n => SC_WD[n]).join(', ')} · ${x.time}` : `Once · ${x.date} ${x.time}`;
+async function scLoad(){
+  const el = $p('scList'); if(!el) return;
+  const r = await window._accountApi('adminTgSchedule', { op: 'list' }); _SC = r.ok ? r.data.list || [] : [];
+  el.className = ''; el.innerHTML = _SC.length ? _SC.map(x => `<div class="tg-post" style="${x.on === false ? 'opacity:.55' : ''}"><div><b>${ep(x.title || '(no title)')}</b><small> · <i class="fa-regular fa-clock"></i> ${ep(scWhen(x))} · ${ep(x.to)}${x.pin ? ' · pinned' : ''}</small><br><small>${ep(String(x.text || '').slice(0, 140))}</small>
+      ${x.lastAt ? `<br><small>Last: ${fd(x.lastAt)} — <span style="color:${String(x.lastResult || '').startsWith('sent') ? 'var(--p)' : 'var(--red)'}">${ep(x.lastResult || '')}</span></small>` : ''}</div>
+    <div style="display:flex;gap:5px;align-items:flex-start"><label class="tog" title="On / off"><input type="checkbox" ${x.on !== false ? 'checked' : ''} onchange="scToggle('${ep(x.id)}',this.checked)"><span class="tog-sl"></span></label>
+      <button class="btn btn-sm btn-s ro-ok" onclick="scEdit('${ep(x.id)}')"><i class="fa-solid fa-pen"></i></button><button class="btn btn-sm btn-d ro-ok" onclick="scDel('${ep(x.id)}')"><i class="fa-solid fa-trash"></i></button></div></div>`).join('')
+    : '<div class="hint">Nothing scheduled yet. Add a post above — e.g. a tip every morning or an offer every Friday.</div>';
+}
+function scEdit(id){ const x = _SC.find(y => y.id === id); if(!x) return; _scEdit = id;
+  fillIn({ 'sc-title': x.title, 'sc-text': x.text, 'sc-image': x.image, 'sc-to': x.to || 'channel', 'sc-bt': x.buttonText, 'sc-bl': x.buttonUrl, 'sc-rep': x.repeat, 'sc-time': x.time, 'sc-date': x.date, 'sc-pin': x.pin === true });
+  document.querySelectorAll('#sc-days input').forEach(c => c.checked = (x.days || []).includes(Number(c.value))); scRep();
+  $p('scFormT').textContent = 'Edit scheduled post'; $p('scSaveL').textContent = 'Save changes'; $p('scCancel').style.display = ''; $p('sc-title').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+async function scToggle(id, on){ const r = await window._accountApi('adminTgSchedule', { op: 'toggle', id, on }); if(!r.ok) toast(r.data.error || 'Failed', 'e'); else toast(on ? 'Schedule on' : 'Schedule paused'); scLoad(); }
+function scDel(id){ confirm2('Delete this scheduled post? (Posts already sent stay on Telegram.)', async () => { const r = await window._accountApi('adminTgSchedule', { op: 'delete', id }); if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; } await logAct('Telegram scheduled post deleted', 'broadcast', id); toast('Deleted'); scLoad(); }); }
+async function scRun(){ showL(true); const r = await window._accountApi('adminTgSchedule', { op: 'run' }); showL(false); if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; } toast(r.data.ran ? `Posted ${r.data.ran} due post${r.data.ran > 1 ? 's' : ''} ✓` : 'Nothing is due right now'); scLoad(); tgLog(); }
 
 async function loadTg(){
   buildTg();
@@ -131,7 +192,7 @@ async function loadTg(){
     'tg-button': _TG.button, 'tg-footer': _TG.footer, 'ta-broadcast': _TG.auto.broadcast !== false, 'ta-offers': _TG.auto.offers !== false, 'ta-deals': _TG.auto.deals !== false, 'ta-tasks': _TG.auto.tasks !== false,
     'ta-services': _TG.auto.services !== false, 'tw-on': _TG.welcome.on !== false, 'tw-del': _TG.welcome.deleteJoin !== false, 'tw-text': _TG.welcome.text, 'tg-rules': _TG.rules, 'tm-links': _TG.mod.links !== false,
     'tm-words': (_TG.mod.words || []).join('\n'), 'tg-dm': _TG.dm !== false, 'tg-mini': _TG.miniApp !== false });
-  proTabStart('telegram', 'conn'); afterLoad('telegram'); tgPrev(); tgStatus(); tgLog();
+  proTabStart('telegram', 'conn'); afterLoad('telegram'); tgPrev(); tgStatus(); tgLog(); scLoad();
 }
 async function saveTg(){
   const link = id => { const v = val(id); if(v && !/^https:\/\//i.test(v)) throw new Error('Links must start with https://'); return v; };
