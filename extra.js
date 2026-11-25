@@ -235,7 +235,8 @@ const css = `
 .xs-pc b{font-size:12.5px;color:var(--txt);margin:9px 0 2px;line-height:1.3}.xs-pc small{font-size:10.5px;color:var(--txt2)}
 .xs-pc em{font-style:normal;font-size:10.5px;color:var(--txt3);margin-top:3px;line-height:1.35}
 .xs-pc .pp{margin-top:auto;padding-top:8px}.xs-pc .pp span{font-size:17px;font-weight:900;color:var(--txt)}.xs-pc.sale .pp span{color:#ffd76a;text-shadow:0 0 14px rgba(255,215,106,.35)}
-.xs-pc .vp{font-size:10.5px;font-weight:800;color:#7fc3ff}.xs-pc .vp.ok{color:var(--p)}
+.xs-pc .vp{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;margin-top:4px;font-size:10px;font-weight:800;color:#9fd2ff;padding:2px 7px;border-radius:8px;background:rgba(70,176,255,.12);border:1px solid rgba(70,176,255,.3)}
+.xs-pc .vp.ok{color:var(--p);background:rgba(29,219,128,.1);border-color:rgba(29,219,128,.3)}.xs-pc .vp.ok{color:var(--p)}
 .xs-pc .ct{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:10px;font-weight:900;color:#ffd76a}.xs-pc .ct .xs-cd i{display:none}
 .xs-pc .hot{position:absolute;top:8px;right:8px;display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:900;padding:2px 7px;border-radius:8px;color:#ff9a6b;background:rgba(255,122,89,.14)}
 .xs-pc .off+.hot{top:30px}
@@ -490,7 +491,7 @@ function drawItems(){
     return `<div class="xs-pc${pn.kind ? ' sale' : ''}" onclick="xsPick('${E(s.id)}','${E(i.id)}')">${off ? `<span class="off">−${off}%</span>` : ''}${i.hot ? '<span class="hot"><i class="fa-solid fa-fire"></i>Popular</span>' : ''}
       ${logo(s)}<b>${E(i.name)}</b><small>${E(i.cat || s.name)}</small>${i.note ? `<em>${E(i.note)}</em>` : ''}
       <div class="pp">${pn.kind ? `<s>${tk(quote(s, i, 0, isV()).pay)}</s>` : ''}<span>${tk(qq.pay)}</span></div>
-      ${qq.fee ? `<div class="vp">Verified ${tk(qq.base)}</div>` : qq.waived ? '<div class="vp ok">No charge ✓</div>' : ''}
+      ${qq.fee ? `<div class="vp"><i class="fa-solid fa-circle-check"></i>Save ${tk(qq.fee)} with Verified</div>` : qq.waived ? `<div class="vp ok"><i class="fa-solid fa-circle-check"></i>You save ${tk(qq.saved)} · Verified</div>` : ''}
       ${pn.kind ? `<div class="ct">${pn.kind === 'deal' ? '<i class="fa-solid fa-bolt"></i>Today' : ''}${cd(pn.ends, '')}</div>` : ''}
       <div class="go">Buy now</div></div>`; }).join('')}</div>`;
 }

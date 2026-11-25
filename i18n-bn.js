@@ -153,6 +153,8 @@ const D = s => String(s).replace(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept?|Oct|N
 const TK = '(৳ ?[\\d,]+)';
 const R = (re, f) => BN_RE.push([new RegExp(re), f]);
 R(`^Day (\\d+)$`, 'দিন $1');
+R(`^Save (৳[\\d,]+) with Verified$`, 'ভেরিফায়েড হলে $1 সাশ্রয়');
+R(`^You save (৳[\\d,]+) · Verified$`, 'আপনার সাশ্রয় $1 · ভেরিফায়েড');
 R(`^(\\d+) tasks? open · rewards go to your Extra Balance$`, '$1টি টাস্ক খোলা · পুরস্কার এক্সট্রা ব্যালেন্সে যায়');
 R(`^(Join|Visit|Sign up|Form|Survey|Share|Refer|Task) · (\\d+) places? left$`, (m, t, n) => ({Join:'জয়েন',Visit:'ভিজিট','Sign up':'সাইন আপ',Form:'ফর্ম',Survey:'সার্ভে',Share:'শেয়ার',Refer:'রেফার',Task:'টাস্ক'}[t]) + ` · ${n}টি জায়গা বাকি`);
 R(`^Reward \\+(৳[\\d,]+)$`, 'পুরস্কার +$1');
