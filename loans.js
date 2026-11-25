@@ -205,7 +205,8 @@ P.limit = async function(){
   const L = d.limit, pct = L.cap ? Math.round(L.limit / L.cap * 100) : 100;
   show('Loan Limit', `<div class="lm-hero"><small>YOUR LOAN LIMIT</small><b>${tk(L.limit)}</b><div style="font-size:12px;color:var(--txt2)">Highest possible: ${tk(L.cap)}</div>
       <div class="ln-bar" style="margin:14px 0 0"><i style="width:${pct}%;background:linear-gradient(90deg,#4d8fff,#46c8ff)"></i></div></div>
-    <div class="sv-card"><h4>How your limit is made</h4>${L.parts.map(p => `<div class="sv-row"><span>${E(p.label)}</span><b>+${tk(p.amount)}</b></div>`).join('')}</div>
+    <div class="sv-card"><h4>How your limit is made</h4>${L.parts.map(p => `<div class="sv-row"><span>${E(p.label)}${p.capped ? `<small style="display:block;font-size:10.5px;color:var(--txt3)">${tk(p.full)} · <span>counted up to the highest loan</span></small>` : ''}</span><b>+${tk(p.amount)}</b></div>`).join('')}
+      <div class="sv-row" style="border:0;padding-top:10px"><span><b>Your limit</b></span><b style="color:#7fb7ff">${tk(L.limit)}</b></div></div>
     ${L.tips.length ? `<div class="sv-cat">Raise your limit</div>${L.tips.map(t => `<div class="ord" style="cursor:pointer" onclick="svGo('${E(t.go)}')"><i class="fa-solid fa-arrow-trend-up" style="color:#46c8ff"></i><div><b>${E(t.label)}</b></div><span class="st st-Approved">+${tk(t.amount)}</span></div>`).join('')}` : '<div class="sv-card"><p>🎉 You have the highest limit.</p></div>'}
     ${L.enforce ? '' : '<div style="font-size:11.5px;color:var(--txt2);text-align:center;margin-top:10px">Your limit is a guide — applications above it may need extra review.</div>'}`);
 };

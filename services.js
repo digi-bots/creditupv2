@@ -508,7 +508,7 @@ const PAGES = {
       ${kind === 'verify' ? `<div style="font-size:11.5px;color:var(--txt2);margin:6px 2px"><i class="fa-solid fa-circle-info"></i> The full ৳${price} is needed — no discount, coupon or promo code applies to this fee.</div>` : ''}
       <span class="sv-lbl">3. Enter the payment details</span>
       <input class="sv-in code" id="pyTrx" placeholder="TRANSACTION ID" maxlength="30" autocomplete="off">
-      <input class="sv-in" id="pySender" type="tel" placeholder="Paid from number (01XXXXXXXXX)" value="" style="margin-top:8px">
+      ${kind === 'verify' ? '' : `<input class="sv-in" id="pySender" type="tel" placeholder="Paid from number (01XXXXXXXXX)" style="margin-top:8px">`}
       <button class="sv-btn ${kind === 'vip' ? 'gold' : ''}" style="margin-top:12px" id="pyBtn" onclick="svPaySubmit()"><i class="fa-solid fa-paper-plane"></i>Submit payment</button>
       <div style="font-size:11.5px;color:var(--txt2);margin-top:9px;text-align:center;line-height:1.6">Our team checks the payment and switches it on — usually within a few hours. You get a notification.</div>`);
     window._payData = { kind, plan: plan ? plan.id : '', price, payMethod: cur.w.name, toNumber: opt.number };
@@ -576,7 +576,7 @@ window.svVcBack = async function(code){
 };
 window.svPay = function(kind){ window._payKind = kind; _stack.push('pay'); try { history.pushState({ sv: 'pay' }, ''); } catch (e) {} PAGES.pay(); };
 window.svPaySubmit = async function(){
-  const d = window._payData || {}; const trxId = ($s('pyTrx').value || '').trim(), sender = ($s('pySender').value || '').trim();
+  const d = window._payData || {}; const trxId = ($s('pyTrx').value || '').trim(), sender = (($s('pySender') || {}).value || '').trim();
   if(trxId.length < 6){ toast('Enter the Transaction ID from your payment SMS', true); return; }
   const b = $s('pyBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Submitting…';
   const r = await api('buyService', { ...d, trxId, sender });
