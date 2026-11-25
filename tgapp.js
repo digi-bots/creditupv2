@@ -10,8 +10,41 @@ const user = () => { try { return JSON.parse(localStorage.getItem('creditUpUser'
 const api = (a, d) => (window._api ? window._api(a, d || {}, true) : Promise.resolve({ ok: false, data: {} }));
 const E = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+/* ───────── invites ───────── */
+// a referral that comes through Telegram: t.me/<bot>?start=r01XXXXXXXXX (the bot opens the app with ?ref=…)
+// or t.me/<bot>?startapp=r01XXXXXXXXX (Telegram opens the Mini App with start_param)
+const normRef = v => { const d = String(v || '').replace(/\D/g, '').replace(/^(880)?0*/, ''); return /^1\d{9}$/.test(d) ? d : ''; };
+if(inTg){ const sp = (W.initDataUnsafe || {}).start_param || ''; const rc = /^r/i.test(sp) ? normRef(sp) : ''; if(rc && !(user() || {}).phone) try { localStorage.setItem('referrerPhone', rc); } catch (e) {} }
+let BOT = '';
+fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'tgState' }) }).then(r => r.json()).then(d => { if(d && d.on && d.bot) BOT = d.bot; }).catch(() => {});
+const tgInvite = phone => BOT ? `https://t.me/${BOT}?start=r0${String(phone).replace(/^0+/, '')}` : '';
+window._tgInviteLink = tgInvite;
+// the Telegram share button sends the Telegram link (opens our bot → the app, with the referral kept)
+const _orm = window.openReferModal;
+if(typeof _orm === 'function') window.openReferModal = function(){
+  _orm.apply(this, arguments);
+  const u = user(), l = u && u.phone && tgInvite(u.phone), a = document.getElementById('shTg');
+  if(l && a && typeof window._inviteBody === 'function') a.href = 'https://t.me/share/url?url=' + encodeURIComponent(l) + '&text=' + encodeURIComponent(window._inviteBody());
+};
+
 /* ───────── inside Telegram ───────── */
 if(inTg){
+  // links: Telegram links open in Telegram, other sites in the in-app browser — the Mini App stays open
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]'); if(!a) return;
+    const h = a.href || '';
+    if(/^https:\/\/t\.me\//i.test(h)){ e.preventDefault(); try { W.openTelegramLink(h); } catch (er) { location.href = h; } return; }
+    if(/^https?:\/\//i.test(h) && new URL(h).origin !== location.origin){ e.preventDefault(); try { W.openLink(h); } catch (er) { window.open(h, '_blank'); } }
+  }, true);
+  const _wo = window.open;
+  window.open = function(u){ try { if(/^https:\/\/t\.me\//i.test(u)) { W.openTelegramLink(u); return null; } if(/^https?:\/\//i.test(u) && new URL(u, location.href).origin !== location.origin) { W.openLink(u); return null; } } catch (e) {} return _wo.apply(window, arguments); };
+  // "Share invite": Telegram's own share sheet (pick any chat or group)
+  window.shareRefLink = async function(){
+    const u = user(); if(!u || !u.phone) return;
+    const link = tgInvite(u.phone) || (typeof window._refLink === 'function' ? window._refLink(u.phone) : location.origin + '/?ref=0' + u.phone);
+    const body = typeof window._inviteBody === 'function' ? window._inviteBody() : 'Join me on Creditfy';
+    try { W.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(body)); } catch (e) { if(window.copyRefLink) window.copyRefLink(); }
+  };
   document.documentElement.classList.add('in-tg');
   try { W.ready(); W.expand(); W.setHeaderColor('#06101f'); W.setBackgroundColor('#050b16'); if(W.disableVerticalSwipes) W.disableVerticalSwipes(); } catch (e) {}
   const st = document.createElement('style');

@@ -15,16 +15,18 @@ async function groupAdmins(chat) {
 }
 const sameChat = (cfg, chat) => { const c = String(cfg || '').trim(); if (!c) return false; if (/^-?\d+$/.test(c)) return String(chat.id) === c; const u = c.replace(/^@/, '').replace(/^https?:\/\/t\.me\//, '').toLowerCase(); return (chat.username || '').toLowerCase() === u; };
 
-function appButtons(S, priv) {
-  const rows = [[priv && S.miniApp ? { text: '📱 Open Creditfy', web_app: { url: S.siteUrl } } : { text: '📱 Open Creditfy', url: TG.appUrl(S) }]];
+function appButtons(S, priv, ref) {
+  // ref: an invite — the app opens with ?ref=… so the friend who invited gets the referral
+  const url = S.siteUrl + (ref ? '/?ref=0' + ref : '');
+  const rows = [[priv && S.miniApp ? { text: '📱 Open Creditfy', web_app: { url } } : { text: '📱 Open Creditfy', url: ref ? url : TG.appUrl(S) }]];
   const r2 = [];
   if (S.channelLink) r2.push({ text: '📢 Channel', url: S.channelLink });
   if (S.groupLink) r2.push({ text: '💬 Community', url: S.groupLink });
   if (r2.length) rows.push(r2);
   return { inline_keyboard: rows };
 }
-async function say(chat, S, text, priv, extra = {}) {
-  return TG.call('sendMessage', { chat_id: chat, text, parse_mode: 'HTML', reply_markup: appButtons(S, priv), link_preview_options: { is_disabled: true }, ...extra });
+async function say(chat, S, text, priv, extra = {}, ref = '') {
+  return TG.call('sendMessage', { chat_id: chat, text, parse_mode: 'HTML', reply_markup: appButtons(S, priv, ref), link_preview_options: { is_disabled: true }, ...extra });
 }
 
 // today's offers: offer prices that are still running and today's weekday deals
@@ -54,6 +56,9 @@ async function onPrivate(m, S) {
       }
       return say(chat, S, 'This link has expired. Open Creditfy → Telegram and tap “Connect” again.', true);
     }
+    // an invite link: t.me/<bot>?start=r01XXXXXXXXX
+    const ref = /^r/i.test(arg) ? (String(arg).replace(/\D/g, '').replace(/^(880)?0*/, '').match(/^1\d{9}$/) || [''])[0] : '';
+    if (ref) return say(chat, S, `👋 <b>Welcome to Creditfy</b>, ${TG.esc(m.from.first_name || 'friend')}!\n\nA friend invited you. Tap <b>Open Creditfy</b> below and create your account — your friend’s invite is already applied.\n\n🔒 We will never ask for your PIN, OTP or password.`, true, {}, ref);
     return say(chat, S, `👋 <b>Welcome to Creditfy</b>, ${TG.esc(m.from.first_name || 'friend')}!\n\n• Tap <b>Open Creditfy</b> to use the app right here\n• /offers — today’s offers\n• /balance — your balances (after you connect your account)\n\n🔒 We will never ask for your PIN, OTP or password.`, true);
   }
   if (cmd === '/offers') return say(chat, S, await offersText(), true);
