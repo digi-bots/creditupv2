@@ -77,7 +77,8 @@ function norm(x) {
         id: str(i.id, 30), name: str(i.name, 60), on: i.on !== false, note: str(i.note, 300), price: money(i.price), to: str(i.to, 120),
         unit: str(i.unit || '৳', 8), rate: Math.max(0, Number(i.rate) || 0) || 1, pct: Math.max(0, Math.min(50, Number(i.pct) || 0)), fee: money(i.fee),
         min: Math.max(0, Number(i.min) || 0), max: Math.max(0, Number(i.max) || 0), flow: i.flow === 'sell' ? 'sell' : 'buy',
-        offer: money(i.offer), offerEnd: str(i.offerEnd, 40), cat: str(i.cat, 24), hot: i.hot === true }))
+        offer: money(i.offer), offerEnd: str(i.offerEnd, 40), cat: str(i.cat, 24), hot: i.hot === true,
+        icon: /^https:\/\//i.test(String(i.icon || '')) ? str(i.icon, 500) : str(i.icon, 60), color: str(i.color, 20) }))
     })),
     deals: (Array.isArray(x.deals) ? x.deals : []).filter(d => d && d.sid && d.iid && money(d.price) > 0).slice(0, 30).map(d => ({ id: str(d.id || d.sid + d.iid, 30), sid: str(d.sid, 30), iid: str(d.iid, 30),
       price: money(d.price), on: d.on !== false, days: (Array.isArray(d.days) ? d.days : []).map(Number).filter(n => n >= 0 && n <= 6) })),

@@ -242,6 +242,7 @@ const css = `
 .xs-pc .off+.hot{top:30px}
 .xs-pc .go{margin-top:9px;text-align:center;border-radius:11px;padding:8px;font-size:12px;font-weight:900;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
 .xs-pc.lock{cursor:default;opacity:.85}.xs-pc.lock .go{background:rgba(255,255,255,.07);color:var(--txt2)}
+.xs-ir{flex-wrap:nowrap!important}.xs-ir .xs-lg{width:40px;height:40px;font-size:17px;flex:none;border-radius:12px!important}
 .xs-go{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:900;color:var(--p)}
 .xs-how{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
 .xs-how div{border-radius:14px;padding:11px 6px;text-align:center;background:rgba(255,255,255,.035);border:1px solid var(--bord)}
@@ -250,6 +251,21 @@ const css = `
 @media (max-width:360px){.xs-grid{gap:8px}.xs-lg{width:46px;height:46px;font-size:20px}}`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
+// each option (pack) can have its own icon or logo (Admin → Extra services → Icon); otherwise one is picked from its name / category
+const AUTO_IC = [[/google\s*play/i, 'fa-brands fa-google-play', 'g-green'], [/itunes|apple/i, 'fa-brands fa-apple', 'g-slate'], [/steam/i, 'fa-brands fa-steam', 'g-dark'],
+  [/telegram/i, 'fa-brands fa-telegram', 'g-blue'], [/whatsapp/i, 'fa-brands fa-whatsapp', 'g-green'], [/facebook|meta/i, 'fa-brands fa-facebook', 'g-blue'], [/youtube/i, 'fa-brands fa-youtube', 'g-red'],
+  [/instagram/i, 'fa-brands fa-instagram', 'g-pink'], [/tiktok/i, 'fa-brands fa-tiktok', 'g-dark'], [/netflix/i, 'fa-solid fa-film', 'g-red'], [/spotify/i, 'fa-brands fa-spotify', 'g-green'],
+  [/pubg|free\s*fire|uc\b|diamond/i, 'fa-solid fa-gamepad', 'g-orange'], [/visa/i, 'fa-brands fa-cc-visa', 'g-blue'], [/master\s*card/i, 'fa-brands fa-cc-mastercard', 'g-orange'],
+  [/usdt|tether|crypto/i, 'fa-solid fa-coins', 'g-teal'], [/dollar|payoneer|wise|usd/i, 'fa-solid fa-dollar-sign', 'g-green'], [/bkash/i, 'fa-solid fa-mobile-screen', 'g-pink'],
+  [/nagad/i, 'fa-solid fa-mobile-screen', 'g-orange'], [/rocket/i, 'fa-solid fa-rocket', 'g-purple'], [/daraz/i, 'fa-solid fa-bag-shopping', 'g-orange'], [/apex|shoe/i, 'fa-solid fa-shoe-prints', 'g-red'],
+  [/domain/i, 'fa-solid fa-globe', 'g-cyan'], [/hosting|server/i, 'fa-solid fa-server', 'g-purple'], [/shopping/i, 'fa-solid fa-bag-shopping', 'g-orange'], [/web/i, 'fa-solid fa-globe', 'g-cyan']];
+function ilogo(s, i){
+  if(!i) return logo(s);
+  if(i.icon && /^https:\/\//i.test(i.icon)) return `<div class="xs-lg img"><img src="${E(i.icon)}" alt="${E(i.name)}" loading="lazy"></div>`;
+  if(i.icon) return `<div class="xs-lg ${E(i.color || s.color)}"><i class="${E(i.icon)}"></i></div>`;
+  const m = AUTO_IC.find(([re]) => re.test(i.name + ' ' + (i.cat || '')));
+  return m ? `<div class="xs-lg ${E(i.color || m[2])}"><i class="${m[1]}"></i></div>` : logo(s);
+}
 function logo(s){ return s.logo ? `<div class="xs-lg img"><img src="${E(s.logo)}" alt="${E(s.name)}" loading="lazy"></div>` : `<div class="xs-lg ${E(s.color)}"><i class="${E(s.icon)}"></i></div>`; }
 const svcs = () => ((X.cfg && X.cfg.services) || []).filter(s => s.on);
 const isV = () => !!(X.xb && (X.xb.verified || X.xb.vip));
@@ -288,7 +304,7 @@ function dealCard(){
   const today = bdWd() === rd ? [] : D.filter(d => d.days.includes(bdWd())).map(find).filter(Boolean);
   if(today.length){
     return `<div class="xs-deal"><div class="hd"><span class="tg"><i class="fa-solid fa-bolt"></i>TODAY'S DEAL</span>${cd(bdMid(), 'Ends in')}</div>
-      ${today.map(({ d, s, i }) => `<div class="row" onclick="xsOpen('${E(s.id)}');setTimeout(()=>xsPick('${E(s.id)}','${E(i.id)}'),60)">${logo(s)}<div class="m"><b>${E(i.name)}</b><small>${E(s.name)}</small></div><div class="pp"><s>${tk(i.price)}</s><b>${tk(d.price)}</b><em>−${Math.round((1 - d.price / i.price) * 100)}%</em></div></div>`).join('')}</div>`;
+      ${today.map(({ d, s, i }) => `<div class="row" onclick="xsOpen('${E(s.id)}');setTimeout(()=>xsPick('${E(s.id)}','${E(i.id)}'),60)">${ilogo(s, i)}<div class="m"><b>${E(i.name)}</b><small>${E(s.name)}</small></div><div class="pp"><s>${tk(i.price)}</s><b>${tk(d.price)}</b><em>−${Math.round((1 - d.price / i.price) * 100)}%</em></div></div>`).join('')}</div>`;
   }
   // the next weekday that has a deal
   for(let k = 1; k <= 7; k++){
@@ -405,7 +421,7 @@ function hotRow(){
   if(!H.length) return '';
   return `<div class="xs-cat"><span><i class="fa-solid fa-fire" style="color:#ff7a59"></i> Hot offers</span></div>
     <div class="xs-hot">${H.slice(0, 12).map(({ s, i, pn }) => { const q = quote(s, withNow(s, i), 0, isV());
-      return `<div class="xs-hc" onclick="xsOpen('${E(s.id)}');setTimeout(()=>xsPick('${E(s.id)}','${E(i.id)}'),60)"><span class="off">−${Math.round((1 - pn.price / pn.was) * 100)}%</span>${logo(s)}<b>${E(i.name)}</b><div class="pp"><s>${tk(quote(s, i, 0, isV()).pay)}</s><span>${tk(q.pay)}</span></div>${cd(pn.ends, '')}</div>`; }).join('')}</div>`;
+      return `<div class="xs-hc" onclick="xsOpen('${E(s.id)}');setTimeout(()=>xsPick('${E(s.id)}','${E(i.id)}'),60)"><span class="off">−${Math.round((1 - pn.price / pn.was) * 100)}%</span>${ilogo(s, i)}<b>${E(i.name)}</b><div class="pp"><s>${tk(quote(s, i, 0, isV()).pay)}</s><span>${tk(q.pay)}</span></div>${cd(pn.ends, '')}</div>`; }).join('')}</div>`;
 }
 // Red Friday: one weekday with that day's deals; on other days it shows when it opens
 function redDeals(){
@@ -424,7 +440,7 @@ function redTile(){
 function redPage(){
   const R = X.cfg.redFriday, D = redDeals(), open = redOpen();
   const card = ({ d, s, i }) => { const q = quote(s, { ...i, price: d.price }, 0, isV()), was = quote(s, i, 0, isV()).pay;
-    return `<div class="xs-pc${open ? '' : ' lock'}" ${open ? `onclick="xsPick('${E(s.id)}','${E(i.id)}')"` : ''}><span class="off">−${Math.round((1 - d.price / i.price) * 100)}%</span>${logo(s)}<b>${E(i.name)}</b><small>${E(s.name)}</small>
+    return `<div class="xs-pc${open ? '' : ' lock'}" ${open ? `onclick="xsPick('${E(s.id)}','${E(i.id)}')"` : ''}><span class="off">−${Math.round((1 - d.price / i.price) * 100)}%</span>${ilogo(s, i)}<b>${E(i.name)}</b><small>${E(s.name)}</small>
       <div class="pp"><s>${tk(was)}</s><span>${tk(q.pay)}</span></div><div class="go">${open ? 'Buy now' : `<i class="fa-solid fa-lock"></i> Opens ${WD[R.day]}`}</div></div>`; };
   show(R.title, `<div class="xs-redhero${open ? ' live' : ''}"><div class="big"><i class="fa-solid fa-tags"></i></div><h3>${E(R.title)}</h3><p>${E(R.text || '')}</p>
       <div class="cdw">${open ? cd(bdMid(), 'Ends in') : cd(redStart(), `Opens ${WD[R.day]} in`)}</div>
@@ -484,12 +500,12 @@ function drawItems(){
     el.innerHTML = items.map(i => { const hasFee = i.pct || i.fee, free = PK().on && isV();
       const feeTxt = !hasFee ? 'No fee' : free ? '<span style="color:var(--p);font-weight:800">No fee — Verified ✓</span>' : `Fee ${i.pct ? num(i.pct) + '%' : ''}${i.pct && i.fee ? ' + ' : ''}${i.fee ? tk(i.fee) : ''}${PK().on ? ' · <span style="color:#7fc3ff">Verified: no fee</span>' : ''}`;
       const rate = i.unit === '৳' ? feeTxt : `1 ${E(i.unit)} = ${tk(i.rate)} · ${feeTxt}`;
-      return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b><small>${rate}${i.min || i.max ? ` · ${num(i.min)}–${num(i.max)} ${E(i.unit)}` : ''}</small></div><div class="pr"><span class="xs-go">Start <i class="fa-solid fa-arrow-right"></i></span></div></div>`; }).join('');
+      return `<div class="xs-it xs-ir" onclick="xsPick('${E(s.id)}','${E(i.id)}')">${ilogo(s, i)}<div style="flex:1;min-width:0"><b>${E(i.name)}</b><small>${rate}${i.min || i.max ? ` · ${num(i.min)}–${num(i.max)} ${E(i.unit)}` : ''}</small></div><div class="pr"><span class="xs-go">Start <i class="fa-solid fa-arrow-right"></i></span></div></div>`; }).join('');
     return;
   }
   el.innerHTML = `<div class="xs-pgrid">${items.map(i => { const pn = priceNow(s, i), qq = quote(s, withNow(s, i), 0, isV()), off = pn.kind ? Math.round((1 - pn.price / pn.was) * 100) : 0;
     return `<div class="xs-pc${pn.kind ? ' sale' : ''}" onclick="xsPick('${E(s.id)}','${E(i.id)}')">${off ? `<span class="off">−${off}%</span>` : ''}${i.hot ? '<span class="hot"><i class="fa-solid fa-fire"></i>Popular</span>' : ''}
-      ${logo(s)}<b>${E(i.name)}</b><small>${E(i.cat || s.name)}</small>${i.note ? `<em>${E(i.note)}</em>` : ''}
+      ${ilogo(s, i)}<b>${E(i.name)}</b><small>${E(i.cat || s.name)}</small>${i.note ? `<em>${E(i.note)}</em>` : ''}
       <div class="pp">${pn.kind ? `<s>${tk(quote(s, i, 0, isV()).pay)}</s>` : ''}<span>${tk(qq.pay)}</span></div>
       ${qq.fee ? `<div class="vp"><i class="fa-solid fa-circle-check"></i>Save ${tk(qq.fee)} with Verified</div>` : qq.waived ? `<div class="vp ok"><i class="fa-solid fa-circle-check"></i>You save ${tk(qq.saved)} · Verified</div>` : ''}
       ${pn.kind ? `<div class="ct">${pn.kind === 'deal' ? '<i class="fa-solid fa-bolt"></i>Today' : ''}${cd(pn.ends, '')}</div>` : ''}
@@ -521,7 +537,7 @@ function orderPage(){
       : '<div class="sv-empty">No payment number is set for this service yet. Please contact support.</div>'}
     <span class="sv-lbl">${sell ? 'Transaction ID / hash of what you sent' : 'Transaction ID from your payment SMS'}</span>
     <input class="sv-in code" id="xsTrx" placeholder="TRANSACTION ID" maxlength="80" autocomplete="off">`;
-  show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(i.name)}</h4><p>${E(i.note || s.desc)}</p></div></div>
+  show(s.name, `<div class="xs-hero">${ilogo(s, i)}<div><h4>${E(i.name)}</h4><p>${E(i.note || s.desc)}</p></div></div>
     ${amt ? `<span class="sv-lbl">${sell ? 'How much will you send?' : 'How much do you want?'} (${E(i.unit)})</span>
       <input class="sv-in" id="xsAmt" type="number" inputmode="decimal" min="${i.min || 0}" ${i.max ? `max="${i.max}"` : ''} placeholder="${i.min ? 'Min ' + num(i.min) : 'Amount'}${i.max ? ' · max ' + num(i.max) : ''}" oninput="xsCalc()">
       <div class="xs-brk" id="xsBrk"></div>`
