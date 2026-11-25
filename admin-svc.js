@@ -55,7 +55,7 @@ let _SV = clone(SVD), _ORD = [], _CODES = [], _USES = [];
 function buildSvc(){
   const s = $p('sec-services'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Services &amp; Rewards</h2>${svBtn('services')}</div>${roBanner}
-  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['help', 'circle-question', 'Help & Info'], ['hub', 'grip', 'Quick Services tiles']], 'orders')}
+  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['help', 'circle-question', 'Help & Info'], ['hub', 'grip', 'Quick Services tiles'], ['extra', 'store', 'Extra services']], 'orders')}
   <div class="pro-pane" data-k="help">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-phone-volume"></i>Call-back requests <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="cbLoad()"><i class="fa-solid fa-rotate-right"></i></button></div><div id="cbList"></div></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-lightbulb"></i>Smart Tips <button class="btn btn-sm btn-s" style="margin-left:auto" onclick="heAdd('tips')"><i class="fa-solid fa-plus"></i>Add tip</button></div>
@@ -90,8 +90,8 @@ function buildSvc(){
   </div>
   <div class="pro-pane" data-k="orders">
     <div class="sv-st" id="odStats"></div>
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>VIP &amp; verification payments
-      <select id="odFilter" onchange="odRender()" style="margin-left:auto;height:32px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting for check</option><option value="all">All</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Orders — VIP, verification &amp; extra services
+      <select id="odFilter" onchange="odRender()" style="margin-left:auto;height:32px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting for check</option><option value="Processing">In progress (extra)</option><option value="Delivered">Delivered (extra)</option><option value="all">All</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
       <button class="btn btn-sm btn-s ro-ok" onclick="odLoad()"><i class="fa-solid fa-rotate-right"></i></button></div>
       <div id="odList"></div>
       <div class="hint" style="margin-top:6px">Find the payment in your bKash / Nagad app (amount, TrxID, sender number), then Approve. For verification any sender number is fine — check the ৳ amount and TrxID. Approving VIP switches it on at once and starts the plan's days. Verification needs only the TrxID — check the ৳ amount in your wallet app.</div>
@@ -173,6 +173,17 @@ function buildSvc(){
       <div class="hint" style="margin-bottom:8px">Tick “Home” for up to 6 tiles (the last two are always “Language” and “All Services”). Use the arrows to set the order. “Show” off hides a service everywhere. Badge = a small label like NEW or HOT.</div>
       <div id="hbList"></div>
     </div>
+  </div>
+  <div class="pro-pane" data-k="extra">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-store"></i>Extra Services (the section under Quick Services)</div>
+      <div class="hint" style="margin-bottom:10px">Paid services the team delivers by hand. Orders come into the <b>Orders</b> tab: press <i class="fa-solid fa-hourglass-half"></i> when you start, <i class="fa-solid fa-check"></i> to deliver (write the code or details — only that user sees it), or <i class="fa-solid fa-xmark"></i> to reject. Logo = an image link (square, e.g. 200×200); without one the icon is shown.</div>
+      <div class="fgrid fgrid3">${tog('xs-on', 'Show Extra Services on the home page', true)}${inp('xs-title', 'Section title', 'Extra Services')}</div>
+      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-gamepad"></i>Play &amp; Earn (Tic-Tac-Toe)</div>
+      <div class="fgrid fgrid3">${tog('xs-g-on', 'Games on', true)}${inp('xs-g-reward', 'Reward per win (৳)', '1', 'type="number" min="0"')}${inp('xs-g-perday', 'Paid wins per day', '5', 'type="number" min="0"')}${inp('xs-g-plays', 'Games per day', '30', 'type="number" min="1"')}${inp('xs-g-level', 'Computer skill (0–100)', '75', 'type="number" min="0" max="100"')}</div>
+      <div id="xsCost" class="hint"></div>
+    </div>
+    <div id="xsList"></div>
+    <button class="btn btn-s ro-ok" onclick="xsAddSvc()"><i class="fa-solid fa-plus"></i>Add a service</button>
   </div>`;
 }
 
@@ -190,11 +201,20 @@ async function odLoad(){
 }
 function odRender(){
   const f = $p('odFilter') ? $p('odFilter').value : 'Pending';
-  const L = _ORD.filter(x => f === 'all' || x.status === f);
+  const L = _ORD.filter(x => f === 'all' || x.status === f || (f === 'Pending' && x.kind === 'extra' && x.status === 'Processing'));
   const el = $p('odList'); if(!el) return;
   el.innerHTML = L.length ? L.map(o => {
     const u = (_D.users || []).find(x => String(x.phone) === String(o.uid)) || {};
     const own = String(o.sender) === String(o.uid);
+    if(o.kind === 'extra'){
+      const live = ['Pending', 'Processing'].includes(o.status);
+      const info = (o.fields || []).filter(f => f.value).map(f => `${ep(f.label)}: <b>${ep(f.value)}</b>`).join('<br>');
+      return `<div class="od-row"><div><b><i class="fa-solid fa-store" style="color:#ffd76a"></i> ${ep(o.iname)}</b><small>${ep(o.sname)} · ${ep(u.name || '')} · 0${ep(o.uid)}</small>${info ? `<small>${info}</small>` : ''}</div>
+      <div><b>${o.flow === 'sell' ? 'Pay user ৳' + fa(o.get) : '৳' + fa(o.price)}</b><small>${o.amount ? ep(o.amount) + ' ' + ep(o.unit) + ' · ' : ''}${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
+      <div><span class="mono">${ep(o.trxId)}</span><small>${o.sender ? 'from 0' + ep(o.sender) : 'TrxID only'}</small></div>
+      <div>${sb(o.status === 'Delivered' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${ep(o.status)} · ${fd(o.createdAt)}</small></div>
+      <div class="acts">${live ? `${o.status === 'Pending' ? `<button class="ab" title="Payment OK — start working" onclick="xsOrder('${ep(o._id)}','process')"><i class="fa-solid fa-hourglass-half"></i></button>` : ''}<button class="ab ab-ok" title="Deliver" onclick="xsOrder('${ep(o._id)}','deliver')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" title="Reject" onclick="xsOrder('${ep(o._id)}','reject')"><i class="fa-solid fa-xmark"></i></button>` : `<small>${ep(o.delivery || o.reason || '')}</small>`}</div></div>`;
+    }
     return `<div class="od-row"><div><b>${o.kind === 'vip' ? '👑 ' : '<i class="fa-solid fa-circle-check" style="color:#46b0ff"></i> '}${ep(o.planName || o.kind)}</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
       <div><b>৳${fa(o.price)}</b><small>${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
       <div><span class="mono">${ep(o.trxId)}</span><small>${o.sender ? 'from 0' + ep(o.sender) : 'TrxID only'}</small></div>
@@ -374,6 +394,82 @@ function hbSet(k, f, v){ _SV.hub.tiles = _SV.hub.tiles || {}; _SV.hub.tiles[k] =
 function hbHome(k, on){ let h = (_SV.hub.home || []).filter(x => x !== 'all' && x !== k); if(on){ if(h.length >= 6){ toast('Up to 6 tiles on the home page (Language and All Services are always last)', 'w'); hbRender(); return; } h.push(k); } _SV.hub.home = [...h, 'all']; markDirty('services', 'hub'); hbRender(); }
 function hbMove(k, d){ const h = (_SV.hub.home || []).filter(x => x !== 'all'); const i = h.indexOf(k), j = i + d; if(i < 0 || j < 0 || j >= h.length) return; [h[i], h[j]] = [h[j], h[i]]; _SV.hub.home = [...h, 'all']; markDirty('services', 'hub'); hbRender(); }
 
+/* ═════════ Extra services ═════════ */
+const XS_COLORS = ['g-teal', 'g-green', 'g-blue', 'g-cyan', 'g-purple', 'g-pink', 'g-red', 'g-orange', 'g-gold', 'g-slate', 'g-dark'];
+const xsInp = (v, on, ph = '', t = 'text', w = '') => `<input type="${t}" value="${ep(v ?? '')}" placeholder="${ep(ph)}" oninput="${on}" style="height:34px;padding:0 9px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;font-family:inherit;min-width:0;width:100%;box-sizing:border-box${w}">`;
+function xsRender(){
+  const X = _SV.extra; const el = $p('xsList'); if(!el || !X) return;
+  el.innerHTML = X.services.map((s, n) => {
+    const amt = s.mode === 'amount';
+    const head = amt ? ['Option', 'Unit', 'Rate ৳/unit', 'Fee %', 'Fee ৳', 'Min', 'Max', 'Buy / Sell', 'Pay-to number / address (blank = payment wallets)', 'On', '']
+      : ['Option', 'Price ৳', 'Note for the user', 'Pay-to (blank = payment wallets)', 'On', ''];
+    const cols = amt ? '1.4fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.6fr .6fr 1.6fr 1.3fr 34px 34px';
+    const row = (i, k) => { const f = (key, ph, t) => xsInp(i[key], `xsItem(${n},${k},'${key}',this.value)`, ph, t);
+      return `<div style="display:grid;grid-template-columns:${cols};gap:6px;align-items:center;margin-bottom:5px">${amt
+        ? f('name', 'bKash → Nagad') + f('unit', '৳') + f('rate', '1', 'number') + f('pct', '0', 'number') + f('fee', '0', 'number') + f('min', '0', 'number') + f('max', '0', 'number')
+          + `<select onchange="xsItem(${n},${k},'flow',this.value)" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border)"><option value="buy"${i.flow !== 'sell' ? ' selected' : ''}>User pays</option><option value="sell"${i.flow === 'sell' ? ' selected' : ''}>User sells</option></select>` + f('to', 'e.g. bKash 017XXXXXXXX')
+        : f('name', 'Google Play $10') + f('price', '0', 'number') + f('note', 'optional') + f('to', 'optional')}
+        <input type="checkbox" ${i.on !== false ? 'checked' : ''} onchange="xsItem(${n},${k},'on',this.checked)"><button class="ab ab-no ro-ok" title="Remove" onclick="xsDelItem(${n},${k})"><i class="fa-solid fa-trash"></i></button></div>`; };
+    const lg = s.logo ? `<img src="${ep(s.logo)}" style="width:40px;height:40px;border-radius:12px;object-fit:cover;background:#fff">` : `<div class="${ep(s.color)}" style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;background:#345"><i class="${ep(s.icon)}"></i></div>`;
+    return `<div class="cfg-blk" style="${s.on === false ? 'opacity:.6' : ''}"><div class="cfg-t" style="gap:10px">${lg}<span>${ep(s.name || 'New service')}</span><small style="color:var(--txt2);font-weight:600">${s.mode === 'game' ? 'game' : amt ? 'amount (exchange)' : 'fixed price'}</small>
+        <span style="margin-left:auto;display:flex;gap:5px"><button class="btn btn-sm btn-s ro-ok" onclick="xsMove(${n},-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="btn btn-sm btn-s ro-ok" onclick="xsMove(${n},1)"><i class="fa-solid fa-arrow-down"></i></button><button class="btn btn-sm btn-d ro-ok" onclick="xsDelSvc(${n})"><i class="fa-solid fa-trash"></i></button></span></div>
+      <div class="fgrid fgrid3">
+        <div class="fg"><label>Name</label>${xsInp(s.name, `xsSet(${n},'name',this.value)`, 'Gift Cards')}</div>
+        <div class="fg"><label>Tile label (short)</label>${xsInp(s.short, `xsSet(${n},'short',this.value)`, 'Gift Cards')}</div>
+        <div class="fg"><label>Badge (NEW, HOT…)</label>${xsInp(s.badge, `xsSet(${n},'badge',this.value)`, '')}</div>
+        <div class="fg"><label>Logo image link</label>${xsInp(s.logo, `xsSet(${n},'logo',this.value)`, 'https://…/logo.png')}</div>
+        <div class="fg"><label>Icon (Font Awesome)</label>${xsInp(s.icon, `xsSet(${n},'icon',this.value)`, 'fa-brands fa-steam')}</div>
+        <div class="fg"><label>Colour</label><select onchange="xsSet(${n},'color',this.value,1)">${XS_COLORS.map(c => `<option${c === s.color ? ' selected' : ''}>${c}</option>`).join('')}</select></div>
+        <div class="fg"><label>Type</label><select onchange="xsSet(${n},'mode',this.value,1)"><option value="items"${s.mode === 'items' ? ' selected' : ''}>Fixed price options</option><option value="amount"${amt ? ' selected' : ''}>Amount (exchange)</option><option value="game"${s.mode === 'game' ? ' selected' : ''}>Game (Tic-Tac-Toe)</option></select></div>
+        <div class="fg"><label class="hp-sw"><input type="checkbox" ${s.on !== false ? 'checked' : ''} onchange="xsSet(${n},'on',this.checked,1)"> Show</label><label class="hp-sw"><input type="checkbox" ${s.soon ? 'checked' : ''} onchange="xsSet(${n},'soon',this.checked)"> Coming soon</label></div>
+        <div class="fg full"><label>Description</label>${xsInp(s.desc, `xsSet(${n},'desc',this.value)`, 'What this service gives')}</div>
+        <div class="fg full"><label>Questions for the user — one per line, add <b>*</b> at the end if required</label><textarea rows="2" oninput="xsFields(${n},this.value)" style="width:100%;box-sizing:border-box">${ep((s.fields || []).map(f => f.label + (f.req ? ' *' : '')).join('\n'))}</textarea></div>
+      </div>
+      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 980 : 640}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
+        ${(s.items || []).map(row).join('')}</div></div>
+        <button class="btn btn-sm btn-s ro-ok" onclick="xsAddItem(${n})"><i class="fa-solid fa-plus"></i>Add option</button>
+        ${amt ? '<div class="hint" style="margin-top:6px">User pays = amount × rate + fee % + fee ৳. “User sells” = the user sends to the pay-to address and gets amount × rate − fee.</div>' : ''}`}
+    </div>`;
+  }).join('');
+  const g = { r: numv('xs-g-reward', 1, 0, 1e5), d: numv('xs-g-perday', 5, 0, 1e3) };
+  if($p('xsCost')) $p('xsCost').innerHTML = `Most a Verified user can win from games: <b>৳${fa(g.r * g.d)} a day</b> (about ৳${fa(g.r * g.d * 30)} a month).`;
+}
+const xsDirty = () => markDirty('services', 'extra');
+function xsSet(n, k, v, re){ const s = _SV.extra.services[n]; if(!s) return; s[k] = v; if(k === 'mode' && v !== 'game' && !s.items) s.items = []; xsDirty(); if(re) xsRender(); }
+function xsFields(n, txt){ _SV.extra.services[n].fields = txt.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 6).map(l => ({ label: l.replace(/\s*\*$/, ''), req: /\*$/.test(l) })); xsDirty(); }
+function xsItem(n, k, f, v){ const i = _SV.extra.services[n].items[k]; if(!i) return; i[f] = ['price', 'rate', 'pct', 'fee', 'min', 'max'].includes(f) ? (Number(v) || 0) : v; xsDirty(); }
+function xsAddItem(n){ const s = _SV.extra.services[n]; s.items = s.items || []; s.items.push(s.mode === 'amount' ? { id: 'o' + hid(), name: '', unit: '৳', rate: 1, pct: 0, fee: 0, min: 0, max: 0, flow: 'buy', to: '', on: true } : { id: 'o' + hid(), name: '', price: 0, note: '', to: '', on: true }); xsDirty(); xsRender(); }
+function xsDelItem(n, k){ _SV.extra.services[n].items.splice(k, 1); xsDirty(); xsRender(); }
+function xsAddSvc(){ _SV.extra.services.push({ id: 's' + hid(), name: 'New service', short: '', icon: 'fa-solid fa-star', color: 'g-teal', mode: 'items', on: true, desc: '', fields: [], items: [] }); xsDirty(); xsRender(); setTimeout(() => { const l = $p('xsList'); if(l && l.lastElementChild) l.lastElementChild.scrollIntoView({ behavior: 'smooth' }); }, 50); }
+function xsDelSvc(n){ const s = _SV.extra.services[n]; confirm2(`Remove “${s.name}” from Extra Services? Past orders stay in the Orders tab.`, () => { _SV.extra.services.splice(n, 1); xsDirty(); xsRender(); }); }
+function xsMove(n, d){ const L = _SV.extra.services, j = n + d; if(j < 0 || j >= L.length) return; [L[n], L[j]] = [L[j], L[n]]; xsDirty(); xsRender(); }
+function xsData(){
+  const X = _SV.extra;
+  const services = X.services.filter(s => String(s.name || '').trim()).map(s => ({ ...s, id: s.id || 's' + hid(), name: String(s.name).trim().slice(0, 40), short: String(s.short || '').trim().slice(0, 16),
+    items: (s.items || []).filter(i => String(i.name || '').trim()).map(i => ({ ...i, id: i.id || 'o' + hid(), name: String(i.name).trim().slice(0, 60) })) }));
+  if(services.some(s => s.logo && !/^https:\/\//i.test(s.logo))) throw new Error('Extra services: a logo link must start with https://');
+  return { on: chk('xs-on'), title: val('xs-title') || 'Extra Services', services,
+    games: { on: chk('xs-g-on'), reward: numv('xs-g-reward', 1, 0, 1e5), perDay: numv('xs-g-perday', 5, 0, 1e3), plays: numv('xs-g-plays', 30, 1, 1e3), level: numv('xs-g-level', 75, 0, 100) } };
+}
+async function xsLoad(){
+  const r = await window._accountApi('extraConfig', {});
+  _SV.extra = r.ok ? r.data : { on: true, title: 'Extra Services', services: [], games: { on: true, reward: 1, perDay: 5, plays: 30, level: 75 } };
+  fillIn({ 'xs-on': _SV.extra.on !== false, 'xs-title': _SV.extra.title, 'xs-g-on': _SV.extra.games.on !== false, 'xs-g-reward': _SV.extra.games.reward, 'xs-g-perday': _SV.extra.games.perDay, 'xs-g-plays': _SV.extra.games.plays, 'xs-g-level': _SV.extra.games.level });
+  ['xs-g-reward', 'xs-g-perday'].forEach(id => { const e = $p(id); if(e) e.oninput = xsRender; });
+  xsRender();
+}
+async function xsOrder(id, op){
+  const o = _ORD.find(x => x._id === id); if(!o) return;
+  let text = '', reason = '';
+  if(op === 'deliver'){ text = prompt(`Deliver ${o.planName} to 0${o.uid}.\nWrite the code / card details / note the user should see (only this user sees it):`, ''); if(text === null) return; }
+  if(op === 'reject'){ reason = prompt('Reason (the user sees it):', 'We could not find this payment.'); if(reason === null) return; }
+  if(op === 'process' && !confirm(`Payment ${o.price ? '৳' + fa(o.price) + ' ' : ''}(TrxID ${o.trxId}) checked? Mark “${o.planName}” as in progress.`)) return;
+  showL(true); const r = await window._accountApi('adminExtraOrder', { id, op, text, reason }); showL(false);
+  if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; }
+  await logAct(`Extra order ${o.planName} → ${op} for ${o.uid} (TrxID ${o.trxId})`, 'user', o.uid);
+  toast(op === 'deliver' ? 'Delivered ✓' : op === 'process' ? 'Marked in progress' : 'Rejected', op === 'reject' ? 'e' : 's'); odLoad();
+}
+
 /* ═════════ load / save ═════════ */
 async function loadSvc(){
   buildSvc();
@@ -402,6 +498,7 @@ async function loadSvc(){
   proTabStart('services', 'orders');
   afterLoad('services');
   odLoad(); cdLoad(); vqLoad(); cbLoad();
+  xsLoad().then(() => afterLoad('services'));
 }
 async function saveSvc(){
   const plans = _SV.vip.plans.filter(p => String(p.name || '').trim()).map(p => ({ ...p, id: p.id || 'p' + hid(), price: Math.max(0, Math.round(Number(p.price) || 0)), days: Math.max(0, Math.round(Number(p.days) || 0)) }));
@@ -429,6 +526,7 @@ async function saveSvc(){
   data.help = { useSeoFaq: chk('hp-seofaq'), faq: clean(_SV.help.faq, 'q').filter(f => f.a), feesNote: val('hp-feesnote'),
     safety: { tips: lines('hp-safetips'), numbers: lines('hp-nums').map(l => { const [a, b] = l.includes('|') ? l.split('|') : ['Official', l]; return { label: a.trim().slice(0, 40), number: String(b || '').trim().slice(0, 30) }; }).filter(n => n.number) },
     offices: clean(_SV.help.offices, 'name'), callback: { on: chk('cb-on'), text: val('cb-text'), topics: lines('cb-topics'), slots: lines('cb-slots') } };
+  if(_SV.extra) data.extra = xsData();
   await window._setDoc('siteConfig', 'services', data);
   await logAct('Services & Rewards saved', 'config', 'services');
 }
