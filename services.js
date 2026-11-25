@@ -219,6 +219,35 @@ const css = `
 @keyframes vTw{50%{opacity:.25;transform:scale(.6)}}
 #appBar .ab-name .vf-seal.off{width:20px;height:20px;animation:vfAsk 2.2s ease-in-out infinite}
 .vf-seal svg,.vf-seal svg .ck{animation:none!important}
+/* not verified / pending: golden-brown warning look, so nobody mistakes it for an active badge */
+.vf-warn{display:inline-flex;align-items:center;gap:3px;flex:none;padding:2px 7px 2px 3px;border-radius:12px;cursor:pointer;-webkit-text-fill-color:initial;
+  background:rgba(185,130,40,.16);border:1px solid rgba(214,160,72,.55);color:#e9b85a;font-size:9.5px;font-weight:800;line-height:1.3;white-space:nowrap;letter-spacing:.1px}
+.vf-warn .vf-seal{width:14px!important;height:14px!important;margin:0;animation:none!important;filter:none}
+.vf-warn.off{animation:vWarn 2.4s ease-in-out infinite}
+@keyframes vWarn{50%{box-shadow:0 0 0 3px rgba(214,160,72,.18);border-color:rgba(240,190,100,.85)}}
+.vf-warn .lg,.vf-warn .sh{display:inline-block;line-height:14px;transform:translateY(.5px)}
+.vf-warn .sh{display:none}
+@media (max-width:380px){.vf-warn .lg{display:none}.vf-warn .sh{display:inline}#appBar .ab-name.has-warn h3{font-size:15px}}
+.vf-chip.off,.vf-chip.wait{gap:6px;padding:4px 10px 4px 5px;border-radius:20px;border:1px solid rgba(214,160,72,.6);background:rgba(185,130,40,.15);box-shadow:none;animation:none;color:#e9b85a}
+.vf-chip.off::after{display:none}
+.vf-chip.off b{background:none;-webkit-text-fill-color:#e9b85a;color:#e9b85a;animation:none;font-size:10.5px;letter-spacing:.2px}
+.vf-chip.off em{color:#ffd98a;font-style:normal;font-weight:900;margin-left:2px;padding-left:6px;border-left:1px solid rgba(214,160,72,.45)}
+/* after-login pop-up: offers & rewards are for Verified members */
+.vpop{position:fixed;inset:0;left:var(--app-gut,0);right:var(--app-gut,0);z-index:2700;display:flex;align-items:flex-end;justify-content:center;background:rgba(2,6,14,.72);backdrop-filter:blur(4px);opacity:0;transition:opacity .25s}
+.vpop.on{opacity:1}
+.vpop .card{width:100%;max-height:92dvh;overflow:auto;border-radius:26px 26px 0 0;padding:26px 20px calc(20px + env(safe-area-inset-bottom,0px));position:relative;transform:translateY(40px);transition:transform .3s cubic-bezier(.2,.8,.2,1);
+  background:radial-gradient(130% 90% at 50% 0%,rgba(243,196,107,.22),rgba(6,13,26,0) 60%),linear-gradient(180deg,#14203a,#0a1224);border-top:1px solid rgba(243,196,107,.45);box-shadow:0 -20px 60px rgba(0,0,0,.6)}
+.vpop.on .card{transform:none}
+.vpop .x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#cfd8ea;font-size:15px;cursor:pointer}
+.vpop .big{display:block;text-align:center;font-size:58px;line-height:1}.vpop .big .vf-seal{width:1em;height:1em;margin:0}
+.vpop h3{text-align:center;margin:12px 0 6px;font-size:19px;background:linear-gradient(90deg,#fff,#ffe3a3);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.vpop .sub{text-align:center;color:#a9bcdc;font-size:13px;line-height:1.6;margin:0 0 14px}
+.vpop .row{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;font-size:12.5px;color:#dbe7ff;line-height:1.5}
+.vpop .row i{width:26px;height:26px;flex:none;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.vpop .row.lk i{background:rgba(214,160,72,.18);color:#f3c46b}.vpop .row.ok i{background:rgba(29,219,128,.15);color:var(--p)}
+.vpop .row b{display:block;color:#fff;font-size:13px}
+.vpop .acts{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.vpop .later{border:0;background:none;color:#8fa3c4;font-weight:700;font-size:13px;padding:8px;cursor:pointer;font-family:inherit}
 @media (prefers-reduced-motion:reduce){.vlock::after,.vbtn::after,.vf-chip.off,.vf-chip.off::after,.vf-chip.off b,.vf-chip.off .tw{animation:none}}
 `;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
@@ -551,10 +580,11 @@ const SEAL_PATH = (() => { let d = ''; for(let i = 0; i < 24; i++){ const a = i 
 // kind: '' = verified (blue, tick) · 'off' = not verified (grey, outline) · 'wait' = request being checked (orange, clock)
 function seal(cls, kind){ const id = 'vg' + Math.random().toString(36).slice(2, 7);
   // body colours (top, middle, bottom), rim, tick
-  const C = kind === 'off' ? ['#60a5fa', '#2453c9', '#142a6b', '#ffd76a', '#ffffff']
-    : kind === 'wait' ? ['#ffc48a', '#ff8c42', '#c2501a', '#ffe1c4', '#ffffff']
+  const C = kind === 'off' ? ['#f3c46b', '#b98228', '#6e4612', '#ffe3a3', '#ffffff']
+    : kind === 'wait' ? ['#f3c46b', '#b98228', '#6e4612', '#ffe3a3', '#ffffff']
     : ['#8fd8ff', '#1d8cf2', '#0b47b8', '#e3f4ff', '#ffffff'];
   const mark = kind === 'wait' ? `<path class="ck" d="M12 7.5v4.7l3 1.8" fill="none" stroke="${C[4]}" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>`
+    : kind === 'off' ? `<path class="ck" d="M12 7.2v6M12 16.3v.5" fill="none" stroke="${C[4]}" stroke-width="2.5" stroke-linecap="round"/>`
     : `<path class="ck" d="M7.4 12.3l3 3 6.2-6.4" fill="none" stroke="${C[4]}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"${kind === 'off' ? ' opacity=".95"' : ''}/>`;
   const title = kind === 'off' ? 'Get Verified' : kind === 'wait' ? 'Verification is being checked' : 'Verified';
   return `<span class="vf-seal ${kind || ''} ${cls || ''}" data-noi18n title="${title}" ${kind ? `onclick="event.stopPropagation();svGo('verify')"` : ''}><svg viewBox="0 0 24 24" aria-hidden="true"><defs>
@@ -565,7 +595,7 @@ function seal(cls, kind){ const id = 'vg' + Math.random().toString(36).slice(2, 
     <path d="${SEAL_PATH}" fill="url(#${id}b)" stroke="${C[3]}" stroke-width="${kind === 'off' ? 1.1 : .8}"/>
     <g clip-path="url(#${id}c)"><ellipse cx="9" cy="6.5" rx="9" ry="6" fill="url(#${id}h)"/>
       <rect x="-12" y="-4" width="6" height="32" fill="url(#${id}s)" transform="rotate(22 12 12)"><animate attributeName="x" values="-12;30;30" keyTimes="0;.55;1" dur="${kind === 'off' ? 2.6 : 3.6}s" repeatCount="indefinite"/></rect></g>
-    ${kind === 'off' ? `<circle cx="12" cy="12" r="7.2" fill="none" stroke="${C[3]}" stroke-width=".55" opacity=".8"/>` : ''}${mark}</svg></span>`; }
+    ${mark}</svg></span>`; }
 // verified · pending · not verified (only when the Verified badge is offered)
 function vfKind(s){ if(!s) return null; if(s.verified) return ''; if(((SV.cfg || {}).verify || {}).on === false) return null; return (s.orders || []).some(o => o.kind === 'verify' && o.status === 'Pending') ? 'wait' : 'off'; }
 window._vfSeal = seal;
@@ -575,8 +605,8 @@ function badges(){
   if(ph){ ph.querySelectorAll('.vf-badge,.vf-chip,.vip-badge').forEach(x => x.remove());
     const k = vfKind(s);
     if(k === '') ph.insertAdjacentHTML('beforeend', `<span class="vf-chip" data-noi18n>${seal()}VERIFIED</span>`);
-    else if(k === 'wait') ph.insertAdjacentHTML('beforeend', `<span class="vf-chip wait" data-noi18n onclick="svGo('verify')">${seal('', 'wait')}PENDING</span>`);
-    else if(k === 'off') ph.insertAdjacentHTML('beforeend', `<span class="vf-chip off" onclick="closeModal&&closeModal('profileModal');svGo('verify')">${seal('', 'off')}<b>Get Verified</b><span class="tw">✦</span><em>›</em></span>`);
+    else if(k === 'wait') ph.insertAdjacentHTML('beforeend', `<span class="vf-chip wait" onclick="closeModal&&closeModal('profileModal');svGo('verify')">${seal('', 'wait')}Verification pending</span>`);
+    else if(k === 'off') ph.insertAdjacentHTML('beforeend', `<span class="vf-chip off" onclick="closeModal&&closeModal('profileModal');svGo('verify')">${seal('', 'off')}<b>Not verified</b><em>Get verified ›</em></span>`);
     if(s.vip) ph.insertAdjacentHTML('beforeend', `<span class="vip-badge" data-noi18n>👑 ${E(s.vip.name)}</span>`); }
   // the profile picture and the top-bar picture get a turning ring and a corner seal
   ['pfAv', 'abAv'].forEach(id => { const a = $s(id); if(!a) return; a.classList.toggle('vf-ring', !!s.verified); a.querySelectorAll('.vf-corner').forEach(x => x.remove()); if(s.verified) a.insertAdjacentHTML('beforeend', seal('vf-corner')); });
@@ -586,16 +616,18 @@ function badges(){
 }
 // the app rewrites the top-bar title now and then: put the seal back each time
 (function watch(){ const g = $s('userGreeting'); if(!g){ setTimeout(watch, 800); return; }
-  new MutationObserver(() => { const row = g.parentElement; if(!(row && row.classList.contains('ab-name') && row.querySelector(':scope > .vf-seal'))) topMark(g, vfKind(SV.st)); }).observe(g, { childList: true, characterData: true, subtree: true }); })();
+  new MutationObserver(() => { const row = g.parentElement; if(!(row && row.classList.contains('ab-name') && row.querySelector(':scope > .vf-seal, :scope > .vf-warn'))) topMark(g, vfKind(SV.st)); }).observe(g, { childList: true, characterData: true, subtree: true }); })();
 // the title and the seal sit in their own row, so a long number never pushes into the buttons
 function nameRow(g){ if(g.parentElement && g.parentElement.classList.contains('ab-name')) return g.parentElement;
   const w = document.createElement('div'); w.className = 'ab-name'; g.parentElement.insertBefore(w, g); w.appendChild(g); return w; }
 function topMark(g, k){
-  const row = nameRow(g); row.querySelectorAll(':scope > .vf-seal').forEach(x => x.remove());
+  const row = nameRow(g); row.querySelectorAll(':scope > .vf-seal, :scope > .vf-warn').forEach(x => x.remove()); row.classList.remove('has-warn');
   if(k === null || !user()) return;
-  row.insertAdjacentHTML('beforeend', seal('', k));
-  const el = row.lastElementChild; el.setAttribute('title', k === 'off' ? 'Get Verified' : k === 'wait' ? 'Verification pending' : 'Verified');
-  if(!el.getAttribute('onclick')) el.setAttribute('onclick', "event.stopPropagation();svGo('verify')"); }
+  if(k === ''){ row.insertAdjacentHTML('beforeend', seal()); const el = row.lastElementChild; el.setAttribute('title', 'Verified'); el.setAttribute('onclick', "event.stopPropagation();svGo('verify')"); return; }
+  row.classList.add('has-warn');
+  row.insertAdjacentHTML('beforeend', k === 'wait'
+    ? `<span class="vf-warn wait" onclick="event.stopPropagation();svGo('verify')" title="Verification pending">${seal('', 'wait')}<span class="lg">Pending</span><span class="sh">Pending</span></span>`
+    : `<span class="vf-warn off" onclick="event.stopPropagation();svGo('verify')" title="Not verified — tap to get verified">${seal('', 'off')}<span class="lg">Get verified</span><span class="sh">Verify</span></span>`); }
 const _op = window.openProfileModal;
 if(typeof _op === 'function') window.openProfileModal = function(){ const r = _op.apply(this, arguments); badges(); if(user()) loadState(); return r; };
 
@@ -636,8 +668,40 @@ window.svPromoOff = async function(){
   window._promoCode = ''; window._promoDisc = 0; feeRefresh();
 };
 
+/* ───────── after login: offers & rewards are for Verified members ───────── */
+function vPopShow(){
+  if($s('vPop')) return;
+  const V = (SV.cfg && SV.cfg.verify) || {}, price = Number(V.price) || 100;
+  const d = document.createElement('div'); d.id = 'vPop'; d.className = 'vpop';
+  d.innerHTML = `<div class="card" role="dialog" aria-modal="true"><button class="x" aria-label="Close" onclick="vPopClose()"><i class="fa-solid fa-xmark"></i></button>
+    <span class="big">${seal('', 'off')}</span><h3>Unlock offers &amp; rewards</h3>
+    <p class="sub">On Creditfy, offers, events and rewards are for Verified members. Get your Verified badge once to join them all.</p>
+    <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>Daily check-in &amp; Spin &amp; Win</b>Win balance rewards every day and every month</div></div>
+    <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>Hot offers, events &amp; prizes</b>Join contests and win invite prizes</div></div>
+    <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>Redeem codes &amp; gift vouchers</b>Add codes and send gifts to friends</div></div>
+    <div class="row ok"><i class="fa-solid fa-check"></i><div><b>Your sign-up bonus is already yours</b>Use it on your loan fee — no verification needed</div></div>
+    <div class="acts"><button class="vbtn" onclick="vPopClose();svGo('verify')">${seal()}Get Verified for ${tk(price)}</button><button class="later" onclick="vPopClose()">Maybe later</button></div></div>`;
+  d.addEventListener('click', e => { if(e.target === d) vPopClose(); });
+  document.body.appendChild(d); requestAnimationFrame(() => d.classList.add('on'));
+  try { localStorage.setItem('cf_vpop_' + (user() || {}).phone, String(Date.now())); } catch (e) {}
+}
+window.vPopClose = function(){ const d = $s('vPop'); if(!d) return; d.classList.remove('on'); setTimeout(() => d.remove(), 300); };
+// fresh login → show now; otherwise at most once a day; never while verification is pending
+async function vPopMaybe(fresh){
+  const u = user(); if(!u) return;
+  await loadCfg(); if(!SV.st) await loadState();
+  if(!needsV() || (SV.cfg.verify || {}).on === false) return;
+  if((SV.st.orders || []).some(o => o.kind === 'verify' && o.status === 'Pending')) return;
+  let last = 0; try { last = Number(localStorage.getItem('cf_vpop_' + u.phone)) || 0; } catch (e) {}
+  if(!fresh && Date.now() - last < 864e5) return;
+  const wait = () => (document.getElementById('splash') || document.querySelector('.modal-overlay.on,.modal-overlay.active')) ? setTimeout(wait, 1200) : vPopShow();
+  setTimeout(wait, fresh ? 1500 : 4000);
+}
+let _vpPhone = (user() || {}).phone || '';
+setInterval(() => { const ph = (user() || {}).phone || ''; if(ph && ph !== _vpPhone){ _vpPhone = ph; SV.st = null; loadState().then(() => { renderHub(); vPopMaybe(true); }); } else if(!ph) _vpPhone = ''; }, 1500);
+
 /* ───────── start ───────── */
-function start(){ renderHub(); loadCfg().then(() => { renderHub(); if(user()) loadState().then(renderHub); }); }
+function start(){ renderHub(); loadCfg().then(() => { renderHub(); if(user()) loadState().then(() => { renderHub(); vPopMaybe(false); }); }); }
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 // refresh the red dots after login / logout
 window.addEventListener('storage', e => { if(e.key === 'creditUpUser') start(); });

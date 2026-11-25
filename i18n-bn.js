@@ -141,6 +141,10 @@ Object.assign(BN, {
   'Offers and events are for Verified members. Get your Verified badge once and join every offer, event and reward.': 'অফার ও ইভেন্ট শুধু ভেরিফায়েড সদস্যদের জন্য। একবার ভেরিফায়েড ব্যাজ নিন, তারপর সব অফার, ইভেন্ট ও পুরস্কারে অংশ নিন।',
   'This reward is for Verified members. Get your Verified badge to join offers, events and Spin & Win.': 'এই পুরস্কার শুধু ভেরিফায়েড সদস্যদের জন্য। অফার, ইভেন্ট ও স্পিন অ্যান্ড উইনে অংশ নিতে ভেরিফায়েড ব্যাজ নিন।',
   'Redeem codes': 'রিডিম কোড', 'Gift vouchers': 'গিফট ভাউচার',
+  'Get verified': 'ভেরিফাই করুন', 'Verify': 'ভেরিফাই', 'Not verified': 'ভেরিফায়েড নয়', 'Get verified ›': 'ভেরিফাই করুন ›', 'Verification pending': 'ভেরিফিকেশন অপেক্ষমাণ', 'Pending': 'অপেক্ষমাণ',
+  'Unlock offers & rewards': 'অফার ও পুরস্কার আনলক করুন', 'On Creditfy, offers, events and rewards are for Verified members. Get your Verified badge once to join them all.': 'ক্রেডিটফাই-তে অফার, ইভেন্ট ও পুরস্কার শুধু ভেরিফায়েড সদস্যদের জন্য। একবার ভেরিফায়েড ব্যাজ নিন, সবকিছুতে অংশ নিন।',
+  'Daily check-in & Spin & Win': 'ডেইলি চেক-ইন ও স্পিন অ্যান্ড উইন', 'Win balance rewards every day and every month': 'প্রতিদিন ও প্রতি মাসে ব্যালেন্স পুরস্কার জিতুন', 'Join contests and win invite prizes': 'প্রতিযোগিতায় অংশ নিন, ইনভাইট পুরস্কার জিতুন',
+  'Add codes and send gifts to friends': 'কোড ব্যবহার করুন, বন্ধুকে গিফট পাঠান', 'Your sign-up bonus is already yours': 'আপনার সাইন-আপ বোনাস আপনারই', 'Use it on your loan fee — no verification needed': 'লোনের ফি-তে ব্যবহার করুন — ভেরিফিকেশন লাগবে না', 'Maybe later': 'পরে দেখব',
   'Number copied': 'নম্বর কপি হয়েছে', 'Code copied': 'কোড কপি হয়েছে', 'Copied': 'কপি হয়েছে', 'Could not submit': 'জমা দেওয়া যায়নি', 'Could not send': 'পাঠানো যায়নি', 'Could not load.': 'লোড করা যায়নি।'
 });
 const M = { Jan: 'জানু', Feb: 'ফেব্রু', Mar: 'মার্চ', Apr: 'এপ্রিল', May: 'মে', Jun: 'জুন', Jul: 'জুলাই', Aug: 'আগস্ট', Sep: 'সেপ্টে', Sept: 'সেপ্টে', Oct: 'অক্টো', Nov: 'নভে', Dec: 'ডিসে' };
@@ -218,6 +222,7 @@ R(`^(\\d{1,2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept?|Oct|Nov|Dec) \\d{4})$`, (
 R(`^(\\d{1,2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept?|Oct|Nov|Dec), \\d{1,2}:\\d{2} [ap]m)$`, (m, a) => D(a));
 R(`^#(\\d+) · (.+)$`, (m, a, b) => `#${a} · ${D(b)}`);
 R(`^Sat–Thu(.*)$`, 'শনি–বৃহস্পতি$1');
+R(`^Get Verified for (৳ ?[\\d,]+)$`, '$1 দিয়ে ভেরিফায়েড হোন');
 R(`^(.+) and all offers, events and rewards are for Verified members\\. Get your Verified badge once and join everything\\.$`, (m, a) => `${BN[a] || a} সহ সব অফার, ইভেন্ট ও পুরস্কার শুধু ভেরিফায়েড সদস্যদের জন্য। একবার ভেরিফায়েড ব্যাজ নিন, তারপর সবকিছুতে অংশ নিন।`);
 R(`^We are checking your verification payment\\. (.+) opens as soon as your badge is active\\.$`, (m, a) => `আপনার ভেরিফিকেশন পেমেন্ট যাচাই হচ্ছে। ব্যাজ চালু হলেই ${BN[a] || a} খুলে যাবে।`);
 R(`^We are waiting for the payment provider to confirm your fee for (CU-\\w+)\\. This usually takes a few minutes — you will get a notification as soon as it is verified\\. Please do not pay again\\.$`, '$1 এর ফি পেমেন্ট প্রোভাইডারের নিশ্চিতকরণের অপেক্ষায় আছে। সাধারণত কয়েক মিনিট লাগে — যাচাই হলেই নোটিফিকেশন পাবেন। দয়া করে আবার পেমেন্ট করবেন না।');
