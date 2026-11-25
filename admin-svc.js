@@ -181,6 +181,12 @@ function buildSvc(){
       <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-gamepad"></i>Play &amp; Earn (Tic-Tac-Toe)</div>
       <div class="fgrid fgrid3">${tog('xs-g-on', 'Games on', true)}${inp('xs-g-reward', 'Reward per win (৳)', '1', 'type="number" min="0"')}${inp('xs-g-perday', 'Paid wins per day', '5', 'type="number" min="0"')}${inp('xs-g-plays', 'Games per day', '30', 'type="number" min="1"')}${inp('xs-g-level', 'Computer skill (0–100)', '75', 'type="number" min="0" max="100"')}</div>
       <div id="xsCost" class="hint"></div>
+      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-wallet"></i>Extra Balance (separate from loans and loan fees)</div>
+      <div class="fgrid fgrid3">${tog('xs-w-on', 'Extra Balance on', true)}${tog('xs-w-direct', 'Also allow paying each order with a TrxID', true)}${inp('xs-w-min', 'Smallest deposit (৳)', '50', 'type="number" min="1"')}${inp('xs-w-max', 'Largest deposit (৳, 0 = no limit)', '50000', 'type="number" min="0"')}</div>
+      <div class="hint">Deposits come into the Orders tab — press ✓ when the money arrived. An order paid from Extra Balance that you reject is refunded to the user's Extra Balance automatically. Users → open a user → “Extra Balance” to add or take money by hand.</div>
+      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-bolt"></i>Live orders list (under Extra Services)</div>
+      <div class="fgrid fgrid3">${tog('xs-l-on', 'Show the live list', true)}${inp('xs-l-count', 'How many to show', '12', 'type="number" min="3" max="30"')}</div>
+      <div class="hint">Shows real orders and deposits only, with the number masked (017****013).</div>
     </div>
     <div id="xsList"></div>
     <button class="btn btn-s ro-ok" onclick="xsAddSvc()"><i class="fa-solid fa-plus"></i>Add a service</button>
@@ -206,12 +212,19 @@ function odRender(){
   el.innerHTML = L.length ? L.map(o => {
     const u = (_D.users || []).find(x => String(x.phone) === String(o.uid)) || {};
     const own = String(o.sender) === String(o.uid);
+    if(o.kind === 'xdeposit'){
+      return `<div class="od-row"><div><b><i class="fa-solid fa-wallet" style="color:var(--p)"></i> Extra Balance deposit</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
+      <div><b>৳${fa(o.price)}</b><small>${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
+      <div><span class="mono">${ep(o.trxId)}</span><small>TrxID</small></div>
+      <div>${sb(o.status === 'Approved' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${fd(o.createdAt)}</small></div>
+      <div class="acts">${o.status === 'Pending' ? `<button class="ab ab-ok" title="Payment arrived — add the balance" onclick="xsOrder('${ep(o._id)}','approve')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" title="Reject" onclick="xsOrder('${ep(o._id)}','reject')"><i class="fa-solid fa-xmark"></i></button>` : `<small>${ep(o.reason || '')}</small>`}</div></div>`;
+    }
     if(o.kind === 'extra'){
       const live = ['Pending', 'Processing'].includes(o.status);
       const info = (o.fields || []).filter(f => f.value).map(f => `${ep(f.label)}: <b>${ep(f.value)}</b>`).join('<br>');
       return `<div class="od-row"><div><b><i class="fa-solid fa-store" style="color:#ffd76a"></i> ${ep(o.iname)}</b><small>${ep(o.sname)} · ${ep(u.name || '')} · 0${ep(o.uid)}</small>${info ? `<small>${info}</small>` : ''}</div>
       <div><b>${o.flow === 'sell' ? 'Pay user ৳' + fa(o.get) : '৳' + fa(o.price)}</b><small>${o.amount ? ep(o.amount) + ' ' + ep(o.unit) + ' · ' : ''}${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
-      <div><span class="mono">${ep(o.trxId)}</span><small>${o.sender ? 'from 0' + ep(o.sender) : 'TrxID only'}</small></div>
+      <div>${o.paidWith === 'xbal' ? '<b style="color:var(--p)">Paid from Extra Balance</b><small>no TrxID needed</small>' : `<span class="mono">${ep(o.trxId)}</span><small>${o.sender ? 'from 0' + ep(o.sender) : 'TrxID only'}</small>`}</div>
       <div>${sb(o.status === 'Delivered' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${ep(o.status)} · ${fd(o.createdAt)}</small></div>
       <div class="acts">${live ? `${o.status === 'Pending' ? `<button class="ab" title="Payment OK — start working" onclick="xsOrder('${ep(o._id)}','process')"><i class="fa-solid fa-hourglass-half"></i></button>` : ''}<button class="ab ab-ok" title="Deliver" onclick="xsOrder('${ep(o._id)}','deliver')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" title="Reject" onclick="xsOrder('${ep(o._id)}','reject')"><i class="fa-solid fa-xmark"></i></button>` : `<small>${ep(o.delivery || o.reason || '')}</small>`}</div></div>`;
     }
@@ -449,12 +462,16 @@ function xsData(){
     items: (s.items || []).filter(i => String(i.name || '').trim()).map(i => ({ ...i, id: i.id || 'o' + hid(), name: String(i.name).trim().slice(0, 60) })) }));
   if(services.some(s => s.logo && !/^https:\/\//i.test(s.logo))) throw new Error('Extra services: a logo link must start with https://');
   return { on: chk('xs-on'), title: val('xs-title') || 'Extra Services', services,
+    wallet: { on: chk('xs-w-on'), direct: chk('xs-w-direct'), min: numv('xs-w-min', 50, 1, 1e7), max: numv('xs-w-max', 50000, 0, 1e8) },
+    live: { on: chk('xs-l-on'), count: numv('xs-l-count', 12, 3, 30) },
     games: { on: chk('xs-g-on'), reward: numv('xs-g-reward', 1, 0, 1e5), perDay: numv('xs-g-perday', 5, 0, 1e3), plays: numv('xs-g-plays', 30, 1, 1e3), level: numv('xs-g-level', 75, 0, 100) } };
 }
 async function xsLoad(){
   const r = await window._accountApi('extraConfig', {});
   _SV.extra = r.ok ? r.data : { on: true, title: 'Extra Services', services: [], games: { on: true, reward: 1, perDay: 5, plays: 30, level: 75 } };
-  fillIn({ 'xs-on': _SV.extra.on !== false, 'xs-title': _SV.extra.title, 'xs-g-on': _SV.extra.games.on !== false, 'xs-g-reward': _SV.extra.games.reward, 'xs-g-perday': _SV.extra.games.perDay, 'xs-g-plays': _SV.extra.games.plays, 'xs-g-level': _SV.extra.games.level });
+  fillIn({ 'xs-on': _SV.extra.on !== false, 'xs-title': _SV.extra.title, 'xs-g-on': _SV.extra.games.on !== false, 'xs-g-reward': _SV.extra.games.reward, 'xs-g-perday': _SV.extra.games.perDay, 'xs-g-plays': _SV.extra.games.plays, 'xs-g-level': _SV.extra.games.level,
+    'xs-w-on': (_SV.extra.wallet || {}).on !== false, 'xs-w-direct': (_SV.extra.wallet || {}).direct !== false, 'xs-w-min': (_SV.extra.wallet || {}).min ?? 50, 'xs-w-max': (_SV.extra.wallet || {}).max ?? 50000,
+    'xs-l-on': (_SV.extra.live || {}).on !== false, 'xs-l-count': (_SV.extra.live || {}).count || 12 });
   ['xs-g-reward', 'xs-g-perday'].forEach(id => { const e = $p(id); if(e) e.oninput = xsRender; });
   xsRender();
 }
@@ -463,11 +480,12 @@ async function xsOrder(id, op){
   let text = '', reason = '';
   if(op === 'deliver'){ text = prompt(`Deliver ${o.planName} to 0${o.uid}.\nWrite the code / card details / note the user should see (only this user sees it):`, ''); if(text === null) return; }
   if(op === 'reject'){ reason = prompt('Reason (the user sees it):', 'We could not find this payment.'); if(reason === null) return; }
+  if(op === 'approve' && !confirm(`Add ৳${fa(o.price)} Extra Balance to 0${o.uid}? Check that ৳${fa(o.price)} with TrxID ${o.trxId} arrived first.`)) return;
   if(op === 'process' && !confirm(`Payment ${o.price ? '৳' + fa(o.price) + ' ' : ''}(TrxID ${o.trxId}) checked? Mark “${o.planName}” as in progress.`)) return;
   showL(true); const r = await window._accountApi('adminExtraOrder', { id, op, text, reason }); showL(false);
   if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; }
   await logAct(`Extra order ${o.planName} → ${op} for ${o.uid} (TrxID ${o.trxId})`, 'user', o.uid);
-  toast(op === 'deliver' ? 'Delivered ✓' : op === 'process' ? 'Marked in progress' : 'Rejected', op === 'reject' ? 'e' : 's'); odLoad();
+  toast(op === 'approve' ? 'Balance added ✓' : op === 'deliver' ? 'Delivered ✓' : op === 'process' ? 'Marked in progress' : 'Rejected', op === 'reject' ? 'e' : 's'); odLoad();
 }
 
 /* ═════════ load / save ═════════ */

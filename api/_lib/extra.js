@@ -20,7 +20,7 @@ const DEF = {
         pair('usd-buy', 'Buy Dollar (Payoneer / Wise)', { unit: 'USD', rate: 130, pct: 0, min: 5, max: 500 })] },
     { id: 'giftcard', name: 'Gift Cards', short: 'Gift Cards', icon: 'fa-brands fa-google-play', color: 'g-purple', mode: 'items', on: true,
       desc: 'Google Play, iTunes, Steam and more. The code is sent to you here in My Orders.',
-      fields: [{ label: 'Email (optional)', req: false }],
+      fields: [{ label: 'Email', req: false }],
       items: [item('gp10', 'Google Play $10 (US)', 1450), item('gp25', 'Google Play $25 (US)', 3500), item('it10', 'iTunes / Apple $10 (US)', 1500), item('st10', 'Steam $10', 1450), item('st20', 'Steam $20', 2850)] },
     { id: 'smm', name: 'SMM & Premium', short: 'SMM', icon: 'fa-solid fa-hashtag', color: 'g-blue', mode: 'items', on: true,
       desc: 'Telegram Premium, Facebook page services and more premium social services.',
@@ -44,7 +44,10 @@ const DEF = {
       fields: [{ label: 'Your receiving number', req: true }],
       items: [pair('b2n', 'bKash → Nagad'), pair('n2b', 'Nagad → bKash'), pair('b2r', 'bKash → Rocket'), pair('r2b', 'Rocket → bKash'), pair('n2r', 'Nagad → Rocket'), pair('r2n', 'Rocket → Nagad')] }
   ],
-  games: { on: true, reward: 1, perDay: 5, plays: 30, level: 75 }
+  games: { on: true, reward: 1, perDay: 5, plays: 30, level: 75 },
+  // Extra Balance: deposit once, pay for orders from it; direct = also allow paying each order with a TrxID
+  wallet: { on: true, min: 50, max: 50000, direct: true },
+  live: { on: true, count: 12 }
 };
 
 function norm(x) {
@@ -61,7 +64,9 @@ function norm(x) {
         unit: str(i.unit || '৳', 8), rate: Math.max(0, Number(i.rate) || 0) || 1, pct: Math.max(0, Math.min(50, Number(i.pct) || 0)), fee: money(i.fee),
         min: Math.max(0, Number(i.min) || 0), max: Math.max(0, Number(i.max) || 0), flow: i.flow === 'sell' ? 'sell' : 'buy' }))
     })),
-    games: { ...DEF.games, ...(x.games || {}) }
+    games: { ...DEF.games, ...(x.games || {}) },
+    wallet: { ...DEF.wallet, ...(x.wallet || {}), min: Math.max(1, money((x.wallet || {}).min ?? DEF.wallet.min)), max: money((x.wallet || {}).max ?? DEF.wallet.max) },
+    live: { ...DEF.live, ...(x.live || {}), count: Math.max(3, Math.min(30, money((x.live || {}).count) || DEF.live.count)) }
   };
 }
 // what the user pays (buy) or gets (sell) for an amount
@@ -98,6 +103,23 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
     try { return await fn(b, user.uid, user); }
     catch (e) { if (e.status) return [e.status, { error: e.message, ...(e.code ? { code: e.code } : {}) }]; throw e; }
   };
+  let _live = null;
+  // add (or take) Extra Balance and write a history line — one transaction; `also` adds more writes to it
+  async function xcredit(ref, uid, amount, type, note, extra = {}, also) {
+    const log = db().collection('xbalLog').doc();
+    let after = 0;
+    await db().runTransaction(async t => {
+      const s = await t.get(ref);
+      after = (Number((s.data() || {}).xbal) || 0) + amount;
+      if (after < 0) throw Object.assign(new Error('Not enough Extra Balance. Please add balance first.'), { status: 400, code: 'xbal_low' });
+      t.update(ref, { xbal: after });
+      t.set(log, { uid, amount, type, note: String(note || '').slice(0, 140), after, at: iso(), ...extra });
+      if (also) also(t);
+    });
+    return after;
+  }
+  const mask = p => { p = String(p || ''); return p.length >= 6 ? '0' + p.slice(0, 2) + '****' + p.slice(-3) : 'A user'; };
+  async function feed(uid, text, s) { try { await db().collection('extraFeed').add({ who: mask(uid), text: str(text, 80), icon: s ? s.icon : 'fa-solid fa-wallet', color: s ? s.color : 'g-green', at: iso() }); _live = null; } catch (e) {} }
   const pubOrder = o => ({ id: o.id, sid: o.sid, sname: o.sname, iname: o.iname, unit: o.unit, amount: o.amount, price: o.price, get: o.get, flow: o.flow, fields: o.fields || [], trxId: o.trxId,
     status: o.status, reason: o.reason || '', delivery: o.status === 'Delivered' ? (o.delivery || '') : '', createdAt: o.createdAt, decidedAt: o.decidedAt || '' });
 
@@ -105,7 +127,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
     extraConfig: async () => [200, await cfg()],
 
     extraOrder: wrap(async (b, uid) => {
-      await me(uid);
+      const { d } = await me(uid);
       const C = await cfg();
       if (!C.on) return [400, { error: 'Extra services are switched off right now.' }];
       const s = C.services.find(x => x.id === b.sid && x.on && !x.soon && x.mode !== 'game');
@@ -124,17 +146,32 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const fields = s.fields.map((f, k) => ({ label: f.label, value: str(vals[k], 300) }));
       const miss = s.fields.find((f, k) => f.req && !fields[k].value);
       if (miss) return [400, { error: `Please fill in: ${miss.label}` }];
-      const trxId = String(b.trxId || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 80);
-      if (trxId.length < 6) return [400, { error: i.flow === 'sell' ? 'Please enter the transaction ID / hash of what you sent.' : 'Please enter the Transaction ID from your payment SMS.' }];
-      const [dupO, dupT] = await Promise.all([db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get(), db().collection('transactions').doc('trx_' + trxId).get()]);
-      if (!dupO.empty || dupT.exists) return [400, { error: 'This Transaction ID has already been used.' }];
       const mine = await db().collection('serviceOrders').where('uid', '==', uid).get();
       if (mine.docs.filter(x => x.data().kind === 'extra' && ['Pending', 'Processing'].includes(x.data().status)).length >= 5) return [400, { error: 'You have 5 orders in progress. Please wait until they are delivered.' }];
+      // pay from the Extra Balance (buy options only), or send money and give the TrxID
+      const useBal = b.payWith === 'xbal' && i.flow !== 'sell';
+      let trxId;
+      if (useBal) {
+        if (!C.wallet.on) return [400, { error: 'Extra Balance is switched off right now.' }];
+        trxId = 'XB' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase();
+      } else {
+        if (i.flow !== 'sell' && !C.wallet.direct) return [400, { error: 'Please pay from your Extra Balance. Add balance first.' }];
+        trxId = String(b.trxId || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 80);
+        if (trxId.length < 6) return [400, { error: i.flow === 'sell' ? 'Please enter the transaction ID / hash of what you sent.' : 'Please enter the Transaction ID from your payment SMS.' }];
+        const [dupO, dupT] = await Promise.all([db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get(), db().collection('transactions').doc('trx_' + trxId).get()]);
+        if (!dupO.empty || dupT.exists) return [400, { error: 'This Transaction ID has already been used.' }];
+      }
       const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
-      const ref = await db().collection('serviceOrders').add({ uid, kind: 'extra', sid: s.id, sname: s.name, iid: i.id, iname: i.name, planName: `${s.name} · ${i.name}`, unit: i.unit, flow: i.flow,
-        amount, price: q.pay, get: q.get, fields, trxId, sender: isPhone(sender) ? sender : '', payMethod: str(b.payMethod, 30), toNumber: str(b.toNumber || i.to, 120), status: 'Pending', createdAt: iso() });
-      await notifyUser(uid, 'Order received 🛒', `${s.name} · ${i.name}${amount ? ` (${amount} ${i.unit})` : ''} — TrxID ${trxId}. Our team will check it and deliver it soon. See Extra Services → My orders.`, 'transaction');
-      return [200, { ok: true, id: ref.id }];
+      const ref = db().collection('serviceOrders').doc();
+      const order = { uid, kind: 'extra', sid: s.id, sname: s.name, iid: i.id, iname: i.name, planName: `${s.name} · ${i.name}`, unit: i.unit, flow: i.flow,
+        amount, price: q.pay, get: q.get, fields, trxId, paidWith: useBal ? 'xbal' : 'trx', sender: isPhone(sender) ? sender : '', payMethod: useBal ? 'Extra Balance' : str(b.payMethod, 30),
+        toNumber: useBal ? '' : str(b.toNumber || i.to, 120), status: useBal ? 'Processing' : 'Pending', createdAt: iso() };
+      let xbal = null;
+      if (useBal) xbal = await xcredit(d.ref, uid, -q.pay, 'order', `${s.name} · ${i.name}`, { orderId: ref.id }, t => t.set(ref, order));
+      else await ref.set(order);
+      await feed(uid, `ordered ${i.name}`, s);
+      await notifyUser(uid, 'Order received 🛒', `${s.name} · ${i.name}${amount ? ` (${amount} ${i.unit})` : ''} — ${useBal ? `paid ৳${q.pay} from your Extra Balance` : 'TrxID ' + trxId}. Our team will deliver it soon. See Extra Services → My orders.`, 'transaction');
+      return [200, { ok: true, id: ref.id, xbal }];
     }),
 
     extraOrders: wrap(async (b, uid) => {
@@ -143,15 +180,69 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       return [200, { list }];
     }),
 
-    // admin: Processing / Delivered (with the code or details) / Rejected
+    // Extra Balance: a separate balance only for Extra Services (not the loan balance, not for loan fees)
+    xbalState: wrap(async (b, uid) => {
+      const { u } = await me(uid);
+      const [lg, od] = await Promise.all([db().collection('xbalLog').where('uid', '==', uid).get(), db().collection('serviceOrders').where('uid', '==', uid).get()]);
+      const log = lg.docs.map(x => x.data()).sort((a, c) => String(c.at).localeCompare(String(a.at))).slice(0, 40);
+      const deposits = od.docs.map(x => ({ id: x.id, ...x.data() })).filter(o => o.kind === 'xdeposit').sort((a, c) => String(c.createdAt).localeCompare(String(a.createdAt))).slice(0, 10)
+        .map(o => ({ id: o.id, amount: o.price, trxId: o.trxId, status: o.status, reason: o.reason || '', createdAt: o.createdAt }));
+      return [200, { xbal: Number(u.xbal) || 0, log, deposits }];
+    }),
+    xbalDeposit: wrap(async (b, uid) => {
+      await me(uid);
+      const C = await cfg(), W = C.wallet;
+      if (!W.on) return [400, { error: 'Extra Balance is switched off right now.' }];
+      const amount = money(b.amount);
+      if (amount < W.min) return [400, { error: `The smallest deposit is ৳${W.min}.` }];
+      if (W.max && amount > W.max) return [400, { error: `The largest deposit is ৳${W.max}.` }];
+      const trxId = String(b.trxId || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 40);
+      if (trxId.length < 6) return [400, { error: 'Please enter the Transaction ID from your payment SMS.' }];
+      const [dupO, dupT] = await Promise.all([db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get(), db().collection('transactions').doc('trx_' + trxId).get()]);
+      if (!dupO.empty || dupT.exists) return [400, { error: 'This Transaction ID has already been used.' }];
+      const mine = await db().collection('serviceOrders').where('uid', '==', uid).get();
+      if (mine.docs.filter(x => x.data().kind === 'xdeposit' && x.data().status === 'Pending').length >= 3) return [400, { error: 'You have 3 deposits waiting for check. Please wait a little.' }];
+      const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+      const ref = await db().collection('serviceOrders').add({ uid, kind: 'xdeposit', planName: 'Extra Balance deposit', sname: 'Extra Balance', iname: 'Deposit', price: amount, trxId,
+        sender: isPhone(sender) ? sender : '', payMethod: str(b.payMethod, 30), toNumber: str(b.toNumber, 40), status: 'Pending', createdAt: iso() });
+      await notifyUser(uid, 'Deposit received 💳', `We received your Extra Balance deposit of ৳${amount} (TrxID ${trxId}). It is added as soon as we check it.`, 'transaction');
+      return [200, { ok: true, id: ref.id }];
+    }),
+
+    // live list under Extra Services: the latest real orders and deposits (numbers are masked)
+    async extraLive() {
+      const C = await cfg();
+      if (!C.on || !C.live.on) return [200, { list: [] }];
+      if (_live && Date.now() - _live.t < 20e3) return [200, { list: _live.list }];
+      let list = [];
+      try { const s = await db().collection('extraFeed').orderBy('at', 'desc').limit(C.live.count).get(); list = s.docs.map(x => x.data()); } catch (e) {}
+      _live = { t: Date.now(), list };
+      return [200, { list }];
+    },
+
+    // admin: Processing / Delivered (with the code or details) / Rejected; deposits: approve / reject
     async adminExtraOrder(b, user) {
       if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admin login required.' }];
       if (!(await adminCan(user, ['services']))) return [403, { error: 'Your admin role does not allow this.' }];
       const ref = db().collection('serviceOrders').doc(String(b.id || ''));
       const s = await ref.get();
-      if (!s.exists || s.data().kind !== 'extra') return [404, { error: 'Order not found.' }];
+      if (!s.exists || !['extra', 'xdeposit'].includes(s.data().kind)) return [404, { error: 'Order not found.' }];
       const o = s.data();
       if (!['Pending', 'Processing'].includes(o.status)) return [400, { error: 'This order is already ' + o.status + '.' }];
+      const ud = await findUserDoc(o.uid);
+      if (o.kind === 'xdeposit') {
+        if (b.op === 'deliver' || b.op === 'approve') {
+          if (!ud) return [404, { error: 'The user no longer exists.' }];
+          await xcredit(ud.ref, o.uid, o.price, 'deposit', `Deposit · TrxID ${o.trxId}`, { orderId: s.id }, t => t.update(ref, { status: 'Approved', decidedAt: iso(), decidedBy: user.uid }));
+          await feed(o.uid, `added ৳${o.price} Extra Balance`, null);
+          await notifyUser(o.uid, 'Extra Balance added ✅', `৳${o.price} is added to your Extra Balance. You can order any Extra Service now.`, 'success');
+        } else if (b.op === 'reject') {
+          const reason = str(b.reason, 200);
+          await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
+          await notifyUser(o.uid, 'Deposit not approved', `Your Extra Balance deposit of ৳${o.price} (TrxID ${o.trxId}) could not be approved.${reason ? ' Reason: ' + reason : ''}`, 'warning');
+        } else return [400, { error: 'Unknown action.' }];
+        return [200, { ok: true }];
+      }
       const what = `${o.sname} · ${o.iname}`;
       if (b.op === 'process') {
         await ref.update({ status: 'Processing', processAt: iso(), processBy: user.uid });
@@ -162,10 +253,28 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
         await notifyUser(o.uid, 'Order delivered ✅', `${what} is delivered.${text ? ' Open Extra Services → My orders to see the details.' : ''}`, 'success');
       } else if (b.op === 'reject') {
         const reason = str(b.reason, 200);
-        await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
-        await notifyUser(o.uid, 'Order not completed', `Your order ${what} (TrxID ${o.trxId}) could not be completed.${reason ? ' Reason: ' + reason : ''} Please contact support if you paid.`, 'warning');
+        // paid from the Extra Balance: the money goes straight back
+        if (o.paidWith === 'xbal' && o.price > 0 && ud) await xcredit(ud.ref, o.uid, o.price, 'refund', `Refund · ${what}`, { orderId: s.id }, t => t.update(ref, { status: 'Rejected', reason, refunded: true, decidedAt: iso(), decidedBy: user.uid }));
+        else await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
+        await notifyUser(o.uid, 'Order not completed', `Your order ${what} could not be completed.${reason ? ' Reason: ' + reason : ''} ${o.paidWith === 'xbal' ? `৳${o.price} is back in your Extra Balance.` : 'Please contact support if you paid.'}`, 'warning');
       } else return [400, { error: 'Unknown action.' }];
       return [200, { ok: true }];
+    },
+
+    // admin: add or take Extra Balance by hand (refunds, corrections)
+    async adminXbal(b, user) {
+      if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admin login required.' }];
+      if (!(await adminCan(user, ['users', 'services']))) return [403, { error: 'Your admin role does not allow this.' }];
+      const phone = String(b.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
+      const ud = isPhone(phone) && await findUserDoc(phone);
+      if (!ud) return [404, { error: 'User not found.' }];
+      const amount = money(b.amount);
+      if (!amount) return [400, { error: 'Enter an amount (use minus to take money).' }];
+      const note = str(b.note, 120) || (amount > 0 ? 'Added by Creditfy' : 'Adjustment');
+      let after;
+      try { after = await xcredit(ud.ref, phone, amount, 'admin', note, { by: user.uid }); } catch (e) { if (e.status) return [e.status, { error: 'The user does not have that much Extra Balance.' }]; throw e; }
+      await notifyUser(phone, amount > 0 ? 'Extra Balance added' : 'Extra Balance updated', `${amount > 0 ? '+' : '−'}৳${Math.abs(amount)} · ${note}. Extra Balance now ৳${after}.`, amount > 0 ? 'success' : 'info');
+      return [200, { ok: true, xbal: after }];
     },
 
     // Play & Earn: Tic-Tac-Toe against the computer, played on the server so the result is fair
