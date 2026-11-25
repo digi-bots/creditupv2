@@ -71,7 +71,7 @@ async function publish(db, p, kind) {
   if (p.to !== 'group' && S.channel) targets.push(['channel', chatId(S.channel)]);
   if ((p.to === 'group' || p.to === 'both') && S.group) targets.push(['group', chatId(S.group)]);
   for (const [where, chat] of targets) {
-    try { const m = await sendTo(chat, S, p); sent++; if (p.pin) await call('pinChatMessage', { chat_id: chat, message_id: m.message_id, disable_notification: true }).catch(() => {}); out.push({ where, ok: true, id: m.message_id }); }
+    try { const m = await sendTo(chat, S, p); sent++; if (p.pin) await call('pinChatMessage', { chat_id: chat, message_id: m.message_id, disable_notification: true }).catch(() => {}); out.push({ where, ok: true, id: m.message_id, chat: String(m.chat && m.chat.id || chat) }); }
     catch (e) { out.push({ where, ok: false, error: e.message }); }
   }
   try { await db().collection('tgPosts').add({ kind: kind || 'manual', title: str(p.title, 120), text: str(p.text, 600), image: str(p.image, 300), result: out, at: iso() }); } catch (e) {}
@@ -100,7 +100,45 @@ function verifyInitData(initData, maxAgeSec = 86400) {
   try { return JSON.parse(p.get('user') || 'null'); } catch (e) { return null; }
 }
 
-module.exports = { DEF, norm, settings, call, publish, dm, verifyInitData, configured, hookSecret, chatId, compose, esc, appUrl, TOKEN };
+/* ── scheduled posts (collection tgSchedule) ──
+   repeat: 'daily' | 'days' (weekdays 0=Sun…6=Sat) | 'once' (a date); time 'HH:MM' Bangladesh time.
+   They run from: any visit to the site (at most every few minutes), the two daily jobs, or "Run due posts now". */
+const bdNow = (t = Date.now()) => { const d = new Date(t + 6 * 3600e3); return { day: d.toISOString().slice(0, 10), wd: d.getUTCDay(), hm: d.toISOString().slice(11, 16) }; };
+function isDue(x, n) {
+  if (!x || x.on === false || !/^\d\d:\d\d$/.test(x.time || '')) return false;
+  if (x.lastRun === n.day) return false;
+  // once: on its date after its time, or later if it was missed (never twice)
+  if (x.repeat === 'once') return !x.lastRun && !!x.date && (x.date < n.day || (x.date === n.day && n.hm >= x.time));
+  if (n.hm < x.time) return false;
+  if (x.repeat === 'daily') return true;
+  if (x.repeat === 'days') return Array.isArray(x.days) && x.days.includes(n.wd);
+  return false;
+}
+async function runSchedule(db, force) {
+  if (!configured()) return { ran: 0 };
+  const n = bdNow();
+  // one runner at a time: a short lock in tgMeta/tick
+  if (!force) {
+    const lock = db().collection('tgMeta').doc('tick'); let go = false;
+    await db().runTransaction(async t => { const s = await t.get(lock); const at = s.exists ? Number(s.data().at) || 0 : 0; if (Date.now() - at > 4 * 60e3) { t.set(lock, { at: Date.now() }); go = true; } });
+    if (!go) return { ran: 0, skipped: 'recent' };
+  }
+  const all = await db().collection('tgSchedule').get();
+  let ran = 0;
+  for (const d of all.docs) {
+    const x = d.data(); if (!isDue(x, n)) continue;
+    // claim it for today first, so it is never posted twice
+    let mine = false;
+    await db().runTransaction(async t => { const s = await t.get(d.ref); if (isDue(s.data(), n)) { t.update(d.ref, { lastRun: n.day, lastAt: iso(), ...(x.repeat === 'once' ? { on: false } : {}) }); mine = true; } });
+    if (!mine) continue;
+    const r = await publish(db, { title: x.title, text: x.text, image: x.image, to: x.to, pin: x.pin === true, button: x.buttonText && x.buttonUrl ? { text: x.buttonText, url: x.buttonUrl } : null }, '');
+    await d.ref.update({ lastResult: r.sent ? 'sent' : 'failed: ' + ((r.out || []).map(o => o.error).filter(Boolean).join('; ') || r.skipped || 'nothing sent') }).catch(() => {});
+    if (r.sent) ran++;
+  }
+  return { ran };
+}
+
+module.exports = { DEF, norm, settings, call, publish, dm, verifyInitData, configured, hookSecret, chatId, compose, esc, appUrl, TOKEN, runSchedule, isDue, bdNow };
 
 // account actions (admin + user), merged into /api/account
 module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
@@ -151,12 +189,54 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
       const r = await publish(db, p, kind);
       return [200, { ok: true, ...r }];
     }),
+    // delete a past post from Telegram (channel / group) and/or from the list
+    adminTgDelete: wrapE(async (b, user) => {
+      const no = await admin(user, ['appset', 'broadcast']); if (no) return no;
+      const ref = db().collection('tgPosts').doc(String(b.id || '')); const s = await ref.get();
+      if (!s.exists) return [404, { error: 'Post not found.' }];
+      const p = s.data(), S = await settings(db), errors = [];
+      if (b.fromTelegram !== false) {
+        for (const o of (p.result || []).filter(o => o.ok && o.id && !o.deleted)) {
+          const chat = o.chat || chatId(o.where === 'group' ? S.group : S.channel);
+          try { await call('deleteMessage', { chat_id: chat, message_id: o.id }); o.deleted = true; }
+          catch (e) { errors.push(`${o.where}: ${e.message.replace(/^Telegram: /, '')}`); }
+        }
+      }
+      if (b.fromList !== false && !errors.length) await ref.delete(); else await ref.update({ result: p.result, deletedAt: iso() });
+      return [200, { ok: !errors.length, errors }];
+    }),
+    // scheduled posts: list / save / delete / run
+    adminTgSchedule: wrapE(async (b, user) => {
+      const no = await admin(user, ['appset', 'broadcast']); if (no) return no;
+      const col = db().collection('tgSchedule');
+      if (b.op === 'save') {
+        const x = b.item || {};
+        const item = { title: str(x.title, 120), text: str(x.text, 3500), image: /^https:\/\//.test(String(x.image || '')) ? str(x.image, 500) : '', to: ['channel', 'group', 'both'].includes(x.to) ? x.to : 'channel', pin: x.pin === true,
+          buttonText: str(x.buttonText, 40), buttonUrl: /^https:\/\//.test(String(x.buttonUrl || '')) ? str(x.buttonUrl, 300) : '', repeat: ['daily', 'days', 'once'].includes(x.repeat) ? x.repeat : 'daily',
+          days: (Array.isArray(x.days) ? x.days : []).map(Number).filter(n => n >= 0 && n <= 6), date: /^\d{4}-\d\d-\d\d$/.test(x.date || '') ? x.date : '', time: /^\d\d:\d\d$/.test(x.time || '') ? x.time : '10:00', on: x.on !== false, updatedAt: iso() };
+        if (!item.title && !item.text) return [400, { error: 'Write a title or a message.' }];
+        if (item.repeat === 'days' && !item.days.length) return [400, { error: 'Pick at least one day.' }];
+        if (item.repeat === 'once' && !item.date) return [400, { error: 'Pick the date.' }];
+        if (x.id) { const r = col.doc(String(x.id)); const old = await r.get(); if (!old.exists) return [404, { error: 'Not found.' }];
+          // a changed time / date can run again today
+          const reset = old.data().time !== item.time || old.data().date !== item.date || old.data().repeat !== item.repeat ? { lastRun: '' } : {};
+          await r.update({ ...item, ...reset }); return [200, { ok: true, id: r.id }]; }
+        const r = await col.add({ ...item, lastRun: '', createdAt: iso() }); return [200, { ok: true, id: r.id }];
+      }
+      if (b.op === 'delete') { await col.doc(String(b.id || '')).delete(); return [200, { ok: true }]; }
+      if (b.op === 'toggle') { await col.doc(String(b.id || '')).update({ on: b.on === true }); return [200, { ok: true }]; }
+      if (b.op === 'run') { const r = await runSchedule(db, true); return [200, { ok: true, ...r }]; }
+      const s = await col.get();
+      return [200, { list: s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, c) => String(a.time).localeCompare(String(c.time))), now: bdNow() }];
+    }),
     adminTgPosts: wrapE(async (b, user) => {
       const no = await admin(user); if (no) return no;
       const s = await db().collection('tgPosts').orderBy('at', 'desc').limit(30).get();
       return [200, { list: s.docs.map(x => ({ id: x.id, ...x.data() })) }];
     }),
     // user: the Telegram card (links, connected or not, a one-time link code)
+    // visits keep the schedule running between the daily jobs (rate-limited by a lock)
+    tgTick: async () => { try { const r = await runSchedule(db); return [200, { ok: true, ran: r.ran || 0 }]; } catch (e) { return [200, { ok: false }]; } },
     tgState: async (b, user) => {
       const S = await settings(db);
       const pub = { on: S.on && configured(), channelLink: S.channelLink, groupLink: S.groupLink, bot: S.botUsername, dm: S.dm };

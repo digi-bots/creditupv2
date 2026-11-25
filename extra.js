@@ -181,7 +181,9 @@ const css = `
 .hs-box.xs{border-color:rgba(255,215,106,.26);padding-top:14px}
 .hs-box.xs .xs-head{margin-top:0}
 .hs-box.xs .xs-grid{margin-bottom:12px}
-.hs-box.xs #xsLive .xs-live{margin:0}
+.hs-box.xs #xsLive.xs-live{margin:2px 0 0}
+.hs-box.xs .xs-grid:last-child{margin-bottom:0}
+.xs-li:last-child{border-bottom:0}
 .hs-tag{position:absolute;top:-10px;left:16px;z-index:2;display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:900;letter-spacing:.3px;padding:3px 9px;border-radius:9px;background:#0b1424;border:1px solid rgba(29,219,128,.35);color:var(--p)}
 .hs-box.xs>.hs-tag{border-color:rgba(255,215,106,.4);color:#ffd76a}
 #liveBlock,#statsBlock,#winBlock{border-radius:24px;padding:12px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(170deg,rgba(255,255,255,.035),rgba(255,255,255,.008))}
