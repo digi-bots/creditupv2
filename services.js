@@ -292,12 +292,12 @@ const HOME_DEF = ['vip', 'checkin', 'spin', 'wallet', 'calc', 'refer', 'history'
 // offers, events and rewards are for Verified members (Admin → Services & Rewards); the sign-up bonus stays for everyone
 const VONLY = ['checkin', 'spin', 'redeem', 'voucher'];
 function needsV(){ const B = (SV.cfg && SV.cfg.bonus) || {}; return B.requireVerified !== false && !!user() && !!SV.st && SV.st.verified !== true; }
-window._svNeedsV = needsV;
+window._svNeedsV = needsV; window._svSeal = () => seal('', '');
 function lockCard(what){
   const pend = SV.st && (SV.st.orders || []).some(o => o.kind === 'verify' && o.status === 'Pending');
   return `<div class="vlock"><span class="big">${seal('', pend ? 'wait' : 'off')}</span><h4>${pend ? 'Verification in progress' : 'For Verified members'}</h4>
     <p>${pend ? 'We are checking your verification payment. ' + E(what) + ' opens as soon as your badge is active.' : E(what) + ' and all offers, events and rewards are for Verified members. Get your Verified badge once and join everything.'}</p>
-    ${pend ? '' : `<ul><li><i class="fa-solid fa-gift"></i>Daily check-in &amp; Spin &amp; Win rewards</li><li><i class="fa-solid fa-fire"></i>Hot offers, events &amp; prizes</li><li><i class="fa-solid fa-ticket"></i>Redeem codes &amp; gift vouchers</li><li><i class="fa-solid fa-circle-check"></i>Premium badge &amp; better approval chance</li></ul>
+    ${pend ? '' : `<ul><li><i class="fa-solid fa-gift"></i>Daily check-in &amp; Spin &amp; Win rewards</li><li><i class="fa-solid fa-fire"></i>Hot offers, events &amp; prizes</li><li><i class="fa-solid fa-ticket"></i>Redeem codes &amp; gift vouchers</li><li><i class="fa-solid fa-percent"></i>0% charge &amp; 0 fee on Extra Services</li><li><i class="fa-solid fa-circle-check"></i>Premium badge &amp; better approval chance</li></ul>
     <button class="vbtn" onclick="svGo('verify')">${seal()}Get Verified</button>`}</div>`;
 }
 function tileCfg(k){ const h = (SV.cfg && SV.cfg.hub && SV.cfg.hub.tiles) || {}; return h[k] || {}; }
@@ -481,7 +481,7 @@ const PAGES = {
     const pend = s && (s.orders || []).find(o => o.kind === 'verify' && o.status === 'Pending');
     if(s && s.verified){ show('Verify Number', `<div class="vf-hero"><div style="font-size:64px;line-height:1">${seal()}</div><h2>Your account is verified</h2><p>0${E(u.phone)} <span class="vf-chip" data-noi18n>${seal()}VERIFIED</span><br>Since ${fdate(s.verifiedAt)}</p></div><div class="sv-card"><p>Your premium Verified badge shows next to your number and on your profile, and our review team sees that you are a serious customer.</p></div>`); return; }
     show('Verify Number', `<div class="vf-hero"><div style="font-size:64px;line-height:1">${seal()}</div><h2>${E(V.title || 'Get a Verified badge')}</h2><p>${E(V.text || '')}</p></div>
-      <div class="vf-why"><div><i class="fa-solid fa-arrow-trend-up"></i>Better approval chance</div><div><i class="fa-solid fa-handshake"></i>Shows you are a serious customer</div><div><i class="fa-solid fa-certificate"></i>Premium badge on your profile</div></div>
+      <div class="vf-why"><div><i class="fa-solid fa-arrow-trend-up"></i>Better approval chance</div><div><i class="fa-solid fa-handshake"></i>Shows you are a serious customer</div><div><i class="fa-solid fa-certificate"></i>Premium badge on your profile</div><div><i class="fa-solid fa-percent"></i>0% charge &amp; 0 fee on Extra Services</div></div>
       <div class="sv-card"><div class="sv-row"><span>Your number</span><b>0${E(u.phone || '')}</b></div><div class="sv-row"><span>One-time fee</span><b>${tk(V.price)}</b></div><div class="sv-row" style="border:0"><span>Pay from</span><b>Any bKash / Nagad number</b></div></div>
       ${pend ? `<div class="ord"><i class="fa-solid fa-hourglass-half" style="color:var(--orange)"></i><div><b>Verification</b> is being checked<br>TrxID ${E(pend.trxId)} · ${ftime(pend.createdAt)}</div><span class="st st-Pending">PENDING</span></div>` : `<button class="sv-btn" style="background:linear-gradient(135deg,#46b0ff,#0d6efd);color:#fff" onclick="svPay('verify')"><i class="fa-solid fa-circle-check"></i>Verify for ${tk(V.price)}</button>`}`);
   },
@@ -691,6 +691,7 @@ function vPopShow(){
     <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>Daily check-in &amp; Spin &amp; Win</b>Win balance rewards every day and every month</div></div>
     <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>Hot offers, events &amp; prizes</b>Join contests and win invite prizes</div></div>
     <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>Redeem codes &amp; gift vouchers</b>Add codes and send gifts to friends</div></div>
+    <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>0% charge · 0 transaction fee</b>On exchange, gift cards, SMM and every Extra Service</div></div>
     <div class="row ok"><i class="fa-solid fa-check"></i><div><b>Your sign-up bonus is already yours</b>Use it on your loan fee — no verification needed</div></div>
     <div class="acts"><button class="vbtn" onclick="vPopClose();svGo('verify')">${seal()}Get Verified for ${tk(price)}</button><button class="later" onclick="vPopClose()">Maybe later</button></div></div>`;
   d.addEventListener('click', e => { if(e.target === d) vPopClose(); });
