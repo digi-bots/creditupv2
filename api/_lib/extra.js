@@ -66,8 +66,11 @@ function norm(x) {
       items: (Array.isArray(s.items) ? s.items : []).filter(i => i && i.id && i.name).slice(0, 60).map(i => ({
         id: str(i.id, 30), name: str(i.name, 60), on: i.on !== false, note: str(i.note, 300), price: money(i.price), to: str(i.to, 120),
         unit: str(i.unit || '৳', 8), rate: Math.max(0, Number(i.rate) || 0) || 1, pct: Math.max(0, Math.min(50, Number(i.pct) || 0)), fee: money(i.fee),
-        min: Math.max(0, Number(i.min) || 0), max: Math.max(0, Number(i.max) || 0), flow: i.flow === 'sell' ? 'sell' : 'buy' }))
+        min: Math.max(0, Number(i.min) || 0), max: Math.max(0, Number(i.max) || 0), flow: i.flow === 'sell' ? 'sell' : 'buy',
+        offer: money(i.offer), offerEnd: str(i.offerEnd, 40) }))
     })),
+    deals: (Array.isArray(x.deals) ? x.deals : []).filter(d => d && d.sid && d.iid && money(d.price) > 0).slice(0, 30).map(d => ({ id: str(d.id || d.sid + d.iid, 30), sid: str(d.sid, 30), iid: str(d.iid, 30),
+      price: money(d.price), on: d.on !== false, days: (Array.isArray(d.days) ? d.days : []).map(Number).filter(n => n >= 0 && n <= 6) })),
     games: { ...DEF.games, ...(x.games || {}) },
     wallet: { ...DEF.wallet, ...(x.wallet || {}), min: Math.max(1, money((x.wallet || {}).min ?? DEF.wallet.min)), max: money((x.wallet || {}).max ?? DEF.wallet.max) },
     perk: { ...DEF.perk, ...(x.perk || {}), on: (x.perk || {}).on !== false, chargePct: Math.max(0, Math.min(50, Number((x.perk || {}).chargePct ?? DEF.perk.chargePct) || 0)), chargeMin: money((x.perk || {}).chargeMin ?? DEF.perk.chargeMin) },
@@ -75,6 +78,22 @@ function norm(x) {
     live: { ...DEF.live, ...(x.live || {}), count: Math.max(3, Math.min(30, money((x.live || {}).count) || DEF.live.count)) }
   };
 }
+// offers with a real end: (1) an offer price until a set date and time, (2) a deal on chosen weekdays (Bangladesh time).
+// Once the time is over the regular price is back — nothing restarts.
+const BD = 6 * 3600e3;
+const bdWeekday = (t = Date.now()) => new Date(t + BD).getUTCDay();
+function bdMidnight(t = Date.now()) { const d = new Date(t + BD); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1) - BD; }
+function priceNow(C, s, i, t = Date.now()) {
+  let price = i.price, kind = '', ends = '';
+  if (s.mode !== 'amount') {
+    const end = i.offerEnd ? new Date(i.offerEnd).getTime() : 0;
+    if (i.offer > 0 && i.offer < price && end > t) { price = i.offer; kind = 'offer'; ends = new Date(end).toISOString(); }
+    const d = (C.deals || []).find(x => x.on && x.sid === s.id && x.iid === i.id && x.days.includes(bdWeekday(t)) && x.price < price);
+    if (d) { price = d.price; kind = 'deal'; ends = new Date(bdMidnight(t)).toISOString(); }
+  }
+  return { price, was: i.price, kind, ends };
+}
+
 // what the user pays (buy) or gets (sell) for an amount
 // Verified members pay no service charge and no transaction fee (the perk; Admin → Extra services)
 function quote(s, i, amount, verified, P) {
@@ -153,7 +172,8 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
         if (i.max && amount > i.max) return [400, { error: `The largest amount is ${i.max} ${i.unit}.` }];
       }
       // Verified and VIP members both get the exclusive: no charge, no fee
-      const q = quote(s, i, amount, u.phoneVerified === true || !!SVC.vipState(u), C.perk);
+      const pn = priceNow(C, s, i);
+      const q = quote(s, { ...i, price: pn.price }, amount, u.phoneVerified === true || !!SVC.vipState(u), C.perk);
       const vals = Array.isArray(b.fields) ? b.fields : [];
       const fields = s.fields.map((f, k) => ({ label: f.label, value: str(vals[k], 300) }));
       const miss = s.fields.find((f, k) => f.req && !fields[k].value);
@@ -176,7 +196,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
       const ref = db().collection('serviceOrders').doc();
       const order = { uid, kind: 'extra', sid: s.id, sname: s.name, iid: i.id, iname: i.name, planName: `${s.name} · ${i.name}`, unit: i.unit, flow: i.flow,
-        amount, price: q.pay, get: q.get, base: q.base, fee: q.fee, feeWaived: q.waived, saved: q.saved, fields, trxId, paidWith: useBal ? 'xbal' : 'trx', sender: isPhone(sender) ? sender : '', payMethod: useBal ? 'Extra Balance' : str(b.payMethod, 30),
+        amount, price: q.pay, get: q.get, base: q.base, regular: pn.was, offerKind: pn.kind, fee: q.fee, feeWaived: q.waived, saved: q.saved, fields, trxId, paidWith: useBal ? 'xbal' : 'trx', sender: isPhone(sender) ? sender : '', payMethod: useBal ? 'Extra Balance' : str(b.payMethod, 30),
         toNumber: useBal ? '' : str(b.toNumber || i.to, 120), status: useBal ? 'Processing' : 'Pending', createdAt: iso() };
       let xbal = null;
       if (useBal) xbal = await xcredit(d.ref, uid, -q.pay, 'order', `${s.name} · ${i.name}`, { orderId: ref.id }, t => t.set(ref, order));
@@ -332,3 +352,4 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
 module.exports.DEF = DEF;
 module.exports.norm = norm;
 module.exports.quote = quote;
+module.exports.priceNow = priceNow;
