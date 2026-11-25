@@ -825,6 +825,8 @@ Object.assign(actions, {
 // Quick Services (codes, vouchers, wallet history, check-in, spin, VIP, verified badge) — see api/_lib/services.js
 const SVC = require('./_lib/services')({ db, admin, findUserDoc, isAdmin, adminCan, notifyUser, isPhone });
 Object.assign(actions, SVC.actions);
+const XTR = require('./_lib/extra')({ db, findUserDoc, isAdmin, adminCan, notifyUser, isPhone, SVC });
+Object.assign(actions, XTR.actions);
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');

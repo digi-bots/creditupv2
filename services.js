@@ -414,7 +414,7 @@ const PAGES = {
     const earned = sum(x => x.amount > 0 && !['voucher-back'].includes(x.type)), spent = -sum(x => x.amount < 0);
     const META = { bonus: ['gift', 'g-orange', 'Bonus'], checkin: ['calendar-check', 'g-green', 'Check-in'], spin: ['dharmachakra', 'g-pink', 'Spin & Win'], redeem: ['ticket', 'g-purple', 'Redeem code'],
       voucher: ['gift', 'g-red', 'Gift voucher'], 'voucher-sent': ['paper-plane', 'g-red', 'Voucher sent'], 'voucher-back': ['rotate-left', 'g-slate', 'Voucher returned'], fee: ['receipt', 'g-blue', 'Used for fee'],
-      admin: ['user-shield', 'g-slate', 'Adjustment'], referral: ['user-plus', 'g-orange', 'Referral bonus'], cashback: ['coins', 'g-gold', 'Cashback'] };
+      admin: ['user-shield', 'g-slate', 'Adjustment'], referral: ['user-plus', 'g-orange', 'Referral bonus'], cashback: ['coins', 'g-gold', 'Cashback'], game: ['gamepad', 'g-pink', 'Game win'] };
     const items = L.map(x => { const m = META[x.type] || ['coins', 'g-teal', 'Wallet']; const pos = Number(x.amount) >= 0;
       return `<div class="wl-it"><div class="ic sv-ic ${m[1]}" style="width:38px;height:38px"><i class="fa-solid fa-${m[0]}"></i></div><div class="m"><b>${E(x.note || m[2])}</b><small>${m[2]} · ${ftime(x.at)}</small></div><div class="a ${pos ? 'p' : 'n'}">${pos ? '+' : '−'}${tk(Math.abs(x.amount))}</div></div>`; }).join('');
     show('Cashback Wallet', `<div class="wl-card"><small>AVAILABLE BALANCE</small><div class="v">${tk(r.data.balance)}</div><div style="font-size:11.5px;color:#b9f5d6;margin-top:6px">Use up to ৳100 on a fee payment, or send it as a gift voucher.</div></div>
