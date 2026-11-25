@@ -50,6 +50,28 @@ const css = `
 .tt-c:disabled{cursor:default}
 .tt-msg{text-align:center;font-size:15px;font-weight:900;margin-bottom:12px;color:var(--txt)}
 .xs-soon{display:flex;gap:10px;align-items:center;border-radius:14px;padding:12px;margin-top:8px;background:rgba(255,255,255,.03);border:1px dashed var(--gbord);font-size:12.5px;color:var(--txt2)}
+.xs-bal{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:5px 6px 5px 11px;border-radius:20px;cursor:pointer;font-size:12.5px;font-weight:900;color:var(--txt);
+  background:linear-gradient(135deg,rgba(29,219,128,.16),rgba(77,143,255,.14));border:1px solid rgba(29,219,128,.4)}
+.xs-bal i.p{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--p),var(--p2));color:#03210f;font-size:10px}
+.xs-sub{display:flex;justify-content:space-between;align-items:center;margin:-4px 2px 10px;font-size:12px;color:var(--txt2)}.xs-sub span{color:var(--p);font-weight:800;cursor:pointer}
+.xs-live{border-radius:18px;padding:12px 12px 6px;margin:-12px 0 25px;background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid var(--bord)}
+.xs-live .hd{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:900;color:var(--txt);margin-bottom:8px}
+.xs-live .hd em{font-style:normal;display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:900;color:#ff6b81;letter-spacing:.4px}
+.xs-live .hd em::before{content:"";width:7px;height:7px;border-radius:50%;background:#ff4d6a;box-shadow:0 0 0 0 rgba(255,77,106,.6);animation:xsPulse 1.6s infinite}
+@keyframes xsPulse{70%{box-shadow:0 0 0 7px rgba(255,77,106,0)}100%{box-shadow:0 0 0 0 rgba(255,77,106,0)}}
+.xs-lv{max-height:196px;overflow:hidden;position:relative}
+.xs-lv .in{animation:xsUp linear infinite}
+.xs-lv:hover .in{animation-play-state:paused}
+@keyframes xsUp{to{transform:translateY(-50%)}}
+.xs-li{display:flex;align-items:center;gap:10px;padding:7px 2px;border-bottom:1px dashed var(--bord);font-size:12px;color:var(--txt2)}
+.xs-li .ic{flex:none;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+.xs-li b{color:var(--txt);font-weight:800}.xs-li small{margin-left:auto;flex:none;font-size:10.5px;color:var(--txt3)}
+.xb-card{position:relative;overflow:hidden;border-radius:22px;padding:18px;margin-bottom:12px;color:#fff;background:radial-gradient(120% 140% at 100% 0%,rgba(77,143,255,.45),transparent 55%),linear-gradient(135deg,#0d7a52,#0a3d6b)}
+.xb-card small{font-size:11px;font-weight:800;letter-spacing:.6px;opacity:.85}.xb-card .v{font-size:34px;font-weight:900;margin:4px 0}.xb-card p{margin:0;font-size:11.5px;opacity:.85;line-height:1.5}
+.xb-chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}.xb-chips button{flex:1;min-width:64px;border-radius:11px;padding:9px 4px;border:1.5px solid var(--gbord);background:var(--glass);color:var(--txt);font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit}
+.xb-chips button.on{border-color:var(--p);background:rgba(29,219,128,.12);color:var(--p)}
+.xs-pm{display:flex;gap:8px;margin:6px 0 10px}.xs-pm button{flex:1;border-radius:13px;padding:11px 8px;border:1.5px solid var(--gbord);background:var(--glass);color:var(--txt);font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit;line-height:1.35}
+.xs-pm button.on{border-color:var(--p);background:rgba(29,219,128,.12)}.xs-pm button small{display:block;font-size:11px;color:var(--txt2);font-weight:700}
 @media (max-width:360px){.xs-grid{gap:8px}.xs-lg{width:46px;height:46px;font-size:20px}}`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -67,6 +89,7 @@ function register(){
   svcs().forEach(s => { const k = 'x_' + s.id; T[k] = { l: s.name, ic: 'star', g: s.color, cat: '', login: true, page: k }; P[k] = () => svcPage(s.id); });
   T.x_order = { l: 'Order', cat: '', login: true, page: 'x_order' }; P.x_order = orderPage;
   T.x_orders = { l: 'My orders', cat: '', login: true, page: 'x_orders' }; P.x_orders = ordersPage;
+  T.x_wallet = { l: 'Extra Balance', cat: '', login: true, page: 'x_wallet' }; P.x_wallet = walletPage; T.x_dep = { l: 'Add balance', cat: '', login: true, page: 'x_dep' }; P.x_dep = depPage;
 }
 function render(){
   const g = document.querySelector('.home-body .qa-grid') || document.querySelector('.qa-grid'); if(!g) return;
@@ -74,9 +97,28 @@ function render(){
   const L = svcs();
   if(!X.cfg || !X.cfg.on || !L.length){ if(box) box.remove(); return; }
   if(!box){ box = document.createElement('div'); box.id = 'xsBlock'; g.insertAdjacentElement('afterend', box); }
-  box.innerHTML = `<div class="quick-actions-title xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em><span class="qa-see" style="margin-left:auto" onclick="svGo('x_orders')">My orders ›</span></div>
-    <div class="xs-grid">${L.map(s => `<div class="xs-t${s.soon ? ' soon' : ''}" onclick="xsOpen('${E(s.id)}')">${s.badge || s.soon ? `<span class="bd">${E(s.soon ? 'SOON' : s.badge)}</span>` : ''}${logo(s)}<b>${E(s.short || s.name)}</b></div>`).join('')}</div>`;
+  const W = X.cfg.wallet || {};
+  box.innerHTML = `<div class="quick-actions-title xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em>${W.on !== false ? `<span class="xs-bal" onclick="svGo('x_wallet')" title="Extra Balance">${user() && X.xb ? tk(X.xb.xbal) : 'Balance'}<i class="p fa-solid fa-plus"></i></span>` : ''}</div>
+    <div class="xs-sub"><span style="color:var(--txt2);font-weight:600">${W.on !== false ? 'Pay with your Extra Balance' : 'Paid services, delivered by our team'}</span><span onclick="svGo('x_orders')">My orders ›</span></div>
+    <div class="xs-grid">${L.map(s => `<div class="xs-t${s.soon ? ' soon' : ''}" onclick="xsOpen('${E(s.id)}')">${s.badge || s.soon ? `<span class="bd">${E(s.soon ? 'SOON' : s.badge)}</span>` : ''}${logo(s)}<b>${E(s.short || s.name)}</b></div>`).join('')}</div>
+    <div id="xsLive"></div>`;
+  drawLive();
 }
+// live list of the latest real orders and deposits (masked numbers), refreshed every 30 seconds
+const ago = t => { const m = Math.max(0, Math.round((Date.now() - new Date(t).getTime()) / 6e4)); return m < 1 ? 'just now' : m < 60 ? m + 'm ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago'; };
+function drawLive(){
+  const el = $x('xsLive'); if(!el) return;
+  const L = X.live || [];
+  if(!L.length || !X.cfg || !(X.cfg.live || {}).on){ el.innerHTML = ''; el.className = ''; return; }
+  el.className = 'xs-live';
+  const row = x => `<div class="xs-li"><div class="ic sv-ic ${E(x.color || 'g-green')}"><i class="${E(x.icon || 'fa-solid fa-bag-shopping')}"></i></div><div><b>${E(x.who)}</b> ${E(x.text)}</div><small>${ago(x.at)}</small></div>`;
+  const scroll = L.length > 5;
+  el.innerHTML = `<div class="hd"><i class="fa-solid fa-bolt" style="color:#ffd76a"></i>Live orders <em>LIVE</em></div><div class="xs-lv"><div class="in" style="${scroll ? `animation-duration:${L.length * 3}s` : 'animation:none'}">${L.map(row).join('')}${scroll ? L.map(row).join('') : ''}</div></div>`;
+}
+async function loadLive(){
+  try { const r = await fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'extraLive' }) }); const d = await r.json(); X.live = d.list || []; drawLive(); } catch (e) {}
+}
+async function loadXb(){ if(!user()) { X.xb = null; return null; } const r = await api('xbalState'); if(r.ok){ X.xb = r.data; render(); } return X.xb; }
 window.xsOpen = id => { const s = svcs().find(x => x.id === id); if(!s) return; if(s.soon){ toast('Coming soon — stay tuned!'); return; } svGo('x_' + id); };
 
 /* ───────── one service: its options ───────── */
@@ -98,7 +140,7 @@ function svcPage(id){
     <div class="sv-card" style="margin-top:12px"><h4><i class="fa-solid fa-shield-halved" style="color:var(--p)"></i> How it works</h4><p>Pick an option, send the payment and enter the Transaction ID. Our team checks the payment and delivers your order by hand — usually within a few hours. You can follow it in My orders.</p></div>
     <button class="sv-btn ghost" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button>`);
 }
-window.xsPick = (sid, iid) => { X.sel = { sid, iid }; window._xsW = 0; svGo('x_order'); };
+window.xsPick = (sid, iid) => { X.sel = { sid, iid }; window._xsW = 0; window._xsPm = ''; svGo('x_order'); loadXb().then(() => { const typed = [...document.querySelectorAll('#svBody input')].some(e => e.value); if(document.getElementById('xsBtn') && !typed) window.svPage('x_order'); }); };
 
 /* ───────── the order form ───────── */
 function payTargets(i){
@@ -111,41 +153,98 @@ function orderPage(){
   if(!s || !i){ show('Order', '<div class="sv-empty">Please choose an option again.</div>'); return; }
   const amt = s.mode === 'amount', sell = i.flow === 'sell';
   const tg = payTargets(i); const w = tg[window._xsW || 0] || tg[0];
+  const W = X.cfg.wallet || {}, bal = X.xb ? X.xb.xbal : 0;
+  const canBal = !sell && W.on !== false, canDirect = sell || W.direct !== false;
+  if(!canDirect) window._xsPm = 'xbal'; else if(!canBal) window._xsPm = 'trx'; else if(!window._xsPm) window._xsPm = 'xbal';
+  const pm = window._xsPm, price = amt ? 0 : i.price;
+  const payBlock = pm === 'xbal' ? `<div class="pay-num" style="border-style:solid"><div><small>Extra Balance</small><b>${tk(bal)}</b></div><button onclick="svGo('x_dep')">+ Add</button></div>
+      <div style="font-size:11.5px;color:var(--txt2);margin:6px 2px" id="xsBalNote">${!amt && price > bal ? `<span style="color:#ff8fa3">You need ${tk(price - bal)} more. Add balance first.</span>` : 'The price is taken from your Extra Balance when you place the order.'}</div>`
+    : `<span class="sv-lbl">${sell ? `Send the ${E(i.unit)} here` : 'Send the payment'}</span>
+    ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xsW=${k};svPage('x_order')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}</button>`).join('')}</div>` : ''}
+    ${w ? `<div class="pay-num"><div><small>${E(w.name)}${w.type ? ' · ' + E(w.type) : ''}</small><b>${E(w.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(w.number)}').then(()=>svToastOk('Copied'))">Copy</button></div>`
+      : '<div class="sv-empty">No payment number is set for this service yet. Please contact support.</div>'}
+    <span class="sv-lbl">${sell ? 'Transaction ID / hash of what you sent' : 'Transaction ID from your payment SMS'}</span>
+    <input class="sv-in code" id="xsTrx" placeholder="TRANSACTION ID" maxlength="80" autocomplete="off">`;
   show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(i.name)}</h4><p>${E(i.note || s.desc)}</p></div></div>
     ${amt ? `<span class="sv-lbl">${sell ? 'How much will you send?' : 'How much do you want?'} (${E(i.unit)})</span>
       <input class="sv-in" id="xsAmt" type="number" inputmode="decimal" min="${i.min || 0}" ${i.max ? `max="${i.max}"` : ''} placeholder="${i.min ? 'Min ' + num(i.min) : 'Amount'}${i.max ? ' · max ' + num(i.max) : ''}" oninput="xsCalc()">
       <div class="xs-sum"><span id="xsLbl">${sell ? 'You get' : 'You pay'}</span><b id="xsPay">৳0</b></div>`
     : `<div class="xs-sum"><span>You pay</span><b>${tk(i.price)}</b></div>`}
     ${s.fields.map((f, k) => `<span class="sv-lbl">${E(f.label)}${f.req ? '' : ' <small style="color:var(--txt3)">(optional)</small>'}</span><input class="sv-in" id="xsF${k}" maxlength="300" autocomplete="off">`).join('')}
-    <span class="sv-lbl">${sell ? `Send the ${E(i.unit)} here` : 'Send the payment'}</span>
-    ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xsW=${k};svPage('x_order')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}</button>`).join('')}</div>` : ''}
-    ${w ? `<div class="pay-num"><div><small>${E(w.name)}${w.type ? ' · ' + E(w.type) : ''}</small><b>${E(w.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(w.number)}').then(()=>svToastOk('Copied'))">Copy</button></div>`
-      : '<div class="sv-empty">No payment number is set for this service yet. Please contact support.</div>'}
-    <span class="sv-lbl">${sell ? 'Transaction ID / hash of what you sent' : 'Transaction ID from your payment SMS'}</span>
-    <input class="sv-in code" id="xsTrx" placeholder="TRANSACTION ID" maxlength="80" autocomplete="off">
-    <button class="sv-btn gold" style="margin-top:12px" id="xsBtn" onclick="xsSubmit()" ${w ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Place order</button>
+    ${canBal && canDirect ? `<span class="sv-lbl">How do you want to pay?</span><div class="xs-pm"><button class="${pm === 'xbal' ? 'on' : ''}" onclick="xsPm('xbal')"><i class="fa-solid fa-wallet"></i> Extra Balance<small>${tk(bal)}</small></button><button class="${pm === 'trx' ? 'on' : ''}" onclick="xsPm('trx')"><i class="fa-solid fa-mobile-screen"></i> bKash / Nagad<small>Send &amp; give TrxID</small></button></div>` : ''}
+    ${payBlock}
+    <button class="sv-btn gold" style="margin-top:12px" id="xsBtn" onclick="xsSubmit()" ${pm === 'xbal' || w ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Place order</button>
     <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> Orders are checked and delivered by hand. If we cannot complete it, your money is returned.</div>`);
-  window._xsCur = { s, i, w };
+  window._xsCur = { s, i, w, pm };
 }
+window.xsPm = v => { window._xsPm = v; window.svPage('x_order'); };
 window.xsCalc = () => {
   const c = window._xsCur; if(!c) return; const { i } = c; const a = Number(($x('xsAmt') || {}).value) || 0;
   const base = a * i.rate;
   const v = i.flow === 'sell' ? Math.max(0, Math.floor(base * (1 - i.pct / 100) - i.fee)) : a > 0 ? Math.ceil(base * (1 + i.pct / 100) + i.fee) : 0;
   $x('xsPay').textContent = tk(v);
+  const n = $x('xsBalNote'); if(n && i.flow !== 'sell'){ const bal = X.xb ? X.xb.xbal : 0; n.innerHTML = v > bal ? `<span style="color:#ff8fa3">You need ${tk(v - bal)} more. Add balance first.</span>` : 'The price is taken from your Extra Balance when you place the order.'; }
 };
 window.xsSubmit = async function(){
-  const c = window._xsCur; if(!c) return; const { s, i, w } = c;
-  const trxId = ($x('xsTrx').value || '').trim();
+  const c = window._xsCur; if(!c) return; const { s, i, w, pm } = c;
+  const trxId = (($x('xsTrx') || {}).value || '').trim();
   if(s.mode === 'amount' && !(Number(($x('xsAmt') || {}).value) > 0)){ toast('Enter the amount', true); return; }
-  if(trxId.length < 6){ toast('Enter the Transaction ID', true); return; }
+  if(pm !== 'xbal' && trxId.length < 6){ toast('Enter the Transaction ID', true); return; }
   const fields = s.fields.map((f, k) => (($x('xsF' + k) || {}).value || '').trim());
   const miss = s.fields.find((f, k) => f.req && !fields[k]); if(miss){ toast('Please fill in: ' + miss.label, true); return; }
   const b = $x('xsBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Placing order…';
-  const r = await api('extraOrder', { sid: s.id, iid: i.id, amount: Number(($x('xsAmt') || {}).value) || 0, fields, trxId, payMethod: w ? w.name : '', toNumber: w ? w.number : '' });
+  const r = await api('extraOrder', { sid: s.id, iid: i.id, amount: Number(($x('xsAmt') || {}).value) || 0, fields, trxId, payWith: pm, payMethod: w ? w.name : '', toNumber: w ? w.number : '' });
   b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Place order';
-  if(!r.ok){ toast(r.data.error || 'Could not place the order', true); return; }
+  if(!r.ok){ toast(r.data.error || 'Could not place the order', true); if(r.data.code === 'xbal_low') svGo('x_dep'); return; }
+  if(r.data.xbal !== null && r.data.xbal !== undefined && X.xb){ X.xb.xbal = r.data.xbal; render(); }
+  loadLive();
   toast('Order placed — we will deliver it soon');
   svGo('x_orders');
+};
+
+/* ───────── Extra Balance ───────── */
+async function walletPage(){
+  show('Extra Balance', '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Loading…</div>');
+  const x = await loadXb();
+  if(!x){ show('Extra Balance', '<div class="sv-empty">Please login again.</div>'); return; }
+  const when = t => { try { return new Date(t).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
+  const TY = { deposit: ['arrow-down', 'g-green', 'Deposit'], order: ['bag-shopping', 'g-purple', 'Order'], refund: ['rotate-left', 'g-blue', 'Refund'], admin: ['user-shield', 'g-slate', 'Adjustment'] };
+  const dep = (x.deposits || []).filter(d => d.status !== 'Approved');
+  show('Extra Balance', `<div class="xb-card"><small>EXTRA BALANCE</small><div class="v">${tk(x.xbal)}</div><p>Only for Extra Services. It is separate from your loan and cannot be used for loan fees.</p></div>
+    <button class="sv-btn gold" onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Add balance</button>
+    ${dep.length ? `<span class="sv-lbl" style="margin-top:14px">Deposits</span>${dep.map(d => `<div class="xs-od"><div class="h"><div><b>${tk(d.amount)}</b><div>TrxID <span style="font-family:monospace">${E(d.trxId)}</span> · ${when(d.createdAt)}</div></div><span class="xs-st ${d.status === 'Rejected' ? 'Rejected' : 'Pending'}">${d.status === 'Rejected' ? 'Not approved' : 'Checking'}</span></div>${d.reason ? `<div style="margin-top:6px;color:#ff8fa3">${E(d.reason)}</div>` : ''}</div>`).join('')}` : ''}
+    <span class="sv-lbl" style="margin-top:14px">History</span>
+    ${(x.log || []).length ? x.log.map(l => { const m = TY[l.type] || ['coins', 'g-teal', 'Balance']; const pos = Number(l.amount) >= 0;
+      return `<div class="wl-it"><div class="ic sv-ic ${m[1]}" style="width:38px;height:38px"><i class="fa-solid fa-${m[0]}"></i></div><div class="m"><b>${E(l.note || m[2])}</b><small>${m[2]} · ${when(l.at)}</small></div><div class="a ${pos ? 'p' : 'n'}">${pos ? '+' : '−'}${tk(Math.abs(l.amount))}</div></div>`; }).join('')
+      : '<div class="sv-empty"><i class="fa-solid fa-wallet"></i>No history yet.</div>'}`);
+}
+function depPage(){
+  const W = (X.cfg && X.cfg.wallet) || {};
+  const tg = payTargets({}); const w = tg[window._xbW || 0] || tg[0];
+  const amts = [100, 500, 1000, 2000, 5000].filter(a => a >= (W.min || 1) && (!W.max || a <= W.max));
+  show('Add balance', `<div class="xb-card"><small>EXTRA BALANCE</small><div class="v">${tk(X.xb ? X.xb.xbal : 0)}</div><p>Add money once and order any Extra Service in one tap.</p></div>
+    <span class="sv-lbl">1. Amount</span>
+    <div class="xb-chips">${amts.map(a => `<button onclick="xbAmt(${a},this)">${tk(a)}</button>`).join('')}</div>
+    <input class="sv-in" id="xbAmt" type="number" inputmode="numeric" placeholder="Amount (min ${tk(W.min || 50)}${W.max ? ', max ' + tk(W.max) : ''})">
+    <span class="sv-lbl">2. Send it to</span>
+    ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xbW=${k};svPage('x_dep')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}</button>`).join('')}</div>` : ''}
+    ${w ? `<div class="pay-num"><div><small>${E(w.name)}${w.type ? ' · ' + E(w.type) : ''}</small><b>${E(w.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(w.number)}').then(()=>svToastOk('Copied'))">Copy</button></div>` : '<div class="sv-empty">No payment number is available right now. Please contact support.</div>'}
+    <span class="sv-lbl">3. Transaction ID from your payment SMS</span>
+    <input class="sv-in code" id="xbTrx" placeholder="TRANSACTION ID" maxlength="40" autocomplete="off">
+    <button class="sv-btn gold" style="margin-top:12px" id="xbBtn" onclick="xbSubmit()" ${w ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Submit deposit</button>
+    <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> We add it as soon as we check your payment. Extra Balance is only for Extra Services — not for loans or loan fees.</div>`);
+  window._xbCur = w;
+}
+window.xbAmt = (v, el) => { $x('xbAmt').value = v; document.querySelectorAll('.xb-chips button').forEach(b => b.classList.toggle('on', b === el)); };
+window.xbSubmit = async function(){
+  const w = window._xbCur, amount = Number($x('xbAmt').value) || 0, trxId = ($x('xbTrx').value || '').trim();
+  if(!(amount > 0)){ toast('Enter the amount', true); return; }
+  if(trxId.length < 6){ toast('Enter the Transaction ID', true); return; }
+  const b = $x('xbBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Submitting…';
+  const r = await api('xbalDeposit', { amount, trxId, payMethod: w ? w.name : '', toNumber: w ? w.number : '' });
+  b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Submit deposit';
+  if(!r.ok){ toast(r.data.error || 'Could not submit', true); return; }
+  toast('Deposit submitted — we will add it after checking'); svGo('x_wallet');
 };
 
 /* ───────── my orders ───────── */
@@ -195,7 +294,9 @@ window.xsMove = async k => {
   drawGame(r);
 };
 
-load();
-// redraw the section after the language changes or the home page is rebuilt
-setInterval(() => { if(X.cfg && !$x('xsBlock')) render(); }, 1500);
+load().then(() => { loadLive(); loadXb(); });
+setInterval(loadLive, 30e3);
+// redraw the section after the language changes or the home page is rebuilt; reload the balance after login / logout
+let _ph = (user() || {}).phone || '';
+setInterval(() => { if(X.cfg && !$x('xsBlock')) render(); const ph = (user() || {}).phone || ''; if(ph !== _ph){ _ph = ph; X.xb = null; loadXb().then(render); } }, 1500);
 })();
