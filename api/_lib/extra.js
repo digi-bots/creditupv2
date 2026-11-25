@@ -169,6 +169,30 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
   }
   const mask = p => { p = String(p || ''); return p.length >= 6 ? '0' + p.slice(0, 2) + '****' + p.slice(-3) : 'A user'; };
   async function feed(uid, text, s) { try { await db().collection('extraFeed').add({ who: mask(uid), text: str(text, 80), icon: s ? s.icon : 'fa-solid fa-wallet', color: s ? s.color : 'g-green', at: iso() }); _live = null; } catch (e) {} }
+  // deposit coupon check (kind 'deposit'): active, dates, uses, per person, audience, minimum deposit → the bonus
+  async function depCoupon(code, uid, amount) {
+    const c = String(code || '').toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 24);
+    const s = await db().collection('promoCodes').doc(c).get(); const p = s.exists ? s.data() : null;
+    const no = m => { throw Object.assign(new Error(m), { status: 400 }); };
+    if (!p || p.kind !== 'deposit') no('This coupon is not valid for deposits.');
+    if (p.on === false) no('This coupon is switched off.');
+    const now = Date.now();
+    if (p.start && new Date(p.start).getTime() > now) no('This coupon is not active yet.');
+    if (p.end && new Date(p.end).getTime() < now) no('This coupon has expired.');
+    if (Number(p.maxUses) > 0 && (Number(p.uses) || 0) >= Number(p.maxUses)) no('This coupon has been fully used.');
+    if (Number(p.minDeposit) > 0 && amount < Number(p.minDeposit)) no(`This coupon needs a deposit of at least ৳${p.minDeposit}.`);
+    const u = (await me(uid)).u;
+    if (p.audience === 'verified' && u.phoneVerified !== true) no('This coupon is for Verified members.');
+    if (p.audience === 'vip' && !SVC.vipState(u)) no('This coupon is for VIP members.');
+    const per = Math.max(1, Number(p.perUser) || 1);
+    const [used, pend] = await Promise.all([db().collection('promoUses').where('code', '==', c).where('uid', '==', uid).get(), db().collection('serviceOrders').where('uid', '==', uid).get()]);
+    const waiting = pend.docs.filter(x => x.data().kind === 'xdeposit' && x.data().coupon === c && x.data().status === 'Pending').length;
+    if (used.size + waiting >= per) no(per === 1 ? 'You have already used this coupon.' : `You can use this coupon ${per} times only.`);
+    const v = Number(p.value) || 0;
+    let bonus = p.type === 'flat' ? Math.round(v) : Math.floor(amount * v / 100);
+    if (Number(p.maxBonus) > 0) bonus = Math.min(bonus, Number(p.maxBonus));
+    return { code: c, bonus: Math.max(0, bonus), label: p.label || '' };
+  }
   const pubOrder = o => ({ id: o.id, sid: o.sid, sname: o.sname, iname: o.iname, unit: o.unit, amount: o.amount, price: o.price, get: o.get, fee: o.fee || 0, feeWaived: o.feeWaived === true, saved: o.saved || 0, flow: o.flow, fields: o.fields || [], trxId: o.trxId,
     status: o.status, reason: o.reason || '', delivery: o.status === 'Delivered' ? (o.delivery || '') : '', createdAt: o.createdAt, decidedAt: o.decidedAt || '' });
 
@@ -210,7 +234,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
         trxId = String(b.trxId || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 80);
         if (trxId.length < 6) return [400, { error: i.flow === 'sell' ? 'Please enter the transaction ID / hash of what you sent.' : 'Please enter the Transaction ID from your payment SMS.' }];
         const [dupO, dupT] = await Promise.all([db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get(), db().collection('transactions').doc('trx_' + trxId).get()]);
-        if (!dupO.empty || dupT.exists) return [400, { error: 'This Transaction ID has already been used.' }];
+        if (!dupO.empty || dupT.exists) { db().collection('riskEvents').add({ type: 'dupTrx', uid, trxId, at: new Date().toISOString() }).catch(() => {}); return [400, { error: 'This Transaction ID has already been used.' }]; }
       }
       const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
       const ref = db().collection('serviceOrders').doc();
@@ -220,6 +244,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       let xbal = null;
       if (useBal) xbal = await xcredit(d.ref, uid, -q.pay, 'order', `${s.name} · ${i.name}`, { orderId: ref.id }, t => t.set(ref, order));
       else await ref.set(order);
+      await require('./alerts').notify(db, 'order', ref.id, order);
       await feed(uid, `ordered ${i.name}`, s);
       await notifyUser(uid, 'Order received 🛒', `${s.name} · ${i.name}${amount ? ` (${amount} ${i.unit})` : ''} — ${useBal ? `paid ৳${q.pay} from your Extra Balance` : 'TrxID ' + trxId}. Our team will deliver it soon. See Extra Services → My orders.`, 'transaction');
       return [200, { ok: true, id: ref.id, xbal }];
@@ -240,6 +265,8 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
         .map(o => ({ id: o.id, amount: o.price, trxId: o.trxId, status: o.status, reason: o.reason || '', createdAt: o.createdAt }));
       return [200, { xbal: Number(u.xbal) || 0, balance: Number(u.balance) || 0, log, deposits, verified: u.phoneVerified === true, vip: !!SVC.vipState(u) }];
     }),
+    // check a deposit coupon before sending the money
+    depositCoupon: wrap(async (b, uid) => { const amount = money(b.amount); const q = await depCoupon(b.code, uid, amount); return [200, { ok: true, ...q }]; }),
     xbalDeposit: wrap(async (b, uid) => {
       await me(uid);
       const C = await cfg(), W = C.wallet;
@@ -250,12 +277,16 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const trxId = String(b.trxId || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 40);
       if (trxId.length < 6) return [400, { error: 'Please enter the Transaction ID from your payment SMS.' }];
       const [dupO, dupT] = await Promise.all([db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get(), db().collection('transactions').doc('trx_' + trxId).get()]);
-      if (!dupO.empty || dupT.exists) return [400, { error: 'This Transaction ID has already been used.' }];
+      if (!dupO.empty || dupT.exists) { db().collection('riskEvents').add({ type: 'dupTrx', uid, trxId, at: new Date().toISOString() }).catch(() => {}); return [400, { error: 'This Transaction ID has already been used.' }]; }
       const mine = await db().collection('serviceOrders').where('uid', '==', uid).get();
       if (mine.docs.filter(x => x.data().kind === 'xdeposit' && x.data().status === 'Pending').length >= 3) return [400, { error: 'You have 3 deposits waiting for check. Please wait a little.' }];
       const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
-      const ref = await db().collection('serviceOrders').add({ uid, kind: 'xdeposit', planName: 'Extra Balance deposit', sname: 'Extra Balance', iname: 'Deposit', price: amount, trxId,
+      // a deposit coupon: checked now, its bonus is added when the deposit is approved
+      let coupon = '', cbonus = 0;
+      if (b.coupon) { const q = await depCoupon(b.coupon, uid, amount); coupon = q.code; cbonus = q.bonus; }
+      const ref = await db().collection('serviceOrders').add({ uid, kind: 'xdeposit', planName: 'Extra Balance deposit', sname: 'Extra Balance', iname: 'Deposit', price: amount, trxId, coupon, couponBonus: cbonus,
         sender: isPhone(sender) ? sender : '', payMethod: str(b.payMethod, 30), toNumber: str(b.toNumber, 40), status: 'Pending', createdAt: iso() });
+      await require('./alerts').notify(db, 'order', ref.id, { uid, kind: 'xdeposit', price: amount, trxId, coupon, couponBonus: cbonus, status: 'Pending' });
       await notifyUser(uid, 'Deposit received 💳', `We received your Extra Balance deposit of ৳${amount} (TrxID ${trxId}). It is added as soon as we check it.`, 'transaction');
       return [200, { ok: true, id: ref.id }];
     }),
@@ -287,8 +318,21 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
           const C = await cfg(), bonus = bonusFor(C.depBonus, o.price);
           await xcredit(ud.ref, o.uid, o.price, 'deposit', `Deposit · TrxID ${o.trxId}`, { orderId: s.id }, t => t.update(ref, { status: 'Approved', bonus, decidedAt: iso(), decidedBy: user.uid }));
           if (bonus > 0) await xcredit(ud.ref, o.uid, bonus, 'bonus', `Deposit bonus on ৳${o.price}`, { orderId: s.id });
+          // the coupon: counted once, at approval (a fixed usage record, so it cannot be used twice)
+          let cb = 0;
+          if (o.coupon && o.couponBonus > 0) {
+            try {
+              await db().runTransaction(async t => {
+                const cref = db().collection('promoCodes').doc(o.coupon), use = db().collection('promoUses').doc(`${o.coupon}_${o.uid}_${s.id}`);
+                const c = await t.get(cref), u2 = await t.get(use); if (!c.exists || u2.exists) return;
+                const x = c.data(); if (x.on === false || (Number(x.maxUses) > 0 && (Number(x.uses) || 0) >= Number(x.maxUses))) return;
+                t.update(cref, { uses: (Number(x.uses) || 0) + 1, lastUsedAt: iso() }); t.set(use, { code: o.coupon, uid: o.uid, kind: 'deposit', amount: o.couponBonus, appId: s.id, at: iso() }); cb = o.couponBonus;
+              });
+              if (cb) await xcredit(ud.ref, o.uid, cb, 'bonus', `Coupon ${o.coupon} on ৳${o.price}`, { orderId: s.id });
+            } catch (e) { console.warn('coupon', e.message); }
+          }
           await feed(o.uid, `added ৳${o.price} Extra Balance`, null);
-          await notifyUser(o.uid, 'Extra Balance added ✅', `৳${o.price} is added to your Extra Balance${bonus ? ` + ৳${bonus} deposit bonus` : ''}. You can order any Extra Service now.`, 'success');
+          await notifyUser(o.uid, 'Extra Balance added ✅', `৳${o.price} is added to your Extra Balance${bonus ? ` + ৳${bonus} deposit bonus` : ''}${cb ? ` + ৳${cb} coupon bonus` : ''}. You can order any Extra Service now.`, 'success');
         } else if (b.op === 'reject') {
           const reason = str(b.reason, 200);
           await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
@@ -339,6 +383,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       try { balance = await SVC.credit(d.ref, uid, -amount, 'recharge', `Recharge ${op} 0${number}`, { orderId: ref.id }); }
       catch (e) { if (e.status) return [400, { error: 'Not enough Creditfy balance for this recharge.', code: 'bal_low' }]; throw e; }
       try { await ref.set(order); } catch (e) { await SVC.credit(d.ref, uid, amount, 'refund', 'Recharge could not be saved'); throw e; }
+      await require('./alerts').notify(db, 'order', ref.id, order);
       await feed(uid, `recharged ৳${amount} ${op}`, { icon: 'fa-solid fa-mobile-screen', color: 'g-green' });
       await notifyUser(uid, 'Recharge received 📱', `৳${amount} ${op} recharge to 0${number} is in progress. You will get it shortly.`, 'transaction');
       return [200, { ok: true, balance }];
@@ -368,6 +413,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       if (old.exists && old.data().status !== 'Rejected') return [400, { error: old.data().status === 'Approved' ? 'You have already done this task.' : 'Your proof is being checked.' }];
       if (t.slots) { const n = await db().collection('taskSubs').where('tid', '==', t.id).get(); if (n.docs.filter(x => ['Pending', 'Approved'].includes(x.data().status)).length >= t.slots) return [400, { error: 'All places for this task are taken.' }]; }
       await ref.set({ tid: t.id, title: t.title, type: t.type, reward: t.reward, uid, proof, status: 'Pending', at: iso() });
+      await require('./alerts').notify(db, 'job', ref.id, { uid, title: t.title, reward: t.reward, proof });
       return [200, { ok: true }];
     }),
     async adminJobs(b, user) {

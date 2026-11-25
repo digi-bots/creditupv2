@@ -58,6 +58,8 @@ async function adminCan(me, secs) {
   return secs.some(k => perms[k] === 'edit');
 }
 const noRole = [403, { error: 'Your admin role does not allow this.' }];
+// a random id the app keeps on each phone (not personal data) — only letters, digits and dashes
+const devId = v => { const s = String(v || '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 40); return s.length >= 12 ? s : ''; };
 const cleanEmail = e => String(e || '').trim().toLowerCase();
 const okEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
@@ -324,6 +326,8 @@ const actions = {
       await prof.ref.update({ password: admin.firestore.FieldValue.delete(), authMigratedAt: new Date().toISOString() });
     }
     if (gs.exists) await guardRef(phone).delete();
+    // fraud check: which devices this account signs in from (Risk Center groups accounts that share a device)
+    const dev = devId(b.deviceId); if (dev && prof) prof.ref.update({ devices: admin.firestore.FieldValue.arrayUnion(dev), lastDevice: dev }).catch(() => {});
     return [200, { ok: true, token: await auth().createCustomToken(phone) }];
   },
 
@@ -364,7 +368,12 @@ const actions = {
     const now = new Date().toISOString();
     const u = { phone, createdAt: now, appStatus: 0, balance: bonus, status: 'active' };
     const ref = String(b.referrer || '');
-    if (isPhone(ref) && ref !== phone && await findUserDoc(ref)) u.referredBy = ref;
+    const refDoc = isPhone(ref) && ref !== phone ? await findUserDoc(ref) : null;
+    if (refDoc) u.referredBy = ref;
+    const dev = devId(b.deviceId);
+    if (dev) { u.devices = [dev]; u.lastDevice = dev; }
+    // a friend invited from the same phone as the person who invited them: kept, but flagged for the Risk Center
+    if (refDoc && dev && ((refDoc.data() || {}).devices || []).includes(dev)) u.riskSelfRef = true;
 
     await createLogin(phone, pw);
     const userRef = store.collection('users').doc(phone);
@@ -830,6 +839,39 @@ const XTR = require('./_lib/extra')({ db, findUserDoc, isAdmin, adminCan, notify
 Object.assign(actions, XTR.actions);
 Object.assign(actions, require('./_lib/tg').actions({ db, isAdmin, adminCan, findUserDoc }));
 
+// admin alerts on Telegram: link this admin's Telegram, list / unlink, and the alert for a fee payment saved by the app
+Object.assign(actions, {
+  async adminTgLink(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    const TG = require('./_lib/tg'); const S = await TG.settings(db);
+    if (!TG.configured() || !S.botUsername) return [400, { error: 'Set up the Telegram bot first (Connection tab).' }];
+    const code = crypto.randomBytes(9).toString('base64url');
+    await db().collection('tgLinks').doc(code).set({ adminUid: me.uid, exp: Date.now() + 15 * 60e3 });
+    return [200, { url: `https://t.me/${S.botUsername}?start=A${code}` }];
+  },
+  async adminTgAdmins(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    if (b.op === 'unlink') {
+      const ref = db().collection('tgAdmins').doc(String(b.chat || '')); const x = await ref.get();
+      if (!x.exists) return [404, { error: 'Not found.' }];
+      if (x.data().uid !== me.uid && !(await adminCan(me, ['appset']))) return noRole;   // your own link, or with App Settings rights
+      await ref.delete(); return [200, { ok: true }];
+    }
+    if (b.op === 'summary') { const day = new Date(Date.now() + 6 * 3600e3).toISOString().slice(0, 10); return [200, { ok: true, ...(await require('./_lib/alerts').sendSummary(db, day)) }]; }
+    const s = await db().collection('tgAdmins').get();
+    return [200, { list: s.docs.map(d => ({ chat: d.id, name: d.data().name || '', username: d.data().username || '', mine: d.data().uid === me.uid, at: d.data().at })) }];
+  },
+  // the app saved a fee payment (transactions/trx_<TrxID>): tell the admins once
+  async alertTrx(b, me) {
+    if (!me) return [401, { error: 'Please login again.' }];
+    const id = 'trx_' + String(b.trxId || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 60);
+    if (id.length < 10) return [200, { ok: false }];
+    const ref = db().collection('transactions').doc(id); let t = null;
+    await db().runTransaction(async x => { const s = await x.get(ref); if (!s.exists) return; const d = s.data(); if (String(d.uid) !== String(me.uid) || d.alerted) return; x.update(ref, { alerted: true }); t = d; });
+    if (t) await require('./_lib/alerts').notify(db, 'trx', id, t);
+    return [200, { ok: true }];
+  }
+});
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -846,3 +888,4 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 };
+module.exports.actions = actions;

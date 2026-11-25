@@ -30,7 +30,8 @@ function norm(t) {
     footer: str(t.footer ?? DEF.footer, 120), button: str(t.button || DEF.button, 30),
     auto: { ...DEF.auto, ...(t.auto || {}) }, welcome: { ...DEF.welcome, ...(t.welcome || {}) }, rules: str(t.rules ?? DEF.rules, 1500),
     mod: { links: (t.mod || {}).links !== false, words: (Array.isArray((t.mod || {}).words) ? t.mod.words : []).map(w => str(w, 40).toLowerCase()).filter(Boolean).slice(0, 100) },
-    on: t.on !== false, dm: t.dm !== false, miniApp: t.miniApp !== false
+    on: t.on !== false, dm: t.dm !== false, miniApp: t.miniApp !== false,
+    adminAlerts: { on: (t.adminAlerts || {}).on !== false, orders: (t.adminAlerts || {}).orders !== false, trx: (t.adminAlerts || {}).trx !== false, summary: (t.adminAlerts || {}).summary !== false }
   };
 }
 async function settings(db) { try { const s = await db().collection('siteConfig').doc('app').get(); return norm(s.exists ? s.data().telegram : null); } catch (e) { return norm(null); } }

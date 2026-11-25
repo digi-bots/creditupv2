@@ -26,7 +26,7 @@ let _TG = clone(TGD);
 function buildTg(){
   const s = $p('sec-telegram'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Telegram</h2>${svBtn('telegram')}</div>${roBanner}
-  ${proTabs('telegram', [['conn', 'plug', 'Connection'], ['post', 'paper-plane', 'Post to channel'], ['auto', 'bolt', 'Auto posts'], ['group', 'comments', 'Group & bot'], ['daily', 'sun', 'Daily reminder'], ['sched', 'calendar-days', 'Scheduled posts'], ['log', 'clock-rotate-left', 'Recent posts']], 'conn')}
+  ${proTabs('telegram', [['conn', 'plug', 'Connection'], ['post', 'paper-plane', 'Post to channel'], ['auto', 'bolt', 'Auto posts'], ['group', 'comments', 'Group & bot'], ['alerts', 'bell', 'Admin alerts'], ['daily', 'sun', 'Daily reminder'], ['sched', 'calendar-days', 'Scheduled posts'], ['log', 'clock-rotate-left', 'Recent posts']], 'conn')}
   <div class="pro-pane" data-k="conn">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-plug"></i>Status <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="tgStatus()"><i class="fa-solid fa-rotate-right"></i>Check</button></div><div id="tgStatus" class="hint">Checking…</div></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-check"></i>How to connect (one time)</div>
@@ -64,6 +64,13 @@ function buildTg(){
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-robot"></i>Bot &amp; Mini App</div>
       <div class="fgrid">${tog('tg-dm', 'Send each user’s notifications to their Telegram too (after they connect)', true)}${tog('tg-mini', '“Open app” button opens Creditfy inside Telegram (Mini App)', true)}</div>
       <div class="hint">Users connect in the app: Quick Services → Telegram → Connect (or automatically when they open Creditfy inside Telegram while logged in). Commands: /start, /offers, /balance, /app, /rules, /help.</div></div>
+  </div>
+  <div class="pro-pane" data-k="alerts">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-bell" style="color:#ffd76a"></i>Admin alerts on your Telegram</div>
+      <div class="hint" style="margin-bottom:10px">Link your own Telegram to get every new payment and order the moment it arrives — with <b>Approve / Reject</b> buttons for Verified, VIP, deposits, Extra orders, recharges and micro jobs (loan fee and installment payments come as a notice; verify those in Transactions). After midnight you get a summary of the day. Every admin links their own Telegram; the buttons follow that admin's role. Send <b>/summary</b> to the bot any time.</div>
+      <div class="fgrid fgrid3">${tog('aa-on', 'Admin alerts on', true)}${tog('aa-orders', 'New orders, deposits & job proofs (with buttons)', true)}${tog('aa-trx', 'New loan fee & installment payments', true)}${tog('aa-summary', 'Daily summary after midnight', true)}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn btn-p ro-ok" onclick="aaLink()"><i class="fa-brands fa-telegram"></i>Connect my Telegram</button><button class="btn btn-s ro-ok" onclick="aaSummary()"><i class="fa-solid fa-chart-column"></i>Send today’s summary now</button><button class="btn btn-sm btn-s ro-ok" onclick="aaLoad()"><i class="fa-solid fa-rotate-right"></i></button></div>
+      <div id="aaList" style="margin-top:12px"></div></div>
   </div>
   <div class="pro-pane" data-k="daily">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-sun" style="color:#ffd76a"></i>Daily reminder — one message, everywhere, every morning at 9am (Bangladesh)</div>
@@ -198,6 +205,21 @@ async function scToggle(id, on){ const r = await window._accountApi('adminTgSche
 function scDel(id){ confirm2('Delete this scheduled post? (Posts already sent stay on Telegram.)', async () => { const r = await window._accountApi('adminTgSchedule', { op: 'delete', id }); if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; } await logAct('Telegram scheduled post deleted', 'broadcast', id); toast('Deleted'); scLoad(); }); }
 async function scRun(){ showL(true); const r = await window._accountApi('adminTgSchedule', { op: 'run' }); showL(false); if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; } toast(r.data.ran ? `Posted ${r.data.ran} due post${r.data.ran > 1 ? 's' : ''} ✓` : 'Nothing is due right now'); scLoad(); tgLog(); }
 
+/* ═════════ admin alerts ═════════ */
+async function aaLoad(){
+  const el = $p('aaList'); if(!el) return;
+  const r = await window._accountApi('adminTgAdmins', { op: 'list' }); const L = r.ok ? r.data.list || [] : [];
+  el.innerHTML = L.length ? L.map(a => `<div class="tg-post"><div><b>${ep(a.name || 'Admin')}</b>${a.username ? ` <small>@${ep(a.username)}</small>` : ''}${a.mine ? ' <small style="color:var(--p)">· you</small>' : ''}<br><small>Linked ${fd(a.at)}</small></div><button class="btn btn-sm btn-d ro-ok" onclick="aaUnlink('${ep(a.chat)}')">Unlink</button></div>`).join('') : '<div class="hint">No admin Telegram linked yet.</div>';
+}
+async function aaLink(){
+  const r = await window._accountApi('adminTgLink', {});
+  if(!r.ok){ toast(r.data.error || 'Could not make a link', 'e'); return; }
+  window.open(r.data.url, '_blank');
+  toast('Telegram opened — press Start there (the link works for 15 minutes)'); setTimeout(aaLoad, 12000);
+}
+function aaUnlink(chat){ confirm2('Stop admin alerts for this Telegram?', async () => { const r = await window._accountApi('adminTgAdmins', { op: 'unlink', chat }); if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; } toast('Unlinked'); aaLoad(); }); }
+async function aaSummary(){ showL(true); const r = await window._accountApi('adminTgAdmins', { op: 'summary' }); showL(false); if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; } toast(r.data.sent ? `Summary sent to ${r.data.sent} admin${r.data.sent > 1 ? 's' : ''} ✓` : 'No admin Telegram linked (or alerts are off)'); }
+
 /* ═════════ daily reminder ═════════ */
 const DR_DEF = { title: '☀️ Good morning from Creditfy', pushText: 'Loans are running smoothly ✅ Recharge, gift cards, exchange & more in Extra Services. Invite friends for bigger offers, get Verified and try VIP.',
   text: `✅ Loans are running smoothly — applications are reviewed and processed every day, and you can follow every step in the app.
@@ -250,7 +272,9 @@ async function loadTg(){
   fillIn({ 'dr-code': DC.on !== false, 'dr-amt': DC.amount ?? 5, 'dr-max': DC.maxUses ?? 0 });
   fillIn({ 'dr-on': D.on !== false, 'dr-site': D.site !== false, 'dr-push': D.push !== false, 'dr-channel': D.channel !== false, 'dr-bot': D.bot !== false, 'dr-pin': D.pin === true,
     'dr-title': D.title || DR_DEF.title, 'dr-text': D.text || DR_DEF.text, 'dr-pushText': D.pushText || DR_DEF.pushText });
-  proTabStart('telegram', 'conn'); afterLoad('telegram'); tgPrev(); tgStatus(); tgLog(); scLoad(); drLast();
+  const AA = _TG.adminAlerts || {};
+  fillIn({ 'aa-on': AA.on !== false, 'aa-orders': AA.orders !== false, 'aa-trx': AA.trx !== false, 'aa-summary': AA.summary !== false });
+  proTabStart('telegram', 'conn'); afterLoad('telegram'); tgPrev(); tgStatus(); tgLog(); scLoad(); drLast(); aaLoad();
 }
 async function saveTg(){
   const link = id => { const v = val(id); if(v && !/^https:\/\//i.test(v)) throw new Error('Links must start with https://'); return v; };
@@ -258,7 +282,8 @@ async function saveTg(){
     button: val('tg-button') || 'Open Creditfy', footer: val('tg-footer'),
     auto: { broadcast: chk('ta-broadcast'), offers: chk('ta-offers'), deals: chk('ta-deals'), tasks: chk('ta-tasks'), services: chk('ta-services') },
     welcome: { on: chk('tw-on'), deleteJoin: chk('tw-del'), text: $p('tw-text').value.trim() || TGD.welcome.text }, rules: $p('tg-rules').value.trim(),
-    mod: { links: chk('tm-links'), words: lines('tm-words').map(w => w.toLowerCase()).slice(0, 100) }, dm: chk('tg-dm'), miniApp: chk('tg-mini'), updatedAt: new Date().toISOString() };
+    mod: { links: chk('tm-links'), words: lines('tm-words').map(w => w.toLowerCase()).slice(0, 100) }, dm: chk('tg-dm'), miniApp: chk('tg-mini'),
+    adminAlerts: { on: chk('aa-on'), orders: chk('aa-orders'), trx: chk('aa-trx'), summary: chk('aa-summary') }, updatedAt: new Date().toISOString() };
   const daily = { on: chk('dr-on'), site: chk('dr-site'), push: chk('dr-push'), channel: chk('dr-channel'), bot: chk('dr-bot'), pin: chk('dr-pin'),
     title: val('dr-title') || DR_DEF.title, text: $p('dr-text').value.trim() || DR_DEF.text, pushText: val('dr-pushText') || DR_DEF.pushText,
     code: { on: chk('dr-code'), amount: numv('dr-amt', 5, 1, 10000), maxUses: numv('dr-max', 0, 0, 1e7) } };

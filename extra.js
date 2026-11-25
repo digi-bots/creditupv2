@@ -134,6 +134,7 @@ const css = `
 .xs-deal .pp{text-align:right;flex:none}.xs-deal .pp s{display:block;font-size:11px;color:var(--txt3)}.xs-deal .pp b{font-size:17px;color:#ffd76a;font-weight:900}
 .xs-deal .pp em{display:block;font-style:normal;font-size:10px;font-weight:900;color:#ff8fa3}
 .xs-deal.soon{background:linear-gradient(135deg,#141c33,#1a1430);border-color:rgba(120,160,255,.35)}
+.xb-cp{display:grid;grid-template-columns:1fr auto;gap:8px;margin:2px 0 6px}.xb-cp button{border:0;border-radius:14px;padding:0 18px;font-weight:900;font-family:inherit;cursor:pointer;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
 .xb-bonus{border-radius:16px;padding:12px;margin:0 0 12px;background:linear-gradient(135deg,rgba(255,215,106,.12),rgba(29,219,128,.06));border:1px solid rgba(255,215,106,.4)}
 .xb-bonus .h{font-size:13px;font-weight:900;color:#ffd76a;display:flex;gap:7px;align-items:center;margin-bottom:8px}
 .xb-bonus .tiers{display:flex;gap:7px;margin-bottom:8px}.xb-bonus .tiers div{flex:1;text-align:center;border-radius:11px;padding:7px 4px;background:rgba(0,0,0,.2)}
@@ -642,6 +643,8 @@ function depPage(){
     <span class="sv-lbl">1. Amount</span>
     <div class="xb-chips">${amts.map(a => `<button onclick="xbAmt(${a},this)">${tk(a)}</button>`).join('')}</div>
     <input class="sv-in" id="xbAmt" type="number" inputmode="numeric" oninput="xbBon()" placeholder="Amount (min ${tk(W.min || 50)}${W.max ? ', max ' + tk(W.max) : ''})">
+    <div class="xb-cp"><input class="sv-in" id="xbCp" placeholder="Coupon code (optional)" maxlength="24" autocomplete="off" style="text-transform:uppercase"><button onclick="xbCoupon()" id="xbCpB">Apply</button></div>
+    <div id="xbCpMsg" style="font-size:12px;margin:-2px 2px 8px"></div>
     <span class="sv-lbl">2. Send it to</span>
     ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xbW=${k};svPage('x_dep')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}</button>`).join('')}</div>` : ''}
     ${w ? `<div class="pay-num"><div><small>${E(w.name)}${w.type ? ' · ' + E(w.type) : ''}</small><b>${E(w.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(w.number)}').then(()=>svToastOk('Copied'))">Copy</button></div>` : '<div class="sv-empty">No payment number is available right now. Please contact support.</div>'}
@@ -654,13 +657,24 @@ function depPage(){
 window.xbAmt = (v, el) => { $x('xbAmt').value = v; document.querySelectorAll('.xb-chips button').forEach(b => b.classList.toggle('on', b === el)); xbBon(); };
 // the bonus for the amount typed (same rule as the server)
 function bonusFor(amount){ const B = (X.cfg && X.cfg.depBonus) || {}; if(!B.on) return 0; const t = [...(B.tiers || [])].reverse().find(x => amount >= x.min); return t ? Math.min(B.max || Infinity, Math.floor(amount * t.pct / 100)) : 0; }
-window.xbBon = () => { const el = $x('xbBon'); if(!el) return; const a = Number(($x('xbAmt') || {}).value) || 0, b = bonusFor(a); el.innerHTML = b ? `You get <b>${tk(a + b)}</b> (${tk(a)} + ${tk(b)} bonus)` : ''; };
+// a deposit coupon: checked on the server for this amount; its bonus comes with the deposit approval
+window._xbCoupon = null;
+window.xbCoupon = async function(){
+  const code = ($x('xbCp').value || '').trim(), amount = Number(($x('xbAmt') || {}).value) || 0, m = $x('xbCpMsg');
+  if(!code){ window._xbCoupon = null; m.innerHTML = ''; return; }
+  if(!amount){ m.innerHTML = '<span style="color:#ff8fa3">Enter the amount first.</span>'; return; }
+  const r = await api('depositCoupon', { code, amount });
+  if(!r.ok){ window._xbCoupon = null; m.innerHTML = `<span style="color:#ff8fa3">${E(r.data.error || 'Not valid')}</span>`; return; }
+  window._xbCoupon = { code: r.data.code, amount }; m.innerHTML = `<span style="color:var(--p);font-weight:800"><i class="fa-solid fa-circle-check"></i> ${E(r.data.code)} applied — +${tk(r.data.bonus)} bonus when your deposit is approved</span>`;
+};
+window.xbBon = () => {
+  if(window._xbCoupon && window._xbCoupon.amount !== (Number(($x('xbAmt') || {}).value) || 0)){ window._xbCoupon = null; const m = $x('xbCpMsg'); if(m) m.innerHTML = '<span style="color:var(--txt2)">Amount changed — tap Apply again for the coupon.</span>'; } const el = $x('xbBon'); if(!el) return; const a = Number(($x('xbAmt') || {}).value) || 0, b = bonusFor(a); el.innerHTML = b ? `You get <b>${tk(a + b)}</b> (${tk(a)} + ${tk(b)} bonus)` : ''; };
 window.xbSubmit = async function(){
   const w = window._xbCur, amount = Number($x('xbAmt').value) || 0, trxId = ($x('xbTrx').value || '').trim();
   if(!(amount > 0)){ toast('Enter the amount', true); return; }
   if(trxId.length < 6){ toast('Enter the Transaction ID', true); return; }
   const b = $x('xbBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Submitting…';
-  const r = await api('xbalDeposit', { amount, trxId, payMethod: w ? w.name : '', toNumber: w ? w.number : '' });
+  const r = await api('xbalDeposit', { amount, trxId, payMethod: w ? w.name : '', toNumber: w ? w.number : '', coupon: window._xbCoupon && window._xbCoupon.amount === amount ? window._xbCoupon.code : '' });
   b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Submit deposit';
   if(!r.ok){ toast(r.data.error || 'Could not submit', true); return; }
   toast('Deposit submitted — we will add it after checking'); svGo('x_wallet');
