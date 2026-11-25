@@ -285,6 +285,7 @@ const T = {
   redeem:   { l: 'Redeem Code', ic: 'ticket', g: 'g-purple', cat: 'rewards', login: true, page: 'redeem' },
   voucher:  { l: 'Gift Voucher', ic: 'gift', g: 'g-red', cat: 'rewards', login: true, page: 'voucher' },
   recharge: { l: 'Mobile Recharge', ic: 'mobile-screen-button', g: 'g-green', cat: 'account', login: true, page: 'recharge', badge: 'VIP' },
+  telegram: { l: 'Telegram', ic: 'paper-plane', g: 'g-blue', cat: 'help', login: true, page: 'telegram', badge: 'JOIN' },
   lang:     { l: 'Language', ic: 'language', g: 'g-teal', cat: 'account', page: 'lang' },
   all:      { l: 'All Services', ic: 'grip', g: 'g-slate', cat: '', page: 'all' }
 };

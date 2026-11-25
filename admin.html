@@ -689,6 +689,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="nav" id="n-home" onclick="gS('home',this)"><i class="fa-solid fa-house-laptop"></i>Home Page</div>
   <div class="nav" id="n-services" onclick="gS('services',this)"><i class="fa-solid fa-gem"></i>Services &amp; Rewards<span class="nb nb-o" id="nb-svc" style="display:none">0</span></div>
   <div class="nav" id="n-appset" onclick="gS('appset',this)"><i class="fa-solid fa-mobile-screen-button"></i>App Settings</div>
+  <div class="nav" id="n-telegram" onclick="gS('telegram',this)"><i class="fa-brands fa-telegram"></i>Telegram</div>
   <div class="nav" id="n-seo" onclick="gS('seo',this)"><i class="fa-solid fa-magnifying-glass-chart"></i>SEO &amp; Reviews<span class="nb nb-o" id="nb-rv" style="display:none">0</span></div>
   <div class="nav" id="n-broadcast" onclick="gS('broadcast',this)"><i class="fa-solid fa-bullhorn"></i>Broadcast</div>
   <div class="sb-sec">System</div>
@@ -1477,7 +1478,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="fg"><label>Button link</label><input id="bc-bl" placeholder="https://www.creditfy.online"></div>
     </div>
     <div style="margin-top:12px;display:flex;gap:14px;flex-wrap:wrap;align-items:center"><button class="btn btn-p" id="bcSendBtn" onclick="sendBC()"><i class="fa-solid fa-paper-plane"></i>Send</button>
-      <label class="hp-sw" style="display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700"><label class="tog"><input type="checkbox" id="bc-push" checked><span class="tog-sl"></span></label>Also send to phones (push notification)</label></div>
+      <label class="hp-sw" style="display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700"><label class="tog"><input type="checkbox" id="bc-push" checked><span class="tog-sl"></span></label>Also send to phones (push notification)</label>
+      <label class="hp-sw" style="display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700;margin-top:8px"><label class="tog"><input type="checkbox" id="bc-tg" checked><span class="tog-sl"></span></label><i class="fa-brands fa-telegram" style="color:#37bbfe"></i>Also post to the Telegram channel (broadcasts to all users)</label></div>
   </div>
   <div class="bc-card">
     <div class="bc-sec-title"><i class="fa-solid fa-history"></i>Broadcast History</div>
@@ -1525,6 +1527,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
 <!-- ADMIN SETTINGS -->
 <div class="sec" id="sec-appset"></div>
 <div class="sec" id="sec-services"></div>
+<div class="sec" id="sec-telegram"></div>
 <div class="sec" id="sec-seo"></div>
 <div class="sec" id="sec-risk"></div>
 
@@ -1947,7 +1950,7 @@ async function saveGateway(quiet){
 
 // ══ CONFIG ══════════════════════════════════════════
 const PG = 20;
-const TITLES = {services:'Services & Rewards',appset:'App Settings',seo:'SEO & Reviews',risk:'Risk Center',home:'Home Page',dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Team & Settings'};
+const TITLES = {telegram:'Telegram',services:'Services & Rewards',appset:'App Settings',seo:'SEO & Reviews',risk:'Risk Center',home:'Home Page',dashboard:'Dashboard',users:'User Management',applications:'Loan Applications',transactions:'Transactions',portfolio:'Loan Portfolio',analytics:'Analytics & Reports',wallets:'Wallets',config:'Site Config',broadcast:'Broadcast',support:'Support Tickets',actlog:'Activity Log',settings:'Team & Settings'};
 const PIPE_STEPS = ['Applied','Fee Pending','Fee Submitted','Fee Verified','Approved','Disbursed','Active','Repaid'];
 const PIPE_MAP = {'Pending Fee Payment':1,'TrxID Submitted':2,'Fee Verified':3,'Approved':4,'Disbursement Rejected':4,'Disbursed':5,'Active':6,'Repaid':7};
 
@@ -1996,7 +1999,7 @@ function exportCur(){ exportCSV(_sec); }
 async function loadSec(id){
   if(!window._db) return;
   const map={dashboard:loadDash,users:loadUsers,applications:loadApps,transactions:loadTrx,portfolio:loadPortfolio,analytics:loadAnalytics,wallets:loadWallets,config:loadConfig,home:loadHome,broadcast:loadBC,support:loadSupport,actlog:loadActLog,
-    appset:()=>window.loadAppSet&&loadAppSet(), services:()=>window.loadSvc&&loadSvc(), seo:()=>window.loadSeo&&loadSeo(), risk:()=>window.loadRisk&&loadRisk(), settings:()=>window.loadTeam&&loadTeam()};
+    appset:()=>window.loadAppSet&&loadAppSet(), services:()=>window.loadSvc&&loadSvc(), telegram:()=>window.loadTg&&loadTg(), seo:()=>window.loadSeo&&loadSeo(), risk:()=>window.loadRisk&&loadRisk(), settings:()=>window.loadTeam&&loadTeam()};
   if(map[id]) await map[id]();
 }
 
@@ -4396,7 +4399,8 @@ async function sendBC(){
       await window._addDoc('broadcasts',d);
       await logAct(`Broadcast: "${t}"`,'broadcast','new');
       const pr = document.getElementById('bc-push')?.checked ? await window._accountApi('adminPush',{audience:'all',title:t,body:sub||m,link:'/?go=notifications',image:isPdf?'':att}) : null;
-      toast('Broadcast sent to all users ✓'+(pr&&pr.ok?` · pushed to ${pr.data.sent||0} of ${pr.data.devices||0} device(s)`:''));
+      const tg = document.getElementById('bc-tg')?.checked ? await window._accountApi('adminTgPost',{kind:'broadcast',title:t,text:(sub?sub+'\n\n':'')+m,image:isPdf?'':att,buttonText:btnT,buttonUrl:btnL}) : null;
+      toast('Broadcast sent to all users ✓'+(pr&&pr.ok?` · pushed to ${pr.data.sent||0} of ${pr.data.devices||0} device(s)`:'')+(tg&&tg.ok&&tg.data.sent?' · posted on Telegram':''));
     }
     ['bc-t','bc-s','bc-m','bc-a','bc-aName','bc-bt','bc-bl','bc-u'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('bc-aHint').innerText='Images show inside the notification; PDFs show as a download button.';
@@ -4938,5 +4942,6 @@ onAuthStateChanged(fbAuth, async user=>{
 </script>
 <script src="admin-pro.js?v=2"></script>
 <script src="admin-svc.js?v=10"></script>
+<script src="admin-tg.js?v=1"></script>
 </body>
 </html>

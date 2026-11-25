@@ -100,6 +100,7 @@ async function notifyUser(uid, title, message, type) {
   try { await db().collection('user_notifications').add({ uid, title, message, type: type || 'info', createdAt: new Date().toISOString() }); }
   catch (e) { console.warn('notify', e); }
   await autoPush(uid, title, message, type || 'info');   // also to the phone, when allowed
+  await require('./_lib/tg').dm(db, uid, title, message);   // and to the user's Telegram, when linked
 }
 
 // a friend joined with this user's link: tell them, plus any reward or balance-offer use it unlocked
@@ -827,6 +828,7 @@ const SVC = require('./_lib/services')({ db, admin, findUserDoc, isAdmin, adminC
 Object.assign(actions, SVC.actions);
 const XTR = require('./_lib/extra')({ db, findUserDoc, isAdmin, adminCan, notifyUser, isPhone, SVC });
 Object.assign(actions, XTR.actions);
+Object.assign(actions, require('./_lib/tg').actions({ db, isAdmin, adminCan, findUserDoc }));
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
