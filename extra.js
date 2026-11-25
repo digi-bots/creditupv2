@@ -91,12 +91,39 @@ const css = `
 .ln-note b{display:block;color:var(--txt);font-size:13px;margin-bottom:2px}
 .ln-note .vb{display:inline-flex;align-items:center;gap:5px;margin-top:7px;border:0;border-radius:10px;padding:7px 11px;font-weight:900;font-size:11.5px;cursor:pointer;font-family:inherit;color:#3a2500;background:linear-gradient(135deg,#ffe08a,#f2a91d)}
 .ln-note.vip{background:linear-gradient(135deg,rgba(255,215,106,.16),rgba(29,219,128,.06))}
+.cz{position:relative;padding-right:46px!important}
+.cz-tg{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.16);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));color:var(--txt);font-size:11px;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:transform .25s}
+.cz-tg i{transition:transform .3s}.cz-slim .cz-tg i{transform:rotate(180deg)}
+.cz-tg:hover{transform:scale(1.08)}
+.cz-m{min-width:0;flex:1}
+.cz-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .35s ease,opacity .3s ease}
+.cz-body>div{overflow:hidden;min-height:0}
+.cz-slim .cz-body{grid-template-rows:0fr;opacity:0}
+.cz-slim{padding-top:9px!important;padding-bottom:9px!important;align-items:center!important}
+.cz-slim .ic,.cz-slim .pc-ic{width:28px!important;height:28px!important;font-size:12px!important;transition:.3s}
+.cz-slim b{margin:0!important}
+.ln-note .cz-body>div{padding-top:1px}
+/* premium finish */
+#xsBlock{position:relative}
+#xsBlock::before{content:"";position:absolute;inset:-8px -6px auto;height:180px;border-radius:26px;pointer-events:none;background:radial-gradient(60% 100% at 20% 0%,rgba(255,215,106,.10),transparent 70%),radial-gradient(60% 100% at 90% 0%,rgba(77,143,255,.10),transparent 70%)}
+.xs-title{background:linear-gradient(90deg,#fff,#ffe9a8 55%,#bfe0ff);-webkit-background-clip:text;background-clip:text}
+.xs-title em,.xs-title .xs-bal{-webkit-text-fill-color:initial}
+.xs-t{overflow:hidden}
+.xs-t::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.10),transparent);transform:skewX(-12deg);transition:left .6s ease;pointer-events:none}
+@media (hover:hover){.xs-t:hover::after{left:130%}.xs-t:hover .xs-lg{box-shadow:0 10px 24px rgba(0,0,0,.45),0 0 0 2px rgba(255,215,106,.35)}}
+.xs-t:active{transform:scale(.97)}
+.xs-lg{transition:box-shadow .25s}
+.xs-it{position:relative;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));transition:transform .15s,border-color .2s}
+.xs-it:active{transform:scale(.99)}
+.xs-it::before{content:"";position:absolute;left:0;top:12%;bottom:12%;width:3px;border-radius:3px;background:linear-gradient(180deg,#ffd76a,#4d8fff);opacity:.7}
+.xs-hero{box-shadow:0 14px 30px rgba(0,0,0,.28)}
 @media (max-width:360px){.xs-grid{gap:8px}.xs-lg{width:46px;height:46px;font-size:20px}}`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
 function logo(s){ return s.logo ? `<div class="xs-lg img"><img src="${E(s.logo)}" alt="${E(s.name)}" loading="lazy"></div>` : `<div class="xs-lg ${E(s.color)}"><i class="${E(s.icon)}"></i></div>`; }
 const svcs = () => ((X.cfg && X.cfg.services) || []).filter(s => s.on);
-const isV = () => !!(X.xb && X.xb.verified);
+const isV = () => !!(X.xb && (X.xb.verified || X.xb.vip));
 const PK = () => (X.cfg && X.cfg.perk) || { on: false };
 // the same price rule as the server: Verified members pay no service charge and no transaction fee
 function quote(s, i, amount, ver){
@@ -111,15 +138,15 @@ const sealHtml = () => { try { return window._svSeal ? window._svSeal() : '<i cl
 // the Verified exclusive banner
 function perkBanner(){
   const P = PK(); if(!P.on) return '';
-  if(user() && isV()) return `<div class="xs-perk on"><span class="sl">${sealHtml()}</span><div><b>Verified Exclusive is active</b><p>You pay no service charge and no transaction fee on every Extra Service.</p></div><span class="go">0% fee ✓</span></div>`;
-  return `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Verified Exclusive: 0% charge · 0 fee</b><p>Verified members pay no service charge${P.chargePct ? ` (${P.chargePct}%)` : ''} and no transaction fee on exchange, gift cards, SMM and every Extra Service.</p></div><span class="go">Get Verified</span></div>`;
+  if(user() && isV()) return `<div class="xs-perk on"><span class="sl">${sealHtml()}</span><div><b>${X.xb && X.xb.vip && !X.xb.verified ? 'VIP Exclusive is active' : 'Verified Exclusive is active'}</b><p>You pay no service charge and no transaction fee on every Extra Service.</p></div><span class="go">0% fee ✓</span></div>`;
+  return `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Verified Exclusive: 0% charge · 0 fee</b><p>Verified and VIP members pay no service charge${P.chargePct ? ` (${P.chargePct}%)` : ''} and no transaction fee on exchange, gift cards, SMM and every Extra Service.</p></div><span class="go">Get Verified</span></div>`;
 }
 // processing-time notice for loans (home page, after applying, application details)
 function loanNote(){
   const N = (X.cfg && X.cfg.loanNotice) || {}; if(N.on === false) return '';
   const days = E(N.days || '7–14');
-  if(X.xb && X.xb.vip) return `<div class="ln-note vip"><div class="ic"><i class="fa-solid fa-crown"></i></div><div><b>Your application has VIP priority</b>Loan money is processed through the bank, which normally takes ${days} working days. As a VIP member, your application is reviewed first with high priority.</div></div>`;
-  return `<div class="ln-note"><div class="ic"><i class="fa-solid fa-building-columns"></i></div><div><b>Processing time: ${days} working days</b>Loan money is processed through the bank, so approval and disbursement can take up to ${days} working days. Want it sooner? VIP applications get high priority and are reviewed first — a better chance of early approval and disbursement.<br><button class="vb" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>Get VIP priority</button></div></div>`;
+  if(X.xb && X.xb.vip) return `<div class="ln-note vip"><div class="ic"><i class="fa-solid fa-crown"></i></div><div class="cz-m"><b>Your application has VIP priority</b><div class="cz-body"><div><span>Loan money is processed through the bank, which normally takes ${days} working days. As a VIP member, your application is reviewed first with high priority.</span></div></div></div></div>`;
+  return `<div class="ln-note"><div class="ic"><i class="fa-solid fa-building-columns"></i></div><div class="cz-m"><b>Processing time: ${days} working days</b><div class="cz-body"><div><span>Loan money is processed through the bank, so approval and disbursement can take up to ${days} working days. Want it sooner? VIP applications get high priority and are reviewed first — a better chance of early approval and disbursement.</span><br><button class="vb" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>Get VIP priority</button></div></div></div></div>`;
 }
 function placeNotes(){
   const html = loanNote(); if(!html) return;
@@ -129,6 +156,22 @@ function placeNotes(){
     const box = document.createElement('div'); box.innerHTML = html; const n = box.firstChild;
     if(how === 'first') el.insertBefore(n, el.firstChild); else { const ref = at(el); if(ref) el.insertBefore(n, ref); else el.appendChild(n); } });
 }
+// slim / full cards: a small round button folds the card to one line; the choice is remembered on this phone
+function slimKey(k){ try { return localStorage.getItem('cf_slim_' + k) === '1'; } catch (e) { return false; } }
+function makeSlim(card, key){
+  if(!card || card.dataset.cz) return; card.dataset.cz = key; card.classList.add('cz');
+  if(!card.querySelector('.cz-body')){
+    // the push card: fold its text and buttons
+    const m = card.querySelector('.pc-m'); if(m){ const body = document.createElement('div'); body.className = 'cz-body'; const inner = document.createElement('div');
+      [...m.children].filter(e => e.tagName !== 'B').forEach(e => inner.appendChild(e)); body.appendChild(inner); m.appendChild(body); m.classList.add('cz-m'); }
+  }
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'cz-tg'; b.setAttribute('aria-label', 'Show less / more');
+  b.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
+  b.onclick = ev => { ev.stopPropagation(); const on = !card.classList.contains('cz-slim'); card.classList.toggle('cz-slim', on); try { localStorage.setItem('cf_slim_' + key, on ? '1' : '0'); } catch (e) {} };
+  card.appendChild(b);
+  if(slimKey(key)) card.classList.add('cz-slim');
+}
+function slimAll(){ document.querySelectorAll('.ln-note').forEach(n => makeSlim(n, 'loan')); const pc = document.getElementById('pushCard'); if(pc && !pc.querySelector('.pc-ok')) makeSlim(pc, 'push'); }
 function refreshNotes(){ document.querySelectorAll('.ln-note').forEach(n => n.remove()); placeNotes(); }
 
 async function load(){
@@ -358,5 +401,5 @@ load().then(() => { loadLive(); loadXb(); });
 setInterval(loadLive, 30e3);
 // redraw the section after the language changes or the home page is rebuilt; reload the balance after login / logout
 let _ph = (user() || {}).phone || '';
-setInterval(() => { if(X.cfg) placeNotes(); if(X.cfg && !$x('xsBlock')) render(); const ph = (user() || {}).phone || ''; if(ph !== _ph){ _ph = ph; X.xb = null; loadXb().then(render); } }, 1500);
+setInterval(() => { if(X.cfg) placeNotes(); slimAll(); if(X.cfg && !$x('xsBlock')) render(); const ph = (user() || {}).phone || ''; if(ph !== _ph){ _ph = ph; X.xb = null; loadXb().then(render); } }, 1500);
 })();

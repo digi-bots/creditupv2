@@ -152,7 +152,8 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
         if (i.min && amount < i.min) return [400, { error: `The smallest amount is ${i.min} ${i.unit}.` }];
         if (i.max && amount > i.max) return [400, { error: `The largest amount is ${i.max} ${i.unit}.` }];
       }
-      const q = quote(s, i, amount, u.phoneVerified === true, C.perk);
+      // Verified and VIP members both get the exclusive: no charge, no fee
+      const q = quote(s, i, amount, u.phoneVerified === true || !!SVC.vipState(u), C.perk);
       const vals = Array.isArray(b.fields) ? b.fields : [];
       const fields = s.fields.map((f, k) => ({ label: f.label, value: str(vals[k], 300) }));
       const miss = s.fields.find((f, k) => f.req && !fields[k].value);
