@@ -8,7 +8,7 @@ const bdDay = (t = Date.now()) => new Date(t + 6 * 3600e3).toISOString().slice(0
 const money = n => Math.round(Number(n) || 0);
 const str = (v, n = 200) => String(v ?? '').replace(/[<>]/g, '').trim().slice(0, n);
 
-const item = (id, name, price, note = '') => ({ id, name, price, note, on: true });
+const item = (id, name, price, note = '', cat = '', hot = false) => ({ id, name, price, note, on: true, cat, hot });
 const pair = (id, name, o = {}) => ({ id, name, on: true, unit: '৳', rate: 1, pct: 1.5, fee: 0, min: 100, max: 25000, flow: 'buy', to: '', note: '', ...o });
 const DEF = {
   on: true, title: 'Extra Services',
@@ -21,24 +21,24 @@ const DEF = {
     { id: 'giftcard', name: 'Gift Cards', short: 'Gift Cards', icon: 'fa-brands fa-google-play', color: 'g-purple', mode: 'items', on: true,
       desc: 'Google Play, iTunes, Steam and more. The code is sent to you here in My Orders.',
       fields: [{ label: 'Email', req: false }],
-      items: [item('gp10', 'Google Play $10 (US)', 1450), item('gp25', 'Google Play $25 (US)', 3500), item('it10', 'iTunes / Apple $10 (US)', 1500), item('st10', 'Steam $10', 1450), item('st20', 'Steam $20', 2850)] },
+      items: [item('gp10', 'Google Play $10 (US)', 1450, '', 'Google Play', true), item('gp25', 'Google Play $25 (US)', 3500, '', 'Google Play'), item('it10', 'iTunes / Apple $10 (US)', 1500, '', 'Apple'), item('st10', 'Steam $10', 1450, '', 'Steam', true), item('st20', 'Steam $20', 2850, '', 'Steam')] },
     { id: 'smm', name: 'SMM & Premium', short: 'SMM', icon: 'fa-solid fa-hashtag', color: 'g-blue', mode: 'items', on: true,
       desc: 'Telegram Premium, Facebook page services and more premium social services.',
       fields: [{ label: 'Link or username', req: true }],
-      items: [item('tgp3', 'Telegram Premium — 3 months (gift)', 1650), item('tgp12', 'Telegram Premium — 12 months (gift)', 4300), item('fbmv', 'Meta Verified (blue badge) — 1 month setup', 1900, 'You need a real name and ID that match the profile.'),
-        item('fbpage', 'Facebook page setup & design', 800), item('fbboost', 'Facebook page boost help', 500)] },
+      items: [item('tgp3', 'Telegram Premium — 3 months (gift)', 1650, '', 'Telegram', true), item('tgp12', 'Telegram Premium — 12 months (gift)', 4300, '', 'Telegram'), item('fbmv', 'Meta Verified (blue badge) — 1 month setup', 1900, 'You need a real name and ID that match the profile.', 'Facebook', true),
+        item('fbpage', 'Facebook page setup & design', 800, '', 'Facebook'), item('fbboost', 'Facebook page boost help', 500, '', 'Facebook')] },
     { id: 'games', name: 'Play & Earn', short: 'Games', icon: 'fa-solid fa-gamepad', color: 'g-pink', mode: 'game', on: true,
       desc: 'Beat the computer at Tic-Tac-Toe and get a small reward in your wallet.', fields: [], items: [] },
     { id: 'vcc', name: 'Virtual Card (VCC)', short: 'VCC', icon: 'fa-brands fa-cc-visa', color: 'g-gold', mode: 'items', on: true,
       desc: 'A prepaid virtual Visa or Mastercard in your own name, from a licensed card issuer, for online payments.',
       fields: [{ label: 'Full name (as on your NID)', req: true }, { label: 'Email', req: true }],
-      items: [item('visa5', 'Virtual Visa — $5 balance', 950), item('visa10', 'Virtual Visa — $10 balance', 1650), item('mc10', 'Virtual Mastercard — $10 balance', 1650)] },
+      items: [item('visa5', 'Virtual Visa — $5 balance', 950, '', 'Visa'), item('visa10', 'Virtual Visa — $10 balance', 1650, '', 'Visa', true), item('mc10', 'Virtual Mastercard — $10 balance', 1650, '', 'Mastercard')] },
     { id: 'promo', name: 'Daraz Promo Codes', short: 'Promo Codes', icon: 'fa-solid fa-tags', color: 'g-orange', mode: 'items', on: true,
       desc: 'Discount codes for Daraz shops. The code is sent to you here in My Orders.', fields: [],
       items: [item('dz100', 'Daraz ৳100 off code', 40), item('dz200', 'Daraz ৳200 off code', 80)] },
     { id: 'voucher', name: 'Gift Vouchers', short: 'Vouchers', icon: 'fa-solid fa-gift', color: 'g-red', mode: 'items', on: true,
       desc: 'Apex, Daraz and digital service vouchers — domains, hosting and more.', fields: [{ label: 'Details (domain name, email, etc.)', req: false }],
-      items: [item('apex1k', 'Apex shoe voucher ৳1,000', 1000), item('dz500', 'Daraz gift card ৳500', 500), item('dom', '.com domain — 1 year', 1550), item('host', 'Web hosting — 1 year (5 GB)', 1200)] },
+      items: [item('apex1k', 'Apex shoe voucher ৳1,000', 1000, '', 'Shopping'), item('dz500', 'Daraz gift card ৳500', 500, '', 'Shopping', true), item('dom', '.com domain — 1 year', 1550, '', 'Web'), item('host', 'Web hosting — 1 year (5 GB)', 1200, '', 'Web')] },
     { id: 'mfs', name: 'MFS Exchange', short: 'MFS Exchange', icon: 'fa-solid fa-right-left', color: 'g-green', mode: 'amount', on: true,
       desc: 'Move money between bKash, Nagad and Rocket. Send to our number, we send the amount to your number.',
       fields: [{ label: 'Your receiving number', req: true }],
@@ -51,7 +51,9 @@ const DEF = {
   // Verified exclusive: no service charge on fixed-price services and no transaction fee on exchanges
   perk: { on: true, chargePct: 5, chargeMin: 10 },
   // shown on the home page, after applying and in the application details
-  loanNotice: { on: true, days: '7–14' }
+  loanNotice: { on: true, days: '7–14' },
+  // a special tile that opens on one weekday (Bangladesh time) with that day's deals (from the weekday deals list)
+  redFriday: { on: true, title: 'Red Friday', day: 5, text: 'Our biggest prices of the week — one day only.' }
 };
 
 function norm(x) {
@@ -67,13 +69,14 @@ function norm(x) {
         id: str(i.id, 30), name: str(i.name, 60), on: i.on !== false, note: str(i.note, 300), price: money(i.price), to: str(i.to, 120),
         unit: str(i.unit || '৳', 8), rate: Math.max(0, Number(i.rate) || 0) || 1, pct: Math.max(0, Math.min(50, Number(i.pct) || 0)), fee: money(i.fee),
         min: Math.max(0, Number(i.min) || 0), max: Math.max(0, Number(i.max) || 0), flow: i.flow === 'sell' ? 'sell' : 'buy',
-        offer: money(i.offer), offerEnd: str(i.offerEnd, 40) }))
+        offer: money(i.offer), offerEnd: str(i.offerEnd, 40), cat: str(i.cat, 24), hot: i.hot === true }))
     })),
     deals: (Array.isArray(x.deals) ? x.deals : []).filter(d => d && d.sid && d.iid && money(d.price) > 0).slice(0, 30).map(d => ({ id: str(d.id || d.sid + d.iid, 30), sid: str(d.sid, 30), iid: str(d.iid, 30),
       price: money(d.price), on: d.on !== false, days: (Array.isArray(d.days) ? d.days : []).map(Number).filter(n => n >= 0 && n <= 6) })),
     games: { ...DEF.games, ...(x.games || {}) },
     wallet: { ...DEF.wallet, ...(x.wallet || {}), min: Math.max(1, money((x.wallet || {}).min ?? DEF.wallet.min)), max: money((x.wallet || {}).max ?? DEF.wallet.max) },
     perk: { ...DEF.perk, ...(x.perk || {}), on: (x.perk || {}).on !== false, chargePct: Math.max(0, Math.min(50, Number((x.perk || {}).chargePct ?? DEF.perk.chargePct) || 0)), chargeMin: money((x.perk || {}).chargeMin ?? DEF.perk.chargeMin) },
+    redFriday: { on: (x.redFriday || {}).on !== false, title: str((x.redFriday || {}).title || DEF.redFriday.title, 24), day: Math.max(0, Math.min(6, Math.round(Number((x.redFriday || {}).day ?? DEF.redFriday.day)))), text: str((x.redFriday || {}).text ?? DEF.redFriday.text, 160) },
     loanNotice: { on: (x.loanNotice || {}).on !== false, days: str((x.loanNotice || {}).days || DEF.loanNotice.days, 20) },
     live: { ...DEF.live, ...(x.live || {}), count: Math.max(3, Math.min(30, money((x.live || {}).count) || DEF.live.count)) }
   };

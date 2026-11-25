@@ -107,7 +107,6 @@ const css = `
 /* premium finish */
 #xsBlock{position:relative}
 #xsBlock::before{content:"";position:absolute;inset:-8px -6px auto;height:180px;border-radius:26px;pointer-events:none;background:radial-gradient(60% 100% at 20% 0%,rgba(255,215,106,.10),transparent 70%),radial-gradient(60% 100% at 90% 0%,rgba(77,143,255,.10),transparent 70%)}
-.xs-title{background:linear-gradient(90deg,#fff,#ffe9a8 55%,#bfe0ff);-webkit-background-clip:text;background-clip:text}
 .xs-title em,.xs-title .xs-bal{-webkit-text-fill-color:initial}
 .xs-t{overflow:hidden}
 .xs-t::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.10),transparent);transform:skewX(-12deg);transition:left .6s ease;pointer-events:none}
@@ -135,6 +134,62 @@ const css = `
 .xs-deal .pp{text-align:right;flex:none}.xs-deal .pp s{display:block;font-size:11px;color:var(--txt3)}.xs-deal .pp b{font-size:17px;color:#ffd76a;font-weight:900}
 .xs-deal .pp em{display:block;font-style:normal;font-size:10px;font-weight:900;color:#ff8fa3}
 .xs-deal.soon{background:linear-gradient(135deg,#141c33,#1a1430);border-color:rgba(120,160,255,.35)}
+/* premium section v2 */
+.xs-head{position:relative;overflow:hidden;border-radius:22px;padding:15px 14px 13px;margin:22px 0 12px;background:radial-gradient(120% 120% at 0% 0%,rgba(255,215,106,.20),transparent 55%),radial-gradient(120% 140% at 100% 100%,rgba(77,143,255,.22),transparent 55%),linear-gradient(150deg,#141b30,#0b1222);border:1px solid rgba(255,215,106,.28);box-shadow:0 16px 36px rgba(0,0,0,.35)}
+.xs-head::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.08),transparent);animation:xsSweep 5s ease-in-out infinite}
+.xs-head .xs-title{font-size:18px;font-weight:900;color:#fff;display:flex;align-items:center;gap:8px;margin:0}
+.xs-head small{display:block;font-size:11.5px;color:#9fb2d6;margin-top:3px;line-height:1.45}
+.xs-head .a{display:flex;gap:8px;margin-top:12px}
+.xs-head .xs-bal{flex:1;margin:0;justify-content:flex-start;padding:7px 8px 7px 10px;border-radius:14px;font-size:14px;gap:9px;cursor:pointer;font-family:inherit;color:var(--txt)}
+.xs-head .xs-bal span{display:flex;flex-direction:column;line-height:1.15;text-align:left}.xs-head .xs-bal span small{font-size:9.5px;color:#9fd8bb;margin:0;font-weight:800;letter-spacing:.4px}
+.xs-head .xs-bal .p{margin-left:auto}
+.xs-ord{flex:none;display:inline-flex;align-items:center;gap:7px;border-radius:14px;padding:0 13px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--txt);font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit}
+.xs-cat{display:flex;align-items:center;margin:4px 2px 9px;font-size:13px;font-weight:900;color:var(--txt)}
+.xs-hot{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 10px;margin-bottom:8px;scrollbar-width:none}.xs-hot::-webkit-scrollbar{display:none}
+.xs-hc{position:relative;flex:none;width:136px;scroll-snap-align:start;border-radius:16px;padding:11px;cursor:pointer;background:linear-gradient(160deg,rgba(255,215,106,.10),rgba(255,255,255,.02));border:1px solid rgba(255,215,106,.35)}
+.xs-hc .xs-lg{width:38px;height:38px;font-size:16px;border-radius:12px}.xs-hc b{display:block;font-size:11.5px;color:var(--txt);margin:7px 0 4px;line-height:1.3;height:30px;overflow:hidden}
+.xs-hc .pp s,.xs-pc .pp s{font-size:10.5px;color:var(--txt3);margin-right:5px}.xs-hc .pp span{font-size:15px;font-weight:900;color:#ffd76a}
+.xs-hc .xs-cd{margin-top:5px}.xs-hc .xs-cd i{display:none}
+.xs-hc .off,.xs-pc .off{position:absolute;top:8px;right:8px;font-size:10px;font-weight:900;padding:2px 7px;border-radius:8px;color:#fff;background:linear-gradient(135deg,#ff6b81,#e0334f);box-shadow:0 4px 10px rgba(224,51,79,.35)}
+.xs-red{position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;border-radius:18px;padding:12px 13px;margin:0 0 12px;cursor:pointer;background:linear-gradient(135deg,#3a0a14,#7a0f24 55%,#2a0710);border:1px solid rgba(255,90,110,.55);box-shadow:0 12px 28px rgba(150,10,40,.35)}
+.xs-red::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);animation:xsSweep 3s ease-in-out infinite}
+.xs-red .rb{flex:none;width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;background:linear-gradient(135deg,#ff4d6a,#b3122e);box-shadow:0 0 0 3px rgba(255,77,106,.18)}
+.xs-red.live .rb{animation:xsPulse 1.6s infinite}
+.xs-red .m{flex:1;min-width:0}.xs-red b{display:block;font-size:15px;color:#fff;letter-spacing:.3px}.xs-red small{font-size:11px;color:#ffc2cb}
+.xs-red .r .xs-cd{color:#ffd0d6}.xs-red .r .xs-cd b{background:rgba(0,0,0,.25);color:#fff}.xs-red .r .xs-cd i{display:none}
+.xs-redhero{border-radius:22px;padding:22px 16px 16px;margin-bottom:14px;text-align:center;color:#fff;background:radial-gradient(120% 100% at 50% 0%,rgba(255,77,106,.45),transparent 60%),linear-gradient(160deg,#4a0c1a,#1b0710);border:1px solid rgba(255,90,110,.5)}
+.xs-redhero .big{width:62px;height:62px;margin:0 auto 8px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(135deg,#ff4d6a,#b3122e);box-shadow:0 10px 26px rgba(255,77,106,.4)}
+.xs-redhero h3{margin:0;font-size:22px;letter-spacing:.5px}.xs-redhero p{margin:6px 0 10px;font-size:12.5px;color:#ffd0d6}
+.xs-redhero .cdw .xs-cd{font-size:13px;color:#fff}.xs-redhero .cdw .xs-cd b{font-size:17px;padding:4px 10px;background:rgba(0,0,0,.3);color:#fff}
+.xs-redhero small{display:block;margin-top:9px;font-size:11px;color:#ffb3bf}
+.xs-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.xs-meta span{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:8px;background:rgba(255,255,255,.06);color:var(--txt2)}
+.xs-meta span.o{background:rgba(255,215,106,.14);color:#ffd76a}
+.xs-tool{display:flex;gap:8px;margin-bottom:10px}
+.xs-srch{flex:1;position:relative}.xs-srch i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--txt2);font-size:13px}
+.xs-srch input{width:100%;box-sizing:border-box;height:44px;border-radius:13px;border:1.5px solid var(--gbord);background:rgba(255,255,255,.04);color:var(--txt);padding:0 12px 0 36px;font-size:14px;font-family:inherit;outline:none}
+.xs-tool select{flex:none;height:44px;border-radius:13px;border:1.5px solid var(--gbord);background:#0f1a30;color:var(--txt);padding:0 8px;font-size:12px;font-weight:700;font-family:inherit;max-width:42%}
+.xs-chips{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;scrollbar-width:none}.xs-chips::-webkit-scrollbar{display:none}
+.xs-chips button{flex:none;border-radius:20px;padding:7px 13px;border:1px solid var(--gbord);background:var(--glass);color:var(--txt2);font-weight:800;font-size:12px;cursor:pointer;font-family:inherit}
+.xs-chips button.on{background:linear-gradient(135deg,rgba(255,215,106,.22),rgba(242,169,29,.12));color:#ffd76a;border-color:rgba(255,215,106,.55)}
+.xs-pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.xs-pc{position:relative;display:flex;flex-direction:column;border-radius:18px;padding:12px;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015));border:1px solid var(--bord);box-shadow:0 10px 22px rgba(0,0,0,.25);transition:transform .15s,border-color .2s}
+.xs-pc:active{transform:scale(.98)}@media (hover:hover){.xs-pc:hover{border-color:rgba(255,215,106,.5);transform:translateY(-2px)}}
+.xs-pc.sale{border-color:rgba(255,215,106,.45);background:linear-gradient(160deg,rgba(255,215,106,.10),rgba(255,255,255,.015))}
+.xs-pc .xs-lg{width:40px;height:40px;font-size:17px;border-radius:12px}
+.xs-pc b{font-size:12.5px;color:var(--txt);margin:9px 0 2px;line-height:1.3}.xs-pc small{font-size:10.5px;color:var(--txt2)}
+.xs-pc em{font-style:normal;font-size:10.5px;color:var(--txt3);margin-top:3px;line-height:1.35}
+.xs-pc .pp{margin-top:auto;padding-top:8px}.xs-pc .pp span{font-size:17px;font-weight:900;color:var(--txt)}.xs-pc.sale .pp span{color:#ffd76a;text-shadow:0 0 14px rgba(255,215,106,.35)}
+.xs-pc .vp{font-size:10.5px;font-weight:800;color:#7fc3ff}.xs-pc .vp.ok{color:var(--p)}
+.xs-pc .ct{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:10px;font-weight:900;color:#ffd76a}.xs-pc .ct .xs-cd i{display:none}
+.xs-pc .hot{position:absolute;top:8px;right:8px;display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:900;padding:2px 7px;border-radius:8px;color:#ff9a6b;background:rgba(255,122,89,.14)}
+.xs-pc .off+.hot{top:30px}
+.xs-pc .go{margin-top:9px;text-align:center;border-radius:11px;padding:8px;font-size:12px;font-weight:900;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
+.xs-pc.lock{cursor:default;opacity:.85}.xs-pc.lock .go{background:rgba(255,255,255,.07);color:var(--txt2)}
+.xs-go{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:900;color:var(--p)}
+.xs-how{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.xs-how div{border-radius:14px;padding:11px 6px;text-align:center;background:rgba(255,255,255,.035);border:1px solid var(--bord)}
+.xs-how i{color:#ffd76a;font-size:16px}.xs-how b{display:block;font-size:12px;color:var(--txt);margin-top:5px}.xs-how small{font-size:10px;color:var(--txt2)}
+@media (max-width:360px){.xs-pgrid{gap:8px}.xs-pc{padding:10px}}
 @media (max-width:360px){.xs-grid{gap:8px}.xs-lg{width:46px;height:46px;font-size:20px}}`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -164,21 +219,23 @@ const cd = (end, lbl) => `<span class="xs-cd" data-end="${end}"><i class="fa-reg
 setInterval(() => {
   let over = false;
   document.querySelectorAll('.xs-cd[data-end]').forEach(e => { const ms = Number(e.dataset.end) - Date.now(); const b = e.querySelector('b'); if(b) b.textContent = left(ms); if(ms <= 0 && !e.dataset.done){ e.dataset.done = 1; over = true; } });
-  if(over){ render(); const st = (window._xsStack || []); if(document.getElementById('xsBrk') && window.svPage) window.svPage('x_order'); else if(X.openSid && document.querySelector('.xs-it')) svcPage(X.openSid); }
+  if(over){ render(); const st = (window._xsStack || []); if(document.getElementById('xsBrk') && window.svPage) window.svPage('x_order'); else if(X.openSid && $x('xsItems')) drawItems(); else if($x('svTitle') && document.querySelector('.xs-redhero')) redPage(); }
 }, 1000);
 const WD = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 // today's deals, or the next one coming up (from the admin's weekday deal list)
 function dealCard(){
   const D = ((X.cfg && X.cfg.deals) || []).filter(d => d.on && d.days.length);
   const find = d => { const s = svcs().find(x => x.id === d.sid && !x.soon); const i = s && s.items.find(x => x.id === d.iid && x.on); return s && i && d.price < i.price ? { d, s, i } : null; };
-  const today = D.filter(d => d.days.includes(bdWd())).map(find).filter(Boolean);
+  // the Red Friday day has its own tile
+  const R = X.cfg && X.cfg.redFriday, rd = R && R.on && redDeals().length ? R.day : -1;
+  const today = bdWd() === rd ? [] : D.filter(d => d.days.includes(bdWd())).map(find).filter(Boolean);
   if(today.length){
     return `<div class="xs-deal"><div class="hd"><span class="tg"><i class="fa-solid fa-bolt"></i>TODAY'S DEAL</span>${cd(bdMid(), 'Ends in')}</div>
       ${today.map(({ d, s, i }) => `<div class="row" onclick="xsOpen('${E(s.id)}');setTimeout(()=>xsPick('${E(s.id)}','${E(i.id)}'),60)">${logo(s)}<div class="m"><b>${E(i.name)}</b><small>${E(s.name)}</small></div><div class="pp"><s>${tk(i.price)}</s><b>${tk(d.price)}</b><em>−${Math.round((1 - d.price / i.price) * 100)}%</em></div></div>`).join('')}</div>`;
   }
   // the next weekday that has a deal
   for(let k = 1; k <= 7; k++){
-    const wd = (bdWd() + k) % 7, nx = D.filter(d => d.days.includes(wd)).map(find).filter(Boolean);
+    const wd = (bdWd() + k) % 7; if(wd === rd) continue; const nx = D.filter(d => d.days.includes(wd)).map(find).filter(Boolean);
     if(nx.length){ const start = bdMid() + (k - 1) * 864e5;
       return `<div class="xs-deal soon"><div class="hd"><span class="tg"><i class="fa-solid fa-calendar-day"></i>NEXT DEAL · ${WD[wd].toUpperCase()}</span>${cd(start, 'Starts in')}</div>
         <div class="row" style="cursor:default">${logo(nx[0].s)}<div class="m"><b>${E(nx[0].i.name)}${nx.length > 1 ? ` +${nx.length - 1} more` : ''}</b><small>${E(nx[0].s.name)}</small></div><div class="pp"><s>${tk(nx[0].i.price)}</s><b>${tk(nx[0].d.price)}</b></div></div></div>`; }
@@ -243,6 +300,7 @@ async function load(){
 // every service gets its own page, opened through the normal Quick Services sheet
 function register(){
   svcs().forEach(s => { const k = 'x_' + s.id; T[k] = { l: s.name, ic: 'star', g: s.color, cat: '', login: true, page: k }; P[k] = () => svcPage(s.id); });
+  T.x_red = { l: 'Red Friday', cat: '', login: true, page: 'x_red' }; P.x_red = redPage;
   T.x_order = { l: 'Order', cat: '', login: true, page: 'x_order' }; P.x_order = orderPage;
   T.x_orders = { l: 'My orders', cat: '', login: true, page: 'x_orders' }; P.x_orders = ordersPage;
   T.x_wallet = { l: 'Extra Balance', cat: '', login: true, page: 'x_wallet' }; P.x_wallet = walletPage; T.x_dep = { l: 'Add balance', cat: '', login: true, page: 'x_dep' }; P.x_dep = depPage;
@@ -250,18 +308,57 @@ function register(){
 function render(){
   const g = document.querySelector('.home-body .qa-grid') || document.querySelector('.qa-grid'); if(!g) return;
   let box = $x('xsBlock');
-  const L = svcs();
-  if(!X.cfg || !X.cfg.on || !L.length){ if(box) box.remove(); return; }
+  const Ls = svcs();
+  if(!X.cfg || !X.cfg.on || !Ls.length){ if(box) box.remove(); return; }
   if(!box){ box = document.createElement('div'); box.id = 'xsBlock'; g.insertAdjacentElement('afterend', box); }
   const W = X.cfg.wallet || {};
-  box.innerHTML = `<div class="quick-actions-title xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em>${W.on !== false ? `<span class="xs-bal" onclick="svGo('x_wallet')" title="Extra Balance">${user() && X.xb ? tk(X.xb.xbal) : 'Balance'}<i class="p fa-solid fa-plus"></i></span>` : ''}</div>
-    <div class="xs-sub"><span style="color:var(--txt2);font-weight:600">${W.on !== false ? 'Pay with your Extra Balance' : 'Paid services, delivered by our team'}</span><span onclick="svGo('x_orders')">My orders ›</span></div>
+  const tile = s => `<div class="xs-t${s.soon ? ' soon' : ''}" onclick="xsOpen('${E(s.id)}')">${s.badge || s.soon ? `<span class="bd">${E(s.soon ? 'SOON' : s.badge)}</span>` : s.items.some(i => i.on && priceNow(s, i).kind) ? '<span class="bd sale">SALE</span>' : ''}${logo(s)}<b>${E(s.short || s.name)}</b></div>`;
+  box.innerHTML = `<div class="xs-head">
+      <div class="t"><div><div class="xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em></div><small>Gift cards, exchange, social &amp; digital services — delivered by our team</small></div></div>
+      <div class="a">${W.on !== false ? `<button class="xs-bal" onclick="svGo('x_wallet')"><i class="fa-solid fa-wallet"></i><span><small>Extra Balance</small>${user() && X.xb ? tk(X.xb.xbal) : 'Open'}</span><i class="p fa-solid fa-plus"></i></button>` : ''}<button class="xs-ord" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button></div>
+    </div>
     ${perkBanner()}
+    ${redTile()}
     ${dealCard()}
-    <div class="xs-grid">${L.map(s => `<div class="xs-t${s.soon ? ' soon' : ''}" onclick="xsOpen('${E(s.id)}')">${s.badge || s.soon ? `<span class="bd">${E(s.soon ? 'SOON' : s.badge)}</span>` : s.items.some(i => i.on && priceNow(s, i).kind) ? '<span class="bd sale">SALE</span>' : ''}${logo(s)}<b>${E(s.short || s.name)}</b></div>`).join('')}</div>
+    ${hotRow()}
+    <div class="xs-cat"><span>All services</span></div>
+    <div class="xs-grid">${Ls.map(tile).join('')}</div>
     <div id="xsLive"></div>`;
   drawLive();
 }
+// a sliding row of everything on offer right now (offer price or today's deal)
+function hotRow(){
+  const H = []; svcs().filter(s => !s.soon && s.mode === 'items').forEach(s => s.items.filter(i => i.on).forEach(i => { const pn = priceNow(s, i); if(pn.kind === 'offer') H.push({ s, i, pn }); }));
+  if(!H.length) return '';
+  return `<div class="xs-cat"><span><i class="fa-solid fa-fire" style="color:#ff7a59"></i> Hot offers</span></div>
+    <div class="xs-hot">${H.slice(0, 12).map(({ s, i, pn }) => { const q = quote(s, withNow(s, i), 0, isV());
+      return `<div class="xs-hc" onclick="xsOpen('${E(s.id)}');setTimeout(()=>xsPick('${E(s.id)}','${E(i.id)}'),60)"><span class="off">−${Math.round((1 - pn.price / pn.was) * 100)}%</span>${logo(s)}<b>${E(i.name)}</b><div class="pp"><s>${tk(quote(s, i, 0, isV()).pay)}</s><span>${tk(q.pay)}</span></div>${cd(pn.ends, '')}</div>`; }).join('')}</div>`;
+}
+// Red Friday: one weekday with that day's deals; on other days it shows when it opens
+function redDeals(){
+  const R = X.cfg && X.cfg.redFriday; if(!R || !R.on) return [];
+  return ((X.cfg.deals) || []).filter(d => d.on && d.days.includes(R.day)).map(d => { const s = svcs().find(x => x.id === d.sid && !x.soon); const i = s && s.items.find(x => x.id === d.iid && x.on); return s && i && d.price < i.price ? { d, s, i } : null; }).filter(Boolean);
+}
+const redOpen = () => X.cfg && X.cfg.redFriday && bdWd() === X.cfg.redFriday.day;
+const redStart = () => { const R = X.cfg.redFriday; const k = (R.day - bdWd() + 7) % 7 || 7; return bdMid() + (k - 1) * 864e5; };
+function redTile(){
+  const R = X.cfg && X.cfg.redFriday, D = redDeals(); if(!R || !R.on || !D.length) return '';
+  const best = Math.max(...D.map(x => Math.round((1 - x.d.price / x.i.price) * 100)));
+  return `<div class="xs-red${redOpen() ? ' live' : ''}" onclick="svGo('x_red')"><div class="rb"><i class="fa-solid fa-tags"></i></div>
+    <div class="m"><b>${E(R.title)}</b><small>${redOpen() ? `LIVE now · up to ${best}% off · ${D.length} deals` : `Opens ${WD[R.day]} · up to ${best}% off`}</small></div>
+    <div class="r">${redOpen() ? cd(bdMid(), 'Ends') : cd(redStart(), 'In')}</div></div>`;
+}
+function redPage(){
+  const R = X.cfg.redFriday, D = redDeals(), open = redOpen();
+  const card = ({ d, s, i }) => { const q = quote(s, { ...i, price: d.price }, 0, isV()), was = quote(s, i, 0, isV()).pay;
+    return `<div class="xs-pc${open ? '' : ' lock'}" ${open ? `onclick="xsPick('${E(s.id)}','${E(i.id)}')"` : ''}><span class="off">−${Math.round((1 - d.price / i.price) * 100)}%</span>${logo(s)}<b>${E(i.name)}</b><small>${E(s.name)}</small>
+      <div class="pp"><s>${tk(was)}</s><span>${tk(q.pay)}</span></div><div class="go">${open ? 'Buy now' : `<i class="fa-solid fa-lock"></i> Opens ${WD[R.day]}`}</div></div>`; };
+  show(R.title, `<div class="xs-redhero${open ? ' live' : ''}"><div class="big"><i class="fa-solid fa-tags"></i></div><h3>${E(R.title)}</h3><p>${E(R.text || '')}</p>
+      <div class="cdw">${open ? cd(bdMid(), 'Ends in') : cd(redStart(), `Opens ${WD[R.day]} in`)}</div>
+      <small>${open ? 'Prices below are live today only (Bangladesh time).' : `Every ${WD[R.day]}, 12:00am – 11:59pm (Bangladesh time).`}</small></div>
+    ${D.length ? `<div class="xs-pgrid">${D.map(card).join('')}</div>` : '<div class="sv-empty">No deals are set for this day yet.</div>'}`);
+}
+
 // live list of the latest real orders and deposits (masked numbers), refreshed every 30 seconds
 const ago = t => { const m = Math.max(0, Math.round((Date.now() - new Date(t).getTime()) / 6e4)); return m < 1 ? 'just now' : m < 60 ? m + 'm ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago'; };
 function drawLive(){
@@ -283,25 +380,49 @@ window.xsOpen = id => { const s = svcs().find(x => x.id === id); if(!s) return; 
 function svcPage(id){
   const s = svcs().find(x => x.id === id); if(!s) return; X.openSid = id;
   if(s.mode === 'game') return gamePage(s);
+  if(!X.f || X.f.sid !== id) X.f = { sid: id, q: '', cat: '', sort: 'pop' };
   const items = s.items.filter(i => i.on);
-  const row = i => {
-    if(s.mode === 'amount'){
-      const hasFee = i.pct || i.fee, free = PK().on && isV();
+  const cats = [...new Set(items.map(i => i.cat).filter(Boolean))];
+  const offers = items.filter(i => priceNow(s, i).kind).length;
+  show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(s.name)}</h4><p>${E(s.desc)}</p>
+      <div class="xs-meta"><span><i class="fa-solid fa-layer-group"></i>${items.length} options</span>${offers ? `<span class="o"><i class="fa-solid fa-tag"></i>${offers} on offer</span>` : ''}<span><i class="fa-solid fa-user-shield"></i>Hand-delivered</span></div></div></div>
+    ${perkBanner()}
+    ${items.length > 3 ? `<div class="xs-tool"><div class="xs-srch"><i class="fa-solid fa-magnifying-glass"></i><input id="xsQ" placeholder="Search ${E(s.name)}" value="${E(X.f.q)}" oninput="xsF('q',this.value)"></div>
+      ${s.mode === 'items' ? `<select id="xsSort" onchange="xsF('sort',this.value)"><option value="pop">Popular</option><option value="off">Offers first</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select>` : ''}</div>` : ''}
+    ${cats.length > 1 ? `<div class="xs-chips"><button data-c="" class="${!X.f.cat ? 'on' : ''}" onclick="xsF('cat','')">All</button>${cats.map(c => `<button data-c="${E(c)}" class="${X.f.cat === c ? 'on' : ''}" onclick="xsF('cat',this.dataset.c)">${E(c)}</button>`).join('')}</div>` : ''}
+    <div id="xsItems"></div>
+    ${s.note ? `<div class="sv-card"><p>${E(s.note)}</p></div>` : ''}
+    <div class="xs-how"><div><i class="fa-solid fa-hand-pointer"></i><b>Choose</b><small>Pick an option</small></div><div><i class="fa-solid fa-wallet"></i><b>Pay</b><small>Extra Balance or TrxID</small></div><div><i class="fa-solid fa-truck-fast"></i><b>Get it</b><small>Delivered in My orders</small></div></div>
+    <button class="sv-btn ghost" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button>`);
+  const so = $x('xsSort'); if(so) so.value = X.f.sort;
+  drawItems();
+}
+window.xsF = (k, v) => { if(!X.f) return; X.f[k] = v; if(k === 'cat') document.querySelectorAll('.xs-chips button').forEach(b => b.classList.toggle('on', b.dataset.c === v)); drawItems(); };
+function drawItems(){
+  const el = $x('xsItems'); const s = svcs().find(x => x.id === X.openSid); if(!el || !s) return;
+  const f = X.f || {}, q = String(f.q || '').toLowerCase();
+  let items = s.items.filter(i => i.on && (!f.cat || i.cat === f.cat) && (!q || (i.name + ' ' + (i.cat || '') + ' ' + (i.note || '')).toLowerCase().includes(q)));
+  const P = i => priceNow(s, i).price;
+  if(f.sort === 'low') items.sort((a, b) => P(a) - P(b)); else if(f.sort === 'high') items.sort((a, b) => P(b) - P(a));
+  else if(f.sort === 'off') items.sort((a, b) => (priceNow(s, b).kind ? 1 : 0) - (priceNow(s, a).kind ? 1 : 0));
+  else items.sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0));
+  if(!items.length){ el.innerHTML = '<div class="sv-empty"><i class="fa-solid fa-magnifying-glass"></i>Nothing matches. Try another word.</div>'; return; }
+  if(s.mode === 'amount'){
+    el.innerHTML = items.map(i => { const hasFee = i.pct || i.fee, free = PK().on && isV();
       const feeTxt = !hasFee ? 'No fee' : free ? '<span style="color:var(--p);font-weight:800">No fee — Verified ✓</span>' : `Fee ${i.pct ? num(i.pct) + '%' : ''}${i.pct && i.fee ? ' + ' : ''}${i.fee ? tk(i.fee) : ''}${PK().on ? ' · <span style="color:#7fc3ff">Verified: no fee</span>' : ''}`;
       const rate = i.unit === '৳' ? feeTxt : `1 ${E(i.unit)} = ${tk(i.rate)} · ${feeTxt}`;
-      return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b><small>${rate}${i.min || i.max ? ` · ${num(i.min)}–${num(i.max)} ${E(i.unit)}` : ''}</small></div><div class="pr"><i class="fa-solid fa-chevron-right" style="color:var(--txt2)"></i></div></div>`;
-    }
-    return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b>${i.note ? `<small>${E(i.note)}</small>` : ''}</div><div class="pr">${(() => { const pn = priceNow(s, i), q = quote(s, withNow(s, i), 0, isV());
-      return `${pn.kind ? `<s class="was">${tk(quote(s, i, 0, isV()).pay)}</s>` : ''}<span class="${pn.kind ? 'now' : ''}">${tk(q.pay)}</span>${q.fee ? `<span class="vp">Verified ${tk(q.base)}</span>` : q.waived ? '<span class="vp">No charge ✓</span>' : ''}`; })()}</div>
-      ${(() => { const pn = priceNow(s, i); return pn.kind ? `<div class="xs-off">${pn.kind === 'deal' ? '<span class="tg"><i class="fa-solid fa-bolt"></i>TODAY\'S DEAL</span>' : `<span class="tg"><i class="fa-solid fa-tag"></i>OFFER −${Math.round((1 - pn.price / pn.was) * 100)}%</span>`}${cd(pn.ends, 'Ends in')}</div>` : ''; })()}</div>`;
-  };
-  show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(s.name)}</h4><p>${E(s.desc)}</p></div></div>
-    ${perkBanner()}
-    ${items.length ? `<span class="sv-lbl">Choose an option</span>${items.map(row).join('')}` : '<div class="sv-empty">Nothing is available here right now. Please check back soon.</div>'}
-    ${s.note ? `<div class="sv-card"><p>${E(s.note)}</p></div>` : ''}
-    <div class="sv-card" style="margin-top:12px"><h4><i class="fa-solid fa-shield-halved" style="color:var(--p)"></i> How it works</h4><p>Pick an option, send the payment and enter the Transaction ID. Our team checks the payment and delivers your order by hand — usually within a few hours. You can follow it in My orders.</p></div>
-    <button class="sv-btn ghost" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button>`);
+      return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b><small>${rate}${i.min || i.max ? ` · ${num(i.min)}–${num(i.max)} ${E(i.unit)}` : ''}</small></div><div class="pr"><span class="xs-go">Start <i class="fa-solid fa-arrow-right"></i></span></div></div>`; }).join('');
+    return;
+  }
+  el.innerHTML = `<div class="xs-pgrid">${items.map(i => { const pn = priceNow(s, i), qq = quote(s, withNow(s, i), 0, isV()), off = pn.kind ? Math.round((1 - pn.price / pn.was) * 100) : 0;
+    return `<div class="xs-pc${pn.kind ? ' sale' : ''}" onclick="xsPick('${E(s.id)}','${E(i.id)}')">${off ? `<span class="off">−${off}%</span>` : ''}${i.hot ? '<span class="hot"><i class="fa-solid fa-fire"></i>Popular</span>' : ''}
+      ${logo(s)}<b>${E(i.name)}</b><small>${E(i.cat || s.name)}</small>${i.note ? `<em>${E(i.note)}</em>` : ''}
+      <div class="pp">${pn.kind ? `<s>${tk(quote(s, i, 0, isV()).pay)}</s>` : ''}<span>${tk(qq.pay)}</span></div>
+      ${qq.fee ? `<div class="vp">Verified ${tk(qq.base)}</div>` : qq.waived ? '<div class="vp ok">No charge ✓</div>' : ''}
+      ${pn.kind ? `<div class="ct">${pn.kind === 'deal' ? '<i class="fa-solid fa-bolt"></i>Today' : ''}${cd(pn.ends, '')}</div>` : ''}
+      <div class="go">Buy now</div></div>`; }).join('')}</div>`;
 }
+
 window.xsPick = (sid, iid) => { X.sel = { sid, iid }; window._xsW = 0; window._xsPm = ''; svGo('x_order'); loadXb().then(() => { const typed = [...document.querySelectorAll('#svBody input')].some(e => e.value); if(document.getElementById('xsBtn') && !typed) window.svPage('x_order'); }); };
 
 /* ───────── the order form ───────── */
