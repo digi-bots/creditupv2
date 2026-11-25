@@ -118,6 +118,23 @@ const css = `
 .xs-it:active{transform:scale(.99)}
 .xs-it::before{content:"";position:absolute;left:0;top:12%;bottom:12%;width:3px;border-radius:3px;background:linear-gradient(180deg,#ffd76a,#4d8fff);opacity:.7}
 .xs-hero{box-shadow:0 14px 30px rgba(0,0,0,.28)}
+.xs-cd{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:#ffd76a;white-space:nowrap}
+.xs-cd b{font-family:ui-monospace,monospace;font-size:11.5px;letter-spacing:.3px;padding:2px 6px;border-radius:7px;background:rgba(255,215,106,.12);color:#ffe9a8}
+.xs-it{flex-wrap:wrap}
+.xs-it .pr .was{display:block;font-size:11px;font-weight:700;color:var(--txt3)}
+.xs-it .pr .now{color:#ffd76a;font-size:16px;text-shadow:0 0 14px rgba(255,215,106,.35)}
+.xs-off{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,215,106,.25)}
+.xs-off .tg,.xs-deal .tg{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:900;letter-spacing:.4px;padding:3px 8px;border-radius:8px;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
+.xs-t .bd{top:5px;right:5px;z-index:2}
+.xs-t .bd.sale{background:linear-gradient(135deg,#ff6b81,#e0334f);color:#fff}
+.xs-deal{position:relative;overflow:hidden;border-radius:18px;padding:12px;margin:0 0 12px;background:radial-gradient(120% 140% at 100% 0%,rgba(255,107,129,.20),transparent 55%),linear-gradient(135deg,#2a1a08,#1a1430 70%);border:1px solid rgba(255,200,90,.45);box-shadow:0 10px 26px rgba(0,0,0,.3)}
+.xs-deal .hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}
+.xs-deal .row{display:flex;align-items:center;gap:11px;padding:8px;border-radius:13px;background:rgba(255,255,255,.05);cursor:pointer;margin-top:6px}
+.xs-deal .row .xs-lg{width:42px;height:42px;font-size:18px;flex:none;border-radius:13px}
+.xs-deal .m{min-width:0;flex:1}.xs-deal .m b{display:block;font-size:13px;color:var(--txt)}.xs-deal .m small{font-size:11px;color:var(--txt2)}
+.xs-deal .pp{text-align:right;flex:none}.xs-deal .pp s{display:block;font-size:11px;color:var(--txt3)}.xs-deal .pp b{font-size:17px;color:#ffd76a;font-weight:900}
+.xs-deal .pp em{display:block;font-style:normal;font-size:10px;font-weight:900;color:#ff8fa3}
+.xs-deal.soon{background:linear-gradient(135deg,#141c33,#1a1430);border-color:rgba(120,160,255,.35)}
 @media (max-width:360px){.xs-grid{gap:8px}.xs-lg{width:46px;height:46px;font-size:20px}}`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -125,6 +142,49 @@ function logo(s){ return s.logo ? `<div class="xs-lg img"><img src="${E(s.logo)}
 const svcs = () => ((X.cfg && X.cfg.services) || []).filter(s => s.on);
 const isV = () => !!(X.xb && (X.xb.verified || X.xb.vip));
 const PK = () => (X.cfg && X.cfg.perk) || { on: false };
+// offers with a real end (the same rule as the server): an offer price until its end time, or a weekday deal until midnight (Bangladesh time)
+const BDMS = 6 * 3600e3;
+const bdWd = (t = Date.now()) => new Date(t + BDMS).getUTCDay();
+function bdMid(t = Date.now()){ const d = new Date(t + BDMS); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1) - BDMS; }
+function priceNow(s, i, t = Date.now()){
+  let price = i.price, kind = '', ends = '';
+  if(s.mode !== 'amount'){
+    const end = i.offerEnd ? new Date(i.offerEnd).getTime() : 0;
+    if(i.offer > 0 && i.offer < price && end > t){ price = i.offer; kind = 'offer'; ends = end; }
+    const d = ((X.cfg && X.cfg.deals) || []).find(x => x.on && x.sid === s.id && x.iid === i.id && x.days.includes(bdWd(t)) && x.price < price);
+    if(d){ price = d.price; kind = 'deal'; ends = bdMid(t); }
+  }
+  return { price, was: i.price, kind, ends };
+}
+const withNow = (s, i) => ({ ...i, price: priceNow(s, i).price });
+// live countdowns: every [data-end] shows the time left; when it reaches zero the page is drawn again with the regular price
+const left = ms => { ms = Math.max(0, ms); const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60, sc = Math.floor(ms / 1e3) % 60, p = n => String(n).padStart(2, '0');
+  return (d ? d + 'd ' : '') + p(h) + ':' + p(m) + ':' + p(sc); };
+const cd = (end, lbl) => `<span class="xs-cd" data-end="${end}"><i class="fa-regular fa-clock"></i>${lbl ? E(lbl) + ' ' : ''}<b>${left(end - Date.now())}</b></span>`;
+setInterval(() => {
+  let over = false;
+  document.querySelectorAll('.xs-cd[data-end]').forEach(e => { const ms = Number(e.dataset.end) - Date.now(); const b = e.querySelector('b'); if(b) b.textContent = left(ms); if(ms <= 0 && !e.dataset.done){ e.dataset.done = 1; over = true; } });
+  if(over){ render(); const st = (window._xsStack || []); if(document.getElementById('xsBrk') && window.svPage) window.svPage('x_order'); else if(X.openSid && document.querySelector('.xs-it')) svcPage(X.openSid); }
+}, 1000);
+const WD = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+// today's deals, or the next one coming up (from the admin's weekday deal list)
+function dealCard(){
+  const D = ((X.cfg && X.cfg.deals) || []).filter(d => d.on && d.days.length);
+  const find = d => { const s = svcs().find(x => x.id === d.sid && !x.soon); const i = s && s.items.find(x => x.id === d.iid && x.on); return s && i && d.price < i.price ? { d, s, i } : null; };
+  const today = D.filter(d => d.days.includes(bdWd())).map(find).filter(Boolean);
+  if(today.length){
+    return `<div class="xs-deal"><div class="hd"><span class="tg"><i class="fa-solid fa-bolt"></i>TODAY'S DEAL</span>${cd(bdMid(), 'Ends in')}</div>
+      ${today.map(({ d, s, i }) => `<div class="row" onclick="xsOpen('${E(s.id)}');setTimeout(()=>xsPick('${E(s.id)}','${E(i.id)}'),60)">${logo(s)}<div class="m"><b>${E(i.name)}</b><small>${E(s.name)}</small></div><div class="pp"><s>${tk(i.price)}</s><b>${tk(d.price)}</b><em>−${Math.round((1 - d.price / i.price) * 100)}%</em></div></div>`).join('')}</div>`;
+  }
+  // the next weekday that has a deal
+  for(let k = 1; k <= 7; k++){
+    const wd = (bdWd() + k) % 7, nx = D.filter(d => d.days.includes(wd)).map(find).filter(Boolean);
+    if(nx.length){ const start = bdMid() + (k - 1) * 864e5;
+      return `<div class="xs-deal soon"><div class="hd"><span class="tg"><i class="fa-solid fa-calendar-day"></i>NEXT DEAL · ${WD[wd].toUpperCase()}</span>${cd(start, 'Starts in')}</div>
+        <div class="row" style="cursor:default">${logo(nx[0].s)}<div class="m"><b>${E(nx[0].i.name)}${nx.length > 1 ? ` +${nx.length - 1} more` : ''}</b><small>${E(nx[0].s.name)}</small></div><div class="pp"><s>${tk(nx[0].i.price)}</s><b>${tk(nx[0].d.price)}</b></div></div></div>`; }
+  }
+  return '';
+}
 // the same price rule as the server: Verified members pay no service charge and no transaction fee
 function quote(s, i, amount, ver){
   const P = PK(), free = !!(P.on && ver);
@@ -197,7 +257,8 @@ function render(){
   box.innerHTML = `<div class="quick-actions-title xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em>${W.on !== false ? `<span class="xs-bal" onclick="svGo('x_wallet')" title="Extra Balance">${user() && X.xb ? tk(X.xb.xbal) : 'Balance'}<i class="p fa-solid fa-plus"></i></span>` : ''}</div>
     <div class="xs-sub"><span style="color:var(--txt2);font-weight:600">${W.on !== false ? 'Pay with your Extra Balance' : 'Paid services, delivered by our team'}</span><span onclick="svGo('x_orders')">My orders ›</span></div>
     ${perkBanner()}
-    <div class="xs-grid">${L.map(s => `<div class="xs-t${s.soon ? ' soon' : ''}" onclick="xsOpen('${E(s.id)}')">${s.badge || s.soon ? `<span class="bd">${E(s.soon ? 'SOON' : s.badge)}</span>` : ''}${logo(s)}<b>${E(s.short || s.name)}</b></div>`).join('')}</div>
+    ${dealCard()}
+    <div class="xs-grid">${L.map(s => `<div class="xs-t${s.soon ? ' soon' : ''}" onclick="xsOpen('${E(s.id)}')">${s.badge || s.soon ? `<span class="bd">${E(s.soon ? 'SOON' : s.badge)}</span>` : s.items.some(i => i.on && priceNow(s, i).kind) ? '<span class="bd sale">SALE</span>' : ''}${logo(s)}<b>${E(s.short || s.name)}</b></div>`).join('')}</div>
     <div id="xsLive"></div>`;
   drawLive();
 }
@@ -220,7 +281,7 @@ window.xsOpen = id => { const s = svcs().find(x => x.id === id); if(!s) return; 
 
 /* ───────── one service: its options ───────── */
 function svcPage(id){
-  const s = svcs().find(x => x.id === id); if(!s) return;
+  const s = svcs().find(x => x.id === id); if(!s) return; X.openSid = id;
   if(s.mode === 'game') return gamePage(s);
   const items = s.items.filter(i => i.on);
   const row = i => {
@@ -230,7 +291,9 @@ function svcPage(id){
       const rate = i.unit === '৳' ? feeTxt : `1 ${E(i.unit)} = ${tk(i.rate)} · ${feeTxt}`;
       return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b><small>${rate}${i.min || i.max ? ` · ${num(i.min)}–${num(i.max)} ${E(i.unit)}` : ''}</small></div><div class="pr"><i class="fa-solid fa-chevron-right" style="color:var(--txt2)"></i></div></div>`;
     }
-    return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b>${i.note ? `<small>${E(i.note)}</small>` : ''}</div><div class="pr">${(() => { const q = quote(s, i, 0, isV()); return q.fee ? `${tk(q.pay)}<span class="vp">Verified ${tk(q.base)}</span>` : `${tk(q.pay)}${q.waived ? '<span class="vp">No charge ✓</span>' : ''}`; })()}</div></div>`;
+    return `<div class="xs-it" onclick="xsPick('${E(s.id)}','${E(i.id)}')"><div><b>${E(i.name)}</b>${i.note ? `<small>${E(i.note)}</small>` : ''}</div><div class="pr">${(() => { const pn = priceNow(s, i), q = quote(s, withNow(s, i), 0, isV());
+      return `${pn.kind ? `<s class="was">${tk(quote(s, i, 0, isV()).pay)}</s>` : ''}<span class="${pn.kind ? 'now' : ''}">${tk(q.pay)}</span>${q.fee ? `<span class="vp">Verified ${tk(q.base)}</span>` : q.waived ? '<span class="vp">No charge ✓</span>' : ''}`; })()}</div>
+      ${(() => { const pn = priceNow(s, i); return pn.kind ? `<div class="xs-off">${pn.kind === 'deal' ? '<span class="tg"><i class="fa-solid fa-bolt"></i>TODAY\'S DEAL</span>' : `<span class="tg"><i class="fa-solid fa-tag"></i>OFFER −${Math.round((1 - pn.price / pn.was) * 100)}%</span>`}${cd(pn.ends, 'Ends in')}</div>` : ''; })()}</div>`;
   };
   show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(s.name)}</h4><p>${E(s.desc)}</p></div></div>
     ${perkBanner()}
@@ -255,7 +318,7 @@ function orderPage(){
   const W = X.cfg.wallet || {}, bal = X.xb ? X.xb.xbal : 0;
   const canBal = !sell && W.on !== false, canDirect = sell || W.direct !== false;
   if(!canDirect) window._xsPm = 'xbal'; else if(!canBal) window._xsPm = 'trx'; else if(!window._xsPm) window._xsPm = 'xbal';
-  const pm = window._xsPm, q0 = quote(s, i, 0, isV()), price = amt ? 0 : q0.pay;
+  const pm = window._xsPm, q0 = quote(s, withNow(s, i), 0, isV()), price = amt ? 0 : q0.pay;
   const payBlock = pm === 'xbal' ? `<div class="pay-num" style="border-style:solid"><div><small>Extra Balance</small><b>${tk(bal)}</b></div><button onclick="svGo('x_dep')">+ Add</button></div>
       <div style="font-size:11.5px;color:var(--txt2);margin:6px 2px" id="xsBalNote">${!amt && price > bal ? `<span style="color:#ff8fa3">You need ${tk(price - bal)} more. Add balance first.</span>` : 'The price is taken from your Extra Balance when you place the order.'}</div>`
     : `<span class="sv-lbl">${sell ? `Send the ${E(i.unit)} here` : 'Send the payment'}</span>
@@ -281,11 +344,12 @@ function orderPage(){
 window.xsPm = v => { window._xsPm = v; window.svPage('x_order'); };
 window.xsCalc = () => {
   const c = window._xsCur; if(!c) return; const { s, i } = c; const amt = s.mode === 'amount', sell = i.flow === 'sell';
-  const a = Number(($x('xsAmt') || {}).value) || 0, q = quote(s, i, a, isV());
+  const a = Number(($x('xsAmt') || {}).value) || 0, pn = priceNow(s, i), q = quote(s, withNow(s, i), a, isV());
   const v = sell ? q.get : (amt && !(a > 0)) ? 0 : q.pay;
   const lbl = amt ? 'Transaction fee' : 'Service charge';
   const feeRow = !PK().on && !q.fee ? '' : q.waived ? `<div><span>${lbl}</span><span><s>${tk(q.saved)}</s> <span class="ok">Waived — Verified ✓</span></span></div>` : q.fee ? `<div><span>${lbl}</span><span>${sell ? '−' : '+'}${tk(q.fee)}</span></div>` : `<div><span>${lbl}</span><span class="ok">৳0</span></div>`;
-  const b = $x('xsBrk'); if(b) b.innerHTML = `<div><span>${amt ? (sell ? 'Value' : 'Amount') : 'Price'}</span><span>${tk(amt ? (a > 0 ? q.base : 0) : q.base)}</span></div>${feeRow}<div class="tot"><span>${sell ? 'You get' : 'You pay'}</span><b>${tk(v)}</b></div>`;
+  const offRow = pn.kind ? `<div><span>Regular price</span><span><s>${tk(pn.was)}</s></span></div><div><span>${pn.kind === 'deal' ? "Today's deal" : 'Offer price'} ${cd(pn.ends, '')}</span><span class="ok">${tk(pn.price)}</span></div>` : '';
+  const b = $x('xsBrk'); if(b) b.innerHTML = (pn.kind ? offRow : `<div><span>${amt ? (sell ? 'Value' : 'Amount') : 'Price'}</span><span>${tk(amt ? (a > 0 ? q.base : 0) : q.base)}</span></div>`) + `${feeRow}<div class="tot"><span>${sell ? 'You get' : 'You pay'}</span><b>${tk(v)}</b></div>`;
   const n = $x('xsBalNote'); if(n && i.flow !== 'sell'){ const bal = X.xb ? X.xb.xbal : 0; n.innerHTML = v > bal ? `<span style="color:#ff8fa3">You need ${tk(v - bal)} more. Add balance first.</span>` : 'The price is taken from your Extra Balance when you place the order.'; }
 };
 window.xsSubmit = async function(){

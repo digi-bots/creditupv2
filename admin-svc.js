@@ -194,6 +194,11 @@ function buildSvc(){
       <div class="fgrid fgrid3">${tog('xs-l-on', 'Show the live list', true)}${inp('xs-l-count', 'How many to show', '12', 'type="number" min="3" max="30"')}</div>
       <div class="hint">Shows real orders and deposits only, with the number masked (017****013).</div>
     </div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-bolt" style="color:#ffd76a"></i>Weekday deals (a special price on chosen days)</div>
+      <div class="hint" style="margin-bottom:8px">Pick an option, a deal price and the days. On those days (Bangladesh time, 12:00am – 11:59pm) users see “Today's deal” with a countdown to midnight; on other days they see the next deal and when it starts. Example: tick only Friday for a Friday special. For a one-time offer instead, use the <b>Offer ৳</b> and <b>Offer ends</b> columns of an option below — when that time passes, the regular price comes back.</div>
+      <div id="xsDeals"></div>
+      <button class="btn btn-sm btn-s ro-ok" onclick="xsAddDeal()"><i class="fa-solid fa-plus"></i>Add a deal</button>
+    </div>
     <div id="xsList"></div>
     <button class="btn btn-s ro-ok" onclick="xsAddSvc()"><i class="fa-solid fa-plus"></i>Add a service</button>
   </div>`;
@@ -421,13 +426,15 @@ function xsRender(){
   el.innerHTML = X.services.map((s, n) => {
     const amt = s.mode === 'amount';
     const head = amt ? ['Option', 'Unit', 'Rate ৳/unit', 'Fee %', 'Fee ৳', 'Min', 'Max', 'Buy / Sell', 'Pay-to number / address (blank = payment wallets)', 'On', '']
-      : ['Option', 'Price ৳', 'Note for the user', 'Pay-to (blank = payment wallets)', 'On', ''];
-    const cols = amt ? '1.4fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.6fr .6fr 1.6fr 1.3fr 34px 34px';
+      : ['Option', 'Price ৳', 'Offer ৳', 'Offer ends (date & time)', 'Note for the user', 'Pay-to (blank = wallets)', 'On', ''];
+    const cols = amt ? '1.4fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.4fr .55fr .55fr 1.15fr 1.2fr 1fr 34px 34px';
     const row = (i, k) => { const f = (key, ph, t) => xsInp(i[key], `xsItem(${n},${k},'${key}',this.value)`, ph, t);
       return `<div style="display:grid;grid-template-columns:${cols};gap:6px;align-items:center;margin-bottom:5px">${amt
         ? f('name', 'bKash → Nagad') + f('unit', '৳') + f('rate', '1', 'number') + f('pct', '0', 'number') + f('fee', '0', 'number') + f('min', '0', 'number') + f('max', '0', 'number')
           + `<select onchange="xsItem(${n},${k},'flow',this.value)" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border)"><option value="buy"${i.flow !== 'sell' ? ' selected' : ''}>User pays</option><option value="sell"${i.flow === 'sell' ? ' selected' : ''}>User sells</option></select>` + f('to', 'e.g. bKash 017XXXXXXXX')
-        : f('name', 'Google Play $10') + f('price', '0', 'number') + f('note', 'optional') + f('to', 'optional')}
+        : f('name', 'Google Play $10') + f('price', '0', 'number') + f('offer', 'none', 'number')
+          + `<input type="datetime-local" value="${ep(xsLocal(i.offerEnd))}" onchange="xsItem(${n},${k},'offerEnd',this.value?new Date(this.value).toISOString():'');xsRender()" style="height:34px;padding:0 6px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid ${xsOfferLive(i) ? 'rgba(255,215,106,.7)' : 'var(--border)'};color:var(--txt);font-size:12px;min-width:0;width:100%;box-sizing:border-box;color-scheme:dark">`
+          + f('note', 'optional') + f('to', 'optional')}
         <input type="checkbox" ${i.on !== false ? 'checked' : ''} onchange="xsItem(${n},${k},'on',this.checked)"><button class="ab ab-no ro-ok" title="Remove" onclick="xsDelItem(${n},${k})"><i class="fa-solid fa-trash"></i></button></div>`; };
     const lg = s.logo ? `<img src="${ep(s.logo)}" style="width:40px;height:40px;border-radius:12px;object-fit:cover;background:#fff">` : `<div class="${ep(s.color)}" style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;background:#345"><i class="${ep(s.icon)}"></i></div>`;
     return `<div class="cfg-blk" style="${s.on === false ? 'opacity:.6' : ''}"><div class="cfg-t" style="gap:10px">${lg}<span>${ep(s.name || 'New service')}</span><small style="color:var(--txt2);font-weight:600">${s.mode === 'game' ? 'game' : amt ? 'amount (exchange)' : 'fixed price'}</small>
@@ -444,19 +451,41 @@ function xsRender(){
         <div class="fg full"><label>Description</label>${xsInp(s.desc, `xsSet(${n},'desc',this.value)`, 'What this service gives')}</div>
         <div class="fg full"><label>Questions for the user — one per line, add <b>*</b> at the end if required</label><textarea rows="2" oninput="xsFields(${n},this.value)" style="width:100%;box-sizing:border-box">${ep((s.fields || []).map(f => f.label + (f.req ? ' *' : '')).join('\n'))}</textarea></div>
       </div>
-      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 980 : 640}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
+      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 980 : 900}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
         ${(s.items || []).map(row).join('')}</div></div>
         <button class="btn btn-sm btn-s ro-ok" onclick="xsAddItem(${n})"><i class="fa-solid fa-plus"></i>Add option</button>
         ${amt ? '<div class="hint" style="margin-top:6px">User pays = amount × rate + fee % + fee ৳. “User sells” = the user sends to the pay-to address and gets amount × rate − fee.</div>' : ''}`}
     </div>`;
   }).join('');
   const g = { r: numv('xs-g-reward', 1, 0, 1e5), d: numv('xs-g-perday', 5, 0, 1e3) };
+  if(typeof xsDealsRender === 'function') xsDealsRender();
   if($p('xsCost')) $p('xsCost').innerHTML = `Most a Verified user can win from games: <b>৳${fa(g.r * g.d)} a day</b> (about ৳${fa(g.r * g.d * 30)} a month).`;
 }
 const xsDirty = () => markDirty('services', 'extra');
+const XS_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+function xsDealsRender(){
+  const el = $p('xsDeals'); if(!el || !_SV.extra) return;
+  const S = _SV.extra.services.filter(s => s.mode === 'items');
+  const sel = 'height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border);min-width:0;width:100%';
+  el.innerHTML = (_SV.extra.deals || []).map((d, k) => { const s = S.find(x => x.id === d.sid) || S[0] || { items: [] }; const it = (s.items || []).find(x => x.id === d.iid);
+    return `<div style="display:grid;grid-template-columns:1fr 1.3fr .6fr 2fr 34px 34px;gap:6px;align-items:center;margin-bottom:6px">
+      <select style="${sel}" onchange="xsDeal(${k},'sid',this.value)">${S.map(x => `<option value="${ep(x.id)}"${x.id === d.sid ? ' selected' : ''}>${ep(x.name)}</option>`).join('')}</select>
+      <select style="${sel}" onchange="xsDeal(${k},'iid',this.value)">${(s.items || []).map(x => `<option value="${ep(x.id)}"${x.id === d.iid ? ' selected' : ''}>${ep(x.name)} (৳${fa(x.price)})</option>`).join('')}</select>
+      ${xsInp(d.price, `xsDeal(${k},'price',Number(this.value)||0,1)`, 'deal ৳', 'number')}
+      <div style="display:flex;gap:3px;flex-wrap:wrap">${XS_WD.map((w, n) => `<label style="display:inline-flex;align-items:center;gap:2px;font-size:11px;padding:3px 6px;border-radius:7px;border:1px solid var(--border);${(d.days || []).includes(n) ? 'background:rgba(255,215,106,.15);color:#ffd76a' : ''}"><input type="checkbox" ${(d.days || []).includes(n) ? 'checked' : ''} onchange="xsDealDay(${k},${n},this.checked)" style="margin:0">${w}</label>`).join('')}</div>
+      <input type="checkbox" ${d.on !== false ? 'checked' : ''} onchange="xsDeal(${k},'on',this.checked)" title="On"><button class="ab ab-no ro-ok" onclick="xsDelDeal(${k})"><i class="fa-solid fa-trash"></i></button>
+      ${it && Number(d.price) >= Number(it.price) ? '<div class="hint" style="grid-column:1/-1;color:var(--orange);margin:-2px 0 4px">The deal price must be lower than the regular price, or it will not show.</div>' : ''}</div>`; }).join('') || '<div class="hint">No deals yet.</div>';
+}
+function xsDeal(k, f, v, quiet){ const d = _SV.extra.deals[k]; if(!d) return; d[f] = v; if(f === 'sid'){ const s = _SV.extra.services.find(x => x.id === v); d.iid = s && s.items && s.items[0] ? s.items[0].id : ''; } xsDirty(); if(!quiet || f !== 'price') xsDealsRender(); }
+function xsDealDay(k, n, on){ const d = _SV.extra.deals[k]; d.days = (d.days || []).filter(x => x !== n); if(on) d.days.push(n); d.days.sort(); xsDirty(); xsDealsRender(); }
+function xsAddDeal(){ const s = _SV.extra.services.find(x => x.mode === 'items' && (x.items || []).length); if(!s){ toast('Add a fixed-price service with options first', 'w'); return; }
+  _SV.extra.deals = _SV.extra.deals || []; _SV.extra.deals.push({ id: 'd' + hid(), sid: s.id, iid: s.items[0].id, price: 0, days: [5], on: true }); xsDirty(); xsDealsRender(); }
+function xsDelDeal(k){ _SV.extra.deals.splice(k, 1); xsDirty(); xsDealsRender(); }
 function xsSet(n, k, v, re){ const s = _SV.extra.services[n]; if(!s) return; s[k] = v; if(k === 'mode' && v !== 'game' && !s.items) s.items = []; xsDirty(); if(re) xsRender(); }
 function xsFields(n, txt){ _SV.extra.services[n].fields = txt.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 6).map(l => ({ label: l.replace(/\s*\*$/, ''), req: /\*$/.test(l) })); xsDirty(); }
-function xsItem(n, k, f, v){ const i = _SV.extra.services[n].items[k]; if(!i) return; i[f] = ['price', 'rate', 'pct', 'fee', 'min', 'max'].includes(f) ? (Number(v) || 0) : v; xsDirty(); }
+const xsLocal = iso => { if(!iso) return ''; const d = new Date(iso); if(isNaN(d)) return ''; return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 16); };
+const xsOfferLive = i => Number(i.offer) > 0 && Number(i.offer) < Number(i.price) && i.offerEnd && new Date(i.offerEnd) > new Date();
+function xsItem(n, k, f, v){ const i = _SV.extra.services[n].items[k]; if(!i) return; i[f] = ['price', 'rate', 'pct', 'fee', 'min', 'max', 'offer'].includes(f) ? (Number(v) || 0) : v; xsDirty(); }
 function xsAddItem(n){ const s = _SV.extra.services[n]; s.items = s.items || []; s.items.push(s.mode === 'amount' ? { id: 'o' + hid(), name: '', unit: '৳', rate: 1, pct: 0, fee: 0, min: 0, max: 0, flow: 'buy', to: '', on: true } : { id: 'o' + hid(), name: '', price: 0, note: '', to: '', on: true }); xsDirty(); xsRender(); }
 function xsDelItem(n, k){ _SV.extra.services[n].items.splice(k, 1); xsDirty(); xsRender(); }
 function xsAddSvc(){ _SV.extra.services.push({ id: 's' + hid(), name: 'New service', short: '', icon: 'fa-solid fa-star', color: 'g-teal', mode: 'items', on: true, desc: '', fields: [], items: [] }); xsDirty(); xsRender(); setTimeout(() => { const l = $p('xsList'); if(l && l.lastElementChild) l.lastElementChild.scrollIntoView({ behavior: 'smooth' }); }, 50); }
@@ -467,7 +496,8 @@ function xsData(){
   const services = X.services.filter(s => String(s.name || '').trim()).map(s => ({ ...s, id: s.id || 's' + hid(), name: String(s.name).trim().slice(0, 40), short: String(s.short || '').trim().slice(0, 16),
     items: (s.items || []).filter(i => String(i.name || '').trim()).map(i => ({ ...i, id: i.id || 'o' + hid(), name: String(i.name).trim().slice(0, 60) })) }));
   if(services.some(s => s.logo && !/^https:\/\//i.test(s.logo))) throw new Error('Extra services: a logo link must start with https://');
-  return { on: chk('xs-on'), title: val('xs-title') || 'Extra Services', services,
+  const deals = (X.deals || []).filter(d => d.sid && d.iid && Number(d.price) > 0 && (d.days || []).length).map(d => ({ id: d.id || 'd' + hid(), sid: d.sid, iid: d.iid, price: Math.round(Number(d.price)), days: d.days, on: d.on !== false }));
+  return { on: chk('xs-on'), deals, title: val('xs-title') || 'Extra Services', services,
     perk: { on: chk('xs-p-on'), chargePct: numv('xs-p-pct', 5, 0, 50), chargeMin: numv('xs-p-min', 10, 0, 1e5) },
     loanNotice: { on: chk('xs-n-on'), days: val('xs-n-days') || '7–14' },
     wallet: { on: chk('xs-w-on'), direct: chk('xs-w-direct'), min: numv('xs-w-min', 50, 1, 1e7), max: numv('xs-w-max', 50000, 0, 1e8) },
@@ -483,7 +513,8 @@ async function xsLoad(){
     'xs-n-on': (_SV.extra.loanNotice || {}).on !== false, 'xs-n-days': (_SV.extra.loanNotice || {}).days || '7–14',
     'xs-l-on': (_SV.extra.live || {}).on !== false, 'xs-l-count': (_SV.extra.live || {}).count || 12 });
   ['xs-g-reward', 'xs-g-perday'].forEach(id => { const e = $p(id); if(e) e.oninput = xsRender; });
-  xsRender();
+  _SV.extra.deals = _SV.extra.deals || [];
+  xsRender(); xsDealsRender();
 }
 async function xsOrder(id, op){
   const o = _ORD.find(x => x._id === id); if(!o) return;
