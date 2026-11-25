@@ -134,6 +134,27 @@ const css = `
 .xs-deal .pp{text-align:right;flex:none}.xs-deal .pp s{display:block;font-size:11px;color:var(--txt3)}.xs-deal .pp b{font-size:17px;color:#ffd76a;font-weight:900}
 .xs-deal .pp em{display:block;font-style:normal;font-size:10px;font-weight:900;color:#ff8fa3}
 .xs-deal.soon{background:linear-gradient(135deg,#141c33,#1a1430);border-color:rgba(120,160,255,.35)}
+.xb-bonus{border-radius:16px;padding:12px;margin:0 0 12px;background:linear-gradient(135deg,rgba(255,215,106,.12),rgba(29,219,128,.06));border:1px solid rgba(255,215,106,.4)}
+.xb-bonus .h{font-size:13px;font-weight:900;color:#ffd76a;display:flex;gap:7px;align-items:center;margin-bottom:8px}
+.xb-bonus .tiers{display:flex;gap:7px;margin-bottom:8px}.xb-bonus .tiers div{flex:1;text-align:center;border-radius:11px;padding:7px 4px;background:rgba(0,0,0,.2)}
+.xb-bonus .tiers b{display:block;font-size:16px;color:#fff}.xb-bonus .tiers small,.xb-bonus>small{font-size:10.5px;color:var(--txt2)}
+.xb-bonus .you{margin-top:6px;font-size:12.5px;color:var(--p);font-weight:700}
+.rc-lock{text-align:center;border-radius:22px;padding:24px 16px 16px;background:radial-gradient(120% 100% at 50% 0%,rgba(29,219,128,.22),transparent 60%),linear-gradient(160deg,#0f2430,#0a1426);border:1px solid rgba(29,219,128,.35)}
+.rc-lock .big{width:62px;height:62px;margin:0 auto 10px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;background:linear-gradient(135deg,#1ddb80,#0e9a5a)}
+.rc-lock h3{margin:0 0 6px;color:var(--txt)}.rc-lock p{margin:0 0 14px;font-size:12.5px;color:var(--txt2)}
+.rc-hero{display:flex;justify-content:space-between;align-items:center;border-radius:18px;padding:14px 16px;margin-bottom:12px;color:#fff;background:linear-gradient(135deg,#0d7a52,#0a3d6b)}
+.rc-hero small{font-size:10.5px;font-weight:800;letter-spacing:.5px;opacity:.85}.rc-hero b{display:block;font-size:24px}
+.rc-hero button{border:0;border-radius:12px;padding:9px 13px;font-weight:900;font-family:inherit;cursor:pointer;background:rgba(255,255,255,.18);color:#fff}
+.rc-ops{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:6px 0 10px}.rc-ops button,.rc-type button{border-radius:12px;padding:10px 4px;border:1.5px solid var(--gbord);background:var(--glass);color:var(--txt);font-weight:800;font-size:12px;cursor:pointer;font-family:inherit}
+.rc-ops button.on,.rc-type button.on{border-color:var(--p);background:rgba(29,219,128,.12);color:var(--p)}
+.rc-type{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.mj-hero{display:flex;justify-content:space-between;align-items:center;border-radius:20px;padding:16px;margin-bottom:12px;color:#fff;background:radial-gradient(120% 140% at 100% 0%,rgba(255,140,66,.4),transparent 55%),linear-gradient(135deg,#2a1708,#14203a)}
+.mj-hero small{font-size:10.5px;font-weight:800;letter-spacing:.5px;color:#ffc89a}.mj-hero b{display:block;font-size:28px;margin:2px 0}.mj-hero span{font-size:11.5px;color:#d9c3b0}.mj-hero>i{font-size:34px;color:#ffb27a;opacity:.8}
+.mj-t{display:flex;align-items:center;gap:12px;border-radius:16px;padding:12px;margin-bottom:8px;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid var(--bord)}
+.mj-t .m{flex:1;min-width:0}.mj-t b{display:block;font-size:13.5px;color:var(--txt)}.mj-t small{font-size:11px;color:var(--txt2)}
+.mj-t .r{text-align:right;flex:none}.rw{display:inline-block;font-weight:900;font-size:14px;color:#1ddb80}
+.mj-st{display:block;margin-top:3px;font-size:10px;font-weight:900}.mj-st.ok{color:var(--p)}.mj-st.wait{color:#ffae6b}.mj-st.no{color:#ff8fa3}.mj-st.full{color:var(--txt3)}
+.mj-dh{display:flex;gap:13px;align-items:center;margin-bottom:12px}.mj-dh .xs-lg{width:56px;height:56px;font-size:24px;flex:none}.mj-dh h4{margin:0 0 5px;font-size:16px;color:var(--txt)}
 /* premium section v2 */
 .xs-head{position:relative;overflow:hidden;border-radius:22px;padding:15px 14px 13px;margin:22px 0 12px;background:radial-gradient(120% 120% at 0% 0%,rgba(255,215,106,.20),transparent 55%),radial-gradient(120% 140% at 100% 100%,rgba(77,143,255,.22),transparent 55%),linear-gradient(150deg,#141b30,#0b1222);border:1px solid rgba(255,215,106,.28);box-shadow:0 16px 36px rgba(0,0,0,.35)}
 .xs-head::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.08),transparent);animation:xsSweep 5s ease-in-out infinite}
@@ -301,6 +322,7 @@ async function load(){
 function register(){
   svcs().forEach(s => { const k = 'x_' + s.id; T[k] = { l: s.name, ic: 'star', g: s.color, cat: '', login: true, page: k }; P[k] = () => svcPage(s.id); });
   T.x_red = { l: 'Red Friday', cat: '', login: true, page: 'x_red' }; P.x_red = redPage;
+  P.recharge = rechargePage; P.jobs = jobsPage; T.x_job = { l: 'Task', cat: '', login: true, page: 'x_job' }; P.x_job = jobPage;
   T.x_order = { l: 'Order', cat: '', login: true, page: 'x_order' }; P.x_order = orderPage;
   T.x_orders = { l: 'My orders', cat: '', login: true, page: 'x_orders' }; P.x_orders = ordersPage;
   T.x_wallet = { l: 'Extra Balance', cat: '', login: true, page: 'x_wallet' }; P.x_wallet = walletPage; T.x_dep = { l: 'Add balance', cat: '', login: true, page: 'x_dep' }; P.x_dep = depPage;
@@ -496,7 +518,7 @@ async function walletPage(){
   const x = await loadXb();
   if(!x){ show('Extra Balance', '<div class="sv-empty">Please login again.</div>'); return; }
   const when = t => { try { return new Date(t).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
-  const TY = { deposit: ['arrow-down', 'g-green', 'Deposit'], order: ['bag-shopping', 'g-purple', 'Order'], refund: ['rotate-left', 'g-blue', 'Refund'], admin: ['user-shield', 'g-slate', 'Adjustment'] };
+  const TY = { deposit: ['arrow-down', 'g-green', 'Deposit'], order: ['bag-shopping', 'g-purple', 'Order'], refund: ['rotate-left', 'g-blue', 'Refund'], admin: ['user-shield', 'g-slate', 'Adjustment'], bonus: ['gift', 'g-gold', 'Deposit bonus'], task: ['briefcase', 'g-orange', 'Micro job'] };
   const dep = (x.deposits || []).filter(d => d.status !== 'Approved');
   show('Extra Balance', `<div class="xb-card"><small>EXTRA BALANCE</small><div class="v">${tk(x.xbal)}</div><p>Only for Extra Services. It is separate from your loan and cannot be used for loan fees.</p></div>
     <button class="sv-btn gold" onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Add balance</button>
@@ -510,10 +532,12 @@ function depPage(){
   const W = (X.cfg && X.cfg.wallet) || {};
   const tg = payTargets({}); const w = tg[window._xbW || 0] || tg[0];
   const amts = [100, 500, 1000, 2000, 5000].filter(a => a >= (W.min || 1) && (!W.max || a <= W.max));
+  const DB = (X.cfg && X.cfg.depBonus) || {};
   show('Add balance', `<div class="xb-card"><small>EXTRA BALANCE</small><div class="v">${tk(X.xb ? X.xb.xbal : 0)}</div><p>Add money once and order any Extra Service in one tap.</p></div>
+    ${DB.on && DB.tiers.length ? `<div class="xb-bonus"><div class="h"><i class="fa-solid fa-gift"></i>Deposit bonus</div><div class="tiers">${DB.tiers.map(t => `<div><b>+${num(t.pct)}%</b><small>on ${tk(t.min)}+</small></div>`).join('')}</div><small>Added to your Extra Balance as soon as your deposit is approved${DB.max ? ` · up to ${tk(DB.max)} per deposit` : ''}.</small><div class="you" id="xbBon"></div></div>` : ''}
     <span class="sv-lbl">1. Amount</span>
     <div class="xb-chips">${amts.map(a => `<button onclick="xbAmt(${a},this)">${tk(a)}</button>`).join('')}</div>
-    <input class="sv-in" id="xbAmt" type="number" inputmode="numeric" placeholder="Amount (min ${tk(W.min || 50)}${W.max ? ', max ' + tk(W.max) : ''})">
+    <input class="sv-in" id="xbAmt" type="number" inputmode="numeric" oninput="xbBon()" placeholder="Amount (min ${tk(W.min || 50)}${W.max ? ', max ' + tk(W.max) : ''})">
     <span class="sv-lbl">2. Send it to</span>
     ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xbW=${k};svPage('x_dep')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}</button>`).join('')}</div>` : ''}
     ${w ? `<div class="pay-num"><div><small>${E(w.name)}${w.type ? ' · ' + E(w.type) : ''}</small><b>${E(w.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(w.number)}').then(()=>svToastOk('Copied'))">Copy</button></div>` : '<div class="sv-empty">No payment number is available right now. Please contact support.</div>'}
@@ -523,7 +547,10 @@ function depPage(){
     <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> We add it as soon as we check your payment. Extra Balance is only for Extra Services — not for loans or loan fees.</div>`);
   window._xbCur = w;
 }
-window.xbAmt = (v, el) => { $x('xbAmt').value = v; document.querySelectorAll('.xb-chips button').forEach(b => b.classList.toggle('on', b === el)); };
+window.xbAmt = (v, el) => { $x('xbAmt').value = v; document.querySelectorAll('.xb-chips button').forEach(b => b.classList.toggle('on', b === el)); xbBon(); };
+// the bonus for the amount typed (same rule as the server)
+function bonusFor(amount){ const B = (X.cfg && X.cfg.depBonus) || {}; if(!B.on) return 0; const t = [...(B.tiers || [])].reverse().find(x => amount >= x.min); return t ? Math.min(B.max || Infinity, Math.floor(amount * t.pct / 100)) : 0; }
+window.xbBon = () => { const el = $x('xbBon'); if(!el) return; const a = Number(($x('xbAmt') || {}).value) || 0, b = bonusFor(a); el.innerHTML = b ? `You get <b>${tk(a + b)}</b> (${tk(a)} + ${tk(b)} bonus)` : ''; };
 window.xbSubmit = async function(){
   const w = window._xbCur, amount = Number($x('xbAmt').value) || 0, trxId = ($x('xbTrx').value || '').trim();
   if(!(amount > 0)){ toast('Enter the amount', true); return; }
@@ -533,6 +560,87 @@ window.xbSubmit = async function(){
   b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Submit deposit';
   if(!r.ok){ toast(r.data.error || 'Could not submit', true); return; }
   toast('Deposit submitted — we will add it after checking'); svGo('x_wallet');
+};
+
+/* ───────── Mobile Recharge (Verified & VIP) ───────── */
+async function rechargePage(){
+  show('Mobile Recharge', '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Loading…</div>');
+  await load(); const x = await loadXb(); const R = (X.cfg && X.cfg.recharge) || {};
+  if(!R.on){ show('Mobile Recharge', '<div class="sv-empty">Mobile recharge is switched off right now.</div>'); return; }
+  if(!x || !(x.verified || x.vip)){
+    show('Mobile Recharge', `<div class="rc-lock"><div class="big"><i class="fa-solid fa-mobile-screen-button"></i></div><h3>For Verified &amp; VIP members</h3><p>Recharge any Bangladeshi number from your Extra Balance — a members-only service.</p>
+      <button class="vbtn" onclick="svGo('verify')">${sealHtml()}Get Verified</button><button class="sv-btn gold" style="margin-top:8px" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>Join VIP</button></div>`); return; }
+  const me = (user() || {}).phone || '';
+  window._rc = window._rc || { op: R.ops[0], type: 'prepaid' };
+  show('Mobile Recharge', `<div class="rc-hero"><div><small>EXTRA BALANCE</small><b>${tk(x.xbal)}</b></div><button onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Add</button></div>
+    <span class="sv-lbl">Operator</span><div class="rc-ops">${R.ops.map(o => `<button class="${window._rc.op === o ? 'on' : ''}" onclick="window._rc.op=this.dataset.o;document.querySelectorAll('.rc-ops button').forEach(b=>b.classList.toggle('on',b===this))" data-o="${E(o)}">${E(o)}</button>`).join('')}</div>
+    <span class="sv-lbl">Number</span><input class="sv-in" id="rcNum" type="tel" inputmode="numeric" value="${me ? '0' + E(me) : ''}" placeholder="01XXXXXXXXX">
+    <div class="rc-type"><button class="${window._rc.type === 'prepaid' ? 'on' : ''}" onclick="window._rc.type='prepaid';svPage('recharge')">Prepaid</button><button class="${window._rc.type === 'postpaid' ? 'on' : ''}" onclick="window._rc.type='postpaid';svPage('recharge')">Postpaid</button></div>
+    <span class="sv-lbl">Amount (৳${R.min} – ৳${R.max})</span><div class="xb-chips">${[20, 50, 100, 200, 500].filter(a => a >= R.min && a <= R.max).map(a => `<button onclick="document.getElementById('rcAmt').value=${a};document.querySelectorAll('.xb-chips button').forEach(b=>b.classList.toggle('on',b===this))">${tk(a)}</button>`).join('')}</div>
+    <input class="sv-in" id="rcAmt" type="number" inputmode="numeric" placeholder="Amount">
+    <button class="sv-btn gold" style="margin-top:12px" id="rcBtn" onclick="rcSubmit()"><i class="fa-solid fa-bolt"></i>Recharge now</button>
+    <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> Paid from your Extra Balance. Our team sends the recharge by hand — you can follow it in My orders. If it cannot be done, the money goes back to your Extra Balance.</div>`);
+}
+window._xsRecharge = () => rechargePage(); window._xsJobs = () => jobsPage();
+window.rcSubmit = async function(){
+  const number = ($x('rcNum').value || '').trim(), amount = Number($x('rcAmt').value) || 0;
+  if(!amount){ toast('Enter the amount', true); return; }
+  const b = $x('rcBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Sending…';
+  const r = await api('rechargeOrder', { op: window._rc.op, type: window._rc.type, number, amount });
+  b.disabled = false; b.innerHTML = '<i class="fa-solid fa-bolt"></i>Recharge now';
+  if(!r.ok){ toast(r.data.error || 'Could not recharge', true); if(r.data.code === 'xbal_low') svGo('x_dep'); return; }
+  if(X.xb) X.xb.xbal = r.data.xbal; render(); loadLive();
+  toast('Recharge request sent — you will get it shortly'); svGo('x_orders');
+};
+
+/* ───────── Micro Jobs ───────── */
+const JT = { join: ['fa-brands fa-telegram', 'g-blue', 'Join'], visit: ['fa-solid fa-arrow-up-right-from-square', 'g-teal', 'Visit'], signup: ['fa-solid fa-user-plus', 'g-purple', 'Sign up'],
+  form: ['fa-solid fa-clipboard-list', 'g-cyan', 'Form'], survey: ['fa-solid fa-square-poll-vertical', 'g-gold', 'Survey'], share: ['fa-solid fa-share-nodes', 'g-pink', 'Share'], refer: ['fa-solid fa-people-arrows', 'g-orange', 'Refer'], other: ['fa-solid fa-briefcase', 'g-slate', 'Task'] };
+async function jobsPage(){
+  show('Micro Jobs', '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Loading…</div>');
+  const r = await api('jobsState');
+  if(!r.ok){ show('Micro Jobs', `<div class="sv-empty">${E(r.data.error || 'Could not load.')}</div>`); return; }
+  const d = r.data; X.jobs = d; X.jf = X.jf || '';
+  if(!d.on){ show('Micro Jobs', '<div class="sv-empty">Micro jobs are switched off right now.</div>'); return; }
+  const types = [...new Set(d.tasks.map(t => t.type))];
+  const open = d.tasks.filter(t => !t.mine || t.mine.status === 'Rejected').length;
+  show('Micro Jobs', `<div class="mj-hero"><div><small>EARNED FROM TASKS</small><b>${tk(d.earned)}</b><span>${open} task${open === 1 ? '' : 's'} open · rewards go to your Extra Balance</span></div><i class="fa-solid fa-briefcase"></i></div>
+    ${d.needVerify ? `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Get Verified to earn</b><p>Task rewards are for Verified and VIP members. You can look at the tasks now.</p></div><span class="go">Get Verified</span></div>` : ''}
+    ${types.length > 1 ? `<div class="xs-chips"><button class="${!X.jf ? 'on' : ''}" onclick="X_jf('')">All</button>${types.map(t => `<button class="${X.jf === t ? 'on' : ''}" onclick="X_jf('${t}')">${(JT[t] || JT.other)[2]}</button>`).join('')}</div>` : ''}
+    <div id="mjList"></div>`);
+  drawJobs();
+}
+window.xsJob = id => { X.jt = id; svGo('x_job'); };
+window.X_jf = t => { X.jf = t; document.querySelectorAll('.xs-chips button').forEach(b => b.classList.toggle('on', (b.getAttribute('onclick') || '').includes(`'${t}'`))); drawJobs(); };
+function drawJobs(){
+  const el = $x('mjList'); if(!el || !X.jobs) return;
+  const L = X.jobs.tasks.filter(t => !X.jf || t.type === X.jf);
+  const st = t => !t.mine ? (t.left === 0 ? '<span class="mj-st full">Full</span>' : '') : t.mine.status === 'Approved' ? '<span class="mj-st ok">Done ✓</span>' : t.mine.status === 'Pending' ? '<span class="mj-st wait">Checking</span>' : '<span class="mj-st no">Try again</span>';
+  el.innerHTML = L.length ? L.map(t => { const m = JT[t.type] || JT.other;
+    return `<div class="mj-t" onclick="xsJob('${E(t.id)}')"><div class="xs-lg ${m[1]}" style="width:44px;height:44px;font-size:18px;border-radius:14px;flex:none"><i class="${m[0]}"></i></div>
+      <div class="m"><b>${E(t.title)}</b><small>${m[2]}${t.left !== null ? ` · ${t.left} place${t.left === 1 ? '' : 's'} left` : ''}</small></div><div class="r"><span class="rw">+${tk(t.reward)}</span>${st(t)}</div></div>`; }).join('')
+    : '<div class="sv-empty"><i class="fa-solid fa-briefcase"></i>No tasks right now. New tasks are added often — check back soon.</div>';
+}
+function jobPage(){
+  const t = X.jobs && X.jobs.tasks.find(x => x.id === X.jt); if(!t){ jobsPage(); return; }
+  const m = JT[t.type] || JT.other, done = t.mine && t.mine.status === 'Approved', wait = t.mine && t.mine.status === 'Pending';
+  show(t.title, `<div class="mj-dh"><div class="xs-lg ${m[1]}"><i class="${m[0]}"></i></div><div><h4>${E(t.title)}</h4><span class="rw">Reward +${tk(t.reward)}</span></div></div>
+    ${t.steps ? `<div class="sv-card"><h4>What to do</h4><p style="white-space:pre-line">${E(t.steps)}</p></div>` : ''}
+    ${t.link ? `<a class="sv-btn ghost" href="${E(t.link)}" target="_blank" rel="noopener nofollow" style="display:flex;text-decoration:none"><i class="fa-solid fa-arrow-up-right-from-square"></i>Open the task</a>` : ''}
+    ${done ? '<div class="sv-card" style="text-align:center"><h4 style="color:var(--p)">Done ✓</h4><p>The reward is in your Extra Balance.</p></div>'
+      : wait ? '<div class="sv-card" style="text-align:center"><h4 style="color:#ffae6b">Being checked</h4><p>We are checking your proof. The reward is added as soon as it is approved.</p></div>'
+      : t.left === 0 ? '<div class="sv-empty">All places for this task are taken.</div>'
+      : `${t.mine && t.mine.reason ? `<div class="sv-card"><p style="color:#ff8fa3">Last time: ${E(t.mine.reason)}</p></div>` : ''}<span class="sv-lbl" style="margin-top:12px">Proof: ${E(t.proof)}</span><textarea class="sv-in" id="mjProof" rows="3" maxlength="400" style="height:auto;padding:12px" placeholder="${E(t.proof)}"></textarea>
+        <button class="sv-btn gold" style="margin-top:10px" id="mjBtn" onclick="mjSubmit()"><i class="fa-solid fa-paper-plane"></i>Submit proof</button>`}
+    <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-shield-halved"></i> Do the task honestly with your own account. Fake or copied proof is rejected.</div>`);
+}
+window.mjSubmit = async function(){
+  const proof = ($x('mjProof').value || '').trim(); if(proof.length < 3){ toast('Add your proof', true); return; }
+  const b = $x('mjBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Sending…';
+  const r = await api('jobSubmit', { tid: X.jt, proof });
+  b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Submit proof';
+  if(!r.ok){ toast(r.data.error || 'Could not send', true); if(r.data.code === 'verify_required') svGo('verify'); return; }
+  toast('Proof sent — we will check it soon'); const t = X.jobs.tasks.find(x => x.id === X.jt); if(t) t.mine = { status: 'Pending' }; jobPage();
 };
 
 /* ───────── my orders ───────── */
@@ -588,3 +696,5 @@ setInterval(loadLive, 30e3);
 let _ph = (user() || {}).phone || '';
 setInterval(() => { if(X.cfg) placeNotes(); slimAll(); if(X.cfg && !$x('xsBlock')) render(); const ph = (user() || {}).phone || ''; if(ph !== _ph){ _ph = ph; X.xb = null; loadXb().then(render); } }, 1500);
 })();
+// Quick Services pages (Mobile Recharge, Micro Jobs) are ready even before the settings load
+(function(){ const P = window._svcPages, T = window._svcTiles; P.recharge = P.recharge || (() => window._xsRecharge()); P.jobs = P.jobs || (() => window._xsJobs()); T.x_job = T.x_job || { l: 'Task', cat: '', login: true, page: 'x_job' }; })();
