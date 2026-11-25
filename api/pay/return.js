@@ -29,6 +29,11 @@ module.exports = async (req, res) => {
       }
     }
   } catch (e) { console.error('pay/return', e); }
+  // the admin's ৳10 connection test goes back to the admin panel
+  if (tz && /^TEST/.test(tranId)) {
+    const adm = String(process.env.ADMIN_PATH || '').trim().replace(/^\/+|\/+$/g, '');
+    res.statusCode = 303; res.setHeader('Location', `/${adm || 'admin.html'}?paytest=${result}&tran=${encodeURIComponent(tranId)}`); return res.end();
+  }
   const to = `/?pay=${result}${/^[A-Za-z0-9_-]{6,64}$/.test(appId) ? '&app=' + appId : ''}`;
   res.statusCode = 303;
   res.setHeader('Location', to);

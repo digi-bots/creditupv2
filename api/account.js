@@ -778,6 +778,43 @@ const actions = {
   }
 };
 
+// ── online payment connection test (admin): a real ৳10 payment that touches no application ──
+Object.assign(actions, {
+  async adminPayTest(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    if (!(await adminCan(me, ['wallets', 'config']))) return noRole;
+    const P = require('./_lib/pay');
+    if (P.provider() !== 'tzpayway') return [400, { error: 'The connection test is for TZPayWay. Add TZPAY_API_KEY in Vercel first.' }];
+    if (P.missingEnv().length) return [503, { error: 'Missing on Vercel: ' + P.missingEnv().join(', ') }];
+    const amount = 10, tranId = 'TEST' + Date.now().toString(36).toUpperCase() + crypto.randomBytes(3).toString('hex').toUpperCase();
+    const base = String(process.env.PUBLIC_BASE_URL || 'https://www.creditfy.online').replace(/\/+$/, '');
+    const q = `gw=tz&tran=${tranId}`;
+    const ref = db().collection('gatewayPayments').doc(tranId);
+    await ref.set({ tranId, test: true, amount, uid: me.uid, status: 'Initiated', provider: 'tzpayway', createdAt: new Date().toISOString() });
+    const r = await P.tzCreate({ amount, currency: 'BDT', country: 'BD', fee_paid_by_user: false, cus_name: 'Creditfy test',
+      webhook_url: `${base}/api/pay/ipn?${q}`, success_url: `${base}/api/pay/return?r=success&${q}`, cancel_url: `${base}/api/pay/return?r=cancel&${q}`, user_data: { tranId, test: true } });
+    if (!r.ok || !r.data.payment_url || !r.data.trx_id) {
+      const why = String((r.raw && (r.raw.error || r.raw.message)) || ('HTTP ' + r.status)).slice(0, 200);
+      await ref.set({ status: 'InitFailed', error: why }, { merge: true });
+      return [502, { error: 'TZPayWay refused to create the payment: ' + why, tranId }];
+    }
+    await ref.set({ gwTrxId: String(r.data.trx_id) }, { merge: true });
+    return [200, { ok: true, tranId, url: r.data.payment_url, gwTrxId: r.data.trx_id }];
+  },
+  async adminPayTestStatus(b, me) {
+    if (!me || !(await isAdmin(me.uid))) return [403, { error: 'Admin login required.' }];
+    const tranId = String(b.tranId || '');
+    if (!/^TEST[A-Z0-9]{6,40}$/.test(tranId)) return [400, { error: 'Unknown test.' }];
+    const P = require('./_lib/pay');
+    const s = await db().collection('gatewayPayments').doc(tranId).get();
+    if (!s.exists) return [404, { error: 'Test not found.' }];
+    let d = s.data();
+    // ask TZPayWay now (the webhook may not have come yet)
+    if (d.status !== 'Paid' && d.gwTrxId && b.check !== false) { try { await P.finalizePaid(tranId, ''); d = (await s.ref.get()).data(); } catch (e) {} }
+    return [200, { status: d.status, created: d.createdAt, gwTrxId: d.gwTrxId || '', webhookAt: d.webhookAt || '', paidAt: d.paidAt || '', method: d.method || '', lastCheck: d.lastCheck || null, error: d.error || '' }];
+  }
+});
+
 // Quick Services (codes, vouchers, wallet history, check-in, spin, VIP, verified badge) — see api/_lib/services.js
 const SVC = require('./_lib/services')({ db, admin, findUserDoc, isAdmin, adminCan, notifyUser, isPhone });
 Object.assign(actions, SVC.actions);

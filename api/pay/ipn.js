@@ -16,6 +16,8 @@ module.exports = async (req, res) => {
         if (!s.empty) tranId = s.docs[0].id;
       }
       if (!/^[A-Za-z0-9_-]{6,80}$/.test(tranId)) return res.status(200).json({ ok: false });
+      // note that TZPayWay reached us (shown in the admin's connection test)
+      await db().collection('gatewayPayments').doc(tranId).set({ webhookAt: new Date().toISOString(), webhookEvent: String((b && b.event) || '').slice(0, 40) }, { merge: true }).catch(() => {});
       const out = await finalizePaid(tranId, '');
       return res.status(200).json({ ok: out.ok, pending: !!out.pending });
     }

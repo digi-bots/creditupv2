@@ -108,6 +108,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 #appBar{position:sticky;top:0;z-index:900;display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(6,58,30,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(29,219,128,.18);box-shadow:0 6px 20px rgba(0,0,0,.35)}
 #appBar .ab-back{width:36px;height:36px;flex-shrink:0;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.1);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 #appBar .ab-back:active{transform:scale(.94)}
+#appBar .ab-home{margin-left:-4px;font-size:14px}
 #appBar .ab-mid{flex:1;min-width:0}
 #appBar h3{background:linear-gradient(90deg,#ffffff,#1ddb80,#ffffff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:16px;font-weight:900;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #appBar .balance-pill{margin-top:4px;padding:3px 10px;gap:6px}
@@ -3017,6 +3018,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <div id="appBar">
   <button class="ab-back" id="abBack" onclick="navBack()" aria-label="Back" style="display:none"><i class="fa-solid fa-arrow-left"></i></button>
+  <button class="ab-back ab-home" id="abHome" onclick="goHome()" aria-label="Home" title="Home" style="display:none"><i class="fa-solid fa-house"></i></button>
   <button class="ab-av" id="abAv" onclick="openProfileModal()" aria-label="My profile"><i class="fa-solid fa-user"></i></button>
   <div class="ab-mid">
     <small class="ab-hi" id="abHi"></small>
@@ -3956,6 +3958,15 @@ function _updateBackBtn(){
   const b=document.getElementById('abBack'); if(!b) return;
   const cur=document.querySelector('.screen.active');
   b.style.display = (cur && cur.id !== 'screen-home') ? 'flex' : 'none';
+  const h=document.getElementById('abHome'); if(h) h.style.display = b.style.display;
+}
+// one tap back to the home page from anywhere: closes pop-ups and service pages too
+function goHome(){
+  document.querySelectorAll('.modal-overlay.on,.modal-overlay.active,.premium-popup.on').forEach(m => m.classList.remove('on', 'active'));
+  try{ if(window.svClose) svClose(); }catch(e){}
+  _navStack = [];
+  nav('screen-home');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function navBack(){
   const u=_getUser();
@@ -6033,6 +6044,11 @@ window._authReady = new Promise(resolve => {
   let first = true;
   onAuthStateChanged(fbAuth, user => {
     const stored = _getUser();
+    // a login that is not this user's phone account (for example the admin panel on the same domain,
+    // from before it had its own session) is not a user session: sign it out here
+    if(user && (!stored || String(user.uid) !== String(stored.phone).replace(/^0+/, '')) && !/^\d{10}$/.test(String(user.uid))){
+      signOut(fbAuth).catch(() => {}); if(first){ first = false; resolve(null); } if(stored){ if(typeof logoutUser === 'function') logoutUser(true); else localStorage.removeItem('creditUpUser'); } return;
+    }
     if(first){ first = false; resolve(user); }
     if(!user && stored){
       if(typeof logoutUser === 'function') logoutUser(true); else localStorage.removeItem('creditUpUser');
@@ -6368,6 +6384,11 @@ async function startOnlinePay(){
   const btn = document.getElementById('btnTrx'); const html = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Opening secure payment…';
   try{
+    await window._authReady;
+    if(!fbAuth || !fbAuth.currentUser || String(fbAuth.currentUser.uid) !== String(user.phone).replace(/^0+/, '')){
+      btn.disabled = false; btn.innerHTML = html;
+      showErrorModal('Login Needed', 'Your session has ended. Please log in again, then pay.'); if(typeof logoutUser === 'function') logoutUser(true); return;
+    }
     const r = await fetch('/api/pay/init', { method:'POST', headers:{'Content-Type':'application/json', ...(await window._authHeader())},
       body: JSON.stringify({ appId, uid: user.phone, useBalance: appliedBalance > 0 }) });
     const j = await r.json().catch(()=>({}));

@@ -119,6 +119,11 @@ async function finalizePaid(tranId, valId) {
   }
 
   const now = new Date().toISOString();
+  // an admin connection test (৳10): no application, no transaction record — just mark it paid
+  if (pay.test) {
+    await payRef.set({ status: 'Paid', paidAt: now, bankTranId: gwRef, method }, { merge: true });
+    return { ok: true, already: false, pay, test: true };
+  }
   const result = await store.runTransaction(async (t) => {
     const fresh = await t.get(payRef);
     if (fresh.data().status === 'Paid') return { already: true };
