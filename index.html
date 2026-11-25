@@ -298,6 +298,14 @@ html.lang-bn .btn-borrow .bn-bn,html.lang-bn .btn-borrow .bn-div{display:none!im
 .pw-t{flex:1;font-size:12px;color:#dff5e8;line-height:1.4}
 .pw-go{border:0;border-radius:10px;background:var(--p);color:#03210f;font-weight:800;padding:9px 13px;font-family:inherit;cursor:pointer}
 .pw-x{border:0;background:none;color:var(--txt2);font-size:14px;padding:6px;cursor:pointer}
+/* closed: a small tab that peeks from the right edge */
+.pw-tab{display:none}
+.pw-bar.tab{left:auto;right:calc(max(0px,(100vw - 400px) / 2));transform:none;width:auto;padding:0;background:none;border:0;box-shadow:none;bottom:calc(150px + env(safe-area-inset-bottom))}
+.pw-bar.tab>*:not(.pw-tab){display:none}
+.pw-bar.tab .pw-tab{display:flex;flex-direction:column;align-items:center;gap:3px;border:1px solid rgba(29,219,128,.45);border-right:0;border-radius:14px 0 0 14px;padding:7px 6px 6px 8px;cursor:pointer;font-family:inherit;
+  background:linear-gradient(160deg,rgba(13,40,30,.96),rgba(8,20,36,.96));box-shadow:-6px 8px 20px rgba(0,0,0,.4);color:var(--p);font-size:9.5px;font-weight:900;letter-spacing:.3px;animation:pwPeek .5s cubic-bezier(.2,.8,.2,1)}
+.pw-bar.tab .pw-tab img{width:26px;height:26px;border-radius:8px}
+@keyframes pwPeek{from{transform:translateX(100%)}to{transform:none}}
 @media (display-mode: standalone){.pw-bar{display:none}}
 .push-card{display:flex;gap:11px;align-items:flex-start;margin:32px 0 14px;position:relative;z-index:4;padding:13px;border-radius:16px;background:linear-gradient(135deg,rgba(77,143,255,.14),rgba(29,219,128,.08));border:1px solid rgba(77,143,255,.35);animation:sxIn .5s ease both}
 .pc-ic{width:38px;height:38px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#4d8fff,#2457c5);color:#fff;font-size:16px}
@@ -7648,11 +7656,11 @@ setTimeout(async () => {
   if(_getUser() && typeof window.loadUserDashboardData === 'function'){ window.loadUserDashboardData(); }
 }, 300);
 </script>
-<script src="app-pro.js?v=4"></script>
-<script src="services.js?v=10"></script>
+<script src="app-pro.js?v=5"></script>
+<script src="services.js?v=12"></script>
 <script src="loans.js?v=3"></script>
 <script src="help.js?v=2"></script>
-<script src="extra.js?v=10"></script>
-<script src="i18n-bn.js?v=14"></script>
+<script src="extra.js?v=12"></script>
+<script src="i18n-bn.js?v=15"></script>
 </body>
 </html>

@@ -44,10 +44,10 @@ const SVD = {
   loans: { emiMode: 'principal', pay: { on: true }, payoff: { on: true, discountPct: 0, fee: 0 }, limit: { on: true, enforce: false, start: 20000, step: 10000, verifiedBonus: 5000, vipBonus: 10000, max: 0 },
     trust: { on: true, levels: [{ name: 'Bronze', min: 0, perk: 'Welcome to Creditfy' }, { name: 'Silver', min: 30, perk: 'Faster review' }, { name: 'Gold', min: 60, perk: 'Higher loan limit and priority review' }, { name: 'Platinum', min: 85, perk: 'Our best limits and the fastest service' }] },
     budget: { safePct: 40 }, statement: { on: true } },
-  hub: { home: ['vip', 'checkin', 'spin', 'wallet', 'recharge', 'jobs', 'calc', 'refer', 'history', 'all'], tiles: {} }
+  hub: { home: ['vip', 'checkin', 'spin', 'wallet', 'recharge', 'calc', 'refer', 'history', 'all'], tiles: {} }
 };
 const SV_TILES = [['vip', 'VIP Express'], ['verify', 'Verify Number'], ['checkin', 'Daily Check-in'], ['spin', 'Spin & Win'], ['wallet', 'Wallet'], ['redeem', 'Redeem Code'], ['voucher', 'Gift Voucher'],
-  ['recharge', 'Mobile Recharge'], ['jobs', 'Micro Jobs'], ['calc', 'Calculator'], ['refer', 'Refer & Earn'], ['history', 'History'], ['profile', 'Profile'],
+  ['recharge', 'Mobile Recharge'], ['calc', 'Calculator'], ['refer', 'Refer & Earn'], ['history', 'History'], ['profile', 'Profile'],
   ['loans', 'My Loans'], ['repay', 'Pay Installment'], ['payoff', 'Early Payoff'], ['limit', 'Loan Limit'], ['trust', 'Trust Level'], ['statement', 'Statement (PDF)'], ['budget', 'Budget Planner'], ['compare', 'EMI Compare'],
   ['tips', 'Smart Tips'], ['sponsors', 'Partners & Sites'], ['faq', 'Help Center'], ['fees', 'Fees Explained'], ['safety', 'Stay Safe'], ['callback', 'Call Me Back'], ['offices', 'Our Offices']];
 let _SV = clone(SVD), _ORD = [], _CODES = [], _USES = [];
@@ -175,8 +175,8 @@ function buildSvc(){
     </div>
   </div>
   <div class="pro-pane" data-k="jobs">
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-briefcase"></i>Micro Jobs — tasks users do to earn (paid to the Creditfy balance)</div>
-      <div class="hint" style="margin-bottom:8px">Add a task (join a Telegram / WhatsApp group or channel, visit a link, sign up, fill a form, a survey, share, refer…), its link, the reward and what proof you want. Users send the proof, you check it below and approve — the reward goes to their <b>Creditfy balance</b> (Micro Jobs is a Quick Service). Rewards are for Verified &amp; VIP members. Slots = how many people can do it (0 = no limit). Press <b>Save changes</b> after editing tasks.</div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-briefcase"></i>Micro Jobs — tasks users do to earn (in Extra Services, paid to the Extra Balance)</div>
+      <div class="hint" style="margin-bottom:8px">Add a task (join a Telegram / WhatsApp group or channel, visit a link, sign up, fill a form, a survey, share, refer…), its link, the reward and what proof you want. Users send the proof, you check it below and approve — the reward goes to their <b>Extra Balance</b> (Micro Jobs is in Extra Services). Rewards are for Verified &amp; VIP members. Slots = how many people can do it (0 = no limit). Press <b>Save changes</b> after editing tasks.</div>
       <div class="fgrid fgrid3">${tog('mj-on', 'Micro Jobs on', true)}</div>
       <div id="mjTasks"></div>
       <button class="btn btn-sm btn-s ro-ok" onclick="mjAdd()"><i class="fa-solid fa-plus"></i>Add a task</button>
