@@ -442,14 +442,14 @@ function xsRender(){
   const X = _SV.extra; const el = $p('xsList'); if(!el || !X) return;
   el.innerHTML = X.services.map((s, n) => {
     const amt = s.mode === 'amount';
-    const head = amt ? ['Option', 'Unit', 'Rate ৳/unit', 'Fee %', 'Fee ৳', 'Min', 'Max', 'Buy / Sell', 'Pay-to number / address (blank = payment wallets)', 'On', '']
-      : ['Option', 'Category', 'Price ৳', 'Offer ৳', 'Offer ends (date & time)', 'Note for the user', 'Pay-to (blank = wallets)', 'Popular', 'On', ''];
-    const cols = amt ? '1.4fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.3fr .8fr .55fr .55fr 1.15fr 1.1fr .9fr 44px 34px 34px';
+    const head = amt ? ['Option', 'Icon', 'Unit', 'Rate ৳/unit', 'Fee %', 'Fee ৳', 'Min', 'Max', 'Buy / Sell', 'Pay-to number / address (blank = payment wallets)', 'On', '']
+      : ['Option', 'Icon', 'Category', 'Price ৳', 'Offer ৳', 'Offer ends (date & time)', 'Note for the user', 'Pay-to (blank = wallets)', 'Popular', 'On', ''];
+    const cols = amt ? '1.4fr 1fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.3fr 1fr .8fr .55fr .55fr 1.15fr 1.1fr .9fr 44px 34px 34px';
     const row = (i, k) => { const f = (key, ph, t) => xsInp(i[key], `xsItem(${n},${k},'${key}',this.value)`, ph, t);
       return `<div style="display:grid;grid-template-columns:${cols};gap:6px;align-items:center;margin-bottom:5px">${amt
-        ? f('name', 'bKash → Nagad') + f('unit', '৳') + f('rate', '1', 'number') + f('pct', '0', 'number') + f('fee', '0', 'number') + f('min', '0', 'number') + f('max', '0', 'number')
+        ? f('name', 'bKash → Nagad') + f('icon', 'auto') + f('unit', '৳') + f('rate', '1', 'number') + f('pct', '0', 'number') + f('fee', '0', 'number') + f('min', '0', 'number') + f('max', '0', 'number')
           + `<select onchange="xsItem(${n},${k},'flow',this.value)" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border)"><option value="buy"${i.flow !== 'sell' ? ' selected' : ''}>User pays</option><option value="sell"${i.flow === 'sell' ? ' selected' : ''}>User sells</option></select>` + f('to', 'e.g. bKash 017XXXXXXXX')
-        : f('name', 'Google Play $10') + f('cat', 'e.g. Steam') + f('price', '0', 'number') + f('offer', 'none', 'number')
+        : f('name', 'Google Play $10') + f('icon', 'auto') + f('cat', 'e.g. Steam') + f('price', '0', 'number') + f('offer', 'none', 'number')
           + `<input type="datetime-local" value="${ep(xsLocal(i.offerEnd))}" onchange="xsItem(${n},${k},'offerEnd',this.value?new Date(this.value).toISOString():'');xsRender()" style="height:34px;padding:0 6px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid ${xsOfferLive(i) ? 'rgba(255,215,106,.7)' : 'var(--border)'};color:var(--txt);font-size:12px;min-width:0;width:100%;box-sizing:border-box;color-scheme:dark">`
           + f('note', 'optional') + f('to', 'optional') + `<input type="checkbox" title="Popular" ${i.hot ? 'checked' : ''} onchange="xsItem(${n},${k},'hot',this.checked)">`}
         <input type="checkbox" ${i.on !== false ? 'checked' : ''} onchange="xsItem(${n},${k},'on',this.checked)"><button class="ab ab-no ro-ok" title="Remove" onclick="xsDelItem(${n},${k})"><i class="fa-solid fa-trash"></i></button></div>`; };
@@ -468,9 +468,10 @@ function xsRender(){
         <div class="fg full"><label>Description</label>${xsInp(s.desc, `xsSet(${n},'desc',this.value)`, 'What this service gives')}</div>
         <div class="fg full"><label>Questions for the user — one per line, add <b>*</b> at the end if required</label><textarea rows="2" oninput="xsFields(${n},this.value)" style="width:100%;box-sizing:border-box">${ep((s.fields || []).map(f => f.label + (f.req ? ' *' : '')).join('\n'))}</textarea></div>
       </div>
-      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 980 : 1080}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
+      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 1120 : 1220}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
         ${(s.items || []).map(row).join('')}</div></div>
         <button class="btn btn-sm btn-s ro-ok" onclick="xsAddItem(${n})"><i class="fa-solid fa-plus"></i>Add option</button>
+        <div class="hint" style="margin-top:6px"><b>Icon</b>: leave empty for an automatic icon (Google Play, Steam, Telegram, Visa, bKash… are recognised from the name), or write a Font Awesome icon such as <code>fa-brands fa-steam</code>, <code>fa-brands fa-playstation</code>, <code>fa-solid fa-film</code>, or paste a logo image link starting with https://.</div>
         ${amt ? '<div class="hint" style="margin-top:6px">User pays = amount × rate + fee % + fee ৳. “User sells” = the user sends to the pay-to address and gets amount × rate − fee.</div>' : ''}`}
     </div>`;
   }).join('');
@@ -513,6 +514,7 @@ function xsData(){
   const services = X.services.filter(s => String(s.name || '').trim()).map(s => ({ ...s, id: s.id || 's' + hid(), name: String(s.name).trim().slice(0, 40), short: String(s.short || '').trim().slice(0, 16),
     items: (s.items || []).filter(i => String(i.name || '').trim()).map(i => ({ ...i, id: i.id || 'o' + hid(), name: String(i.name).trim().slice(0, 60) })) }));
   if(services.some(s => s.logo && !/^https:\/\//i.test(s.logo))) throw new Error('Extra services: a logo link must start with https://');
+  if(services.some(s => (s.items || []).some(i => i.icon && /^http:/i.test(i.icon)))) throw new Error('Extra services: an icon image link must start with https://');
   const deals = (X.deals || []).filter(d => d.sid && d.iid && Number(d.price) > 0 && (d.days || []).length).map(d => ({ id: d.id || 'd' + hid(), sid: d.sid, iid: d.iid, price: Math.round(Number(d.price)), days: d.days, on: d.on !== false }));
   return { on: chk('xs-on'), deals, redFriday: { on: chk('xs-r-on'), title: val('xs-r-title') || 'Red Friday', day: Number(val('xs-r-day') || 5), text: val('xs-r-text') }, title: val('xs-title') || 'Extra Services', services,
     perk: { on: chk('xs-p-on'), chargePct: numv('xs-p-pct', 5, 0, 50), chargeMin: numv('xs-p-min', 10, 0, 1e5) },
