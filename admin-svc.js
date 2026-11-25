@@ -47,7 +47,7 @@ const SVD = {
   hub: { home: ['vip', 'checkin', 'spin', 'wallet', 'recharge', 'calc', 'refer', 'history', 'all'], tiles: {} }
 };
 const SV_TILES = [['vip', 'VIP Express'], ['verify', 'Verify Number'], ['checkin', 'Daily Check-in'], ['spin', 'Spin & Win'], ['wallet', 'Wallet'], ['redeem', 'Redeem Code'], ['voucher', 'Gift Voucher'],
-  ['recharge', 'Mobile Recharge'], ['calc', 'Calculator'], ['refer', 'Refer & Earn'], ['history', 'History'], ['profile', 'Profile'],
+  ['recharge', 'Mobile Recharge'], ['telegram', 'Telegram'], ['calc', 'Calculator'], ['refer', 'Refer & Earn'], ['history', 'History'], ['profile', 'Profile'],
   ['loans', 'My Loans'], ['repay', 'Pay Installment'], ['payoff', 'Early Payoff'], ['limit', 'Loan Limit'], ['trust', 'Trust Level'], ['statement', 'Statement (PDF)'], ['budget', 'Budget Planner'], ['compare', 'EMI Compare'],
   ['tips', 'Smart Tips'], ['sponsors', 'Partners & Sites'], ['faq', 'Help Center'], ['fees', 'Fees Explained'], ['safety', 'Stay Safe'], ['callback', 'Call Me Back'], ['offices', 'Our Offices']];
 let _SV = clone(SVD), _ORD = [], _CODES = [], _USES = [];

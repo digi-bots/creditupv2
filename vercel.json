@@ -1,13 +1,41 @@
 {
   "rewrites": [
-    { "source": "/robots.txt", "destination": "/api/seo?f=robots" },
-    { "source": "/sitemap.xml", "destination": "/api/seo?f=sitemap" },
-    { "source": "/manifest.webmanifest", "destination": "/api/seo?f=manifest" }
+    {
+      "source": "/robots.txt",
+      "destination": "/api/seo?f=robots"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/seo?f=sitemap"
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "destination": "/api/seo?f=manifest"
+    }
   ],
   "headers": [
-    { "source": "/sw.js", "headers": [ { "key": "Cache-Control", "value": "no-cache" }, { "key": "Service-Worker-Allowed", "value": "/" } ] }
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
+      ]
+    }
   ],
   "crons": [
-    { "path": "/api/cron/overdue", "schedule": "0 3 * * *" }
+    {
+      "path": "/api/cron/overdue",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/telegram",
+      "schedule": "5 18 * * *"
+    }
   ]
 }

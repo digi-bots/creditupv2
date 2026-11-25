@@ -7657,10 +7657,13 @@ setTimeout(async () => {
 }, 300);
 </script>
 <script src="app-pro.js?v=5"></script>
-<script src="services.js?v=12"></script>
+<script>/* inside Telegram (Mini App): load Telegram's helper first; normal browsers skip it */
+if(/tgWebApp/.test(location.hash + location.search) || window.TelegramWebviewProxy) document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>');</script>
+<script src="services.js?v=13"></script>
 <script src="loans.js?v=3"></script>
 <script src="help.js?v=2"></script>
 <script src="extra.js?v=14"></script>
-<script src="i18n-bn.js?v=16"></script>
+<script src="tgapp.js?v=1"></script>
+<script src="i18n-bn.js?v=17"></script>
 </body>
 </html>
