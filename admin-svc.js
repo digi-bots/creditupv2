@@ -40,6 +40,7 @@ const SVD = {
   spin: { on: true, period: 'month', prizes: [{ id: 'p1', label: '৳5', type: 'balance', value: 5, weight: 30, color: '#1ddb80' }, { id: 'p2', label: 'Try again', type: 'none', value: 0, weight: 35, color: '#4d8fff' }, { id: 'p3', label: '৳10', type: 'balance', value: 10, weight: 18, color: '#ff8c42' }, { id: 'p4', label: '৳20', type: 'balance', value: 20, weight: 8, color: '#a855f7' }, { id: 'p5', label: 'Better luck', type: 'none', value: 0, weight: 7, color: '#5a6b85' }, { id: 'p6', label: '৳50', type: 'balance', value: 50, weight: 2, color: '#ffc94d' }] },
   voucher: { on: true, min: 50, max: 1000, days: 30 },
   codes: { promo: true, redeem: true },
+  bonus: { requireVerified: true },
   loans: { emiMode: 'principal', pay: { on: true }, payoff: { on: true, discountPct: 0, fee: 0 }, limit: { on: true, enforce: false, start: 20000, step: 10000, verifiedBonus: 5000, vipBonus: 10000, max: 0 },
     trust: { on: true, levels: [{ name: 'Bronze', min: 0, perk: 'Welcome to Creditfy' }, { name: 'Silver', min: 30, perk: 'Faster review' }, { name: 'Gold', min: 60, perk: 'Higher loan limit and priority review' }, { name: 'Platinum', min: 85, perk: 'Our best limits and the fastest service' }] },
     budget: { safePct: 40 }, statement: { on: true } },
@@ -149,6 +150,10 @@ function buildSvc(){
     </div>
   </div>
   <div class="pro-pane" data-k="rewards">
+    <div class="cfg-blk" style="border-color:rgba(96,165,250,.45)"><div class="cfg-t"><i class="fa-solid fa-circle-check" style="color:#60a5fa"></i>Who can join offers &amp; rewards</div>
+      <div class="fgrid">${tog('bn-reqv', 'Only Verified members can join offers, events and rewards', 1)}</div>
+      <div class="hint" style="margin-top:6px">When on, users without the Verified badge cannot use Daily check-in, Spin &amp; Win, Redeem codes, Gift vouchers or the Hot Offer, and they are left out of invite prizes, the podium and winner lists (they can still invite friends). Every new user still gets the sign-up bonus and can use it on the fee.</div>
+    </div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-calendar-check"></i>Daily check-in</div>
       <div class="fgrid fgrid3">${tog('ck-on', 'Daily check-in on', 1)}</div>
       <div class="man-sub">Reward for day 1 to 7 of a streak (৳)</div><div id="ckDays" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px"></div>
@@ -374,7 +379,7 @@ async function loadSvc(){
   buildSvc();
   const d = (await window._getDoc('siteConfig', 'services')) || {};
   _SV = clone(SVD);
-  ['vip', 'verify', 'checkin', 'spin', 'voucher', 'codes', 'hub'].forEach(k => Object.assign(_SV[k], d[k] || {}));
+  ['vip', 'verify', 'checkin', 'spin', 'voucher', 'codes', 'bonus', 'hub'].forEach(k => Object.assign(_SV[k], d[k] || {}));
   _SV.tips = Array.isArray(d.tips) ? clone(d.tips) : []; _SV.sponsors = Array.isArray(d.sponsors) ? clone(d.sponsors) : [];
   const Hd = d.help || {}; _SV.help = { useSeoFaq: Hd.useSeoFaq !== false, faq: clone(Hd.faq || []), feesNote: Hd.feesNote || '', safety: { numbers: clone((Hd.safety || {}).numbers || []), tips: clone((Hd.safety || {}).tips || []) }, offices: clone(Hd.offices || []), callback: { on: true, text: '', topics: [], slots: [], ...(Hd.callback || {}) } };
   if(!Array.isArray(_SV.vip.plans) || !_SV.vip.plans.length) _SV.vip.plans = clone(SVD.vip.plans);
@@ -392,7 +397,7 @@ async function loadSvc(){
   if($p('cd-kind')) $p('cd-kind').value = 'redeem';
   fillIn({ 'vp-on': _SV.vip.on !== false, 'vp-hours': _SV.vip.hours, 'vp-normal': _SV.vip.normal, 'vf-on': _SV.verify.on !== false, 'vf-price': _SV.verify.price, 'vf-title': _SV.verify.title, 'vf-text': _SV.verify.text,
     'ck-on': _SV.checkin.on !== false, 'sp-on': _SV.spin.on !== false, 'sp-period': _SV.spin.period || 'month', 'vc-on': _SV.voucher.on !== false, 'vc-min': _SV.voucher.min, 'vc-max': _SV.voucher.max, 'vc-days': _SV.voucher.days,
-    'cd-promo-on': _SV.codes.promo !== false, 'cd-redeem-on': _SV.codes.redeem !== false });
+    'cd-promo-on': _SV.codes.promo !== false, 'cd-redeem-on': _SV.codes.redeem !== false, 'bn-reqv': _SV.bonus.requireVerified !== false });
   vpRender(); ckRender(); spRender(); hbRender(); cdKind();
   proTabStart('services', 'orders');
   afterLoad('services');
@@ -409,6 +414,7 @@ async function saveSvc(){
     spin: { on: chk('sp-on'), period: val('sp-period') || 'month', prizes: _SV.spin.prizes.map(p => ({ id: p.id || 'p' + hid(), label: String(p.label).trim().slice(0, 16), type: p.type || 'balance', value: Math.max(0, Math.round(Number(p.value) || 0)), weight: Math.max(0, Number(p.weight) || 0), color: p.color || '#1ddb80' })) },
     voucher: { on: chk('vc-on'), min: numv('vc-min', 50, 1, 1e6), max: numv('vc-max', 1000, 1, 1e6), days: numv('vc-days', 30, 1, 365) },
     codes: { promo: false, redeem: chk('cd-redeem-on') },
+    bonus: { requireVerified: chk('bn-reqv') },
     hub: { home: _SV.hub.home, tiles: _SV.hub.tiles || {} },
     loans: { emiMode: val('ln-mode') || 'principal', pay: { on: chk('ln-pay') }, payoff: { on: chk('ln-po'), discountPct: numv('ln-pod', 0, 0, 100), fee: numv('ln-pof', 0, 0, 1e6) },
       limit: { on: chk('lm-on'), enforce: chk('lm-enf'), start: numv('lm-start', 20000, 0, 1e8), step: numv('lm-step', 10000, 0, 1e8), verifiedBonus: numv('lm-vf', 5000, 0, 1e8), vipBonus: numv('lm-vip', 10000, 0, 1e8), max: numv('lm-max', 0, 0, 1e9) },

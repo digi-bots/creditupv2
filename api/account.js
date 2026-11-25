@@ -123,8 +123,10 @@ async function notifyReferrer(ref) {
       + (next ? ` ${next.need - active} more to unlock: ${next.prize}.` : ''), 'bonus');
     if (hit) {
       const manual = (((await homeCfg()).winners || {}).mode || 'manual') !== 'auto';
-      if (manual) await notifyUser(ref, 'Target Reached! 🎯', `You reached ${active} active friends for: ${hit.prize}. Winners are chosen by our team — watch the Winners section on the home page!`, 'bonus');
-      else await notifyUser(ref, 'Reward Unlocked! 🏆', `You reached ${active} active friends and unlocked: ${hit.prize}. Contact support to claim it.`, 'bonus');
+      const needV = ((await SVC.cfg()).bonus || {}).requireVerified !== false && (d.data() || {}).phoneVerified !== true;
+      const vNote = needV ? ' Only Verified members can win prizes — get your Verified badge from Quick Services to take part.' : '';
+      if (manual) await notifyUser(ref, 'Target Reached! 🎯', `You reached ${active} active friends for: ${hit.prize}. Winners are chosen by our team — watch the Winners section on the home page!${vNote}`, 'bonus');
+      else await notifyUser(ref, 'Reward Unlocked! 🏆', `You reached ${active} active friends and unlocked: ${hit.prize}. ${needV ? 'Get your Verified badge to claim it.' : 'Contact support to claim it.'}`, 'bonus');
     }
     await balanceState(d, ref, true);   // sends "Balance Offer Unlocked" if 5 more friends freed it again
   } catch (e) { console.warn('referrer notify', e); }
@@ -165,7 +167,7 @@ async function showcaseData() {
   if (_showcaseCache.data && Date.now() - _showcaseCache.at < 60e3) return _showcaseCache.data;
   const store = db();
   const [uSnap, aSnap, tSnap, mainSnap] = await Promise.all([
-    store.collection('users').select('phone', 'name', 'status', 'referredBy', 'createdAt', 'createdBy', 'promoClaimed', 'promoClaimedAt', 'promo', 'removed').get(),
+    store.collection('users').select('phone', 'name', 'status', 'referredBy', 'createdAt', 'createdBy', 'promoClaimed', 'promoClaimedAt', 'promo', 'removed', 'phoneVerified').get(),
     store.collection('applications').select('uid', 'name', 'status', 'loanAmount', 'approvedAt', 'disbursedAt', 'creditedAt', 'statusUpdatedAt', 'submittedAt', 'removed').get(),
     store.collection('transactions').where('status', '==', 'Verified').select('uid', 'appliedBalance', 'verifiedAt', 'submittedAt', 'removed').get(),
     store.collection('siteConfig').doc('main').get()
@@ -207,7 +209,8 @@ async function showcaseData() {
   if (bonus > 0) users.forEach(u => { if (u.createdAt && u.createdBy !== 'admin') events.push({ id: 'j_' + u.phone, kind: 'bonus', phone: u.phone, at: u.createdAt, prize: `৳${bonus} sign-up bonus` }); });
   events.sort((a, b) => String(b.at).localeCompare(String(a.at)));
   const known = new Set(users.map(u => u.phone));
-  const data = { stats, refs, events, names, known };
+  const vset = new Set(users.filter(u => u.phoneVerified === true).map(u => u.phone));
+  const data = { stats, refs, events, names, known, vset };
   _showcaseCache = { at: Date.now(), data };
   return data;
 }
@@ -461,36 +464,39 @@ const actions = {
     const targets = refTargetsFrom(home);
     // manual mode (default): a target winner is shown only after the admin picks them (Home Page → Winners)
     const manual = (W.mode || 'manual') !== 'auto';
+    // prizes, winner lists and offer winners are for Verified members only (Services & Rewards setting)
+    const reqV = ((await SVC.cfg()).bonus || {}).requireVerified !== false;
+    const okV = phone => !reqV || d.vset.has(phone);
     const picked = (W.picked && typeof W.picked === 'object') ? W.picked : {};
     const isPicked = (t, phone) => (Array.isArray(picked[String(t.need)]) ? picked[String(t.need)] : []).includes(phone);
-    const won = (t, r) => r.count >= t.need && (!manual || isPicked(t, r.phone));
+    const won = (t, r) => r.count >= t.need && (!manual || isPicked(t, r.phone)) && okV(r.phone);
     // target events depend on the admin's targets; announced winners must be real, registered users
     const events = [...d.events];
     d.refs.forEach(r => targets.forEach((t, i) => { if (won(t, r)) events.push({ id: `t${i + 1}_` + r.phone, kind: 'target', target: i + 1, phone: r.phone, at: r.joined[t.need - 1] || '', prize: t.prize }); }));
     (Array.isArray(W.announced) ? W.announced : []).forEach(a => {
       const ph = String(a.phone || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
-      if (a.on !== false && d.known.has(ph) && a.prize) events.push({ id: 'a_' + (a.id || ph), kind: 'announce', phone: ph, at: a.at || '', prize: String(a.prize).slice(0, 120), offer: String(a.offer || 'Special offer').slice(0, 60) });
+      if (a.on !== false && d.known.has(ph) && okV(ph) && a.prize) events.push({ id: 'a_' + (a.id || ph), kind: 'announce', phone: ph, at: a.at || '', prize: String(a.prize).slice(0, 120), offer: String(a.offer || 'Special offer').slice(0, 60) });
     });
     events.sort((a, b) => String(b.at).localeCompare(String(a.at)));
     const hidden = new Set(Array.isArray(W.hidden) ? W.hidden : []);
     const person = (phone, extra) => ({ id: 'u_' + phone, name: shortName(d.names[phone], phone), ...(admin ? { phone, hidden: hidden.has('u_' + phone) } : {}), ...extra });
     const keep = x => admin || !hidden.has(x.id);
-    const out = { mode: manual ? 'manual' : 'auto' };
+    const out = { mode: manual ? 'manual' : 'auto', requireVerified: reqV };
     if (S.on !== false || admin) out.stats = { ...d.stats };
     if (W.on !== false || admin) {
       const top = Math.min(10, Math.max(1, Number(W.leaderCount) || 3));
-      out.leaders = d.refs.filter(r => keep({ id: 'u_' + r.phone })).slice(0, top).map((r, i) => person(r.phone, { rank: i + 1, count: r.count }));
+      out.leaders = d.refs.filter(r => keep({ id: 'u_' + r.phone }) && okV(r.phone)).slice(0, top).map((r, i) => person(r.phone, { rank: i + 1, count: r.count }));
       const perTarget = Math.min(20, Math.max(1, Number(W.targetCount) || 5));
       out.targets = targets.map((t, i) => {
         const all = d.refs.filter(r => won(t, r) && keep({ id: 'u_' + r.phone }));
         const out1 = { level: i + 1, need: t.need, prize: t.prize, total: all.length, winners: all.slice(0, perTarget).map(r => person(r.phone, { count: r.count })) };
         // the admin also sees everyone who reached the target, to choose the winners from
-        if (admin) out1.eligible = d.refs.filter(r => r.count >= t.need).map(r => ({ phone: r.phone, name: String(d.names[r.phone] || ''), count: r.count, at: r.joined[t.need - 1] || '', picked: isPicked(t, r.phone) }));
+        if (admin) out1.eligible = d.refs.filter(r => r.count >= t.need).map(r => ({ phone: r.phone, name: String(d.names[r.phone] || ''), count: r.count, at: r.joined[t.need - 1] || '', picked: isPicked(t, r.phone), verified: d.vset.has(r.phone) }));
         return out1;
       });
       const kinds = { hot: true, target: true, balance: true, bonus: false, announce: true, ...(W.kinds || {}) };
       const feedN = Math.min(40, Math.max(1, Number(W.feedCount) || 10));
-      out.feed = events.filter(e => kinds[e.kind] && keep(e) && keep({ id: 'u_' + e.phone })).slice(0, admin ? 40 : feedN)
+      out.feed = events.filter(e => kinds[e.kind] && keep(e) && keep({ id: 'u_' + e.phone }) && (!['hot', 'target', 'announce'].includes(e.kind) || okV(e.phone))).slice(0, admin ? 40 : feedN)
         .map(e => ({ id: e.id, kind: e.kind, target: e.target || 0, prize: e.prize, offer: e.offer || '', at: e.at, name: shortName(d.names[e.phone], e.phone), ...(admin ? { hidden: hidden.has(e.id) } : {}) }));
     }
     let R = {};
@@ -649,6 +655,7 @@ const actions = {
     const f = await fomoCfg();
     if (!f.on || f.ended) return [200, { result: 'closed' }];
     const u = d.data();
+    if (((await SVC.cfg()).bonus || {}).requireVerified !== false && u.phoneVerified !== true) return [200, { result: 'verify' }];
     const mine = f.round === 1 ? u.promoClaimed === true : Number(u.promoRound) === f.round;
     if (mine) return [200, { result: 'already' }];
     if ((await fomoClaims(f.round)) >= f.limit) return [200, { result: 'full' }];

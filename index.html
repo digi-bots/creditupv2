@@ -3626,6 +3626,7 @@ async function claimFomoOffer() {
     const res = (typeof window.claimOffer === 'function') ? await window.claimOffer(u.phone) : 'error';
     const F = window._fomo || FOMO_DEF, strip = t => _fomoTxt(t).replace(/<[^>]+>/g, '');
     if(res === 'full' || res === 'closed'){ showAlert('Offer Ended', strip(F.endedText || FOMO_DEF.endedText), 'info'); const b=document.getElementById('hotOfferBanner'); if(b) b.style.display = 'none'; return; }
+    if(res === 'verify'){ showAlert('Verified Members Only ✨', 'Offers and events are for Verified members. Get your Verified badge once and join every offer, event and reward.', 'info', () => { if(window.svGo) svGo('verify'); }); return; }
     if(res === 'already'){ showAlert('Already Claimed', 'You have already claimed this offer. It will be added to your next loan application.', 'info'); return; }
     if(res !== 'ok'){ showAlert('Error', 'The offer cannot be claimed right now. Please try again in a moment.', 'error'); return; }
     window._promoClaimed = true;
@@ -7648,9 +7649,9 @@ setTimeout(async () => {
 }, 300);
 </script>
 <script src="app-pro.js?v=3"></script>
-<script src="services.js?v=2"></script>
+<script src="services.js?v=3"></script>
 <script src="loans.js?v=2"></script>
 <script src="help.js?v=2"></script>
-<script src="i18n-bn.js?v=2"></script>
+<script src="i18n-bn.js?v=3"></script>
 </body>
 </html>
