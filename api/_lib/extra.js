@@ -352,7 +352,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const used = {}; all.docs.forEach(x => { used[x.data().tid] = (used[x.data().tid] || 0) + 1; });
       const tasks = C.jobs.tasks.filter(t => t.on && (!t.until || new Date(t.until).getTime() > now)).map(t => ({ ...t, left: t.slots ? Math.max(0, t.slots - (used[t.id] || 0)) : null, mine: my[t.id] || null }));
       const earned = mine.docs.filter(x => x.data().status === 'Approved').reduce((a, x) => a + (Number(x.data().reward) || 0), 0);
-      return [200, { on: C.jobs.on, tasks, earned, needVerify: S.bonus.requireVerified !== false && u.phoneVerified !== true && !SVC.vipState(u), balance: Number(u.balance) || 0 }];
+      return [200, { on: C.jobs.on, tasks, earned, needVerify: S.bonus.requireVerified !== false && u.phoneVerified !== true && !SVC.vipState(u), xbal: Number(u.xbal) || 0 }];
     }),
     jobSubmit: wrap(async (b, uid) => {
       const { u } = await me(uid);
@@ -381,11 +381,10 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const o = s.data(); if (o.status !== 'Pending') return [400, { error: 'Already ' + o.status + '.' }];
       if (b.op === 'approve') {
         const ud = await findUserDoc(o.uid); if (!ud) return [404, { error: 'The user no longer exists.' }];
-        // Micro Jobs is a Quick Service: the reward goes to the Creditfy balance
-        await ref.update({ status: 'Approved', decidedAt: iso(), decidedBy: user.uid });
-        await SVC.credit(ud.ref, o.uid, o.reward, 'task', `Task: ${o.title}`, { taskId: o.tid });
+        // Micro Jobs is in Extra Services: the reward goes to the Extra Balance
+        await xcredit(ud.ref, o.uid, o.reward, 'task', `Task: ${o.title}`, { taskId: o.tid }, t => t.update(ref, { status: 'Approved', decidedAt: iso(), decidedBy: user.uid }));
         await feed(o.uid, `earned ৳${o.reward} from a task`, { icon: 'fa-solid fa-briefcase', color: 'g-orange' });
-        await notifyUser(o.uid, 'Task approved 💼', `“${o.title}” is approved — ৳${o.reward} is added to your Creditfy balance.`, 'success');
+        await notifyUser(o.uid, 'Task approved 💼', `“${o.title}” is approved — ৳${o.reward} is added to your Extra Balance.`, 'success');
       } else if (b.op === 'reject') {
         const reason = str(b.reason, 200);
         await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });

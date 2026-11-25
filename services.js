@@ -247,6 +247,10 @@ const css = `
 .vpop .row.lk i{background:rgba(214,160,72,.18);color:#f3c46b}.vpop .row.ok i{background:rgba(29,219,128,.15);color:var(--p)}
 .vpop .row b{display:block;color:#fff;font-size:13px}
 .vpop .acts{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+@media (min-height:0){.vpop{align-items:center;padding:16px}.vpop .card{max-width:350px;border-radius:24px;padding:18px 16px 12px;max-height:84dvh}
+  .vpop .big{font-size:40px}.vpop h3{font-size:17px;margin:8px 0 4px}.vpop .sub{font-size:12px;line-height:1.5;margin-bottom:10px}
+  .vpop .row{padding:7px 10px;font-size:11.5px;margin-bottom:6px;border-radius:12px}.vpop .row b{font-size:12px}.vpop .row i{width:22px;height:22px;font-size:11px}.vpop .acts{margin-top:10px;gap:4px}.vpop .x{top:10px;right:10px;width:30px;height:30px}}
+body:has(#vPop) .hot-offer-floating,body:has(#vPop) .pw-bar{opacity:0!important;pointer-events:none!important}
 .vpop .later{border:0;background:none;color:#8fa3c4;font-weight:700;font-size:13px;padding:8px;cursor:pointer;font-family:inherit}
 @media (prefers-reduced-motion:reduce){.vlock::after,.vbtn::after,.vf-chip.off,.vf-chip.off::after,.vf-chip.off b,.vf-chip.off .tw{animation:none}}
 `;
@@ -281,7 +285,6 @@ const T = {
   redeem:   { l: 'Redeem Code', ic: 'ticket', g: 'g-purple', cat: 'rewards', login: true, page: 'redeem' },
   voucher:  { l: 'Gift Voucher', ic: 'gift', g: 'g-red', cat: 'rewards', login: true, page: 'voucher' },
   recharge: { l: 'Mobile Recharge', ic: 'mobile-screen-button', g: 'g-green', cat: 'account', login: true, page: 'recharge', badge: 'VIP' },
-  jobs:     { l: 'Micro Jobs', ic: 'briefcase', g: 'g-orange', cat: 'rewards', login: true, page: 'jobs', badge: 'EARN' },
   lang:     { l: 'Language', ic: 'language', g: 'g-teal', cat: 'account', page: 'lang' },
   all:      { l: 'All Services', ic: 'grip', g: 'g-slate', cat: '', page: 'all' }
 };
@@ -289,7 +292,7 @@ const T = {
 window._svcTiles = T;
 window._svcPages = window._svcPages || {};
 const CATS = [['premium', 'Premium', 'crown'], ['rewards', 'Rewards', 'gift'], ['loans', 'Loans', 'hand-holding-dollar'], ['help', 'Help & Info', 'circle-question'], ['account', 'Account', 'user']];
-const HOME_DEF = ['vip', 'checkin', 'spin', 'wallet', 'recharge', 'jobs', 'calc', 'refer', 'history', 'all'];
+const HOME_DEF = ['vip', 'checkin', 'spin', 'wallet', 'recharge', 'calc', 'refer', 'history', 'all'];
 
 // offers, events and rewards are for Verified members (Admin → Services & Rewards); the sign-up bonus stays for everyone
 const VONLY = ['checkin', 'spin', 'redeem', 'voucher'];
@@ -311,7 +314,7 @@ function tileHtml(k){
   const t = T[k], c = tileCfg(k), badge = c.badge !== undefined ? c.badge : (t.badge || '');
   // Mobile Recharge and Micro Jobs: Verified or VIP members
   const vv = !!user() && !!SV.st && SV.st.verified !== true && !SV.st.vip;
-  const lk = (VONLY.includes(k) && needsV()) || (k === 'recharge' && vv) || (k === 'jobs' && vv && needsV());
+  const lk = (VONLY.includes(k) && needsV()) || (k === 'recharge' && vv);
   const dot = !lk && ((k === 'checkin' && SV.st && SV.st.checkin && !SV.st.checkin.doneToday) || (k === 'spin' && SV.st && SV.st.spin && SV.st.spin.canSpin));
   return `<div class="sv-tile${lk ? ' locked' : ''}" onclick="svGo('${k}')">${lk ? '<em class="sv-lockb"><i class="fa-solid fa-lock"></i>VERIFIED</em>' : badge ? `<em class="sv-bdg${t.gold ? ' gold' : ''}">${E(badge)}</em>` : dot ? '<em class="sv-dot"></em>' : ''}<div class="sv-ic ${t.g}"><i class="fa-solid fa-${t.ic}"></i></div><span>${E(c.label || t.l)}</span></div>`;
 }
@@ -702,6 +705,7 @@ function vPopShow(){
   document.body.appendChild(d); requestAnimationFrame(() => d.classList.add('on'));
   try { localStorage.setItem('cf_vpop_' + (user() || {}).phone, String(Date.now())); } catch (e) {}
 }
+window._vPopShow = () => vPopShow();
 window.vPopClose = function(){ const d = $s('vPop'); if(!d) return; d.classList.remove('on'); setTimeout(() => d.remove(), 300); };
 // fresh login → show now; otherwise at most once a day; never while verification is pending
 async function vPopMaybe(fresh){

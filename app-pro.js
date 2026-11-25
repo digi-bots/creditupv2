@@ -243,17 +243,21 @@ function _pwInit(cfg){
   const P = { on: true, prompt: true, promptText: 'Install the Creditfy app — opens faster and works like a real app.', btn: 'Install', delay: 15, iosHint: true, ...((cfg || {}).pwa || {}) };
   if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('/sw.js').catch(() => {});
   if(P.on === false || P.prompt === false || _standalone()) return;
+  // closed before: it waits as a small tab on the side of the screen instead of the full bar
   let last = 0; try{ last = Number(localStorage.getItem('cu_pw_dismiss') || 0); }catch(e){}
-  if(Date.now() - last < 7 * 864e5) return;
+  const asTab = Date.now() - last < 7 * 864e5;
   setTimeout(() => {
     if(_standalone() || (!_bip && !(_ios() && P.iosHint !== false))) return;
     let bar = _ap('pwBar');
     if(!bar){ bar = document.createElement('div'); bar.id = 'pwBar'; bar.className = 'pw-bar'; document.body.appendChild(bar); }
     bar.innerHTML = `<div class="pw-ic"><img src="/icons/icon-192.png" alt="" onerror="this.remove()"></div><div class="pw-t">${_ae(P.promptText)}</div><button class="pw-go" type="button">${_ae(P.btn || 'Install')}</button><button class="pw-x" type="button" aria-label="Not now"><i class="fa-solid fa-xmark"></i></button>`;
     bar.querySelector('.pw-go').onclick = () => window.cuInstall();
-    bar.querySelector('.pw-x').onclick = () => { _pwHide(); try{ localStorage.setItem('cu_pw_dismiss', String(Date.now())); }catch(e){} };
+    bar.insertAdjacentHTML('beforeend', '<button class="pw-tab" type="button" aria-label="Install the app"><img src="/icons/icon-192.png" alt="" onerror="this.remove()"><span>App</span></button>');
+    bar.querySelector('.pw-x').onclick = () => { bar.classList.add('tab'); try{ localStorage.setItem('cu_pw_dismiss', String(Date.now())); }catch(e){} };
+    bar.querySelector('.pw-tab').onclick = () => bar.classList.remove('tab');
+    if(asTab) bar.classList.add('tab');
     requestAnimationFrame(() => bar.classList.add('on'));
-  }, Math.max(0, Number(P.delay) || 0) * 1000);
+  }, asTab ? 4000 : Math.max(0, Number(P.delay) || 0) * 1000);
 }
 // shortcuts from the installed app icon (long-press menu): ?go=apply, ?go=calc
 function _goShortcut(){

@@ -155,8 +155,26 @@ const css = `
 .mj-t .r{text-align:right;flex:none}.rw{display:inline-block;font-weight:900;font-size:14px;color:#1ddb80}
 .mj-st{display:block;margin-top:3px;font-size:10px;font-weight:900}.mj-st.ok{color:var(--p)}.mj-st.wait{color:#ffae6b}.mj-st.no{color:#ff8fa3}.mj-st.full{color:var(--txt3)}
 .mj-dh{display:flex;gap:13px;align-items:center;margin-bottom:12px}.mj-dh .xs-lg{width:56px;height:56px;font-size:24px;flex:none}.mj-dh h4{margin:0 0 5px;font-size:16px;color:var(--txt)}
+/* square, realistic 3D glass icons (Quick Services + Extra Services) */
+.sv-ic,.xs-lg{border-radius:14px!important;position:relative;overflow:hidden;
+  box-shadow:0 10px 18px -6px rgba(0,0,0,.55),0 3px 6px rgba(0,0,0,.35),inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -4px 8px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.18)!important}
+.sv-ic::before,.xs-lg::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(160deg,rgba(255,255,255,.38) 0%,rgba(255,255,255,.10) 38%,rgba(255,255,255,0) 52%,rgba(0,0,0,.10) 100%);pointer-events:none;z-index:1}
+.sv-ic::after,.xs-lg::after{content:""!important;position:absolute!important;left:8%!important;right:8%!important;top:5%!important;height:42%!important;border-radius:10px 10px 50% 50%/10px 10px 22% 22%!important;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.04))!important;pointer-events:none;z-index:1}
+.sv-ic i,.xs-lg i{position:relative;z-index:2;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35)) drop-shadow(0 0 6px rgba(255,255,255,.25))}
+.xs-lg.img::before,.xs-lg.img::after{opacity:.6}
+.sv-tile .sv-ic,.xs-t .xs-lg{transition:transform .2s}
+@media (hover:hover){.sv-tile:hover .sv-ic,.xs-t:hover .xs-lg{transform:translateY(-2px) rotate(-2deg)}}
+.xs-t .bd.earn{background:linear-gradient(135deg,#ffb35c,#ff7a2f);color:#2a1300}
+/* Extra Balance notice */
+.xb-note{display:flex;align-items:center;gap:10px;border-radius:16px;padding:10px 10px 10px 12px;margin:0 0 12px;background:linear-gradient(135deg,rgba(255,215,106,.16),rgba(242,169,29,.06));border:1px solid rgba(255,215,106,.55)}
+.xb-note>i{flex:none;font-size:18px;color:#ffd76a}
+.xb-note b{display:block;font-size:12.5px;color:#ffe9a8}.xb-note span{display:block;font-size:11px;color:#d9c9a0;line-height:1.45;margin-top:1px}
+.xb-note button{flex:none;border:0;border-radius:11px;padding:8px 11px;font-weight:900;font-size:12px;cursor:pointer;font-family:inherit;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d);display:inline-flex;gap:5px;align-items:center}
+.xb-note.empty{animation:xbPulse 2.2s ease-in-out infinite}
+@keyframes xbPulse{50%{box-shadow:0 0 0 4px rgba(255,215,106,.15);border-color:#ffd76a}}
+.xs-perk{padding:10px 12px!important}.xs-perk .sl{font-size:28px!important}.xs-perk b{font-size:12.5px!important}.xs-perk p{font-size:11px!important}
 /* one slim-bordered box per home section */
-.hs-box{position:relative;border-radius:24px;padding:4px 12px 14px;margin:22px 0 18px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(170deg,rgba(255,255,255,.035),rgba(255,255,255,.008));box-shadow:0 12px 30px rgba(0,0,0,.22)}
+.hs-box{position:relative;border-radius:24px;padding:4px 10px 12px;margin:26px -8px 22px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(170deg,rgba(255,255,255,.035),rgba(255,255,255,.008));box-shadow:0 12px 30px rgba(0,0,0,.22)}
 .hs-box .quick-actions-title{margin-top:16px}
 .hs-box .qa-grid{margin-bottom:6px}
 .hs-box.qs{border-color:rgba(29,219,128,.22)}
@@ -167,7 +185,10 @@ const css = `
 .hs-tag{position:absolute;top:-10px;left:16px;z-index:2;display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:900;letter-spacing:.3px;padding:3px 9px;border-radius:9px;background:#0b1424;border:1px solid rgba(29,219,128,.35);color:var(--p)}
 .hs-box.xs>.hs-tag{border-color:rgba(255,215,106,.4);color:#ffd76a}
 #liveBlock,#statsBlock,#winBlock{border-radius:24px;padding:12px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(170deg,rgba(255,255,255,.035),rgba(255,255,255,.008))}
-#liveBlock{margin-bottom:18px}
+#liveBlock{margin:0 -8px 22px}#statsBlock,#winBlock{margin-left:-8px;margin-right:-8px}
+#screen-home .home-body>.ln-note,#screen-home .home-body>#pushCard,#screen-home .home-body>.info-card,#screen-home .home-body>#userStatusCard{margin-left:-8px;margin-right:-8px}
+#screen-home .home-body>.info-card{margin-top:4px;margin-bottom:22px;border-radius:24px}
+#screen-home #liveSection{margin-top:0!important}
 #xsBlock.hs-box::before{display:none}
 /* premium section v2 */
 .xs-head{position:relative;overflow:hidden;border-radius:22px;padding:15px 14px 13px;margin:22px 0 12px;background:radial-gradient(120% 120% at 0% 0%,rgba(255,215,106,.20),transparent 55%),radial-gradient(120% 140% at 100% 100%,rgba(77,143,255,.22),transparent 55%),linear-gradient(150deg,#141b30,#0b1222);border:1px solid rgba(255,215,106,.28);box-shadow:0 16px 36px rgba(0,0,0,.35)}
@@ -291,7 +312,7 @@ const sealHtml = () => { try { return window._svSeal ? window._svSeal() : '<i cl
 function perkBanner(){
   const P = PK(); if(!P.on) return '';
   if(user() && isV()) return `<div class="xs-perk on"><span class="sl">${sealHtml()}</span><div><b>${X.xb && X.xb.vip && !X.xb.verified ? 'VIP Exclusive is active' : 'Verified Exclusive is active'}</b><p>You pay no service charge and no transaction fee on every Extra Service.</p></div><span class="go">0% fee ✓</span></div>`;
-  return `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Verified Exclusive: 0% charge · 0 fee</b><p>Verified and VIP members pay no service charge${P.chargePct ? ` (${P.chargePct}%)` : ''} and no transaction fee on exchange, gift cards, SMM and every Extra Service.</p></div><span class="go">Get Verified</span></div>`;
+  return `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Verified Exclusive: 0% charge · 0 fee</b><p>Verified &amp; VIP members pay no service charge${P.chargePct ? ` (${P.chargePct}%)` : ''} or transaction fee here.</p></div><span class="go">Get Verified</span></div>`;
 }
 // processing-time notice for loans (home page, after applying, application details)
 function loanNote(){
@@ -361,14 +382,21 @@ function render(){
       <div class="t"><div><div class="xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em></div><small>Gift cards, exchange, social &amp; digital services — paid from your Extra Balance</small></div></div>
       <div class="a">${W.on !== false ? `<button class="xs-bal" onclick="svGo('x_wallet')"><i class="fa-solid fa-wallet"></i><span><small>Extra Balance</small>${user() && X.xb ? tk(X.xb.xbal) : 'Open'}</span><i class="p fa-solid fa-plus"></i></button>` : ''}<button class="xs-ord" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button></div>
     </div>
+    ${xbNotice()}
     ${perkBanner()}
     ${redTile()}
     ${dealCard()}
     ${hotRow()}
     <div class="xs-cat"><span>All services</span></div>
-    <div class="xs-grid">${Ls.map(tile).join('')}</div>
+    <div class="xs-grid">${(X.cfg.jobs || {}).on !== false ? `<div class="xs-t" onclick="svGo('jobs')"><span class="bd earn">EARN</span><div class="xs-lg g-orange"><i class="fa-solid fa-briefcase"></i></div><b>Micro Jobs</b></div>` : ''}${Ls.map(tile).join('')}</div>
     <div id="xsLive"></div>`;
   drawLive();
+}
+// clear notice: everything in this section is paid from the Extra Balance, so deposit first
+function xbNotice(){
+  if((X.cfg.wallet || {}).on === false) return '';
+  const bal = user() && X.xb ? Number(X.xb.xbal) || 0 : null, empty = bal !== null && bal <= 0;
+  return `<div class="xb-note${empty ? ' empty' : ''}"><i class="fa-solid fa-circle-exclamation"></i><div><b>Paid from your Extra Balance only</b><span>Extra Services are charged from your Extra Balance — not your Creditfy balance. ${empty ? 'Your Extra Balance is ৳0 — deposit first to order.' : 'Keep it topped up to order in one tap.'}</span></div><button onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Deposit</button></div>`;
 }
 // a sliding row of everything on offer right now (offer price or today's deal)
 function hotRow(){
@@ -626,7 +654,7 @@ async function jobsPage(){
   if(!d.on){ show('Micro Jobs', '<div class="sv-empty">Micro jobs are switched off right now.</div>'); return; }
   const types = [...new Set(d.tasks.map(t => t.type))];
   const open = d.tasks.filter(t => !t.mine || t.mine.status === 'Rejected').length;
-  show('Micro Jobs', `<div class="mj-hero"><div><small>EARNED FROM TASKS</small><b>${tk(d.earned)}</b><span>${open} task${open === 1 ? '' : 's'} open · rewards go to your Creditfy balance</span></div><i class="fa-solid fa-briefcase"></i></div>
+  show('Micro Jobs', `<div class="mj-hero"><div><small>EARNED FROM TASKS</small><b>${tk(d.earned)}</b><span>${open} task${open === 1 ? '' : 's'} open · rewards go to your Extra Balance</span></div><i class="fa-solid fa-briefcase"></i></div>
     ${d.needVerify ? `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Get Verified to earn</b><p>Task rewards are for Verified and VIP members. You can look at the tasks now.</p></div><span class="go">Get Verified</span></div>` : ''}
     ${types.length > 1 ? `<div class="xs-chips"><button class="${!X.jf ? 'on' : ''}" onclick="X_jf('')">All</button>${types.map(t => `<button class="${X.jf === t ? 'on' : ''}" onclick="X_jf('${t}')">${(JT[t] || JT.other)[2]}</button>`).join('')}</div>` : ''}
     <div id="mjList"></div>`);
@@ -649,7 +677,7 @@ function jobPage(){
   show(t.title, `<div class="mj-dh"><div class="xs-lg ${m[1]}"><i class="${m[0]}"></i></div><div><h4>${E(t.title)}</h4><span class="rw">Reward +${tk(t.reward)}</span></div></div>
     ${t.steps ? `<div class="sv-card"><h4>What to do</h4><p style="white-space:pre-line">${E(t.steps)}</p></div>` : ''}
     ${t.link ? `<a class="sv-btn ghost" href="${E(t.link)}" target="_blank" rel="noopener nofollow" style="display:flex;text-decoration:none"><i class="fa-solid fa-arrow-up-right-from-square"></i>Open the task</a>` : ''}
-    ${done ? '<div class="sv-card" style="text-align:center"><h4 style="color:var(--p)">Done ✓</h4><p>The reward is in your Creditfy balance.</p></div>'
+    ${done ? '<div class="sv-card" style="text-align:center"><h4 style="color:var(--p)">Done ✓</h4><p>The reward is in your Extra Balance.</p></div>'
       : wait ? '<div class="sv-card" style="text-align:center"><h4 style="color:#ffae6b">Being checked</h4><p>We are checking your proof. The reward is added as soon as it is approved.</p></div>'
       : t.left === 0 ? '<div class="sv-empty">All places for this task are taken.</div>'
       : `${t.mine && t.mine.reason ? `<div class="sv-card"><p style="color:#ff8fa3">Last time: ${E(t.mine.reason)}</p></div>` : ''}<span class="sv-lbl" style="margin-top:12px">Proof: ${E(t.proof)}</span><textarea class="sv-in" id="mjProof" rows="3" maxlength="400" style="height:auto;padding:12px" placeholder="${E(t.proof)}"></textarea>
