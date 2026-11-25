@@ -227,7 +227,7 @@ const css = `
 @keyframes vWarn{50%{box-shadow:0 0 0 3px rgba(214,160,72,.18);border-color:rgba(240,190,100,.85)}}
 .vf-warn .lg,.vf-warn .sh{display:inline-block;line-height:14px;transform:translateY(.5px)}
 .vf-warn .sh{display:none}
-@media (max-width:380px){.vf-warn .lg{display:none}.vf-warn .sh{display:inline}#appBar .ab-name.has-warn h3{font-size:15px}}
+@media (max-width:340px){.vf-warn .lg{display:none}.vf-warn .sh{display:inline}#appBar .ab-name.has-warn h3{font-size:15px}}
 .vf-chip.off,.vf-chip.wait{gap:6px;padding:4px 10px 4px 5px;border-radius:20px;border:1px solid rgba(214,160,72,.6);background:rgba(185,130,40,.15);box-shadow:none;animation:none;color:#e9b85a}
 .vf-chip.off::after{display:none}
 .vf-chip.off b{background:none;-webkit-text-fill-color:#e9b85a;color:#e9b85a;animation:none;font-size:10.5px;letter-spacing:.2px}
@@ -280,6 +280,7 @@ const T = {
   wallet:   { l: 'Wallet', ic: 'wallet', g: 'g-teal', cat: 'rewards', login: true, page: 'wallet' },
   redeem:   { l: 'Redeem Code', ic: 'ticket', g: 'g-purple', cat: 'rewards', login: true, page: 'redeem' },
   voucher:  { l: 'Gift Voucher', ic: 'gift', g: 'g-red', cat: 'rewards', login: true, page: 'voucher' },
+  lang:     { l: 'Language', ic: 'language', g: 'g-teal', cat: 'account', page: 'lang' },
   all:      { l: 'All Services', ic: 'grip', g: 'g-slate', cat: '', page: 'all' }
 };
 // other parts of the app (loan tools, help pages) add their own tiles here
@@ -300,7 +301,7 @@ function lockCard(what){
     <button class="vbtn" onclick="svGo('verify')">${seal()}Get Verified</button>`}</div>`;
 }
 function tileCfg(k){ const h = (SV.cfg && SV.cfg.hub && SV.cfg.hub.tiles) || {}; return h[k] || {}; }
-function tileOn(k){ const t = T[k]; if(!t) return false; if(k === 'all') return true; const c = tileCfg(k); if(c.on === false) return false;
+function tileOn(k){ const t = T[k]; if(!t) return false; if(k === 'all') return true; if(k === 'lang') return window._langOn !== false; const c = tileCfg(k); if(c.on === false) return false;
   const C = SV.cfg || {}; if(k === 'vip' && C.vip && C.vip.on === false) return false; if(k === 'verify' && C.verify && C.verify.on === false) return false;
   if(k === 'checkin' && C.checkin && C.checkin.on === false) return false; if(k === 'spin' && C.spin && C.spin.on === false) return false;
   if(k === 'voucher' && C.voucher && C.voucher.on === false) return false; if(k === 'redeem' && C.codes && C.codes.redeem === false) return false; return true; }
@@ -313,7 +314,9 @@ function tileHtml(k){
 function renderHub(){
   const g = document.querySelector('.qa-grid'); if(!g) return;
   const order = (SV.cfg && SV.cfg.hub && Array.isArray(SV.cfg.hub.home) && SV.cfg.hub.home.length) ? SV.cfg.hub.home : HOME_DEF;
-  let keys = order.filter(k => k !== 'all' && tileOn(k)).slice(0, 7);
+  // the admin's tiles, then Language, then All Services (always the last two)
+  let keys = order.filter(k => k !== 'all' && k !== 'lang' && tileOn(k)).slice(0, 6);
+  if(tileOn('lang')) keys.push('lang');
   keys.push('all');
   g.classList.add('sv-hub');
   g.innerHTML = keys.map(tileHtml).join('');
@@ -354,6 +357,14 @@ const loading = '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spi
 
 /* ───────── pages ───────── */
 const PAGES = {
+  // language: two big choices; the choice is remembered on this phone
+  lang(){
+    const cur = document.documentElement.lang === 'bn' ? 'bn' : 'en';
+    const opt = (v, flag, name, sub) => `<div class="sv-card" data-noi18n onclick="svLang('${v}')" style="cursor:pointer;display:flex;align-items:center;gap:14px;${cur === v ? 'border-color:rgba(29,219,128,.6);box-shadow:0 0 0 3px rgba(29,219,128,.15)' : ''}">
+      <div style="font-size:30px">${flag}</div><div style="flex:1"><h4 style="margin:0">${name}</h4><p>${sub}</p></div>${cur === v ? '<i class="fa-solid fa-circle-check" style="color:var(--p);font-size:22px"></i>' : '<i class="fa-regular fa-circle" style="color:var(--txt3);font-size:22px"></i>'}</div>`;
+    show(cur === 'bn' ? 'ভাষা' : 'Language', opt('en', '🇬🇧', 'English', 'Use the app in English') + opt('bn', '🇧🇩', 'বাংলা', 'অ্যাপটি বাংলায় ব্যবহার করুন')
+      + `<div style="font-size:11.5px;color:var(--txt2);text-align:center;margin-top:6px" data-noi18n>${cur === 'bn' ? 'আপনার বাছাই এই ফোনে মনে থাকবে।' : 'Your choice is remembered on this phone.'}</div>`);
+  },
   all(){
     const html = CATS.map(([c, name, ic]) => { const ks = Object.keys(T).filter(k => T[k].cat === c && tileOn(k)); if(!ks.length) return '';
       return `<div class="sv-cat"><i class="fa-solid fa-${ic}"></i> ${name}</div><div class="qa-grid sv-hub" style="margin:0">${ks.map(tileHtml).join('')}</div>`; }).join('');
@@ -503,6 +514,7 @@ const PAGES = {
     window._payData = { kind, plan: plan ? plan.id : '', price, payMethod: cur.w.name, toNumber: opt.number };
   }
 };
+window.svLang = function(v){ if(window.setLang) setLang(v); toast(v === 'bn' ? 'ভাষা: বাংলা' : 'Language: English'); setTimeout(() => { svClose(); renderHub(); }, 350); };
 window.svPage = k => { const P = PAGES[k] || window._svcPages[k]; if(P) P(); };
 window.svToastOk = m => toast(m);
 

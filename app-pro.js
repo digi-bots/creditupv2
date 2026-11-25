@@ -145,7 +145,9 @@ function _langInit(cfg){
   _CUSTOM = {}; (L.custom || []).forEach(x => { if(x && x.en && x.bn) _CUSTOM[String(x.en).replace(/\s+/g, ' ').trim()] = x.bn; });
   let saved = null; try{ saved = localStorage.getItem('cu_lang'); }catch(e){}
   const acts = document.querySelector('#appBar .ab-acts');
-  if(L.on !== false && L.showSwitch !== false && acts && !_ap('langSw')){
+  window._langOn = L.on !== false;
+  // the language switch now lives in Quick Services (the last tile), so the top bar has room for the full number
+  if(false && L.on !== false && L.showSwitch !== false && acts && !_ap('langSw')){
     const b = document.createElement('button'); b.id = 'langSw'; b.className = 'lang-sw'; b.type = 'button'; b.setAttribute('data-noi18n', '');
     b.onclick = () => setLang(_LANG === 'bn' ? 'en' : 'bn'); acts.insertBefore(b, acts.firstChild);
   }
@@ -165,7 +167,7 @@ function _langAsk(){
     #langAsk button.p{background:linear-gradient(135deg,#1ddb80,#0fbb65);color:#03210f;border:0}`;
   document.head.appendChild(st);
   const d = document.createElement('div'); d.id = 'langAsk'; d.setAttribute('data-noi18n', '');
-  d.innerHTML = '<b>বাংলায় দেখতে চান?</b><p>উপরের বাং / EN বাটন দিয়ে যেকোনো সময় ভাষা বদলাতে পারবেন।</p><div class="r"><button class="p" type="button" id="laBn">বাংলা</button><button type="button" id="laEn">English</button></div>';
+  d.innerHTML = '<b>বাংলায় দেখতে চান?</b><p>পরে যেকোনো সময় Quick Services-এর শেষে Language থেকে বদলাতে পারবেন।</p><div class="r"><button class="p" type="button" id="laBn">বাংলা</button><button type="button" id="laEn">English</button></div>';
   document.body.appendChild(d); requestAnimationFrame(() => d.classList.add('on'));
   const done = l => { setLang(l); d.classList.remove('on'); setTimeout(() => d.remove(), 350); };
   _ap('laBn').onclick = () => done('bn'); _ap('laEn').onclick = () => done('en');
