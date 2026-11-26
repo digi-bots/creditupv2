@@ -163,14 +163,24 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
         return { ok: true, title: chat.title, username: chat.username || '', id: chat.id, type: chat.type, admin: ['administrator', 'creator'].includes(m.status), canPost: m.can_post_messages !== false, canDelete: !!m.can_delete_messages, members: n }; } catch (e) { return { ok: false, error: e.message }; } };
       const [channel, group] = await Promise.all([check(S.channel), check(S.group)]);
       const site = S.siteUrl;
-      return [200, { configured: true, bot: { id: me.id, username: me.username, name: me.first_name }, webhook: { url: hook.url || '', ok: (hook.url || '') === site + '/api/telegram', pending: hook.pending_update_count || 0, error: hook.last_error_message || '' }, channel, group }];
+      return [200, { configured: true, bot: { id: me.id, username: me.username, name: me.first_name }, webhook: { url: hook.url || '', ok: /^https:\/\/[^/]+\/api\/telegram$/.test(hook.url || ''), lastError: hook.last_error_date ? iso(hook.last_error_date * 1000) : '', pending: hook.pending_update_count || 0, error: hook.last_error_message || '' }, channel, group }];
     }),
     // one-tap setup: webhook, commands, the "Open app" menu button, bot descriptions
     adminTgSetup: wrapE(async (b, user) => {
       const no = await admin(user); if (no) return no;
       const S = await settings(db);
       const me = await call('getMe');
-      await call('setWebhook', { url: S.siteUrl + '/api/telegram', secret_token: hookSecret(), allowed_updates: ['message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: true });
+      // Telegram does not follow redirects (www ⇄ no-www): find the address that answers directly
+      let hookUrl = S.siteUrl + '/api/telegram';
+      for (let k = 0; k < 4; k++) {
+        try {
+          const r = await fetch(hookUrl, { method: 'POST', redirect: 'manual', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+          const loc = r.status >= 300 && r.status < 400 && r.headers.get('location');
+          if (!loc) break;
+          const u = new URL(loc, hookUrl); hookUrl = 'https://' + u.host + '/api/telegram';
+        } catch (e) { break; }
+      }
+      await call('setWebhook', { url: hookUrl, secret_token: hookSecret(), allowed_updates: ['message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: true });
       const cmds = [{ command: 'start', description: 'Open Creditfy & connect your account' }, { command: 'offers', description: 'Today’s offers and deals' }, { command: 'balance', description: 'Your Creditfy & Extra Balance' },
         { command: 'app', description: 'Open the Creditfy app' }, { command: 'rules', description: 'Community rules' }, { command: 'help', description: 'Help' }];
       await call('setMyCommands', { commands: cmds });
@@ -181,7 +191,8 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
       await call('setMyDescription', { description: 'Creditfy official bot 🤝\n\n💰 Apply for a loan from your phone — money to bKash, Nagad or Rocket, every fee shown upfront.\n📱 Mobile recharge, gift cards, vouchers, currency & MFS exchange.\n💼 Earn with micro jobs, daily check-in and Spin & Win.\n🔔 Get your loan, payment and order updates here.\n\nTap “Open app” to start. We will never ask for your PIN, OTP or password.' }).catch(() => {});
       const ref = db().collection('siteConfig').doc('app');
       await ref.update({ 'telegram.botUsername': me.username }).catch(() => ref.set({ telegram: { botUsername: me.username } }, { merge: true }));
-      return [200, { ok: true, bot: me.username, webhook: S.siteUrl + '/api/telegram' }];
+      await db().collection('tgMeta').doc('hook').set({ url: hookUrl, at: iso() }).catch(() => {});
+      return [200, { ok: true, bot: me.username, webhook: hookUrl }];
     }),
     adminTgPost: wrapE(async (b, user) => {
       const no = await admin(user, ['appset', 'broadcast']); if (no) return no;
