@@ -325,6 +325,15 @@ Object.assign(BN, {
 R(`^Only (\\d+) left$`, 'মাত্র $1টি বাকি');
 R(`^Want something else in (.+)\\?$`, '$1-এ আর কিছু চান?');
 R(`^Delivery time: about (.+)$`, 'ডেলিভারি সময়: প্রায় $1');
+// VIP notes, support, footer
+Object.assign(BN, {
+  'For VIP members': 'ভিআইপি সদস্যদের জন্য',
+  'VIP · any plan': 'ভিআইপি · যেকোনো প্ল্যান',
+  'Admin Support': 'অ্যাডমিন সাপোর্ট',
+  'Direct line to the admin team — account, payment & order help': 'সরাসরি অ্যাডমিন টিম — অ্যাকাউন্ট, পেমেন্ট ও অর্ডার সাহায্য',
+  'Application submit time:': 'আবেদন জমার সময়:',
+  'Complaints:': 'অভিযোগ:'
+});
 // re-translate what is already on screen
 try { if(document.documentElement.lang === 'bn' && window.setLang) setLang('bn', false); } catch (e) {}
 })();

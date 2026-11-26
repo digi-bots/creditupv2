@@ -26,7 +26,7 @@ let _TG = clone(TGD);
 function buildTg(){
   const s = $p('sec-telegram'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Telegram</h2>${svBtn('telegram')}</div>${roBanner}
-  ${proTabs('telegram', [['conn', 'plug', 'Connection'], ['post', 'paper-plane', 'Post to channel'], ['auto', 'bolt', 'Auto posts'], ['group', 'comments', 'Group & bot'], ['alerts', 'bell', 'Admin alerts'], ['daily', 'sun', 'Daily reminder'], ['sched', 'calendar-days', 'Scheduled posts'], ['log', 'clock-rotate-left', 'Recent posts']], 'conn')}
+  ${proTabs('telegram', [['conn', 'plug', 'Connection'], ['post', 'paper-plane', 'Post to channel'], ['auto', 'bolt', 'Auto posts'], ['group', 'comments', 'Group & bot'], ['mod', 'shield-halved', 'Group guard'], ['alerts', 'bell', 'Admin alerts'], ['daily', 'sun', 'Daily reminder'], ['sched', 'calendar-days', 'Scheduled posts'], ['log', 'clock-rotate-left', 'Recent posts']], 'conn')}
   <div class="pro-pane" data-k="conn">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-plug"></i>Status <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="tgStatus()"><i class="fa-solid fa-rotate-right"></i>Check</button></div><div id="tgStatus" class="hint">Checking…</div></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-check"></i>How to connect (one time)</div>
@@ -60,10 +60,21 @@ function buildTg(){
   <div class="pro-pane" data-k="group">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-comments"></i>Community group</div>
       <div class="fgrid">${tog('tw-on', 'Welcome new members', true)}${tog('tw-del', 'Hide “joined / left” lines', true)}${area('tw-text', 'Welcome message ({name} = their name)', '', 3)}${area('tg-rules', 'Group rules (also /rules)', '', 4)}
-        ${tog('tm-links', 'Delete links posted by members (admins can post links)', true)}${area('tm-words', 'Blocked words — one per line (message is deleted)', '', 3)}</div></div>
+        ${area('tm-words', 'Your own blocked words — one per line (message is deleted, member warned)', '', 3)}</div>
+      <div class="hint">New members are greeted by name with a short list of the services, the rules and the warning notice. New channel subscribers get the same greeting from the bot privately (only those who have started the bot — Telegram does not allow more).</div></div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-robot"></i>Bot &amp; Mini App</div>
       <div class="fgrid">${tog('tg-dm', 'Send each user’s notifications to their Telegram too (after they connect)', true)}${tog('tg-mini', '“Open app” button opens Creditfy inside Telegram (Mini App)', true)}</div>
       <div class="hint">Users connect in the app: Quick Services → Telegram → Connect (or automatically when they open Creditfy inside Telegram while logged in). Commands: /start, /offers, /balance, /app, /rules, /help.</div></div>
+  </div>
+  <div class="pro-pane" data-k="mod">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-shield-halved"></i>Group guard</div>
+      <div class="hint" style="margin-bottom:8px">The bot watches every member message in the community group (also the comments under channel posts, when that comment group is your community group). A message that breaks a rule is deleted, the member gets a warning, and after the limit they can no longer post (they can still read). Group admins are never checked. You get every case on your Telegram (Admin alerts) with an <b>Unban</b> / <b>Clear</b> button. <b>The bot must be an admin of the group</b> with “Delete messages”, “Ban users” and “Pin messages”.</div>
+      <div class="fgrid fgrid3">${tog('tm-on', 'Group guard on', true)}${inp('tm-limit', 'Warnings before they cannot post', '3', 'type="number" min="1" max="10"')}${tog('tm-links', 'Links & invite links', true)}
+        ${tog('tm-pay', 'Complaints / negative talk about money, payment, loans (Bangla, English, Banglish) → sent to Support', true)}${tog('tm-abuse', 'Abuse & bad language', true)}${tog('tm-phones', 'Phone numbers (stops scammers and protects members)', true)}
+        ${tog('tm-flood', 'Flooding (more than 6 messages in 15 seconds)', true)}${tog('tm-fwd', 'Forwards from other channels', true)}${tog('tm-spam', 'Ads, money-making spam, mass mentions', true)}</div>
+      <div class="hint">Commands in the group — everyone: /rules, /offers, /app, /support, /report (reply), /mywarns, /help. Admins (reply to the member): /warn [reason], /unwarn, /mute, /unmute, /ban, /warns, /pin.</div></div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-user-slash"></i>Ban list &amp; suspects <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="tmLoad()"><i class="fa-solid fa-rotate-right"></i>Load</button></div>
+      <div id="tmList" class="hint">Press Load.</div></div>
   </div>
   <div class="pro-pane" data-k="alerts">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-bell" style="color:#ffd76a"></i>Admin alerts on your Telegram</div>
@@ -266,7 +277,7 @@ async function loadTg(){
   _TG = { ...clone(TGD), ...t, auto: { ...TGD.auto, ...(t.auto || {}) }, welcome: { ...TGD.welcome, ...(t.welcome || {}) }, mod: { ...TGD.mod, ...(t.mod || {}) } };
   fillIn({ 'tg-on': _TG.on !== false, 'tg-site': _TG.siteUrl, 'tg-channel': _TG.channel, 'tg-channelLink': _TG.channelLink, 'tg-group': _TG.group, 'tg-groupLink': _TG.groupLink, 'tg-appLink': _TG.appLink,
     'tg-button': _TG.button, 'tg-footer': _TG.footer, 'ta-broadcast': _TG.auto.broadcast !== false, 'ta-offers': _TG.auto.offers !== false, 'ta-deals': _TG.auto.deals !== false, 'ta-tasks': _TG.auto.tasks !== false,
-    'ta-services': _TG.auto.services !== false, 'tw-on': _TG.welcome.on !== false, 'tw-del': _TG.welcome.deleteJoin !== false, 'tw-text': _TG.welcome.text, 'tg-rules': _TG.rules, 'tm-links': _TG.mod.links !== false,
+    'ta-services': _TG.auto.services !== false, 'tw-on': _TG.welcome.on !== false, 'tw-del': _TG.welcome.deleteJoin !== false, 'tw-text': _TG.welcome.text, 'tg-rules': _TG.rules, 'tm-links': _TG.mod.links !== false, 'tm-on': _TG.mod.on !== false, 'tm-limit': _TG.mod.limit || 3, 'tm-pay': _TG.mod.payNeg !== false, 'tm-abuse': _TG.mod.abuse !== false, 'tm-phones': _TG.mod.phones !== false, 'tm-flood': _TG.mod.flood !== false, 'tm-fwd': _TG.mod.forwards !== false, 'tm-spam': _TG.mod.spam !== false,
     'tm-words': (_TG.mod.words || []).join('\n'), 'tg-dm': _TG.dm !== false, 'tg-mini': _TG.miniApp !== false });
   const D = d.daily || {};
   const DC = D.code || {};
@@ -283,7 +294,7 @@ async function saveTg(){
     button: val('tg-button') || 'Open Creditfy', footer: val('tg-footer'),
     auto: { broadcast: chk('ta-broadcast'), offers: chk('ta-offers'), deals: chk('ta-deals'), tasks: chk('ta-tasks'), services: chk('ta-services') },
     welcome: { on: chk('tw-on'), deleteJoin: chk('tw-del'), text: $p('tw-text').value.trim() || TGD.welcome.text }, rules: $p('tg-rules').value.trim(),
-    mod: { links: chk('tm-links'), words: lines('tm-words').map(w => w.toLowerCase()).slice(0, 100) }, dm: chk('tg-dm'), miniApp: chk('tg-mini'),
+    mod: { on: chk('tm-on'), limit: numv('tm-limit', 3, 1, 10), links: chk('tm-links'), payNeg: chk('tm-pay'), abuse: chk('tm-abuse'), phones: chk('tm-phones'), flood: chk('tm-flood'), forwards: chk('tm-fwd'), spam: chk('tm-spam'), words: lines('tm-words').map(w => w.toLowerCase()).slice(0, 100) }, dm: chk('tg-dm'), miniApp: chk('tg-mini'),
     adminAlerts: { on: chk('aa-on'), orders: chk('aa-orders'), trx: chk('aa-trx'), summary: chk('aa-summary') }, updatedAt: new Date().toISOString() };
   const daily = { on: chk('dr-on'), site: chk('dr-site'), push: chk('dr-push'), channel: chk('dr-channel'), bot: chk('dr-bot'), pin: chk('dr-pin'),
     title: val('dr-title') || DR_DEF.title, text: $p('dr-text').value.trim() || DR_DEF.text, pushText: val('dr-pushText') || DR_DEF.pushText,
@@ -292,6 +303,17 @@ async function saveTg(){
   await logAct('Telegram settings saved', 'config', 'telegram');
 }
 window._SAVERS.telegram = { load: loadTg, save: saveTg };
+// ban list & suspects from the group guard
+async function tmLoad(){
+  const el = $p('tmList'); if(!el) return; el.innerHTML = 'Loading…';
+  const r = await window._accountApi('adminTgMod', {}); if(!r.ok){ el.innerHTML = 'Could not load.'; return; }
+  const row = (x, banned) => `<div class="od-row" style="grid-template-columns:1.2fr 1.6fr auto"><div><b>${ep(x.name || 'Member')}</b><small>${x.username ? '@' + ep(x.username) + ' · ' : ''}id ${ep(x.uid)}</small></div>
+    <div><small style="margin:0">${banned ? (x.removed ? 'Removed from the group' : 'Cannot post') : 'Warnings ' + (x.warns || 0)} · ${ep(((x.history || []).slice(-1)[0] || {}).reason || '')}</small><small>${fd(x.updatedAt)}</small></div>
+    <div class="acts">${banned ? `<button class="ab ab-ok ro-ok" title="Unban" onclick="tmDo('unban','${ep(x.id)}')"><i class="fa-solid fa-unlock"></i></button>` : `<button class="ab ab-v ro-ok" title="Clear warnings" onclick="tmDo('clear','${ep(x.id)}')"><i class="fa-solid fa-broom"></i></button>`}<button class="ab ab-no ro-ok" title="Forget" onclick="tmDo('forget','${ep(x.id)}')"><i class="fa-solid fa-trash"></i></button></div></div>`;
+  el.innerHTML = `<div style="font-weight:900;margin:4px 0 6px">⛔ Banned (${r.data.banned.length})</div>${r.data.banned.map(x => row(x, true)).join('') || '<div class="hint">Nobody.</div>'}
+    <div style="font-weight:900;margin:14px 0 6px">👀 Suspects — have warnings (${r.data.suspects.length})</div>${r.data.suspects.map(x => row(x, false)).join('') || '<div class="hint">Nobody.</div>'}`;
+}
+async function tmDo(op, id){ if(op !== 'clear' && !confirm(op === 'unban' ? 'Let this member post again?' : 'Forget this member’s record?')) return; await window._accountApi('adminTgMod', { op, id }); toast('Done ✓'); tmLoad(); }
 // roles: the Telegram page follows the App Settings permission
 setTimeout(function hideNav(){ const p = window._perm; if(!p) return setTimeout(hideNav, 800); const n = $p('n-telegram'); if(n && p.appset === 'none') n.style.display = 'none'; }, 1500);
 

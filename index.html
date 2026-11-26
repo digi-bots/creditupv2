@@ -456,6 +456,12 @@ body:has(.hot-offer-floating[style*="block"]:not(.away):not(.folded)) .pw-bar{bo
 .ft-rank i{font-size:10px}
 .ft-tag{font-size:12px;color:var(--txt2);line-height:1.6;margin:12px 0 4px}
 .ft-tag:empty{display:none}
+.cs-direct{display:flex;gap:8px;align-items:flex-start;margin:8px 10px 0;padding:8px 10px;border-radius:11px;font-size:11px;line-height:1.45;color:var(--txt2);background:rgba(29,219,128,.08);border:1px solid rgba(29,219,128,.3)}.cs-direct i{color:var(--p);margin-top:2px}.cs-direct b{color:var(--txt)}
+.ft-x{display:flex;flex-direction:column;gap:7px;margin:0 0 12px}.ft-x:empty{display:none}
+.ft-hr{font-size:11px;color:var(--txt2);display:flex;align-items:center;gap:7px;flex-wrap:wrap}.ft-hr i{color:var(--p);width:14px;text-align:center}.ft-hr b{color:var(--txt)}.ft-hr a{color:var(--txt2);text-decoration:underline}
+.ft-so{display:flex;gap:8px;margin-top:2px}.ft-so a{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;background:var(--sc);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 4px 10px rgba(0,0,0,.3);text-decoration:none}
+.ft-abs{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}.ft-ab{display:inline-flex;align-items:center;gap:7px;padding:5px 11px 5px 9px;border-radius:10px;background:#000;border:1px solid rgba(255,255,255,.22);color:#fff;text-decoration:none;cursor:pointer}
+.ft-ab i{font-size:17px}.ft-ab span{display:flex;flex-direction:column;line-height:1.05;font-size:12px;font-weight:800}.ft-ab small{font-size:7.5px;font-weight:700;letter-spacing:.4px;opacity:.8}
 .ft-disc{display:flex;gap:9px;align-items:flex-start;margin:0 0 12px;padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
 .ft-disc:empty{display:none}.ft-disc i{color:#ffd76a;font-size:13px;margin-top:2px;flex:none}.ft-disc p{margin:0;font-size:10.5px;line-height:1.55;color:var(--txt3)}.ft-disc b{color:var(--txt2);margin-right:3px}
 .ft-trust{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin:12px 0;padding:10px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
@@ -2821,7 +2827,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
           <div class="premium-cs-icon" style="background:rgba(77,143,255,.15); color:var(--blue);"><i class="fa-solid fa-user-tie"></i></div>
           <div style="flex:1;">
             <h4 style="font-size:15px; font-weight:700; color:var(--txt);">Admin Support Chat</h4>
-            <p style="font-size:12px; color:var(--txt2);">Chat directly with our support team</p>
+            <p style="font-size:12px; color:var(--txt2);">Direct line to the admin team — account, payment &amp; order help</p>
           </div>
           <span class="cs-menu-badge" id="csMenuBadge">0</span>
           <i class="fa-solid fa-chevron-right" style="color:var(--txt2); margin-left:6px;"></i>
@@ -2881,6 +2887,7 @@ body:has(.modal-overlay.on,.premium-cs-overlay.on,.bottom-sheet.on) .hot-offer-f
         <i class="fa-solid fa-user-tie"></i>
         <h4>Admin Support</h4>
       </div>
+      <div class="cs-direct"><i class="fa-solid fa-user-shield"></i><span><b>Direct chat with our admin team.</b> Account, payment, loan or order problems — write here, a real admin replies. We never ask for your PIN, OTP or password.</span></div>
       <div class="chat-messages" id="supportChatMessages"></div>
       <div class="cs-closed-banner" id="csClosedBanner">
         <i class="fa-solid fa-circle-check" style="font-size:24px; color:var(--p);"></i>
@@ -3132,6 +3139,7 @@ document.addEventListener('DOMContentLoaded', function(){
       <div class="ft-links" id="ftLinks"></div>
       <div class="ft-disc" id="ftDisc"></div>
       <div class="ft-contact" id="ftContact"></div>
+      <div class="ft-x" id="ftExtra"></div>
       <div class="ft-sign" id="ftSign">
         <div class="fs-l"><div class="fs-cap">Digital Signature</div><div class="fs-sig" id="ftSig">Creditfy</div><div class="fs-line"></div><div class="fs-who"><b id="ftSigName">Authorized Signatory</b><span id="ftSigTitle"></span></div></div>
         <div class="fs-seal"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="37" fill="none" stroke="rgba(29,219,128,.55)" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="40" cy="40" r="30" fill="rgba(29,219,128,.08)" stroke="rgba(29,219,128,.6)" stroke-width="1.5"/><path d="M28 41l8 8 16-17" fill="none" stroke="#1ddb80" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="ftSeal">VERIFIED</span></div>
@@ -7141,6 +7149,7 @@ window.renderHomeBlocks = async function(){
 
 // site footer (Admin → Home Page → Footer): brand + VIP badge, flat trust row, links, contact, digital signature
 window.renderFooter = function(cfg){
+  window._lastHomeCfg = cfg;
   const el = document.getElementById('siteFooter'); if(!el) return;
   const F = { on:true, name:'', tagline:'Smart credit, made simple — fast, transparent and secure loans from your phone.', vip:true, vipText:'VIP', vipSub:'Premium Digital Lending',
     trust:true, links:null, contact:true, address:true, sign:true, signName:'Authorized Signatory', signTitle:'', signText:'', signImg:'', seal:'VERIFIED',
@@ -7174,6 +7183,20 @@ window.renderFooter = function(cfg){
   }
   if(F.address !== false && C.address) ct.push(`<span><i class="fa-solid fa-location-dot"></i>${_escT(C.address)}</span>`);
   document.getElementById('ftContact').innerHTML = ct.join('');
+  // hours, complaints, social links and app badges — small
+  { const Cm = F.complaint || {}, So = F.social || {}, x = [], ok = u => /^https:\/\//i.test(String(u || ''));
+    x.push(`<div class="ft-hr"><i class="fa-solid fa-clock"></i>Application submit time: <b>${_escT(F.hours || '24/7')}</b></div>`);
+    const cp = String(Cm.phone || '').replace(/[^\d+]/g, ''), ce = String(Cm.email || C.email || '').trim();
+    if(cp || ce) x.push(`<div class="ft-hr"><i class="fa-solid fa-flag"></i>Complaints: ${cp ? `<a href="https://wa.me/${_escT(cp.replace(/^\+?0/, '880').replace(/^\+/, ''))}" target="_blank" rel="noopener">${_escT(cp)}</a>` : ''}${cp && ce ? ' · ' : ''}${ce ? `<a href="mailto:${_escT(ce)}">${_escT(ce)}</a>` : ''}</div>`);
+    const SO = [['facebook', 'fa-facebook-f', '#1877f2'], ['youtube', 'fa-youtube', '#ff0000'], ['tiktok', 'fa-tiktok', '#111'], ['instagram', 'fa-instagram', '#e1306c'], ['telegram', 'fa-telegram', '#26a5e4'], ['whatsapp', 'fa-whatsapp', '#25d366']].filter(([k]) => ok(So[k]));
+    if(SO.length) x.push(`<div class="ft-so">${SO.map(([k, ic, col]) => `<a href="${_escT(So[k])}" target="_blank" rel="noopener" aria-label="${k}" style="--sc:${col}"><i class="fa-brands ${ic}"></i></a>`).join('')}</div>`);
+    const B = [];
+    if(ok(F.playUrl)) B.push(`<a class="ft-ab" href="${_escT(F.playUrl)}" target="_blank" rel="noopener"><i class="fa-brands fa-google-play"></i><span><small>GET IT ON</small>Google Play</span></a>`);
+    if(ok(F.iosUrl)) B.push(`<a class="ft-ab" href="${_escT(F.iosUrl)}" target="_blank" rel="noopener"><i class="fa-brands fa-apple"></i><span><small>Download on the</small>App Store</span></a>`);
+    if(!window.matchMedia('(display-mode: standalone)').matches && !document.documentElement.classList.contains('in-tg')) B.push(`<a class="ft-ab" role="button" onclick="window.cuInstall&&cuInstall()"><i class="fa-solid fa-mobile-screen-button"></i><span><small>INSTALL THE</small>Creditfy App</span></a>`);
+    if(window._tgBot) B.push(`<a class="ft-ab" href="https://t.me/${_escT(window._tgBot)}" target="_blank" rel="noopener" onclick="return window.tgOpen?tgOpen(this.href,event):true"><i class="fa-brands fa-telegram"></i><span><small>OPEN IN</small>Telegram</span></a>`);
+    if(B.length) x.push(`<div class="ft-abs">${B.join('')}</div>`);
+    document.getElementById('ftExtra').innerHTML = x.join(''); }
   document.getElementById('ftSign').style.display = F.sign === false ? 'none' : '';
   const sig = document.getElementById('ftSig');
   if(/^https:\/\//i.test(F.signImg || '')) sig.innerHTML = `<img src="${_escT(F.signImg)}" alt="Signature">`; else sig.textContent = F.signText || brand;
@@ -7689,14 +7712,14 @@ setTimeout(async () => {
 <script src="app-pro.js?v=5"></script>
 <script>/* inside Telegram (Mini App): load Telegram's helper first; normal browsers skip it */
 if(/tgWebApp/.test(location.hash + location.search) || window.TelegramWebviewProxy) document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>');</script>
-<script src="services.js?v=18"></script>
+<script src="services.js?v=19"></script>
 <script src="loans.js?v=4"></script>
 <script src="help.js?v=3"></script>
-<script src="extra.js?v=20"></script>
-<script src="tgapp.js?v=6"></script>
+<script src="extra.js?v=21"></script>
+<script src="tgapp.js?v=7"></script>
 <script src="dock.js?v=2"></script>
 <script src="ux.js?v=2"></script>
-<script src="progress.js?v=3"></script>
-<script src="i18n-bn.js?v=21"></script>
+<script src="progress.js?v=4"></script>
+<script src="i18n-bn.js?v=22"></script>
 </body>
 </html>

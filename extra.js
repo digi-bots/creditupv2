@@ -163,6 +163,7 @@ const css = `
 .xs-t .bd.lk{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d);color:#2a1a00}
 .xs-t .bd.st{background:#56627a;color:#fff}.xs-t .bd.st.busy{background:linear-gradient(135deg,#ff9f43,#e67e22)}.xs-t .bd.st.closed{background:linear-gradient(135deg,#ff6b81,#c0392b)}
 .xs-t.lk .xs-lg{filter:saturate(.7) brightness(.9)}
+.xs-fine{margin:12px 2px 2px;display:flex;flex-direction:column;gap:5px;font-size:10.5px;line-height:1.5;color:var(--txt3)}.xs-fine div{display:block}.xs-fine i{margin-right:6px;color:var(--txt2);font-size:10px}.xs-fine b{color:var(--txt2)}.xs-fine a{color:var(--p);font-weight:800;cursor:pointer;text-decoration:underline}
 .xs-pnote{margin:-2px 0 8px;padding:9px 11px;border-radius:12px;background:rgba(77,143,255,.07);border:1px dashed rgba(77,143,255,.35);font-size:11.5px;color:var(--txt2);line-height:1.55}.xs-pnote ol{margin:4px 0 0;padding-left:18px}
 .pay-w button .pw-t{display:block;font-size:9.5px;font-weight:700;opacity:.75;margin-top:1px}
 .ln-note b{display:block;color:var(--txt);font-size:13px;margin-bottom:2px}
@@ -471,7 +472,7 @@ function quote(s, i, amount, ver){
 const sealHtml = () => { try { return window._svSeal ? window._svSeal() : '<i class="fa-solid fa-circle-check" style="color:#46b0ff"></i>'; } catch (e) { return ''; } };
 // who can order: everyone / Verified / VIP / VIP 1·2·3 (the server checks the same rule)
 const can = a => !a || a === 'all' || (typeof window._svCanUse === 'function' && window._svCanUse(a));
-const ACC = { verified: 'VERIFIED', vip: 'VIP', vip1: 'VIP 1+', vip2: 'VIP 2+', vip3: 'VIP 3' };
+const ACC = { vip: 'VIP · any plan' };
 const BDC = t => ({ HOT: 'sale', SALE: 'sale', NEW: 'new', EARN: 'earn', FREE: 'new', POPULAR: 'pop', TOP: 'pop', VERIFIED: 'ver', 'FOR VERIFIED': 'ver', JOIN: 'ver' }[String(t).toUpperCase()] || '');
 const nudge = () => typeof window._svNudge === 'function' ? window._svNudge() : '';
 // the Digital Balance on every service page, with Deposit and My orders
@@ -499,8 +500,8 @@ function perkBanner(){
 function loanNote(){
   const N = (X.cfg && X.cfg.loanNotice) || {}; if(N.on === false) return '';
   const days = E(N.days || '7–14');
-  if(X.xb && X.xb.vip) return `<div class="ln-note vip"><div class="ic"><i class="fa-solid fa-crown"></i></div><div class="cz-m"><b>Your application has VIP priority</b><div class="cz-body"><div><span>Loan money is processed through the bank, which normally takes ${days} working days. As a VIP member, your application is reviewed first with high priority.</span></div></div></div></div>`;
-  return `<div class="ln-note"><div class="ic"><i class="fa-solid fa-building-columns"></i></div><div class="cz-m"><b>Processing time: ${days} working days</b><div class="cz-body"><div><span>Loan money is processed through the bank, so approval and disbursement can take up to ${days} working days. Want it sooner? VIP applications get high priority and are reviewed first — a better chance of early approval and disbursement.</span><br><button class="vb" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>Get VIP priority</button></div></div></div></div>`;
+  if(X.xb && X.xb.vip) return `<div class="ln-note vip"><div class="ic"><i class="fa-solid fa-crown"></i></div><div class="cz-m"><b>Your application has VIP priority</b><div class="cz-body"><div><span>Loan money is processed through the bank, which normally takes ${days} working days. As a VIP member, your application is reviewed first with high priority — the higher your VIP plan (1, 2, 3), the earlier.</span></div></div></div></div>`;
+  return `<div class="ln-note"><div class="ic"><i class="fa-solid fa-building-columns"></i></div><div class="cz-m"><b>Processing time: ${days} working days</b><div class="cz-body"><div><span>Loan money is processed through the bank, so approval and disbursement can take up to ${days} working days. Want it sooner? VIP applications get high priority and are reviewed first — the higher the VIP plan (1, 2, 3), the earlier the review.</span><br><button class="vb" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>Get VIP priority</button></div></div></div></div>`;
 }
 function placeNotes(){
   const html = loanNote(); if(!html) return;
@@ -560,7 +561,7 @@ function render(){
   if(!box){ box = document.createElement('div'); box.id = 'xsBlock'; box.className = 'hs-box xs'; g.insertAdjacentElement('afterend', box); }
   const W = X.cfg.wallet || {};
   const tile = s => { const st = s.soon ? 'soon' : s.status !== 'open' ? s.status : '', lk = !st && !can(s.access);
-    const bd = st ? `<span class="bd st ${st}">${st.toUpperCase()}</span>` : lk ? `<span class="bd lk"><i class="fa-solid fa-${s.access === 'verified' ? 'lock' : 'crown'}"></i>${ACC[s.access]}</span>` : s.badge ? `<span class="bd ${BDC(s.badge)}">${E(s.badge)}</span>` : s.items.some(i => i.on && priceNow(s, i).kind) ? '<span class="bd sale">SALE</span>' : '';
+    const bd = st ? `<span class="bd st ${st}">${st.toUpperCase()}</span>` : lk ? `<span class="bd lk"><i class="fa-solid fa-crown"></i>VIP</span>` : s.badge ? `<span class="bd ${BDC(s.badge)}">${E(s.badge)}</span>` : s.items.some(i => i.on && priceNow(s, i).kind) ? '<span class="bd sale">SALE</span>' : '';
     const tri = !st && s.trialEnd && new Date(s.trialEnd).getTime() > Date.now();
     return `<div class="xs-t${st === 'soon' || st === 'closed' ? ' soon' : ''}${lk ? ' lk' : ''}" onclick="xsOpen('${E(s.id)}')">${tri && !lk ? '<span class="bd tri"><i class="fa-solid fa-flask"></i>TRIAL</span>' : bd}${logo(s)}<b>${E(s.short || s.name)}</b>${s.ver ? `<i class="vr">v${E(s.ver)}</i>` : ''}</div>`; };
   box.innerHTML = `<div class="hs-tag"><i class="fa-solid fa-wallet"></i>Uses your Digital Balance</div><div class="xs-head">
@@ -574,7 +575,7 @@ function render(){
     ${hotRow()}
     <div class="xs-cat"><span>All services</span></div>
     <div class="xs-grid">${(X.cfg.jobs || {}).on !== false ? `<div class="xs-t" onclick="svGo('jobs')"><span class="bd earn">EARN</span><div class="xs-lg g-orange"><i class="fa-solid fa-briefcase"></i></div><b>Micro Jobs</b></div>` : ''}${Ls.map(tile).join('')}${user() ? `<div class="xs-t sg" onclick="xsSug('x:all','Digital Services')"><div class="xs-lg g-slate"><i class="fa-regular fa-lightbulb"></i></div><b>Suggest</b></div>` : ''}</div>
-    <div id="xsLive"></div>`;
+    <div id="xsLive"></div>${finePrint()}`;
   drawLive();
 }
 // clear notice: everything in this section is paid from the Digital Balance, so deposit first
@@ -651,6 +652,9 @@ window.xsSugSend = async () => { const g = X.sug || { scope: 'x:all', label: '' 
 window._svHeadX = k => { X.hk = k; if(!k || k === 'x_sug' || !/^(x_|c_|jobs$|recharge$)/.test(k) || !X.cfg || (X.cfg.wallet || {}).on === false || !user()) return '';
   if(k === 'recharge') return ''; const b = X.xb ? Number(X.xb.xbal) || 0 : null;
   return `<button class="hx-bal${b === 0 ? ' zero' : ''}" onclick="svGo('x_dep')" title="Digital Balance — tap to deposit"><i class="fa-solid fa-wallet"></i><span><small>Digital Balance</small>${b === null ? '…' : tk(b)}</span><em><i class="fa-solid fa-plus"></i></em></button>${k !== 'x_orders' ? `<button class="hx-ord" onclick="svGo('x_orders')" aria-label="My orders"><i class="fa-solid fa-receipt"></i></button>` : ''}`; };
+// small print for the digital section: VIP is one level for services; a late delivery goes to Support
+function finePrint(){ return `<div class="xs-fine"><div><i class="fa-solid fa-crown"></i>VIP services open with <b>any VIP plan</b> — VIP 1, 2 or 3 only sets how early your loan is reviewed.</div>
+  <div><i class="fa-solid fa-clock"></i>For special reasons a service can sometimes be late. If it is very late, message the admin in <a onclick="svClose();window.openSupportChat&&openSupportChat()">Support</a>.</div></div>`; }
 /* ───────── one service: its options ───────── */
 // version tag (v1.2 · Updated / Fixed) — set by the admin when a service is updated
 function verTag(s){ return s.ver ? `<span class="xs-ver${s.verKind ? ' ' + s.verKind : ''}" title="${E(s.verNote || '')}">v${E(s.ver)}${s.verKind ? ' · ' + (s.verKind === 'fixed' ? 'Fixed' : 'Updated') : ''}</span>` : ''; }
@@ -696,7 +700,7 @@ function svcPage(id){
     <div id="xsGrp"></div>
     <div id="xsItems"></div>
     ${s.note ? `<div class="cx-note"><i class="fa-solid fa-circle-info"></i><span>${E(s.note)}</span></div>` : ''}
-    ${sugRow('x:' + s.id, s.name)}`);
+    ${sugRow('x:' + s.id, s.name)}${finePrint()}`);
   const so = $x('xsSort'); if(so) so.value = X.f.sort;
   drawItems();
 }
@@ -966,7 +970,7 @@ async function ordersPage(){
   show('My orders', L.length ? L.map(o => `<div class="xs-od"><div class="h"><div><b>${E(o.iname)}</b><div>${E(o.sname)} · ${when(o.createdAt)}</div></div><span class="xs-st ${E(o.status)}">${lbl[o.status] || E(o.status)}</span></div>
       <div style="margin-top:6px">${o.amount ? `${num(o.amount)} ${E(o.unit)} · ` : ''}${o.flow === 'sell' ? 'You get ' + tk(o.get) : 'Paid ' + tk(o.price)} · TrxID <span style="font-family:monospace">${E(o.trxId)}</span></div>
       ${o.status === 'Delivered' && o.delivery ? `<div class="xs-dl">${E(o.delivery)}<button onclick="navigator.clipboard&&navigator.clipboard.writeText(this.parentNode.firstChild.textContent).then(()=>svToastOk('Copied'))"><i class="fa-regular fa-copy"></i> Copy</button></div>` : ''}
-      ${o.status === 'Rejected' && o.reason ? `<div style="margin-top:6px;color:#ff8fa3">${E(o.reason)}</div>` : ''}</div>`).join('')
+      ${o.status === 'Rejected' && o.reason ? `<div style="margin-top:6px;color:#ff8fa3">${E(o.reason)}</div>` : ''}</div>`).join('') + finePrint()
     : `<div class="sv-empty"><i class="fa-solid fa-bag-shopping"></i>No orders yet.</div><button class="sv-btn ghost" onclick="svClose()">Browse Digital Services</button>`);
 }
 

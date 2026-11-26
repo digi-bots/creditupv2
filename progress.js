@@ -38,8 +38,8 @@ function next(status, a){
   switch(status){
     case 'none': return ['Start your loan', 'Apply from your phone in a few minutes — every fee is shown before you pay.', 'Apply now', borrow, ''];
     case 'Pending Fee Payment': return ['Next: pay the fee', 'Your application is saved. Pay the fee so our team can start the review.', 'Pay the fee', 'openAppStatusModal()', 'gold'];
-    case 'TrxID Submitted': return ['We are checking your payment', 'This usually takes a few minutes. Want a faster review? VIP applications go first.', vip() ? 'View status' : 'Get VIP priority', vip() ? 'openAppStatusModal()' : "svGo('vip')", vip() ? '' : 'gold'];
-    case 'Fee Verified': return ['Under review', 'Loan money is processed through the bank — up to 7–14 working days. VIP applications are reviewed first.', vip() ? 'View status' : 'Get VIP priority', vip() ? 'openAppStatusModal()' : "svGo('vip')", vip() ? '' : 'gold'];
+    case 'TrxID Submitted': return ['We are checking your payment', 'This usually takes a few minutes. Want a faster review? VIP goes first — a higher plan, earlier.', vip() ? 'View status' : 'Get VIP priority', vip() ? 'openAppStatusModal()' : "svGo('vip')", vip() ? '' : 'gold'];
+    case 'Fee Verified': return ['Under review', 'Loan money is processed through the bank — up to 7–14 working days. VIP is reviewed first (higher plan = earlier).', vip() ? 'View status' : 'Get VIP priority', vip() ? 'openAppStatusModal()' : "svGo('vip')", vip() ? '' : 'gold'];
     case 'Approved': return ['Approved — money on the way', 'Your loan is approved and the money is being sent to your account.', 'View details', 'openAppStatusModal()', ''];
     case 'Disbursement Rejected': return ['Sending did not go through', 'The amount is in your Creditfy balance. Check your receiving number and tap for details.', 'Details', 'openAppStatusModal()', 'gold'];
     case 'Disbursed': case 'Active': return ['Your loan is active', 'Pay each installment on time — it grows your loan limit and trust level.', 'Pay installment', "svGo('repay')", ''];
