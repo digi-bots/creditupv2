@@ -115,30 +115,35 @@ const css = `
 .xs-lg.bl i{display:block;width:56%;height:56%;background:#fff;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
 .xs-lg.bl.lt i{background:#111}
 /* item card: compact, premium */
-.xs-pgrid{gap:9px!important}
-.xs-pc2{position:relative;display:flex;flex-direction:column;gap:5px;padding:10px;border-radius:16px;cursor:pointer;overflow:hidden;background:linear-gradient(165deg,rgba(255,255,255,.075),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 18px rgba(0,0,0,.25);transition:transform .2s,border-color .2s}
+.xs-pgrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+@media(max-width:480px){#svBody{padding-left:10px!important;padding-right:10px!important}}
+.xs-pc2{position:relative;display:flex;flex-direction:column;gap:4px;padding:8px 9px;border-radius:16px;cursor:pointer;overflow:hidden;background:linear-gradient(165deg,rgba(255,255,255,.075),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 18px rgba(0,0,0,.25);transition:transform .2s,border-color .2s}
 .xs-pc2:hover{transform:translateY(-2px);border-color:rgba(29,219,128,.45)}.xs-pc2:active{transform:scale(.98)}
 .xs-pc2.sale{border-color:rgba(255,154,90,.45)}.xs-pc2.out{opacity:.55;cursor:not-allowed}
-.xs-pc2 .tp{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}.xs-pc2 .tp .xs-lg{width:38px!important;height:38px!important;flex:0 0 38px;border-radius:11px;font-size:16px;margin:0}
+.xs-pc2 .tp{display:flex;align-items:center;gap:7px;min-height:32px}.xs-pc2 .tp .xs-lg{width:30px!important;height:30px!important;flex:0 0 30px;border-radius:9px;font-size:13px;margin:0}
+.xs-pc2 .tg{position:absolute;top:5px;right:6px;flex-direction:row!important}.xs-pc2 .mt .et{color:#9fd8ff!important}
 .xs-pc2 .tg{display:flex;flex-direction:column;align-items:flex-end;gap:3px}.xs-pc2 .tg span{font-size:9px;font-weight:900;padding:2px 6px;border-radius:7px;white-space:nowrap}
 .xs-pc2 .tg .h{color:#fff;background:linear-gradient(135deg,#ff6b4a,#ff3d6e)}.xs-pc2 .tg .o{color:#2a1a00;background:linear-gradient(135deg,#ffe08a,#f2a91d)}
-.xs-pc2 .nm{font-size:12.5px;line-height:1.3;color:var(--txt);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px}
+.xs-pc2 .nm{font-size:12px;line-height:1.25;color:var(--txt);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding-right:2px}.xs-pc2 .tg+.tp .nm{padding-right:0}.xs-pc2 .tg+.tp{margin-top:14px}
 .xs-pc2 .mt{display:flex;flex-wrap:wrap;gap:5px;min-height:15px}.xs-pc2 .mt span{font-size:10px;font-weight:800;color:var(--txt2)}.xs-pc2 .rt{color:#ffd76a!important}.xs-pc2 .rt small{color:var(--txt3);font-weight:700}
 .xs-pc2 .nt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.xs-pc2 .pp{display:flex;align-items:baseline;gap:6px;margin-top:1px}.xs-pc2 .pp s{font-size:10.5px;color:var(--txt3)}.xs-pc2 .pp span{font-size:16px;font-weight:900;color:#1ddb80;letter-spacing:-.3px}
-.xs-pc2 .pp .by{margin-left:auto;align-self:center;width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11.5px;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d);box-shadow:0 4px 10px rgba(242,169,29,.35)}
+.xs-pc2 .pp{display:flex;align-items:baseline;gap:6px;margin-top:1px}.xs-pc2 .pp s{font-size:10.5px;color:var(--txt3)}.xs-pc2 .pp span{font-size:15px;font-weight:900;color:#1ddb80;letter-spacing:-.3px}
+.xs-pc2 .pp .by{margin-left:auto;align-self:center;width:26px;height:26px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11.5px;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d);box-shadow:0 4px 10px rgba(242,169,29,.35)}
 .xs-pc2 .es .xs-cd{background:none!important;border:0!important;padding:0!important;font-size:10px!important}.xs-pc2 .es .xs-cd i{display:none}.xs-pc2 .es .xs-cd b{font-size:10.5px;padding:1px 5px;border-radius:5px;background:rgba(255,159,122,.15)}
 .xs-pc2 .es{font-size:10px;font-weight:800;color:#ff9f7a;display:flex;align-items:center;gap:4px;flex-wrap:wrap}.xs-pc2 .es.o{color:#ffd76a}.xs-pc2 .es .xs-cd{font-size:10px;padding:1px 6px}
 .xs-pc2 .st{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:10px;font-weight:800;color:#5fe3a1}.xs-pc2 .st span{margin-left:auto;color:#9fd8ff}.xs-pc2 .st.low{color:#ffae6b}.xs-pc2 .st.out{color:#ff8fa3}
-.xs-pc2 .sf{margin:auto -10px -10px;width:calc(100% + 20px);box-sizing:border-box;padding:5px 10px;font-size:9.5px;font-weight:900;letter-spacing:.2px;color:#b9f5d8;background:linear-gradient(90deg,rgba(29,219,128,.16),rgba(29,219,128,.04));border-top:1px solid rgba(29,219,128,.2);display:flex;align-items:center;gap:5px}
+.xs-pc2 .sf{margin:auto -9px -8px;width:calc(100% + 18px);box-sizing:border-box;padding:4px 9px;justify-content:space-between;font-size:9.5px;font-weight:900;letter-spacing:.2px;color:#b9f5d8;background:linear-gradient(90deg,rgba(29,219,128,.16),rgba(29,219,128,.04));border-top:1px solid rgba(29,219,128,.2);display:flex;align-items:center;gap:5px}
 /* suggestions, region confirm, delivery time */
 .xs-sug{display:flex;align-items:center;gap:10px;margin:12px 0 4px;padding:10px 12px;border-radius:14px;cursor:pointer;border:1px dashed rgba(255,215,106,.45);background:rgba(255,215,106,.05)}
 .xs-sug>i:first-child{color:#ffd76a;font-size:18px}.xs-sug div{flex:1;min-width:0}.xs-sug b{display:block;font-size:12.5px;color:var(--txt)}.xs-sug small{font-size:11px;color:var(--txt2)}.xs-sug>i:last-child{color:var(--txt3)}
 .xs-t.sg .xs-lg{opacity:.9}.xs-t .vr{position:absolute;bottom:5px;right:6px;font-style:normal;font-size:8px;font-weight:900;color:#9fd8ff;opacity:.85}
 .xs-t .bd.tri{display:inline-flex;align-items:center;gap:3px;color:#fff;background:linear-gradient(135deg,#b06bff,#7b3fe4)}
+.xs-pc2 .sf{white-space:nowrap;font-size:8.5px!important;gap:4px;letter-spacing:0!important}.xs-pc2 .sf span{overflow:hidden;text-overflow:ellipsis}.xs-pc2 .sf span:first-child{flex:none}.xs-pc2 .sf span:first-child::before{content:'● '}
+.xs-pc2 .sf .low{color:#ffae6b}.xs-pc2 .sf .out{color:#ff8fa3}.xs-pc2 .sf span:last-child{opacity:.85}
 .xs-reg{display:flex;gap:9px;align-items:flex-start;margin:4px 0 10px;padding:10px 11px;border-radius:12px;font-size:12px;line-height:1.5;color:var(--txt2);background:rgba(70,176,255,.07);border:1px solid rgba(70,176,255,.35);cursor:pointer}
 .xs-reg input{margin-top:3px;width:17px;height:17px;flex:none;accent-color:#1ddb80}
 .xs-eta{display:flex;gap:7px;align-items:center;margin:6px 2px 10px;font-size:11.5px;color:#9fd8ff}
+.xb-chips{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px!important}.xb-chips button{padding:8px 2px!important;font-size:12px!important;min-width:0!important}
 .xb-strip{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 10px 10px 12px;border-radius:16px;background:linear-gradient(135deg,rgba(29,219,128,.12),rgba(29,219,128,.03));border:1px solid rgba(29,219,128,.35)}
 .xb-strip .ic{flex:0 0 34px;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#03210f;background:linear-gradient(135deg,#3be07c,#14b86a)}
 .xb-strip>div{flex:1;min-width:0}.xb-strip small{display:block;font-size:10.5px;color:var(--txt2)}.xb-strip b{font-size:16px;color:var(--txt)}.xb-strip em{display:block;font-style:normal;font-size:10.5px;color:#ff8fa3;font-weight:800}
@@ -568,7 +573,6 @@ function render(){
       <div class="t"><div><div class="xs-title">${E(X.cfg.title || 'Digital Services')} <em>PREMIUM</em></div><small>Gift cards, exchange, social &amp; digital services — paid from your Digital Balance</small></div></div>
       <div class="a">${W.on !== false ? `<button class="xs-bal" onclick="svGo('x_wallet')"><i class="fa-solid fa-wallet"></i><span><small>Digital Balance</small>${user() && X.xb ? tk(X.xb.xbal) : 'Open'}</span><i class="p fa-solid fa-plus"></i></button>` : ''}<button class="xs-ord" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button></div>
     </div>
-    ${xbNotice()}
     ${perkBanner()}
     ${redTile()}
     ${dealCard()}
@@ -666,13 +670,12 @@ function card(s, i){
   const out = i.stock !== null && i.stock !== undefined && i.stock <= 0, low = !out && i.stock !== null && i.stock !== undefined && i.stock <= Math.max(3, i.lowAt || 0);
   const soon = pn.kind && pn.ends && pn.ends - Date.now() < 864e5, eta = i.eta || s.eta || (s.deliver === 'email' ? '5–10 min' : '');
   return `<div class="xs-pc2${out ? ' out' : ''}${pn.kind ? ' sale' : ''}" ${out ? '' : `onclick="xsPick('${E(s.id)}','${E(i.id)}')"`}>
-    <div class="tp">${ilogo(s, i)}<div class="tg">${i.hot ? '<span class="h"><i class="fa-solid fa-fire"></i>HOT</span>' : ''}${off ? `<span class="o">−${off}%</span>` : ''}</div></div>
-    <b class="nm">${E(i.name)}</b>
-    <div class="mt">${i.rating ? `<span class="rt">⭐ ${num(i.rating)}<small>/5</small></span>` : ''}${i.region ? `<span class="rg">${flag(i.region)} ${E(i.region)}</span>` : ''}${!i.rating && !i.region && i.note ? `<span class="nt">${E(i.note)}</span>` : ''}</div>
+    ${i.hot || off ? `<div class="tg">${i.hot ? '<span class="h"><i class="fa-solid fa-fire"></i>HOT</span>' : ''}${off ? `<span class="o">−${off}%</span>` : ''}</div>` : ''}
+    <div class="tp">${ilogo(s, i)}<b class="nm">${E(i.name)}</b></div>
+    <div class="mt">${i.rating ? `<span class="rt">⭐ ${num(i.rating)}<small>/5</small></span>` : ''}${i.region ? `<span class="rg">${flag(i.region)} ${E(i.region)}</span>` : ''}${eta && !out ? `<span class="et"><i class="fa-solid fa-bolt"></i>${E(eta)}</span>` : ''}</div>
     <div class="pp">${off ? `<s>${tk(reg)}</s>` : ''}<span>${tk(pay)}</span>${out ? '' : '<em class="by"><i class="fa-solid fa-cart-shopping"></i></em>'}</div>
-    ${soon ? `<div class="es"><i class="fa-solid fa-hourglass-half"></i>Offer ends soon ${cd(pn.ends, '')}</div>` : pn.kind ? `<div class="es o">${cd(pn.ends, pn.kind === 'deal' ? 'Today' : 'Ends in')}</div>` : ''}
-    <div class="st${out ? ' out' : low ? ' low' : ''}">${out ? '<i class="fa-solid fa-ban"></i>Out of stock' : low ? `<i class="fa-solid fa-fire-flame-curved"></i>Only ${i.stock} left` : '<i class="fa-solid fa-circle-check"></i>In stock'}${eta && !out ? `<span><i class="fa-solid fa-bolt"></i>${E(eta)}</span>` : ''}</div>
-    <div class="sf"><i class="fa-solid fa-shield-halved"></i>100% Safe &amp; Secured</div></div>`;
+    ${soon ? `<div class="es"><i class="fa-solid fa-hourglass-half"></i>Ends soon ${cd(pn.ends, '')}</div>` : ''}
+    <div class="sf"><span class="${out ? 'out' : low ? 'low' : ''}">${out ? 'Out of stock' : low ? `Only ${i.stock} left` : 'In stock'}</span><span><i class="fa-solid fa-shield-halved"></i>100% Safe &amp; Secured</span></div></div>`;
 }
 
 function svcPage(id){
@@ -688,10 +691,7 @@ function svcPage(id){
   const offers = items.filter(i => priceNow(s, i).kind).length;
   const eta = s.eta || (s.deliver === 'email' ? '5–10 min' : '');
   show(s.name, `<div class="xs-top">
-    <div class="xs-hero sl">${logo(s)}<div style="min-width:0;flex:1"><h4>${E(s.name)} ${verTag(s)}</h4>${s.desc ? `<p>${E(s.desc)}</p>` : ''}
-      <div class="xs-meta"><span><i class="fa-solid fa-layer-group"></i>${items.length}</span>${offers ? `<span class="o"><i class="fa-solid fa-tag"></i>${offers} offers</span>` : ''}${eta ? `<span><i class="fa-solid fa-bolt"></i>${E(eta)}</span>` : ''}${(s.access && s.access !== 'all') ? `<span class="o"><i class="fa-solid fa-crown"></i>${ACC[s.access]}</span>` : ''}</div></div></div>
     ${trialBar(s)}${statusBar(s)}
-    ${steps(cats.length > 1 && !X.f.cat ? 0 : 1, cats.length > 1)}
     ${isV() ? nudge() : perkBanner()}
     </div>
     ${items.length > 3 ? `<div class="xs-tool"><div class="xs-srch"><i class="fa-solid fa-magnifying-glass"></i><input id="xsQ" placeholder="Search ${E(s.name)}" value="${E(X.f.q)}" oninput="xsF('q',this.value)"></div>
@@ -705,7 +705,7 @@ function svcPage(id){
   drawItems();
 }
 window.xsF = (k, v) => { if(!X.f) return; X.f[k] = v;
-  if(k === 'cat'){ X.f.grp = ''; document.querySelectorAll('.xs-menu button').forEach(b => b.classList.toggle('on', b.dataset.c === v)); const st = $x('xsSteps'); if(st) st.outerHTML = steps(v ? 1 : 0, true); }
+  if(k === 'cat'){ X.f.grp = ''; document.querySelectorAll('.xs-menu button').forEach(b => b.classList.toggle('on', b.dataset.c === v));  }
   if(k === 'grp') document.querySelectorAll('#xsGrp button').forEach(b => b.classList.toggle('on', b.dataset.g === v));
   drawItems(); };
 function drawItems(){
@@ -756,7 +756,6 @@ function orderPage(){
   if(!s || !i){ show('Order', '<div class="sv-empty">Please choose an option again.</div>'); return; }
   if(!can(s.access) || s.status === 'closed') return svcPage(s.id);
   const amt = s.mode === 'amount', sell = i.flow === 'sell';
-  const tg = payTargets(i); const w = tg[window._xsW || 0] || tg[0];
   const W = X.cfg.wallet || {}, bal = X.xb ? X.xb.xbal : 0;
   const canBal = !sell && W.on !== false, canDirect = sell || W.direct !== false;
   if(!canDirect) window._xsPm = 'xbal'; else if(!canBal) window._xsPm = 'trx'; else if(!window._xsPm) window._xsPm = 'xbal';
@@ -764,12 +763,11 @@ function orderPage(){
   const payBlock = pm === 'xbal' ? `<div class="pay-num" style="border-style:solid"><div><small>Digital Balance</small><b>${tk(bal)}</b></div><button onclick="svGo('x_dep')">+ Add</button></div>
       <div style="font-size:11.5px;color:var(--txt2);margin:6px 2px" id="xsBalNote">${!amt && price > bal ? `<span style="color:#ff8fa3">You need ${tk(price - bal)} more. Add balance first.</span>` : 'The price is taken from your Digital Balance when you place the order.'}</div>`
     : `<span class="sv-lbl">${sell ? `Send the ${E(i.unit)} here` : 'Send the payment'}</span>
-    ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xsW=${k};svPage('x_order')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}${x.type ? `<small class="pw-t">${E(x.type)}</small>` : ''}</button>`).join('')}</div>` : ''}
-    ${payNum(w)}
+    ${window._payPick('xo', { amount: !amt && !sell ? price : 0, fixed: i.to ? { name: sell ? 'Send to' : 'Pay to', type: '', number: i.to, steps: [] } : null })}
     <span class="sv-lbl">${sell ? 'Transaction ID / hash of what you sent' : 'Transaction ID from your payment SMS'}</span>
     <input class="sv-in code" id="xsTrx" placeholder="TRANSACTION ID" maxlength="80" autocomplete="off">`;
   const hasCats = new Set(s.items.filter(x => x.on).map(x => x.cat).filter(Boolean)).size > 1;
-  show(s.name, `${steps(sell || pm !== 'xbal' ? 3 : 2, hasCats)}<div class="xs-hero">${ilogo(s, i)}<div><h4>${E(i.name)}</h4><p>${E(i.note || s.desc)}</p>${i.cat || i.group ? `<div class="xs-meta"><span>${E([i.cat, i.group].filter(Boolean).join(' › '))}</span></div>` : ''}</div></div>
+  show(s.name, `<div class="xs-hero sl">${ilogo(s, i)}<div><h4>${E(i.name)}</h4><p>${E(i.note || s.desc)}</p>${i.cat || i.group ? `<div class="xs-meta"><span>${E([i.cat, i.group].filter(Boolean).join(' › '))}</span></div>` : ''}</div></div>
     ${statusBar(s)}
     ${amt ? `<span class="sv-lbl">${sell ? 'How much will you send?' : 'How much do you want?'} (${E(i.unit)})</span>
       <input class="sv-in" id="xsAmt" type="number" inputmode="decimal" min="${i.min || 0}" ${i.max ? `max="${i.max}"` : ''} placeholder="${i.min ? 'Min ' + num(i.min) : 'Amount'}${i.max ? ' · max ' + num(i.max) : ''}" oninput="xsCalc()">
@@ -781,9 +779,9 @@ function orderPage(){
     ${s.fields.map((f, k) => `<span class="sv-lbl">${E(f.label)}${f.req ? '' : ' <small style="color:var(--txt3)">(optional)</small>'}</span><input class="sv-in" id="xsF${k}" maxlength="300" autocomplete="off">`).join('')}
     ${canBal && canDirect ? `<span class="sv-lbl">How do you want to pay?</span><div class="xs-pm"><button class="${pm === 'xbal' ? 'on' : ''}" onclick="xsPm('xbal')"><i class="fa-solid fa-wallet"></i> Digital Balance<small>${tk(bal)}</small></button><button class="${pm === 'trx' ? 'on' : ''}" onclick="xsPm('trx')"><i class="fa-solid fa-mobile-screen"></i> bKash / Nagad<small>Send &amp; give TrxID</small></button></div>` : ''}
     ${payBlock}
-    <button class="sv-btn gold" style="margin-top:12px" id="xsBtn" onclick="xsSubmit()" ${pm === 'xbal' || w ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Place order</button>
+    <button class="sv-btn gold" style="margin-top:12px" id="xsBtn" onclick="xsSubmit()"><i class="fa-solid fa-paper-plane"></i>Place order</button>
     <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> Orders are checked and delivered by hand. If we cannot complete it, your money is returned.</div>`);
-  window._xsCur = { s, i, w, pm };
+  window._xsCur = { s, i, pm };
   xsCalc();
 }
 window.xsPm = v => { window._xsPm = v; window.svPage('x_order'); };
@@ -795,10 +793,12 @@ window.xsCalc = () => {
   const feeRow = !PK().on && !q.fee ? '' : q.waived ? `<div><span>${lbl}</span><span><s>${tk(q.saved)}</s> <span class="ok">Waived — Verified ✓</span></span></div>` : q.fee ? `<div><span>${lbl}</span><span>${sell ? '−' : '+'}${tk(q.fee)}</span></div>` : `<div><span>${lbl}</span><span class="ok">৳0</span></div>`;
   const offRow = pn.kind ? `<div><span>Regular price</span><span><s>${tk(pn.was)}</s></span></div><div><span>${pn.kind === 'deal' ? "Today's deal" : 'Offer price'} ${cd(pn.ends, '')}</span><span class="ok">${tk(pn.price)}</span></div>` : '';
   const b = $x('xsBrk'); if(b) b.innerHTML = (pn.kind ? offRow : `<div><span>${amt ? (sell ? 'Value' : 'Amount') : 'Price'}</span><span>${tk(amt ? (a > 0 ? q.base : 0) : q.base)}</span></div>`) + `${feeRow}<div class="tot"><span>${sell ? 'You get' : 'You pay'}</span><b>${tk(v)}</b></div>`;
+  if(s.mode === 'amount' && c.pm !== 'xbal' && !sell && window._pp && window._pp.xo && window._pp.xo.amount !== v){ clearTimeout(X._pa2); X._pa2 = setTimeout(() => window._ppAmount('xo', v), 400); }
   const n = $x('xsBalNote'); if(n && i.flow !== 'sell'){ const bal = X.xb ? X.xb.xbal : 0; n.innerHTML = v > bal ? `<span style="color:#ff8fa3">You need ${tk(v - bal)} more. Add balance first.</span>` : 'The price is taken from your Digital Balance when you place the order.'; }
 };
 window.xsSubmit = async function(){
-  const c = window._xsCur; if(!c) return; const { s, i, w, pm } = c;
+  const c = window._xsCur; if(!c) return; const { s, i, pm } = c; const w = pm === 'xbal' ? null : window._ppCur('xo');
+  if(pm !== 'xbal' && !w){ toast('Choose how you paid (bKash, Nagad…)', true); return; }
   const trxId = (($x('xsTrx') || {}).value || '').trim();
   if(s.mode === 'amount' && !(Number(($x('xsAmt') || {}).value) > 0)){ toast('Enter the amount', true); return; }
   if(pm !== 'xbal' && trxId.length < 6){ toast('Enter the Transaction ID', true); return; }
@@ -807,13 +807,13 @@ window.xsSubmit = async function(){
   if(i.region && !($x('xsReg') || {}).checked){ toast('Please confirm the region (' + i.region + ')', true); return; }
   const email = (($x('xsEm') || {}).value || '').trim(); if(s.deliver === 'email' && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)){ toast('Enter the email for delivery', true); return; }
   const b = $x('xsBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Placing order…';
-  const r = await api('extraOrder', { regionOk: !!i.region, email, sid: s.id, iid: i.id, amount: Number(($x('xsAmt') || {}).value) || 0, fields, trxId, payWith: pm, payMethod: w ? w.name : '', toNumber: w ? w.number : '' });
+  const r = await api('extraOrder', { regionOk: !!i.region, email, sid: s.id, iid: i.id, amount: Number(($x('xsAmt') || {}).value) || 0, fields, trxId, payWith: pm, payMethod: w ? w.name + (w.type ? ' · ' + w.type : '') : '', toNumber: w ? w.number : '' });
   b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Place order';
   if(!r.ok){ toast(r.data.error || 'Could not place the order', true); if(r.data.code === 'xbal_low') svGo('x_dep'); return; }
   if(r.data.xbal !== null && r.data.xbal !== undefined && X.xb){ X.xb.xbal = r.data.xbal; render(); }
   loadLive();
   toast('Order placed — we will deliver it soon');
-  svGo('x_orders');
+  svGo('x_orders', { replace: true });
 };
 
 /* ───────── Digital Balance ───────── */
@@ -834,26 +834,22 @@ async function walletPage(){
 }
 function depPage(){
   const W = (X.cfg && X.cfg.wallet) || {};
-  const tg = payTargets({}); const w = tg[window._xbW || 0] || tg[0];
   const amts = [100, 500, 1000, 2000, 5000].filter(a => a >= (W.min || 1) && (!W.max || a <= W.max));
   const DB = (X.cfg && X.cfg.depBonus) || {};
-  show('Add balance', `<div class="xb-card"><small>EXTRA BALANCE</small><div class="v">${tk(X.xb ? X.xb.xbal : 0)}</div><p>Add money once and order any Digital Service in one tap.</p></div>
-    ${DB.on && DB.tiers.length ? `<div class="xb-bonus"><div class="h"><i class="fa-solid fa-gift"></i>Deposit bonus</div><div class="tiers">${DB.tiers.map(t => `<div><b>+${num(t.pct)}%</b><small>on ${tk(t.min)}+</small></div>`).join('')}</div><small>Added to your Digital Balance as soon as your deposit is approved${DB.max ? ` · up to ${tk(DB.max)} per deposit` : ''}.</small><div class="you" id="xbBon"></div></div>` : ''}
+  show('Add balance', `    ${DB.on && DB.tiers.length ? `<div class="xb-bonus"><div class="h"><i class="fa-solid fa-gift"></i>Deposit bonus</div><div class="tiers">${DB.tiers.map(t => `<div><b>+${num(t.pct)}%</b><small>on ${tk(t.min)}+</small></div>`).join('')}</div><small>Added to your Digital Balance as soon as your deposit is approved${DB.max ? ` · up to ${tk(DB.max)} per deposit` : ''}.</small><div class="you" id="xbBon"></div></div>` : ''}
     <span class="sv-lbl">1. Amount</span>
     <div class="xb-chips">${amts.map(a => `<button onclick="xbAmt(${a},this)">${tk(a)}</button>`).join('')}</div>
     <input class="sv-in" id="xbAmt" type="number" inputmode="numeric" oninput="xbBon()" placeholder="Amount (min ${tk(W.min || 50)}${W.max ? ', max ' + tk(W.max) : ''})">
     <div class="xb-cp"><input class="sv-in" id="xbCp" placeholder="Coupon code (optional)" maxlength="24" autocomplete="off" style="text-transform:uppercase"><button onclick="xbCoupon()" id="xbCpB">Apply</button></div>
     <div id="xbCpMsg" style="font-size:12px;margin:-2px 2px 8px"></div>
     <span class="sv-lbl">2. Send it to</span>
-    ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xbW=${k};svPage('x_dep')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}${x.type ? `<small class="pw-t">${E(x.type)}</small>` : ''}</button>`).join('')}</div>` : ''}
-    ${payNum(w)}
+    ${window._payPick('dep')}
     <span class="sv-lbl">3. Transaction ID from your payment SMS</span>
     <input class="sv-in code" id="xbTrx" placeholder="TRANSACTION ID" maxlength="40" autocomplete="off">
-    <button class="sv-btn gold" style="margin-top:12px" id="xbBtn" onclick="xbSubmit()" ${w ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Submit deposit</button>
+    <button class="sv-btn gold" style="margin-top:12px" id="xbBtn" onclick="xbSubmit()"><i class="fa-solid fa-paper-plane"></i>Submit deposit</button>
     <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> We add it as soon as we check your payment. Digital Balance is only for Digital Services — not for loans or loan fees.</div>`);
-  window._xbCur = w;
 }
-window.xbAmt = (v, el) => { $x('xbAmt').value = v; document.querySelectorAll('.xb-chips button').forEach(b => b.classList.toggle('on', b === el)); xbBon(); };
+window.xbAmt = (v, el) => { $x('xbAmt').value = v; window._ppAmount && window._ppAmount('dep', v); document.querySelectorAll('.xb-chips button').forEach(b => b.classList.toggle('on', b === el)); xbBon(); };
 // the bonus for the amount typed (same rule as the server)
 function bonusFor(amount){ const B = (X.cfg && X.cfg.depBonus) || {}; if(!B.on) return 0; const t = [...(B.tiers || [])].reverse().find(x => amount >= x.min); return t ? Math.min(B.max || Infinity, Math.floor(amount * t.pct / 100)) : 0; }
 // a deposit coupon: checked on the server for this amount; its bonus comes with the deposit approval
@@ -866,17 +862,18 @@ window.xbCoupon = async function(){
   if(!r.ok){ window._xbCoupon = null; m.innerHTML = `<span style="color:#ff8fa3">${E(r.data.error || 'Not valid')}</span>`; return; }
   window._xbCoupon = { code: r.data.code, amount }; m.innerHTML = `<span style="color:var(--p);font-weight:800"><i class="fa-solid fa-circle-check"></i> ${E(r.data.code)} applied — +${tk(r.data.bonus)} bonus when your deposit is approved</span>`;
 };
-window.xbBon = () => {
+window.xbBon = () => { const _a = Number(($x('xbAmt') || {}).value) || 0; if(window._ppAmount && window._pp && window._pp.dep && window._pp.dep.amount !== _a){ clearTimeout(X._pa); X._pa = setTimeout(() => window._ppAmount('dep', _a), 350); }
   if(window._xbCoupon && window._xbCoupon.amount !== (Number(($x('xbAmt') || {}).value) || 0)){ window._xbCoupon = null; const m = $x('xbCpMsg'); if(m) m.innerHTML = '<span style="color:var(--txt2)">Amount changed — tap Apply again for the coupon.</span>'; } const el = $x('xbBon'); if(!el) return; const a = Number(($x('xbAmt') || {}).value) || 0, b = bonusFor(a); el.innerHTML = b ? `You get <b>${tk(a + b)}</b> (${tk(a)} + ${tk(b)} bonus)` : ''; };
 window.xbSubmit = async function(){
-  const w = window._xbCur, amount = Number($x('xbAmt').value) || 0, trxId = ($x('xbTrx').value || '').trim();
+  const w = window._ppCur('dep'), amount = Number($x('xbAmt').value) || 0, trxId = ($x('xbTrx').value || '').trim();
   if(!(amount > 0)){ toast('Enter the amount', true); return; }
+  if(!w){ toast('Choose how you paid (bKash, Nagad…)', true); return; }
   if(trxId.length < 6){ toast('Enter the Transaction ID', true); return; }
   const b = $x('xbBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Submitting…';
-  const r = await api('xbalDeposit', { amount, trxId, payMethod: w ? w.name : '', toNumber: w ? w.number : '', coupon: window._xbCoupon && window._xbCoupon.amount === amount ? window._xbCoupon.code : '' });
+  const r = await api('xbalDeposit', { amount, trxId, payMethod: w.name + (w.type ? ' · ' + w.type : ''), toNumber: w.number, coupon: window._xbCoupon && window._xbCoupon.amount === amount ? window._xbCoupon.code : '' });
   b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Submit deposit';
   if(!r.ok){ toast(r.data.error || 'Could not submit', true); return; }
-  toast('Deposit submitted — we will add it after checking'); svGo('x_wallet');
+  toast('Deposit submitted — we will add it after checking'); svGo('x_wallet', { replace: true });
 };
 
 /* ───────── Mobile Recharge (Verified & VIP) ───────── */
@@ -968,8 +965,8 @@ async function ordersPage(){
   const when = t => { try { return new Date(t).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
   const lbl = { Pending: 'Checking payment', Processing: 'In progress', Delivered: 'Delivered', Rejected: 'Not completed' };
   show('My orders', L.length ? L.map(o => `<div class="xs-od"><div class="h"><div><b>${E(o.iname)}</b><div>${E(o.sname)} · ${when(o.createdAt)}</div></div><span class="xs-st ${E(o.status)}">${lbl[o.status] || E(o.status)}</span></div>
-      <div style="margin-top:6px">${o.amount ? `${num(o.amount)} ${E(o.unit)} · ` : ''}${o.flow === 'sell' ? 'You get ' + tk(o.get) : 'Paid ' + tk(o.price)} · TrxID <span style="font-family:monospace">${E(o.trxId)}</span></div>
-      ${o.status === 'Delivered' && o.delivery ? `<div class="xs-dl">${E(o.delivery)}<button onclick="navigator.clipboard&&navigator.clipboard.writeText(this.parentNode.firstChild.textContent).then(()=>svToastOk('Copied'))"><i class="fa-regular fa-copy"></i> Copy</button></div>` : ''}
+      <div style="margin-top:6px">${o.amount ? `${num(o.amount)} ${E(o.unit)} · ` : ''}${o.flow === 'sell' ? 'You get ' + tk(o.get) : 'Paid ' + tk(o.price)} · TrxID <span style="font-family:monospace">${E(o.trxId)}</span> ${window._cpBtn ? window._cpBtn(o.trxId, 1) : ''}</div>
+      ${o.status === 'Delivered' && o.delivery ? `<div class="xs-dl">${E(o.delivery)}${window._cpBtn(o.delivery)}</div>` : ''}
       ${o.status === 'Rejected' && o.reason ? `<div style="margin-top:6px;color:#ff8fa3">${E(o.reason)}</div>` : ''}</div>`).join('') + finePrint()
     : `<div class="sv-empty"><i class="fa-solid fa-bag-shopping"></i>No orders yet.</div><button class="sv-btn ghost" onclick="svClose()">Browse Digital Services</button>`);
 }
