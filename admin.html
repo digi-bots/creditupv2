@@ -2139,14 +2139,20 @@ function renderUP(){
 }
 function viewUser(id){
   const u=findById('users',id); if(!u){toast('Not found','e');return;} _userId=u._id;
+  // the user's applications (filled by the user or by an admin): name, email, loans and progress come from them when the profile has none
+  const ph=String(u.phone||u._id), myApps=(_D.applications||[]).filter(a=>String(a.uid||a.phone||'')===ph&&!a.removed).sort((a,b)=>String(b.submittedAt||'').localeCompare(String(a.submittedAt||'')));
+  const la=myApps[0]||{}, loanSt=['Approved','Disbursed','Active','Overdue','Repaid'];
+  const name=u.name||la.name||'', email=u.email||la.email||'';
+  const prog=myApps.length?Math.max(Number(u.appStatus)||0,5):(Number(u.appStatus)||0);
   document.getElementById('uGrid').innerHTML=[
     {l:'Phone',v:u.phone,c:'mono'},{l:'Registered',v:fd(u.createdAt)},
-    {l:'Status',v:sb(u.status||'active')},{l:'App Progress',v:`${u.appStatus||0}/5 steps`},
+    {l:'Status',v:sb(u.status||'active')},{l:'App Progress',v:`${prog}/5 steps${la.status?' · '+_escA(la.status):''}`},
     {l:'Referral By',v:u.referredBy||'-'},{l:'Admin Note',v:u.adminNote||'-'},
-    {l:'Total Loans',v:u.totalLoans||0},{l:'Doc ID',v:u._id,c:'mono'},
-    {l:'Name',v:u.name?_escA(u.name):'-'},{l:'Last seen',v:u.lastSeenAt?`${agoTxt(u.lastSeenAt)} <span style="color:var(--txt2);font-size:11px">(${fd(u.lastSeenAt)}${u.lastDevice?' · '+_escA(u.lastDevice):''})</span>`:'Never'},
+    {l:'Total Loans',v:`${myApps.filter(a=>loanSt.includes(a.status)).length||u.totalLoans||0} loan(s) · ${myApps.length} application(s)`},{l:'Doc ID',v:u._id,c:'mono'},
+    {l:'Name',v:name?_escA(name):'-'},{l:'Email',v:email?_escA(email):'-'},{l:'Last seen',v:u.lastSeenAt?`${agoTxt(u.lastSeenAt)} <span style="color:var(--txt2);font-size:11px">(${fd(u.lastSeenAt)}${u.lastDevice?' · '+_escA(u.lastDevice):''})</span>`:'Never'},
     {l:'Created by',v:u.createdBy==='admin'?'Admin (manual)':'User (self sign-up)'},
-  ].map(f=>`<div class="dr"><div class="dl">${f.l}</div><div class="dv ${f.c||''}">${f.v||'-'}</div></div>`).join('');
+  ].map(f=>`<div class="dr"><div class="dl">${f.l}</div><div class="dv ${f.c||''}">${f.v||'-'}</div></div>`).join('')
+    + (myApps.length?`<div class="dr" style="grid-column:1/-1"><div class="dl">Applications</div>${myApps.map(a=>`<div onclick="closeMo('moUser');viewApp('${a._id}')" style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed var(--border);cursor:pointer;font-size:12.5px"><span><b class="mono">CU-${String(a._id).slice(-6).toUpperCase()}</b> · ৳${fa(a.loanAmount)} · ${_escA(String(a.term||''))} mo</span><span>${sb(a.status||'-')} <small style="color:var(--txt2)">${fd(a.submittedAt)}</small></span></div>`).join('')}</div>`:'');
   document.getElementById('uBal').innerText='৳ '+fa(u.balance||0);
   { const v=u.vip, vipOn=v&&v.plan&&v.active!==false&&(!v.until||new Date(v.until)>new Date())&&!['banned','suspended'].includes(u.status);
     document.getElementById('uSvc').innerHTML=(u.phoneVerified?'<span class="b b-active" style="background:rgba(29,161,242,.15);color:#46b0ff"><i class="fa-solid fa-circle-check"></i> Verified number</span>':'<span class="b b-inactive">Number not verified</span>')
@@ -4942,6 +4948,6 @@ onAuthStateChanged(fbAuth, async user=>{
 </script>
 <script src="admin-pro.js?v=3"></script>
 <script src="admin-svc.js?v=11"></script>
-<script src="admin-tg.js?v=6"></script>
+<script src="admin-tg.js?v=7"></script>
 </body>
 </html>

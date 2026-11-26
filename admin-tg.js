@@ -138,6 +138,7 @@ async function tgStatus(){
   const r = await window._accountApi('adminTgStatus', {});
   if(!r.ok){ el.innerHTML = `<span style="color:var(--red)">${ep(r.data.error || 'Could not check')}</span>`; return; }
   const d = r.data;
+  if(d.fixed) toast('Webhook address fixed automatically → ' + d.fixed);
   if(!d.configured){ el.innerHTML = '<div class="tg-st"><div class="tg-k"><b class="no">Bot not connected</b><small>Add <code>TELEGRAM_BOT_TOKEN</code> in Vercel → Settings → Environment Variables, then Redeploy. Steps are below.</small></div></div>'; return; }
   const chat = (c, name, need) => !c ? `<div class="tg-k"><b class="wn">${name}: not set</b><small>Fill it in below.</small></div>`
     : !c.ok ? `<div class="tg-k"><b class="no">${name}: not found</b><small>${ep(c.error)}<br>Check the @username / ID and that the bot was added.</small></div>`

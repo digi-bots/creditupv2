@@ -327,7 +327,7 @@ const actions = {
     }
     if (gs.exists) await guardRef(phone).delete();
     // fraud check: which devices this account signs in from (Risk Center groups accounts that share a device)
-    const dev = devId(b.deviceId); if (dev && prof) prof.ref.update({ devices: admin.firestore.FieldValue.arrayUnion(dev), lastDevice: dev }).catch(() => {});
+    const dev = devId(b.deviceId); if (dev && prof) prof.ref.update({ devices: admin.firestore.FieldValue.arrayUnion(dev), lastDeviceId: dev }).catch(() => {});
     return [200, { ok: true, token: await auth().createCustomToken(phone) }];
   },
 
@@ -371,7 +371,7 @@ const actions = {
     const refDoc = isPhone(ref) && ref !== phone ? await findUserDoc(ref) : null;
     if (refDoc) u.referredBy = ref;
     const dev = devId(b.deviceId);
-    if (dev) { u.devices = [dev]; u.lastDevice = dev; }
+    if (dev) { u.devices = [dev]; u.lastDeviceId = dev; }
     // a friend invited from the same phone as the person who invited them: kept, but flagged for the Risk Center
     if (refDoc && dev && ((refDoc.data() || {}).devices || []).includes(dev)) u.riskSelfRef = true;
 
