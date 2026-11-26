@@ -89,10 +89,11 @@ async function page(){
   show('Telegram', '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Loading…</div>');
   const r = await api('tgState'); const d = r.ok ? r.data : {};
   if(!d.on && !d.channelLink && !d.groupLink){ show('Telegram', '<div class="sv-empty"><i class="fa-brands fa-telegram"></i>Our Telegram is coming soon.</div>'); return; }
-  const row = (href, ic, bg, t, sub) => `<a class="tg-row" href="${E(href)}" target="_blank" rel="noopener"><div class="ic" style="background:${bg}"><i class="${ic}"></i></div><div><b>${t}</b><small>${sub}</small></div><i class="fa-solid fa-arrow-up-right-from-square go"></i></a>`;
+  const row = (href, ic, bg, t, sub) => `<a class="tg-row" href="${E(href)}" target="_blank" rel="noopener" onclick="return tgOpen(this.href, event)"><div class="ic" style="background:${bg}"><i class="${ic}"></i></div><div><b>${t}</b><small>${sub}</small></div><i class="fa-solid fa-arrow-up-right-from-square go"></i></a>`;
   show('Telegram', `<div class="tg-hero"><div class="big"><i class="fa-brands fa-telegram"></i></div><h3>Creditfy on Telegram</h3><p>News, offers and new features in our channel — questions and chat in our community group.</p></div>
     ${d.channelLink ? row(d.channelLink, 'fa-solid fa-bullhorn', 'linear-gradient(135deg,#37bbfe,#1d8ed8)', 'Join our channel', 'Offers, news and updates first') : ''}
     ${d.groupLink ? row(d.groupLink, 'fa-solid fa-comments', 'linear-gradient(135deg,#1ddb80,#0e9a5a)', 'Join the community', 'Chat with members and our team') : ''}
+    ${d.bot ? row('https://t.me/' + d.bot, 'fa-solid fa-robot', 'linear-gradient(135deg,#8b7bff,#5a4bd6)', 'Open our bot @' + E(d.bot), 'Offers, balance and answers any time') : ''}
     ${d.bot ? `<span class="sv-lbl" style="margin-top:12px">Your updates on Telegram</span>
       ${d.linked ? `<div class="tg-ok"><i class="fa-solid fa-circle-check"></i><div><b>Connected${d.tgName ? ' as ' + E(d.tgName) : ''}</b><br>Loan, payment and order updates also come from @${E(d.bot)}.</div></div>
         <button class="sv-btn ghost" onclick="tgUnlink()"><i class="fa-solid fa-link-slash"></i>Disconnect</button>`
@@ -100,6 +101,19 @@ async function page(){
         <button class="sv-btn" id="tgCon" onclick="tgConnect()"><i class="fa-brands fa-telegram"></i>Connect Telegram</button>`}` : ''}
     <div style="font-size:11.5px;color:var(--txt2);margin:12px 2px;line-height:1.6"><i class="fa-solid fa-shield-halved"></i> Our team will never ask for your PIN, OTP or password on Telegram. Only trust @${E(d.bot || 'our official bot')}.</div>`);
 }
+// open a t.me link the best way: inside the Mini App Telegram opens it itself; on a phone the Telegram app
+// opens straight away (tg:// link) and the web page is the fallback when the app is not installed
+window.tgOpen = function(href, ev){
+  const m = String(href || '').match(/^https:\/\/t\.me\/(\+|joinchat\/)?([\w-]+)/i); if(!m) return true;
+  if(ev) ev.preventDefault();
+  if(inTg){ try { W.openTelegramLink(href); return false; } catch (e) {} }
+  const app = m[1] ? 'tg://join?invite=' + m[2] : 'tg://resolve?domain=' + m[2];
+  if(!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){ window.open(href, '_blank', 'noopener'); return false; }
+  let left = false; const bye = () => { left = true; }; document.addEventListener('visibilitychange', bye, { once: true }); window.addEventListener('pagehide', bye, { once: true });
+  location.href = app;
+  setTimeout(() => { if(!left && !document.hidden) location.href = href; }, 1400);
+  return false;
+};
 window.tgConnect = async function(){
   const b = document.getElementById('tgCon'); if(b){ b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Opening Telegram…'; }
   if(inTg){ const r = await api('tgLinkWebApp', { initData: W.initData }); if(b) b.disabled = false; if(r.ok){ try { localStorage.setItem('cf_tg_linked', (user() || {}).phone || ''); } catch (e) {} page(); return; } }

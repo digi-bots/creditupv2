@@ -26,6 +26,21 @@
 @media(max-width:900px){.vq-row{grid-template-columns:1fr 1fr}}
 .pz-row{display:grid;grid-template-columns:1.2fr 1fr .8fr .8fr 70px 60px auto;gap:7px;align-items:center;margin-bottom:6px}
 .pl-row{display:grid;grid-template-columns:auto 1.2fr .8fr .8fr 1fr auto;gap:7px;align-items:center;margin-bottom:6px}
+.hb-row{border:1.5px solid var(--border);border-radius:12px;margin-bottom:7px;background:rgba(255,255,255,.02);transition:box-shadow .2s,border-color .2s}
+.hb-row:hover{border-color:rgba(29,219,128,.4)}.hb-row.on{border-color:rgba(29,219,128,.6);box-shadow:0 0 0 3px rgba(29,219,128,.1)}.hb-row.off{opacity:.6}
+.hb-row.dg-on,.xs-blk.dg-on{opacity:.85;box-shadow:0 12px 30px rgba(0,0,0,.45);border-color:#ffd76a;position:relative;z-index:5}
+.hb-top{display:flex;align-items:center;gap:9px;padding:8px 10px}
+.dg{cursor:grab;touch-action:none;color:var(--txt2);padding:6px 4px;font-size:15px;user-select:none}.dg:active{cursor:grabbing}
+.hb-n{flex:1;min-width:0}.hb-n b{font-size:13px}.hb-n small{margin-left:6px;color:var(--txt2);font-size:11px}.hb-n div{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}
+.hb-b,.hb-c{font-style:normal;font-size:9.5px;font-weight:900;padding:2px 7px;border-radius:7px;color:#fff}.hb-c{background:rgba(255,255,255,.08);color:var(--txt2)}.hb-c.st{background:rgba(255,159,67,.18);color:#ffae6b}.hb-c.own{background:rgba(29,219,128,.15);color:var(--p)}
+.hb-f{padding:4px 12px 12px;border-top:1px dashed var(--border)}
+.hb-f textarea{padding:8px 9px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;font-family:inherit;resize:vertical}
+.hb-f .hint{font-size:11.5px;color:var(--txt2);line-height:1.5}.hb-f .hint code{font-size:11px}
+.hb-sec{border:1px solid var(--border);border-radius:10px;padding:9px;margin-top:8px;background:rgba(255,255,255,.015)}
+.hb-sh{display:flex;gap:6px;align-items:center}.hb-sh b{flex:none;font-size:12px}
+.hb-it{border-left:3px solid rgba(29,219,128,.5);padding:6px 0 6px 9px;margin:6px 0}
+.hb-ig{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:5px;align-items:center}
+@media(max-width:700px){.hb-ig{grid-template-columns:1fr 1fr}.hb-top{flex-wrap:wrap}}
 .tl-row2{display:grid;grid-template-columns:auto 1.4fr 1fr .8fr auto;gap:7px;align-items:center;margin-bottom:6px}
 .pz-row input,.pz-row select,.pl-row input,.pl-row select,.tl-row2 input,.lst-row input{height:34px;padding:0 9px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;font-family:inherit;min-width:0;width:100%;box-sizing:border-box}
 .pz-row select option,.pl-row select option{background:#0f1d35}
@@ -181,8 +196,10 @@ function buildSvc(){
   </div>
   <div class="pro-pane" data-k="hub">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-grip"></i>Quick Services on the home page</div>
-      <div class="hint" style="margin-bottom:8px">Tick “Home” for up to 6 tiles (the last two are always “Language” and “All Services”). Use the arrows to set the order. “Show” off hides a service everywhere. Badge = a small label like NEW or HOT.</div>
+      <div class="hint" style="margin-bottom:8px"><b>Drag</b> <i class="fa-solid fa-grip-vertical"></i> to change the order (it is the order on the home page and in All Services). Tick <b>Home</b> for up to 6 tiles — “Language” and “All Services” are always last. <b>Show</b> off hides a service everywhere. Tap <i class="fa-solid fa-pen"></i> to set the badge, who can open it, its status and a note — or to build the page of your own tile.</div>
       <div id="hbList"></div>
+      <button class="btn btn-sm btn-p ro-ok" style="margin-top:8px" onclick="hbAdd()"><i class="fa-solid fa-plus"></i>Add a new tile</button>
+      <datalist id="bdgList"><option>HOT</option><option>NEW</option><option>POPULAR</option><option>SALE</option><option>FREE</option><option>EARN</option><option>FOR VERIFIED</option><option>VIP</option><option>VIP 1</option><option>VIP 2</option><option>VIP 3</option></datalist>
     </div>
   </div>
   <div class="pro-pane" data-k="report">
@@ -465,19 +482,97 @@ async function cbLoad(){
   const n = L.filter(c => c.status === 'Open').length; const b = $p('nb-svc'); if(b && n){ b.title = n + ' call-back request(s)'; }
 }
 async function cbDone(id){ await window._updateDoc(id, 'callbacks', { status: 'Done', doneAt: new Date().toISOString() }); await logAct('Call-back request marked as called', 'user', id); toast('Marked as called ✓'); cbLoad(); }
-function hbRender(){
-  const H = _SV.hub, home = H.home || [];
-  const order = [...home.filter(k => k !== 'all'), ...SV_TILES.map(t => t[0]).filter(k => !home.includes(k))];
-  $p('hbList').innerHTML = order.map((k, i) => { const name = (SV_TILES.find(t => t[0] === k) || [k, k])[1], c = (H.tiles || {})[k] || {};
-    return `<div class="tl-row2"><label class="tog" title="Show"><input type="checkbox" ${c.on !== false ? 'checked' : ''} onchange="hbSet('${k}','on',this.checked)"><span class="tog-sl"></span></label>
-      <div><b>${ep(name)}</b> <input value="${ep(c.label || '')}" placeholder="Own name (optional)" oninput="hbSet('${k}','label',this.value)" style="margin-top:4px"></div>
-      <label class="hp-sw" style="font-size:12px"><input type="checkbox" ${home.includes(k) ? 'checked' : ''} onchange="hbHome('${k}',this.checked)"> Home</label>
-      <input value="${ep(c.badge ?? '')}" placeholder="Badge" maxlength="6" oninput="hbSet('${k}','badge',this.value)">
-      <div style="display:flex;gap:4px"><button class="ab ab-v" onclick="hbMove('${k}',-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="ab ab-v" onclick="hbMove('${k}',1)"><i class="fa-solid fa-arrow-down"></i></button></div></div>`; }).join('');
+/* ── drag to reorder (mouse and touch): rows carry data-i, the handle is .dg ── */
+function dgSort(box, sel, done){
+  if(!box) return;
+  box.querySelectorAll(sel + ' .dg').forEach(h => { h.onpointerdown = e => {
+    if(e.button > 0) return; e.preventDefault(); const row = h.closest(sel); if(!row || row.parentNode !== box) return;
+    row.classList.add('dg-on');
+    const mv = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY), over = el && el.closest(sel);
+      if(over && over !== row && over.parentNode === box){ const r = over.getBoundingClientRect(); box.insertBefore(row, ev.clientY < r.top + r.height / 2 ? over : over.nextSibling); }
+      if(ev.clientY < 70) window.scrollBy(0, -14); else if(ev.clientY > innerHeight - 70) window.scrollBy(0, 14); };
+    const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); row.classList.remove('dg-on');
+      const ord = [...box.querySelectorAll(':scope > ' + sel)].map(x => Number(x.dataset.i)); if(ord.some((v, k) => v !== k)) done(ord); };
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  }; });
 }
-function hbSet(k, f, v){ _SV.hub.tiles = _SV.hub.tiles || {}; _SV.hub.tiles[k] = { ...(_SV.hub.tiles[k] || {}), [f]: v }; markDirty('services', 'hub'); }
-function hbHome(k, on){ let h = (_SV.hub.home || []).filter(x => x !== 'all' && x !== k); if(on){ if(h.length >= 6){ toast('Up to 6 tiles on the home page (Language and All Services are always last)', 'w'); hbRender(); return; } h.push(k); } _SV.hub.home = [...h, 'all']; markDirty('services', 'hub'); hbRender(); }
-function hbMove(k, d){ const h = (_SV.hub.home || []).filter(x => x !== 'all'); const i = h.indexOf(k), j = i + d; if(i < 0 || j < 0 || j >= h.length) return; [h[i], h[j]] = [h[j], h[i]]; _SV.hub.home = [...h, 'all']; markDirty('services', 'hub'); hbRender(); }
+const HB_ACC = [['all', 'Everyone'], ['verified', 'Verified members (and VIP)'], ['vip', 'Any VIP plan'], ['vip1', 'VIP 1 and above'], ['vip2', 'VIP 2 and above'], ['vip3', 'VIP 3 only']];
+const HB_ST = [['open', 'Open'], ['busy', 'Busy (slow)'], ['closed', 'Closed'], ['soon', 'Coming soon']];
+const HB_CATS = [['premium', 'Premium'], ['rewards', 'Rewards'], ['loans', 'Loans'], ['help', 'Help & Info'], ['account', 'Account']];
+const HB_BTN = [['', 'No button'], ['tile', 'Open a Quick Service'], ['extra', 'Open an Extra Service'], ['url', 'Open a link (https)'], ['support', 'Open Support chat']];
+const BDG_C = t => ({ HOT: '#ff6b4a', SALE: '#ff6b4a', NEW: '#1ddb80', FREE: '#1ddb80', EARN: '#ff9f43', POPULAR: '#a46bff', 'FOR VERIFIED': '#2d8cff', VERIFIED: '#2d8cff', VIP: '#f2a91d', 'VIP 1': '#f2a91d', 'VIP 2': '#f2a91d', 'VIP 3': '#f2a91d' }[String(t).toUpperCase()] || '#ff5a6e');
+const opts = (L, v) => L.map(([k, t]) => `<option value="${ep(k)}"${k === (v || L[0][0]) ? ' selected' : ''}>${ep(t)}</option>`).join('');
+const hbSel = (L, v, on, w = '') => `<select onchange="${on}" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border);min-width:0;width:100%${w}">${opts(L, v)}</select>`;
+let _hbOpen = '';
+function hbKeys(){
+  const H = _SV.hub; H.custom = H.custom || []; H.tiles = H.tiles || {};
+  const all = [...SV_TILES.map(t => t[0]), ...H.custom.map(c => 'c_' + c.id)];
+  const ord = (H.order && H.order.length ? H.order : (H.home || []).filter(k => k !== 'all')).filter(k => all.includes(k));
+  return [...new Set([...ord, ...all])];
+}
+function hbName(k){ const c = (_SV.hub.custom || []).find(x => 'c_' + x.id === k); return c ? (c.label || 'New tile') : (SV_TILES.find(t => t[0] === k) || [k, k])[1]; }
+function hbRender(){
+  const H = _SV.hub, home = H.home || [], keys = hbKeys(); H.order = keys;
+  $p('hbList').innerHTML = keys.map((k, i) => { const c = H.tiles[k] || {}, cu = (H.custom || []).find(x => 'c_' + x.id === k), open = _hbOpen === k;
+    const chips = [c.badge ? `<em class="hb-b" style="background:${BDG_C(c.badge)}">${ep(c.badge)}</em>` : '', c.access && c.access !== 'all' ? `<em class="hb-c">🔒 ${ep((HB_ACC.find(a => a[0] === c.access) || [0, c.access])[1])}</em>` : '', c.status && c.status !== 'open' ? `<em class="hb-c st">${ep((HB_ST.find(a => a[0] === c.status) || [0, c.status])[1])}</em>` : '', cu ? '<em class="hb-c own">Own tile</em>' : ''].join('');
+    return `<div class="hb-row${open ? ' on' : ''}${c.on === false ? ' off' : ''}" data-i="${i}"><div class="hb-top">
+      <span class="dg" title="Drag to move"><i class="fa-solid fa-grip-vertical"></i></span>
+      <label class="tog" title="Show"><input type="checkbox" ${c.on !== false ? 'checked' : ''} onchange="hbSet('${k}','on',this.checked,1)"><span class="tog-sl"></span></label>
+      <div class="hb-n"><b>${ep(c.label || hbName(k))}</b>${c.label ? `<small>${ep(hbName(k))}</small>` : ''}<div>${chips}</div></div>
+      <label class="hp-sw" style="font-size:12px"><input type="checkbox" ${home.includes(k) ? 'checked' : ''} onchange="hbHome('${k}',this.checked)"> Home</label>
+      <button class="ab ab-v" title="Edit" onclick="hbEdit('${k}')"><i class="fa-solid fa-${open ? 'chevron-up' : 'pen'}"></i></button>
+      ${cu ? `<button class="ab ab-no ro-ok" title="Delete" onclick="hbDel('${k}')"><i class="fa-solid fa-trash"></i></button>` : ''}</div>
+      ${open ? hbForm(k, c, cu) : ''}</div>`; }).join('');
+  dgSort($p('hbList'), '.hb-row', ord => { const K = hbKeys(); H.order = ord.map(n => K[n]); hbSyncHome(); markDirty('services', 'hub'); hbRender(); });
+}
+function hbForm(k, c, cu){
+  const f = (fld, ph, v) => xsInp(v ?? c[fld], `hbSet('${k}','${fld}',this.value)`, ph);
+  let h = `<div class="hb-f"><div class="fgrid fgrid3">
+    <div class="fg"><label>Own name (optional)</label>${f('label', hbName(k))}</div>
+    <div class="fg"><label>Badge — pick or type</label><input list="bdgList" value="${ep(c.badge ?? '')}" maxlength="14" placeholder="none" oninput="hbSet('${k}','badge',this.value.toUpperCase())" onchange="hbRender()" style="height:34px;padding:0 9px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;width:100%;box-sizing:border-box"></div>
+    <div class="fg"><label>Who can open it</label>${hbSel(HB_ACC, c.access, `hbSet('${k}','access',this.value,1)`)}</div>
+    <div class="fg"><label>Status</label>${hbSel(HB_ST, c.status, `hbSet('${k}','status',this.value,1)`)}</div>
+    <div class="fg"><label>Status message (closed / busy / soon)</label>${f('statusNote', 'e.g. Back on Sunday 10 AM')}</div>
+    <div class="fg"><label>Icon (Font Awesome, optional)</label>${f('icon', cu ? 'fa-solid fa-star' : 'keep')}</div>
+    <div class="fg"><label>Colour</label>${hbSel([['', cu ? 'g-teal' : 'Keep'], ...XS_COLORS.map(x => [x, x])], c.color, `hbSet('${k}','color',this.value)`)}</div>
+    <div class="fg full"><label>Service note (shown at the top of its page)</label>${f('note', 'e.g. Orders are delivered within 30 minutes')}</div></div>`;
+  if(cu){ const n = _SV.hub.custom.indexOf(cu);
+    h += `<div class="cfg-t" style="margin-top:10px;font-size:13px"><i class="fa-solid fa-file-lines"></i>Its page</div><div class="fgrid fgrid3">
+      <div class="fg"><label>Group in All Services</label>${hbSel(HB_CATS, cu.cat, `hbC(${n},'cat',this.value)`)}</div>
+      <div class="fg full"><label>Short description</label>${xsInp(cu.desc, `hbC(${n},'desc',this.value)`, 'What this service is about')}</div></div>
+      <div class="hint" style="margin:6px 0">Tabs (sections) at the top of the page; each tab has menu items that open to show the text and the sub-menu. A sub-menu line is <code>Title | text</code>.</div>
+      ${(cu.sections || []).map((sc, j) => `<div class="hb-sec"><div class="hb-sh"><b>Tab ${j + 1}</b>${xsInp(sc.title, `hbS(${n},${j},'title',this.value)`, 'Tab name, e.g. Prices')}
+          <button class="ab ab-v" onclick="hbSecMove(${n},${j},-1)"><i class="fa-solid fa-arrow-left"></i></button><button class="ab ab-v" onclick="hbSecMove(${n},${j},1)"><i class="fa-solid fa-arrow-right"></i></button><button class="ab ab-no ro-ok" onclick="hbSecDel(${n},${j})"><i class="fa-solid fa-trash"></i></button></div>
+        <textarea rows="2" placeholder="Text at the top of this tab (optional)" oninput="hbS(${n},${j},'text',this.value)" style="width:100%;box-sizing:border-box;margin:6px 0">${ep(sc.text || '')}</textarea>
+        ${(sc.items || []).map((it, m) => `<div class="hb-it"><div class="hb-ig">${xsInp(it.title, `hbI(${n},${j},${m},'title',this.value)`, 'Menu item')}${xsInp(it.icon, `hbI(${n},${j},${m},'icon',this.value)`, 'icon (optional)')}<input list="bdgList" value="${ep(it.tag || '')}" placeholder="badge" oninput="hbI(${n},${j},${m},'tag',this.value.toUpperCase())" style="height:34px;padding:0 9px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;min-width:0;width:100%;box-sizing:border-box"><button class="ab ab-no ro-ok" onclick="hbItDel(${n},${j},${m})"><i class="fa-solid fa-xmark"></i></button></div>
+          <textarea rows="2" placeholder="Text" oninput="hbI(${n},${j},${m},'text',this.value)" style="width:100%;box-sizing:border-box;margin-top:5px">${ep(it.text || '')}</textarea>
+          <textarea rows="2" placeholder="Sub-menu — one per line:  Title | text" oninput="hbI(${n},${j},${m},'subTxt',this.value)" style="width:100%;box-sizing:border-box;margin-top:5px">${ep((it.sub || []).map(x => x.title + (x.text ? ' | ' + x.text : '')).join('\n'))}</textarea>
+          <div class="hb-ig" style="margin-top:5px">${hbSel(HB_BTN, (it.btn || {}).kind, `hbB(${n},${j},${m},'kind',this.value)`)}${xsInp((it.btn || {}).label, `hbB(${n},${j},${m},'label',this.value)`, 'Button text')}${xsInp((it.btn || {}).to, `hbB(${n},${j},${m},'to',this.value)`, 'tile key / service id / https link')}</div></div>`).join('')}
+        <button class="btn btn-sm btn-s ro-ok" onclick="hbItAdd(${n},${j})"><i class="fa-solid fa-plus"></i>Add menu item</button></div>`).join('')}
+      <button class="btn btn-sm btn-s ro-ok" style="margin-top:6px" onclick="hbSecAdd(${n})"><i class="fa-solid fa-folder-plus"></i>Add tab</button>
+      <div class="hint" style="margin-top:6px">Button “Open a Quick Service” takes a tile key such as <code>vip</code>, <code>verify</code>, <code>recharge</code>, <code>telegram</code>; “Open an Extra Service” takes the service id from the Extra services tab (${(_SV.extra && _SV.extra.services || []).slice(0, 6).map(x => '<code>' + ep(x.id) + '</code>').join(' ')}).</div>`;
+  }
+  return h + '</div>';
+}
+function hbSet(k, f, v, re){ _SV.hub.tiles = _SV.hub.tiles || {}; _SV.hub.tiles[k] = { ...(_SV.hub.tiles[k] || {}), [f]: v }; const cu = (_SV.hub.custom || []).find(x => 'c_' + x.id === k); if(cu && ['label', 'icon', 'color'].includes(f)) cu[f] = v; markDirty('services', 'hub'); if(re) hbRender(); }
+function hbEdit(k){ _hbOpen = _hbOpen === k ? '' : k; hbRender(); }
+function hbSyncHome(){ const H = _SV.hub, set = new Set((H.home || []).filter(x => x !== 'all')); H.home = [...(H.order || hbKeys()).filter(k => set.has(k)), 'all']; }
+function hbHome(k, on){ const H = _SV.hub, cur = (H.home || []).filter(x => x !== 'all' && x !== k); if(on && cur.length >= 6){ toast('Up to 6 tiles on the home page (Language and All Services are always last)', 'w'); hbRender(); return; }
+  H.home = on ? [...cur, k, 'all'] : [...cur, 'all']; hbSyncHome(); markDirty('services', 'hub'); hbRender(); }
+function hbAdd(){ const H = _SV.hub; H.custom = H.custom || []; const id = hid(); H.custom.push({ id, label: 'New service', icon: 'fa-solid fa-star', color: 'g-teal', cat: 'help', desc: '', sections: [{ title: 'Details', text: '', items: [{ title: 'How it works', text: '', sub: [] }] }] });
+  H.order = [...hbKeys().filter(k => k !== 'c_' + id), 'c_' + id]; H.tiles = H.tiles || {}; H.tiles['c_' + id] = { on: true, label: 'New service' }; _hbOpen = 'c_' + id; markDirty('services', 'hub'); hbRender();
+  setTimeout(() => { const r = document.querySelector('.hb-row.on'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); }
+function hbDel(k){ if(!confirm('Delete this tile and its page?')) return; const H = _SV.hub; H.custom = (H.custom || []).filter(x => 'c_' + x.id !== k); delete H.tiles[k]; H.order = (H.order || []).filter(x => x !== k); H.home = (H.home || []).filter(x => x !== k); markDirty('services', 'hub'); hbRender(); }
+const hbCu = n => _SV.hub.custom[n];
+function hbC(n, f, v){ hbCu(n)[f] = v; markDirty('services', 'hub'); }
+function hbS(n, j, f, v){ hbCu(n).sections[j][f] = v; markDirty('services', 'hub'); }
+function hbI(n, j, m, f, v){ const it = hbCu(n).sections[j].items[m]; if(f === 'subTxt') it.sub = String(v).split('\n').map(l => l.trim()).filter(Boolean).slice(0, 20).map(l => { const [a, ...b] = l.split('|'); return { title: a.trim().slice(0, 80), text: b.join('|').trim().slice(0, 400) }; }); else it[f] = v; markDirty('services', 'hub'); }
+function hbB(n, j, m, f, v){ const it = hbCu(n).sections[j].items[m]; it.btn = { ...(it.btn || {}), [f]: v }; markDirty('services', 'hub'); }
+function hbSecAdd(n){ const c = hbCu(n); c.sections = c.sections || []; c.sections.push({ title: 'New tab', text: '', items: [] }); markDirty('services', 'hub'); hbRender(); }
+function hbSecDel(n, j){ hbCu(n).sections.splice(j, 1); markDirty('services', 'hub'); hbRender(); }
+function hbSecMove(n, j, d){ const L = hbCu(n).sections, t = j + d; if(t < 0 || t >= L.length) return; [L[j], L[t]] = [L[t], L[j]]; markDirty('services', 'hub'); hbRender(); }
+function hbItAdd(n, j){ const sc = hbCu(n).sections[j]; sc.items = sc.items || []; sc.items.push({ title: '', text: '', sub: [] }); markDirty('services', 'hub'); hbRender(); }
+function hbItDel(n, j, m){ hbCu(n).sections[j].items.splice(m, 1); markDirty('services', 'hub'); hbRender(); }
 
 /* ═════════ Extra services ═════════ */
 const XS_COLORS = ['g-teal', 'g-green', 'g-blue', 'g-cyan', 'g-purple', 'g-pink', 'g-red', 'g-orange', 'g-gold', 'g-slate', 'g-dark'];
@@ -487,23 +582,26 @@ function xsRender(){
   el.innerHTML = X.services.map((s, n) => {
     const amt = s.mode === 'amount';
     const head = amt ? ['Option', 'Icon', 'Unit', 'Rate ৳/unit', 'Fee %', 'Fee ৳', 'Min', 'Max', 'Buy / Sell', 'Pay-to number / address (blank = payment wallets)', 'On', '']
-      : ['Option', 'Icon', 'Category', 'Price ৳', 'Offer ৳', 'Offer ends (date & time)', 'Note for the user', 'Pay-to (blank = wallets)', 'Popular', 'On', ''];
-    const cols = amt ? '1.4fr 1fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.3fr 1fr .8fr .55fr .55fr 1.15fr 1.1fr .9fr 44px 34px 34px';
+      : ['Option', 'Icon', 'Menu (category)', 'Sub-menu (group)', 'Price ৳', 'Offer ৳', 'Offer ends (date & time)', 'Note for the user', 'Pay-to (blank = wallets)', 'Popular', 'On', ''];
+    const cols = amt ? '1.4fr 1fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.3fr 1fr .8fr .8fr .55fr .55fr 1.15fr 1.1fr .9fr 44px 34px 34px';
     const row = (i, k) => { const f = (key, ph, t) => xsInp(i[key], `xsItem(${n},${k},'${key}',this.value)`, ph, t);
       return `<div style="display:grid;grid-template-columns:${cols};gap:6px;align-items:center;margin-bottom:5px">${amt
         ? f('name', 'bKash → Nagad') + f('icon', 'auto') + f('unit', '৳') + f('rate', '1', 'number') + f('pct', '0', 'number') + f('fee', '0', 'number') + f('min', '0', 'number') + f('max', '0', 'number')
           + `<select onchange="xsItem(${n},${k},'flow',this.value)" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border)"><option value="buy"${i.flow !== 'sell' ? ' selected' : ''}>User pays</option><option value="sell"${i.flow === 'sell' ? ' selected' : ''}>User sells</option></select>` + f('to', 'e.g. bKash 017XXXXXXXX')
-        : f('name', 'Google Play $10') + f('icon', 'auto') + f('cat', 'e.g. Steam') + f('price', '0', 'number') + f('offer', 'none', 'number')
+        : f('name', 'Google Play $10') + f('icon', 'auto') + f('cat', 'e.g. Steam') + f('group', 'e.g. USA') + f('price', '0', 'number') + f('offer', 'none', 'number')
           + `<input type="datetime-local" value="${ep(xsLocal(i.offerEnd))}" onchange="xsItem(${n},${k},'offerEnd',this.value?new Date(this.value).toISOString():'');xsRender()" style="height:34px;padding:0 6px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid ${xsOfferLive(i) ? 'rgba(255,215,106,.7)' : 'var(--border)'};color:var(--txt);font-size:12px;min-width:0;width:100%;box-sizing:border-box;color-scheme:dark">`
           + f('note', 'optional') + f('to', 'optional') + `<input type="checkbox" title="Popular" ${i.hot ? 'checked' : ''} onchange="xsItem(${n},${k},'hot',this.checked)">`}
         <input type="checkbox" ${i.on !== false ? 'checked' : ''} onchange="xsItem(${n},${k},'on',this.checked)"><button class="ab ab-no ro-ok" title="Remove" onclick="xsDelItem(${n},${k})"><i class="fa-solid fa-trash"></i></button></div>`; };
     const lg = s.logo ? `<img src="${ep(s.logo)}" style="width:40px;height:40px;border-radius:12px;object-fit:cover;background:#fff">` : `<div class="${ep(s.color)}" style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;background:#345"><i class="${ep(s.icon)}"></i></div>`;
-    return `<div class="cfg-blk" style="${s.on === false ? 'opacity:.6' : ''}"><div class="cfg-t" style="gap:10px">${lg}<span>${ep(s.name || 'New service')}</span><small style="color:var(--txt2);font-weight:600">${s.mode === 'game' ? 'game' : amt ? 'amount (exchange)' : 'fixed price'}</small>
+    return `<div class="cfg-blk xs-blk" data-i="${n}" style="${s.on === false ? 'opacity:.6' : ''}"><div class="cfg-t" style="gap:10px"><span class="dg" title="Drag to move"><i class="fa-solid fa-grip-vertical"></i></span>${lg}<span>${ep(s.name || 'New service')}</span><small style="color:var(--txt2);font-weight:600">${s.mode === 'game' ? 'game' : amt ? 'amount (exchange)' : 'fixed price'}</small>
         <span style="margin-left:auto;display:flex;gap:5px"><button class="btn btn-sm btn-s ro-ok" onclick="xsMove(${n},-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="btn btn-sm btn-s ro-ok" onclick="xsMove(${n},1)"><i class="fa-solid fa-arrow-down"></i></button><button class="btn btn-sm btn-d ro-ok" onclick="xsDelSvc(${n})"><i class="fa-solid fa-trash"></i></button></span></div>
       <div class="fgrid fgrid3">
         <div class="fg"><label>Name</label>${xsInp(s.name, `xsSet(${n},'name',this.value)`, 'Gift Cards')}</div>
         <div class="fg"><label>Tile label (short)</label>${xsInp(s.short, `xsSet(${n},'short',this.value)`, 'Gift Cards')}</div>
-        <div class="fg"><label>Badge (NEW, HOT…)</label>${xsInp(s.badge, `xsSet(${n},'badge',this.value)`, '')}</div>
+        <div class="fg"><label>Badge — pick or type</label><input list="bdgList" value="${ep(s.badge || '')}" maxlength="14" placeholder="none" oninput="xsSet(${n},'badge',this.value.toUpperCase())" style="height:34px;padding:0 9px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;width:100%;box-sizing:border-box"></div>
+        <div class="fg"><label>Who can order</label>${hbSel(HB_ACC, s.access, `xsSet(${n},'access',this.value)`)}</div>
+        <div class="fg"><label>Status</label>${hbSel(HB_ST.filter(x => x[0] !== 'soon'), s.status, `xsSet(${n},'status',this.value)`)}</div>
+        <div class="fg"><label>Status / service message</label>${xsInp(s.statusNote, `xsSet(${n},'statusNote',this.value)`, 'e.g. Delivery within 1 hour')}</div>
         <div class="fg"><label>Logo image link</label>${xsInp(s.logo, `xsSet(${n},'logo',this.value)`, 'https://…/logo.png')}</div>
         <div class="fg"><label>Icon (Font Awesome)</label>${xsInp(s.icon, `xsSet(${n},'icon',this.value)`, 'fa-brands fa-steam')}</div>
         <div class="fg"><label>Colour</label><select onchange="xsSet(${n},'color',this.value,1)">${XS_COLORS.map(c => `<option${c === s.color ? ' selected' : ''}>${c}</option>`).join('')}</select></div>
@@ -512,13 +610,14 @@ function xsRender(){
         <div class="fg full"><label>Description</label>${xsInp(s.desc, `xsSet(${n},'desc',this.value)`, 'What this service gives')}</div>
         <div class="fg full"><label>Questions for the user — one per line, add <b>*</b> at the end if required</label><textarea rows="2" oninput="xsFields(${n},this.value)" style="width:100%;box-sizing:border-box">${ep((s.fields || []).map(f => f.label + (f.req ? ' *' : '')).join('\n'))}</textarea></div>
       </div>
-      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 1120 : 1220}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
+      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 1120 : 1340}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
         ${(s.items || []).map(row).join('')}</div></div>
         <button class="btn btn-sm btn-s ro-ok" onclick="xsAddItem(${n})"><i class="fa-solid fa-plus"></i>Add option</button>
         <div class="hint" style="margin-top:6px"><b>Icon</b>: leave empty for an automatic icon (Google Play, Steam, Telegram, Visa, bKash… are recognised from the name), or write a Font Awesome icon such as <code>fa-brands fa-steam</code>, <code>fa-brands fa-playstation</code>, <code>fa-solid fa-film</code>, or paste a logo image link starting with https://.</div>
         ${amt ? '<div class="hint" style="margin-top:6px">User pays = amount × rate + fee % + fee ৳. “User sells” = the user sends to the pay-to address and gets amount × rate − fee.</div>' : ''}`}
     </div>`;
   }).join('');
+  dgSort(el, '.xs-blk', ord => { const L = _SV.extra.services; _SV.extra.services = ord.map(i => L[i]); xsDirty(); xsRender(); });
   const g = { r: numv('xs-g-reward', 1, 0, 1e5), d: numv('xs-g-perday', 5, 0, 1e3) };
   if(typeof xsDealsRender === 'function') xsDealsRender();
   if($p('xsCost')) $p('xsCost').innerHTML = `Game wins go to the Extra Balance. Most a Verified user can win: <b>৳${fa(g.r * g.d)} a day</b> (about ৳${fa(g.r * g.d * 30)} a month).`;
@@ -723,6 +822,22 @@ async function loadSvc(){
   odLoad(); cdLoad(); vqLoad(); cbLoad();
   xsLoad().then(() => afterLoad('services'));
 }
+// the Quick Services setup as it is saved: order, home tiles, each tile's settings and the admin's own tiles
+function hubData(){
+  const H = _SV.hub, str = (v, n) => String(v ?? '').trim().slice(0, n);
+  const custom = (H.custom || []).map(c => ({ id: c.id, label: str(c.label, 30) || 'Service', icon: str(c.icon, 60), color: str(c.color, 20) || 'g-teal', cat: str(c.cat, 20) || 'help', desc: str(c.desc, 300),
+    sections: (c.sections || []).filter(x => str(x.title, 40)).slice(0, 12).map(x => ({ title: str(x.title, 40), text: str(x.text, 1500),
+      items: (x.items || []).filter(i => str(i.title, 80)).slice(0, 40).map(i => ({ title: str(i.title, 80), icon: str(i.icon, 60), tag: str(i.tag, 14), text: str(i.text, 1500), sub: (i.sub || []).slice(0, 20),
+        btn: i.btn && i.btn.kind && str(i.btn.label, 40) ? { kind: i.btn.kind, label: str(i.btn.label, 40), to: str(i.btn.to, 300) } : null })) })) }));
+  custom.forEach(c => c.sections.forEach(x => x.items.forEach(i => { if(i.btn && i.btn.kind === 'url' && !/^https:\/\//i.test(i.btn.to)) throw new Error('Quick Services: a button link must start with https://'); })));
+  const keys = hbKeys(), tiles = {};
+  keys.forEach(k => { const c = (H.tiles || {})[k]; if(!c) return; const t = {}; ['on'].forEach(f => { if(c[f] === false) t[f] = false; });
+    ['label', 'badge', 'access', 'status', 'statusNote', 'note', 'icon', 'color'].forEach(f => { const v = str(c[f], f === 'note' ? 300 : f === 'statusNote' ? 160 : 60); if(v && !(f === 'access' && v === 'all') && !(f === 'status' && v === 'open')) t[f] = v; });
+    if(c.badge === '' && SV_TILES.some(x => x[0] === k)) t.badge = '';   // an empty badge hides the built-in one (HOT, VIP…)
+    if(Object.keys(t).length) tiles[k] = t; });
+  hbSyncHome();
+  return { home: H.home, order: keys, tiles, custom };
+}
 async function saveSvc(){
   const plans = _SV.vip.plans.filter(p => String(p.name || '').trim()).map(p => ({ ...p, id: p.id || 'p' + hid(), price: Math.max(0, Math.round(Number(p.price) || 0)), days: Math.max(0, Math.round(Number(p.days) || 0)) }));
   if(!plans.length) throw new Error('Keep at least one VIP plan');
@@ -735,7 +850,7 @@ async function saveSvc(){
     voucher: { on: chk('vc-on'), min: numv('vc-min', 50, 1, 1e6), max: numv('vc-max', 1000, 1, 1e6), days: numv('vc-days', 30, 1, 365) },
     codes: { promo: false, redeem: chk('cd-redeem-on') },
     bonus: { requireVerified: chk('bn-reqv') },
-    hub: { home: _SV.hub.home, tiles: _SV.hub.tiles || {} },
+    hub: hubData(),
     loans: { emiMode: val('ln-mode') || 'principal', pay: { on: chk('ln-pay') }, payoff: { on: chk('ln-po'), discountPct: numv('ln-pod', 0, 0, 100), fee: numv('ln-pof', 0, 0, 1e6) },
       limit: { on: chk('lm-on'), enforce: chk('lm-enf'), start: numv('lm-start', 20000, 0, 1e8), step: numv('lm-step', 10000, 0, 1e8), verifiedBonus: numv('lm-vf', 5000, 0, 1e8), vipBonus: numv('lm-vip', 10000, 0, 1e8), max: numv('lm-max', 0, 0, 1e9) },
       trust: { on: true, levels: _SV.loans.trust.levels.filter(l => String(l.name || '').trim()).map(l => ({ name: String(l.name).trim().slice(0, 20), min: Math.max(0, Math.min(100, Number(l.min) || 0)), perk: String(l.perk || '').slice(0, 120) })).sort((a, b) => a.min - b.min) },

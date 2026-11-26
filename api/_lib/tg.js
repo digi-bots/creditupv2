@@ -21,11 +21,20 @@ const DEF = {
   rules: '1. Be respectful.\n2. No spam, ads or outside links.\n3. Never share your PIN, OTP or password — our team will never ask for it.\n4. For account issues, message the support inside the app.',
   mod: { links: true, words: [] }
 };
+// a join link that always works: "@name", "t.me/name", "https://t.me/+invite", or just the public @username
+function tme(link, name) {
+  let v = str(link, 200) || (/^@?[A-Za-z]\w{3,}$/.test(str(name, 80)) ? str(name, 80) : '');
+  if (!v) return '';
+  v = v.replace(/^http:\/\//i, 'https://').replace(/^(https:\/\/)?(www\.)?(telegram\.me|t\.me)\//i, 'https://t.me/');
+  if (/^@?[A-Za-z]\w{3,}$/.test(v)) return 'https://t.me/' + v.replace(/^@/, '');
+  if (/^\+[\w-]{6,}$/.test(v)) return 'https://t.me/' + v;
+  return /^https:\/\//.test(v) ? v : '';
+}
 function norm(t) {
   t = t || {};
   return {
     ...DEF, ...t,
-    channel: str(t.channel, 80), group: str(t.group, 80), channelLink: str(t.channelLink, 200), groupLink: str(t.groupLink, 200), botUsername: str(t.botUsername, 64).replace(/^@/, ''),
+    channel: str(t.channel, 80), group: str(t.group, 80), channelLink: tme(t.channelLink, t.channel), groupLink: tme(t.groupLink, t.group), botUsername: str(t.botUsername, 64).replace(/^@/, ''),
     appLink: str(t.appLink, 200), siteUrl: /^https:\/\//.test(String(t.siteUrl || '')) ? str(t.siteUrl, 200).replace(/\/+$/, '') : DEF.siteUrl,
     footer: str(t.footer ?? DEF.footer, 120), button: str(t.button || DEF.button, 30),
     auto: { ...DEF.auto, ...(t.auto || {}) }, welcome: { ...DEF.welcome, ...(t.welcome || {}) }, rules: str(t.rules ?? DEF.rules, 1500),

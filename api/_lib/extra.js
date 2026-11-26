@@ -64,6 +64,17 @@ const DEF = {
 
 const JOB_TYPES = ['join', 'visit', 'signup', 'form', 'survey', 'share', 'refer', 'other'];
 function bonusFor(B, amount) { if (!B || !B.on) return 0; const t = [...B.tiers].reverse().find(x => amount >= x.min); return t ? Math.min(B.max || Infinity, Math.floor(amount * t.pct / 100)) : 0; }
+// who can order a service: everyone, Verified (or VIP) members, any VIP, or VIP plan 1 / 2 / 3 and above
+const ACCESS = ['all', 'verified', 'vip', 'vip1', 'vip2', 'vip3'];
+// VIP level = the plan's place in Admin → VIP plans (1 = first plan); 0 = not VIP
+function vipLevel(v, plans) { if (!v) return 0; const i = (plans || []).findIndex(p => p.id === v.plan); return i < 0 ? 1 : i + 1; }
+function canUse(access, verified, level) {
+  if (!access || access === 'all') return true;
+  if (access === 'verified') return verified || level > 0;
+  if (access === 'vip') return level > 0;
+  return level >= Number(access.slice(3));
+}
+const accessText = a => ({ verified: 'Verified members', vip: 'VIP members', vip1: 'VIP 1 members and above', vip2: 'VIP 2 members and above', vip3: 'VIP 3 members' }[a] || '');
 function norm(x) {
   x = x || {};
   const list = Array.isArray(x.services) ? x.services : DEF.services;
@@ -71,13 +82,14 @@ function norm(x) {
     on: x.on !== false, title: str(x.title || DEF.title, 40),
     services: list.filter(s => s && s.id && s.name).map(s => ({
       id: str(s.id, 30), name: str(s.name, 40), short: str(s.short || s.name, 16), logo: str(s.logo, 500), icon: str(s.icon || 'fa-solid fa-star', 60), color: str(s.color || 'g-teal', 20),
-      mode: ['items', 'amount', 'game'].includes(s.mode) ? s.mode : 'items', on: s.on !== false, soon: s.soon === true, badge: str(s.badge, 10), desc: str(s.desc, 400), note: str(s.note, 400),
+      mode: ['items', 'amount', 'game'].includes(s.mode) ? s.mode : 'items', on: s.on !== false, soon: s.soon === true, badge: str(s.badge, 14), desc: str(s.desc, 400), note: str(s.note, 400),
+      access: ACCESS.includes(s.access) ? s.access : 'all', status: ['open', 'busy', 'closed'].includes(s.status) ? s.status : 'open', statusNote: str(s.statusNote, 160),
       fields: (Array.isArray(s.fields) ? s.fields : []).filter(f => f && f.label).slice(0, 6).map(f => ({ label: str(f.label, 60), req: f.req === true })),
       items: (Array.isArray(s.items) ? s.items : []).filter(i => i && i.id && i.name).slice(0, 60).map(i => ({
         id: str(i.id, 30), name: str(i.name, 60), on: i.on !== false, note: str(i.note, 300), price: money(i.price), to: str(i.to, 120),
         unit: str(i.unit || '৳', 8), rate: Math.max(0, Number(i.rate) || 0) || 1, pct: Math.max(0, Math.min(50, Number(i.pct) || 0)), fee: money(i.fee),
         min: Math.max(0, Number(i.min) || 0), max: Math.max(0, Number(i.max) || 0), flow: i.flow === 'sell' ? 'sell' : 'buy',
-        offer: money(i.offer), offerEnd: str(i.offerEnd, 40), cat: str(i.cat, 24), hot: i.hot === true,
+        offer: money(i.offer), offerEnd: str(i.offerEnd, 40), cat: str(i.cat, 24), group: str(i.group, 24), hot: i.hot === true,
         icon: /^https:\/\//i.test(String(i.icon || '')) ? str(i.icon, 500) : str(i.icon, 60), color: str(i.color, 20) }))
     })),
     deals: (Array.isArray(x.deals) ? x.deals : []).filter(d => d && d.sid && d.iid && money(d.price) > 0).slice(0, 30).map(d => ({ id: str(d.id || d.sid + d.iid, 30), sid: str(d.sid, 30), iid: str(d.iid, 30),
@@ -205,6 +217,12 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       if (!C.on) return [400, { error: 'Extra services are switched off right now.' }];
       const s = C.services.find(x => x.id === b.sid && x.on && !x.soon && x.mode !== 'game');
       if (!s) return [400, { error: 'This service is not available right now.' }];
+      if (s.status === 'closed') return [400, { error: s.statusNote || 'This service is closed right now. Please try again later.' }];
+      if (s.access !== 'all') {
+        const sc = await db().collection('siteConfig').doc('services').get().catch(() => null);
+        const plans = (sc && sc.exists && sc.data().vip && sc.data().vip.plans) || [];
+        if (!canUse(s.access, u.phoneVerified === true, vipLevel(SVC.vipState(u), plans))) return [403, { error: `This service is for ${accessText(s.access)}.`, need: s.access }];
+      }
       const i = s.items.find(x => x.id === b.iid && x.on);
       if (!i) return [400, { error: 'Please choose an option.' }];
       let amount = 0;
@@ -502,3 +520,6 @@ module.exports.norm = norm;
 module.exports.quote = quote;
 module.exports.priceNow = priceNow;
 module.exports.bonusFor = bonusFor;
+module.exports.canUse = canUse;
+module.exports.vipLevel = vipLevel;
+module.exports.ACCESS = ACCESS;

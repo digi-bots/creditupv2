@@ -252,6 +252,46 @@ R(`^Get Verified for (৳ ?[\\d,]+)$`, '$1 দিয়ে ভেরিফায
 R(`^(.+) and all offers, events and rewards are for Verified members\\. Get your Verified badge once and join everything\\.$`, (m, a) => `${BN[a] || a} সহ সব অফার, ইভেন্ট ও পুরস্কার শুধু ভেরিফায়েড সদস্যদের জন্য। একবার ভেরিফায়েড ব্যাজ নিন, তারপর সবকিছুতে অংশ নিন।`);
 R(`^We are checking your verification payment\\. (.+) opens as soon as your badge is active\\.$`, (m, a) => `আপনার ভেরিফিকেশন পেমেন্ট যাচাই হচ্ছে। ব্যাজ চালু হলেই ${BN[a] || a} খুলে যাবে।`);
 R(`^We are waiting for the payment provider to confirm your fee for (CU-\\w+)\\. This usually takes a few minutes — you will get a notification as soon as it is verified\\. Please do not pay again\\.$`, '$1 এর ফি পেমেন্ট প্রোভাইডারের নিশ্চিতকরণের অপেক্ষায় আছে। সাধারণত কয়েক মিনিট লাগে — যাচাই হলেই নোটিফিকেশন পাবেন। দয়া করে আবার পেমেন্ট করবেন না।');
+// tile manager, service pages and reminders
+Object.assign(BN, {
+  'Open now': 'এখন খোলা',
+  'Busy — replies may be slow': 'ব্যস্ত — উত্তর দিতে দেরি হতে পারে',
+  'BUSY': 'ব্যস্ত',
+  'CLOSED': 'বন্ধ',
+  'SOON': 'শিগগির',
+  'POPULAR': 'জনপ্রিয়',
+  'Coming soon': 'শিগগির আসছে',
+  'Closed right now': 'এখন বন্ধ আছে',
+  'OK': 'ঠিক আছে',
+  'Nothing here yet.': 'এখানে এখনো কিছু নেই।',
+  'Upgrade VIP': 'ভিআইপি আপগ্রেড',
+  'Upgrade': 'আপগ্রেড',
+  'Get Verified — pay 0% charge': 'ভেরিফায়েড হোন — ০% চার্জ',
+  'Verified members pay no service charge or fee on Extra Services.': 'ভেরিফায়েড সদস্যরা এক্সট্রা সার্ভিসে কোনো সার্ভিস চার্জ বা ফি দেন না।',
+  'Verified members get more': 'ভেরিফায়েড সদস্যরা বেশি পান',
+  'Daily rewards, redeem codes, offers and a better approval chance.': 'ডেইলি রিওয়ার্ড, রিডিম কোড, অফার আর অনুমোদনের ভালো সম্ভাবনা।',
+  'One badge, every perk': 'একটি ব্যাজ, সব সুবিধা',
+  'Verify once and unlock rewards, deals and 0 fee orders.': 'একবার ভেরিফাই করে রিওয়ার্ড, ডিল আর ০ ফি অর্ডার চালু করুন।',
+  'Go VIP — be served first': 'ভিআইপি হোন — আগে সার্ভিস পান',
+  'VIP orders and loan reviews get high priority.': 'ভিআইপি অর্ডার ও লোন রিভিউ সর্বোচ্চ অগ্রাধিকার পায়।',
+  'VIP-only services': 'শুধু ভিআইপি সার্ভিস',
+  'Some services and deals open only for VIP members.': 'কিছু সার্ভিস ও ডিল শুধু ভিআইপি সদস্যদের জন্য খোলা।',
+  'Faster loan with VIP': 'ভিআইপিতে দ্রুত লোন',
+  'VIP applications are reviewed first — a better chance of early approval.': 'ভিআইপি আবেদন আগে রিভিউ হয় — দ্রুত অনুমোদনের ভালো সম্ভাবনা।',
+  'Your Extra Balance': 'আপনার এক্সট্রা ব্যালেন্স',
+  'Deposit first to order': 'অর্ডারের আগে ডিপোজিট করুন',
+  'Deposit': 'ডিপোজিট',
+  'Category': 'ক্যাটাগরি',
+  'Item': 'আইটেম',
+  'Details': 'বিস্তারিত',
+  'Pay': 'পেমেন্ট',
+  'More': 'আরও',
+  'Busy right now — delivery may take longer than usual.': 'এখন ব্যস্ত — ডেলিভারিতে স্বাভাবিকের চেয়ে বেশি সময় লাগতে পারে।',
+  'This service is busy right now — it may take longer than usual.': 'সার্ভিসটি এখন ব্যস্ত — স্বাভাবিকের চেয়ে বেশি সময় লাগতে পারে।',
+  'Open our bot': 'আমাদের বট খুলুন',
+  'Offers, balance and answers any time': 'অফার, ব্যালেন্স আর উত্তর — যেকোনো সময়',
+  'Closed right now — please check back later.': 'এখন বন্ধ — পরে আবার দেখুন।'
+});
 // re-translate what is already on screen
 try { if(document.documentElement.lang === 'bn' && window.setLang) setLang('bn', false); } catch (e) {}
 })();

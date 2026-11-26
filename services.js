@@ -277,9 +277,42 @@ try { if(typeof BN === 'object') Object.assign(BN, {
   'Transaction ID (TrxID)': 'ট্রানজেকশন আইডি (TrxID)', 'Paid from number': 'যে নম্বর থেকে পাঠিয়েছেন', 'My requests': 'আমার অনুরোধ', 'Copy': 'কপি', 'Share': 'শেয়ার'
 }); } catch (e) {}
 
+/* ───────── admin-managed tiles: badges, status, access, custom pages, reminders ───────── */
+(function(){ const st = document.createElement('style'); st.textContent = `
+.sv-bdg.hot{background:linear-gradient(135deg,#ff4d6a,#ff8c42)}.sv-bdg.new{background:linear-gradient(135deg,#1ddb80,#0e9a5a);box-shadow:0 3px 8px rgba(29,219,128,.35)}
+.sv-bdg.pop{background:linear-gradient(135deg,#b06bff,#7b3fe4);box-shadow:0 3px 8px rgba(176,107,255,.4)}.sv-bdg.ver{background:linear-gradient(135deg,#1da1f2,#0d6efd);box-shadow:0 3px 8px rgba(13,110,253,.4)}
+.sv-bdg.vip{background:linear-gradient(135deg,#ffe08a,#f2a91d);color:#3a2500;box-shadow:0 3px 8px rgba(242,169,29,.4)}
+.cx-hero .sv-bdg,.cx-it .sv-bdg{position:static;display:inline-block;vertical-align:middle;margin-left:4px}
+.sv-stb{position:absolute;top:-6px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:8.5px;font-weight:900;letter-spacing:.3px;padding:2px 7px;border-radius:8px;color:#fff;background:#56627a}
+.sv-stb.busy{background:linear-gradient(135deg,#ff9f43,#e67e22)}.sv-stb.soon{background:linear-gradient(135deg,#6c7a96,#46526b)}.sv-stb.closed{background:linear-gradient(135deg,#ff6b81,#c0392b)}
+.sv-tile.off .sv-ic{filter:grayscale(.85) brightness(.75)}.sv-tile.off span{opacity:.65}
+.sv-lockb.vip{background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
+.vlock.vip{background:radial-gradient(140% 120% at 50% 0%,rgba(255,200,90,.26),rgba(6,13,26,0) 65%),linear-gradient(160deg,#2a1f08,#120d05);border-color:rgba(255,215,106,.45)}
+.vlock.st{background:linear-gradient(160deg,#141d31,#0a1226);border-color:var(--bord)}
+.vbtn.gold{color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
+.sv-nudge{display:flex;align-items:center;gap:11px;margin:0 0 12px;padding:11px 12px;border-radius:16px;cursor:pointer;border:1px solid rgba(70,176,255,.45);background:linear-gradient(135deg,rgba(29,161,242,.16),rgba(13,110,253,.05))}
+.sv-nudge.p{border-color:rgba(255,215,106,.5);background:linear-gradient(135deg,rgba(255,215,106,.16),rgba(242,169,29,.04))}
+.sv-nudge .ic{flex:0 0 34px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.sv-nudge>div{flex:1;min-width:0}.sv-nudge b{display:block;font-size:13px;color:var(--txt)}.sv-nudge small{font-size:11.5px;color:var(--txt2);line-height:1.45}
+.sv-nudge .go{flex:none;font-size:11.5px;font-weight:900;padding:7px 11px;border-radius:10px;color:#fff;background:linear-gradient(135deg,#1da1f2,#0d6efd)}
+.sv-nudge.p .go{color:#2a1a00;background:linear-gradient(135deg,#ffe08a,#f2a91d)}
+.sv-nudge.sw>div{animation:nudgeIn .45s ease}@keyframes nudgeIn{from{opacity:0;transform:translateY(6px)}}
+.cx-hero{display:flex;gap:13px;align-items:center;margin-bottom:12px;padding:14px;border-radius:20px;background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid var(--bord)}
+.cx-hero .sv-ic{flex:0 0 56px;width:56px;height:56px;border-radius:17px;font-size:22px;margin:0}
+.cx-hero h4{margin:0 0 3px;font-size:16px;color:var(--txt)}.cx-hero p{margin:0 0 6px;font-size:12px;color:var(--txt2);line-height:1.5}
+.cx-st{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--p)}.cx-st i{font-size:7px}
+.cx-st.busy{color:#ffae6b}.cx-st.closed{color:#ff8fa3}.cx-st.soon{color:var(--txt2)}
+.cx-note{display:flex;gap:9px;align-items:flex-start;margin:0 0 12px;padding:10px 12px;border-radius:14px;font-size:12px;line-height:1.55;color:var(--txt2);background:rgba(77,143,255,.08);border:1px solid rgba(77,143,255,.3)}
+.cx-note i{color:#7fb0ff;margin-top:2px}.cx-note.warn{background:rgba(255,159,67,.08);border-color:rgba(255,159,67,.35)}.cx-note.warn i{color:#ffae6b}
+.cx-it{border-radius:15px;margin-bottom:8px;background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.015));border:1px solid var(--bord);cursor:pointer;overflow:hidden}
+.cx-it .h{display:flex;align-items:center;gap:10px;padding:12px}.cx-it .h>i:first-child{color:var(--p);width:18px;text-align:center}.cx-it .h b{flex:1;min-width:0;font-size:13.5px;color:var(--txt)}
+.cx-it .ch{color:var(--txt3);transition:transform .25s}.cx-it.on .ch{transform:rotate(180deg)}
+.cx-it .b{display:none;padding:0 12px 12px 40px;font-size:12.5px;color:var(--txt2);line-height:1.6}.cx-it.on .b{display:block}.cx-it .b p{margin:0 0 6px;white-space:pre-line}
+.cx-sub{padding:8px 10px;margin-top:6px;border-radius:11px;background:rgba(255,255,255,.04);border-left:3px solid var(--p)}.cx-sub b{display:block;font-size:12.5px;color:var(--txt)}.cx-sub small{font-size:11.5px}
+`; document.head.appendChild(st); })();
 /* ───────── data ───────── */
 const SV = { cfg: null, st: null, cfgP: null };
-function loadCfg(){ if(!SV.cfgP) SV.cfgP = fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'svcConfig' }) }).then(r => r.json()).then(j => (SV.cfg = j || {})).catch(() => (SV.cfg = {})); return SV.cfgP; }
+function loadCfg(){ if(!SV.cfgP) SV.cfgP = fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'svcConfig' }) }).then(r => r.json()).then(j => { SV.cfg = j || {}; regCustom(); return SV.cfg; }).catch(() => (SV.cfg = {})); return SV.cfgP; }
 async function loadState(){ if(!user()) return null; const r = await api('svcState'); SV.st = r.ok ? r.data : null; window._svState = SV.st; badges(); return SV.st; }
 
 /* ───────── services list ───────── */
@@ -326,9 +359,81 @@ function tileHtml(k){
   const t = T[k], c = tileCfg(k), badge = c.badge !== undefined ? c.badge : (t.badge || '');
   // Mobile Recharge and Micro Jobs: Verified or VIP members
   const vv = !!user() && !!SV.st && SV.st.verified !== true && !SV.st.vip;
-  const lk = (VONLY.includes(k) && needsV()) || (k === 'recharge' && vv);
+  const acc = c.access && c.access !== 'all' ? c.access : '', noAcc = acc && !canUse(acc);
+  const lk = noAcc || (VONLY.includes(k) && needsV()) || (k === 'recharge' && vv);
+  const st = ST_TXT[c.status] ? c.status : '';
   const dot = !lk && ((k === 'checkin' && SV.st && SV.st.checkin && !SV.st.checkin.doneToday) || (k === 'spin' && SV.st && SV.st.spin && SV.st.spin.canSpin));
-  return `<div class="sv-tile${lk ? ' locked' : ''}" onclick="svGo('${k}')">${lk ? '<em class="sv-lockb"><i class="fa-solid fa-lock"></i>VERIFIED</em>' : badge ? `<em class="sv-bdg${t.gold ? ' gold' : ''}">${E(badge)}</em>` : dot ? '<em class="sv-dot"></em>' : ''}<div class="sv-ic ${t.g}"><i class="fa-solid fa-${t.ic}"></i></div><span>${E(c.label || t.l)}</span></div>`;
+  const ic = /fa-/.test(t.ic) ? t.ic : 'fa-solid fa-' + t.ic;
+  return `<div class="sv-tile${lk ? ' locked' : ''}${st === 'closed' || st === 'soon' ? ' off' : ''}" onclick="svGo('${k}')">${st && st !== 'open' ? `<em class="sv-stb ${st}">${ST_TXT[st]}</em>` : lk ? `<em class="sv-lockb${noAcc && acc !== 'verified' ? ' vip' : ''}"><i class="fa-solid fa-${noAcc && acc !== 'verified' ? 'crown' : 'lock'}"></i>${noAcc ? ACC_TXT[acc] : 'VERIFIED'}</em>` : badge ? bdg(badge, t.gold) : dot ? '<em class="sv-dot"></em>' : ''}<div class="sv-ic ${E(c.color || t.g)}"><i class="${E(c.icon ? (/fa-/.test(c.icon) ? c.icon : 'fa-solid fa-' + c.icon) : ic)}"></i></div><span>${E(c.label || t.l)}</span></div>`;
+}
+/* ───────── tiles the admin manages (Admin → Services → Quick Services) ───────── */
+// badge look by its text: HOT / NEW / POPULAR / VERIFIED / VIP (1·2·3) — any other text keeps the red look
+const BADGE = { HOT: 'hot', SALE: 'hot', NEW: 'new', EARN: 'new', FREE: 'new', POPULAR: 'pop', TOP: 'pop', VERIFIED: 'ver', 'FOR VERIFIED': 'ver', JOIN: 'ver', VIP: 'vip', 'VIP 1': 'vip', 'VIP 2': 'vip', 'VIP 3': 'vip', 'FOR VIP': 'vip' };
+function bdg(text, gold){ const t = String(text || '').trim(); if(!t) return ''; return `<em class="sv-bdg ${BADGE[t.toUpperCase()] || (gold ? 'vip' : '')}">${E(t)}</em>`; }
+const ACC_TXT = { verified: 'VERIFIED', vip: 'VIP', vip1: 'VIP 1+', vip2: 'VIP 2+', vip3: 'VIP 3' };
+const ST_TXT = { open: '', busy: 'BUSY', closed: 'CLOSED', soon: 'SOON' };
+const hubC = () => (SV.cfg && SV.cfg.hub) || {};
+// VIP level = the plan's place in the VIP plans list (1 = first plan); 0 = not VIP
+function vipLevel(){ const v = SV.st && SV.st.vip; if(!v) return 0; const pl = ((SV.cfg || {}).vip || {}).plans || []; const i = pl.findIndex(p => p.id === v.plan); return i < 0 ? 1 : i + 1; }
+function canUse(a){ if(!a || a === 'all') return true; if(!SV.st) return false; const lv = vipLevel();
+  if(a === 'verified') return SV.st.verified === true || lv > 0; if(a === 'vip') return lv > 0; return lv >= Number(String(a).slice(3)) || 0; }
+window._svLock = (name, a) => a === 'verified' ? lockCard(name) : vipLock(name, a); window._svCanUse = canUse; window._svVipLevel = vipLevel; window._svBadge = bdg;
+function regCustom(){
+  (hubC().custom || []).forEach(c => { if(!c || !c.id) return; const k = 'c_' + c.id;
+    T[k] = { l: c.label || 'Service', ic: c.icon || 'star', g: c.color || 'g-teal', cat: c.cat || 'help', page: k, custom: c }; window._svcPages[k] = () => customPage(k); });
+}
+// closed / coming soon / not for this member: one clear page instead of the service
+function gate(k){
+  const c = tileCfg(k), t = T[k]; if(!t) return null; const name = c.label || t.l;
+  if(c.status === 'closed' || c.status === 'soon') return () => show(name, `<div class="vlock st"><span class="big" style="font-size:44px"><i class="fa-solid fa-${c.status === 'soon' ? 'hourglass-half' : 'store-slash'}"></i></span><h4>${c.status === 'soon' ? 'Coming soon' : 'Closed right now'}</h4><p>${E(c.statusNote || (c.status === 'soon' ? name + ' is coming soon — stay tuned!' : name + ' is closed for now. Please check back later.'))}</p><button class="vbtn" onclick="svBack()">OK</button></div>${nudge()}`);
+  const a = c.access && c.access !== 'all' ? c.access : '';
+  if(a && user()){
+    if(!SV.st) return () => { show(name, loading); loadState().then(() => { if(_stack[_stack.length - 1] === k) open(k); }); };
+    if(!canUse(a)) return () => show(name, a === 'verified' ? lockCard(name) : vipLock(name, a));
+  }
+  return null;
+}
+function vipLock(name, a){
+  const pl = (((SV.cfg || {}).vip || {}).plans || []).filter(p => p.on !== false), need = a === 'vip' ? 1 : Number(a.slice(3)) || 1;
+  const ok = pl.filter((p, i) => i + 1 >= need), cur = vipLevel();
+  return `<div class="vlock vip"><span class="big" style="font-size:44px">👑</span><h4>For ${a === 'vip' ? 'VIP' : 'VIP ' + need + (need < 3 ? ' and above' : '')} members</h4>
+    <p>${E(name)} is a VIP service.${cur ? ' Your plan is VIP ' + cur + ' — upgrade to open it.' : ' Join VIP to open it, with priority on your loan and orders.'}</p>
+    ${ok.length ? `<ul>${ok.map(p => `<li><i class="fa-solid fa-crown"></i>${E(p.name)} — ${tk(p.price)}</li>`).join('')}</ul>` : ''}
+    <button class="vbtn gold" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>${cur ? 'Upgrade VIP' : 'Get VIP'}</button></div>`;
+}
+// a reminder on service pages: Verified first, then VIP; the text changes every few seconds
+const NUDGE = {
+  v: [['Get Verified — pay 0% charge', 'Verified members pay no service charge or fee on Extra Services.'], ['Verified members get more', 'Daily rewards, redeem codes, offers and a better approval chance.'], ['One badge, every perk', 'Verify once and unlock rewards, deals and 0 fee orders.']],
+  p: [['Go VIP — be served first', 'VIP orders and loan reviews get high priority.'], ['VIP-only services', 'Some services and deals open only for VIP members.'], ['Faster loan with VIP', 'VIP applications are reviewed first — a better chance of early approval.']]
+};
+function nudge(){
+  if(!user() || !SV.st) return ''; const lv = vipLevel(), ver = SV.st.verified === true;
+  if(lv >= 3) return ''; const kind = !ver && !lv ? 'v' : 'p', L = NUDGE[kind], n = Math.floor(Date.now() / 7000) % L.length;
+  return `<div class="sv-nudge ${kind}" data-k="${kind}" onclick="svGo('${kind === 'v' ? 'verify' : 'vip'}')"><span class="ic">${kind === 'v' ? seal() : '👑'}</span><div><b>${L[n][0]}</b><small>${L[n][1]}</small></div><span class="go">${kind === 'v' ? 'Verify' : lv ? 'Upgrade' : 'Get VIP'}</span></div>`;
+}
+window._svNudge = nudge;
+setInterval(() => document.querySelectorAll('.sv-nudge').forEach(el => { const L = NUDGE[el.dataset.k]; if(!L) return; const n = Math.floor(Date.now() / 7000) % L.length; const b = el.querySelector('b'), sm = el.querySelector('small'); if(b && b.textContent !== L[n][0]){ el.classList.remove('sw'); void el.offsetWidth; el.classList.add('sw'); b.textContent = L[n][0]; sm.textContent = L[n][1]; } }), 1000);
+// a page the admin builds: tabs (sections), menu items that open to show text and sub-items, and a button
+function customPage(k){
+  const t = T[k]; if(!t || !t.custom) return; const c = t.custom, cf = tileCfg(k);
+  const secs = (c.sections || []).filter(x => x && x.title); let at = Math.min(window._cxTab && window._cxTab.k === k ? window._cxTab.i : 0, Math.max(0, secs.length - 1));
+  const ic = v => /fa-/.test(v || '') ? v : 'fa-solid fa-' + (v || 'star');
+  const btn = b => { if(!b || !b.label) return ''; const go = b.kind === 'tile' ? `svGo('${E(b.to)}')` : b.kind === 'extra' ? `xsOpen&&xsOpen('${E(b.to)}')` : b.kind === 'support' ? 'svClose();window.openSupportChat&&openSupportChat()' : /^https:\/\//.test(b.to || '') ? `window.open('${E(b.to)}','_blank','noopener')` : '';
+    return go ? `<button class="sv-btn" style="margin-top:9px" onclick="event.stopPropagation();${go}"><i class="fa-solid fa-arrow-right"></i>${E(b.label)}</button>` : ''; };
+  const sec = secs[at];
+  const items = sec ? (sec.items || []).filter(i => i && i.title) : [];
+  const st = cf.status && ST_TXT[cf.status] ? cf.status : 'open';
+  show(cf.label || c.label, `<div class="cx-hero"><div class="sv-ic ${E(cf.color || c.color || 'g-teal')}"><i class="${E(ic(cf.icon || c.icon))}"></i></div><div style="min-width:0"><h4>${E(cf.label || c.label)} ${cf.badge ? bdg(cf.badge) : ''}</h4>${c.desc ? `<p>${E(c.desc)}</p>` : ''}
+      <span class="cx-st ${st}"><i class="fa-solid fa-circle"></i>${st === 'open' ? 'Open now' : st === 'busy' ? 'Busy — replies may be slow' : ST_TXT[st]}</span></div></div>
+    ${cf.note || c.note ? `<div class="cx-note"><i class="fa-solid fa-circle-info"></i><span>${E(cf.note || c.note)}</span></div>` : ''}
+    ${cf.statusNote && st !== 'open' ? `<div class="cx-note warn"><i class="fa-solid fa-triangle-exclamation"></i><span>${E(cf.statusNote)}</span></div>` : ''}
+    ${typeof window._xbStrip === 'function' ? window._xbStrip() : ''}
+    ${nudge()}
+    ${secs.length > 1 ? `<div class="xs-chips cx-tabs">${secs.map((x, i) => `<button class="${i === at ? 'on' : ''}" onclick="window._cxTab={k:'${k}',i:${i}};svPage('${k}')">${E(x.title)}</button>`).join('')}</div>` : sec ? `<div class="sv-cat">${E(sec.title)}</div>` : ''}
+    ${sec && sec.text ? `<div class="sv-card"><p style="white-space:pre-line">${E(sec.text)}</p></div>` : ''}
+    <div class="cx-list">${items.map(i => `<div class="cx-it${items.length === 1 ? ' on' : ''}" onclick="this.classList.toggle('on')"><div class="h"><i class="${E(ic(i.icon || 'circle-chevron-right'))}"></i><b>${E(i.title)}</b>${i.tag ? bdg(i.tag) : ''}<i class="fa-solid fa-chevron-down ch"></i></div>
+      <div class="b">${i.text ? `<p>${E(i.text)}</p>` : ''}${(i.sub || []).filter(x => x && x.title).map(x => `<div class="cx-sub"><b>${E(x.title)}</b>${x.text ? `<small>${E(x.text)}</small>` : ''}</div>`).join('')}${btn(i.btn)}</div></div>`).join('') || (sec ? '' : '<div class="sv-empty">Nothing here yet.</div>')}</div>
+    ${btn(c.btn)}`);
 }
 function renderHub(){
   const g = document.querySelector('.qa-grid'); if(!g) return;
@@ -351,7 +456,11 @@ function sheet(){
   if(!s){ s = document.createElement('div'); s.id = 'svSheet'; s.className = 'sv-sheet'; s.innerHTML = '<div class="sv-wrap"><div class="sv-head"><button onclick="svBack()" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button><h3 id="svTitle"></h3></div><div class="sv-body" id="svBody"></div></div>'; document.body.appendChild(s); }
   return s;
 }
-function show(title, html){ sheet().classList.add('on'); $s('svTitle').textContent = title; $s('svBody').innerHTML = html; $s('svBody').scrollTop = 0; document.body.style.overflow = 'hidden'; document.body.classList.add('sv-open'); }
+function show(title, html){
+  // the admin's note and a busy notice on that service's own page
+  const top = _stack[_stack.length - 1], tc = top && T[top] && !T[top].custom ? tileCfg(top) : {};
+  if(tc.note || tc.status === 'busy') html = `${tc.status === 'busy' ? `<div class="cx-note warn"><i class="fa-solid fa-hourglass-half"></i><span>${E(tc.statusNote || 'This service is busy right now — it may take longer than usual.')}</span></div>` : ''}${tc.note ? `<div class="cx-note"><i class="fa-solid fa-circle-info"></i><span>${E(tc.note)}</span></div>` : ''}` + html;
+  sheet().classList.add('on'); $s('svTitle').textContent = title; $s('svBody').innerHTML = html; $s('svBody').scrollTop = 0; document.body.style.overflow = 'hidden'; document.body.classList.add('sv-open'); }
 window.svGo = function(k){
   const t = T[k]; if(!t) return;
   if(t.login && !user()){ if(window.nav) nav('screen-login'); return; }
@@ -359,7 +468,7 @@ window.svGo = function(k){
   _stack.push(k); try { history.pushState({ sv: k }, ''); } catch (e) {}
   open(k);
 };
-function open(k){ const P = PAGES[k] || window._svcPages[k]; if(P) P(); }
+function open(k){ const g = gate(k); if(g) return g(); const P = PAGES[k] || window._svcPages[k]; if(P) P(); }
 window.svBack = function(){ try { if(history.state && history.state.sv) { history.back(); return; } } catch (e) {} _pop(); };
 function _pop(){ _stack.pop(); const k = _stack[_stack.length - 1]; if(k) open(k); else svClose(true); }
 window.svClose = function(silent){ const s = $s('svSheet'); if(s) s.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('sv-open'); _stack = []; renderHub(); };
@@ -385,7 +494,7 @@ const PAGES = {
       + `<div style="font-size:11.5px;color:var(--txt2);text-align:center;margin-top:6px" data-noi18n>${cur === 'bn' ? 'আপনার বাছাই এই ফোনে মনে থাকবে।' : 'Your choice is remembered on this phone.'}</div>`);
   },
   all(){
-    const html = CATS.map(([c, name, ic]) => { const ks = Object.keys(T).filter(k => T[k].cat === c && tileOn(k)); if(!ks.length) return '';
+    const html = CATS.map(([c, name, ic]) => { const ord = hubC().order || [], ix = k => { const i = ord.indexOf(k); return i < 0 ? 999 : i; }; const ks = Object.keys(T).filter(k => T[k].cat === c && tileOn(k)).sort((a, b) => ix(a) - ix(b)); if(!ks.length) return '';
       return `<div class="sv-cat"><i class="fa-solid fa-${ic}"></i> ${name}</div><div class="qa-grid sv-hub" style="margin:0">${ks.map(tileHtml).join('')}</div>`; }).join('');
     show('All Services', html);
   },
@@ -468,7 +577,7 @@ const PAGES = {
         ${row('fa-solid fa-paste', 'g-teal', '2. Paste it above', 'Quick Services → Redeem Code')}
         ${row('fa-solid fa-coins', 'g-orange', '3. Tap Redeem', `${amt || 'The bonus'} goes to your Creditfy balance — once per person, until midnight`)}</div>
       ${I.channelLink || I.bot ? `<div class="rd-tg"><i class="fa-brands fa-telegram"></i><div><b>Never miss the daily bonus</b><small>Join our Telegram — the code is posted there every morning.</small></div></div>
-        <div class="rd-tgb">${I.channelLink ? `<a class="sv-btn" style="background:linear-gradient(135deg,#37bbfe,#1d8ed8);color:#fff;text-decoration:none" href="${E(I.channelLink)}" target="_blank" rel="noopener"><i class="fa-solid fa-bullhorn"></i>Join channel</a>` : ''}${I.bot ? `<a class="sv-btn ghost" style="text-decoration:none" href="https://t.me/${E(I.bot)}" target="_blank" rel="noopener"><i class="fa-solid fa-robot"></i>Open the bot</a>` : ''}</div>` : ''}` : ''}`);
+        <div class="rd-tgb">${I.channelLink ? `<a class="sv-btn" style="background:linear-gradient(135deg,#37bbfe,#1d8ed8);color:#fff;text-decoration:none" href="${E(I.channelLink)}" target="_blank" rel="noopener" onclick="return window.tgOpen ? tgOpen(this.href, event) : true"><i class="fa-solid fa-bullhorn"></i>Join channel</a>` : ''}${I.bot ? `<a class="sv-btn ghost" style="text-decoration:none" href="https://t.me/${E(I.bot)}" target="_blank" rel="noopener" onclick="return window.tgOpen ? tgOpen(this.href, event) : true"><i class="fa-solid fa-robot"></i>Open the bot</a>` : ''}</div>` : ''}` : ''}`);
   },
 
   async voucher(){
@@ -531,24 +640,26 @@ const PAGES = {
     if(kind === 'vip' && !plan){ show('Payment', '<div class="sv-empty">No VIP plan is available right now.</div>'); return; }
     if(plan) window._vipSel = plan.id;
     const price = kind === 'vip' ? (plan ? plan.price : 0) : V.verify.price;
-    const ws = (window._feeWallets || []).map(w => ({ w, opts: Array.isArray(w.methods) && w.methods.length ? w.methods.filter(o => o && o.number) : [{ type: w.payMethod || 'Send Money', number: w.collectionNumber || w.paymentNumber }] })).filter(x => x.opts.length && x.opts[0].number);
+    const ws = (window._feeWallets || []).map(w => ({ w, opts: typeof window._walletOptions === 'function' ? window._walletOptions(w) : Array.isArray(w.methods) && w.methods.length ? w.methods.filter(o => o && o.number) : [{ type: w.payMethod || 'Send Money', number: w.collectionNumber || w.paymentNumber }] })).filter(x => x.opts.length && x.opts[0].number);
     if(!ws.length){ show('Payment', '<div class="sv-empty">No payment number is available right now. Please contact support.</div>'); return; }
     window._payW = window._payW || 0; if(!ws[window._payW]) window._payW = 0;
-    const cur = ws[window._payW], opt = cur.opts[0];
+    const cur = ws[window._payW]; if(!cur.opts[window._payO || 0]) window._payO = 0; const opt = cur.opts[window._payO || 0];
     const u = user() || {};
     show(kind === 'vip' ? `${plan ? plan.name : 'VIP'} payment` : 'Verification payment', `
       <div class="sv-card" style="text-align:center"><div style="font-size:12px;color:var(--txt2)">Amount to send</div><div style="font-size:34px;font-weight:900;color:${kind === 'vip' ? '#ffd76a' : '#46b0ff'}">${tk(price)}</div><div style="font-size:12px;color:var(--txt2)">${kind === 'vip' ? E(plan.name) + ' · one-time' : 'Verified badge · one-time'}</div></div>
       <span class="sv-lbl">1. Choose how to pay</span>
-      <div class="pay-w">${ws.map((x, i) => `<button class="${i === window._payW ? 'on' : ''}" onclick="window._payW=${i};svPage('pay')">${x.w.logoUrl ? `<img src="${E(x.w.logoUrl)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.w.name)}</button>`).join('')}</div>
+      <div class="pay-w">${ws.map((x, i) => `<button class="${i === window._payW ? 'on' : ''}" onclick="window._payW=${i};window._payO=0;svPage('pay')">${x.w.logoUrl ? `<img src="${E(x.w.logoUrl)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.w.name)}</button>`).join('')}</div>
+      ${cur.opts.length > 1 ? `<div class="xs-chips" style="margin:-2px 0 8px">${cur.opts.map((o, j) => `<button class="${j === (window._payO || 0) ? 'on' : ''}" onclick="window._payO=${j};svPage('pay')">${E(o.type || 'Send Money')}</button>`).join('')}</div>` : ''}
       <span class="sv-lbl">2. ${E(opt.type || 'Send Money')} ${tk(price)} to this number</span>
       <div class="pay-num"><div><small>${E(cur.w.name)} · ${E(opt.type || 'Send Money')}</small><b>${E(opt.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(opt.number)}').then(()=>svToastOk('Number copied'))">Copy</button></div>
+      ${opt.note || (opt.instructions || []).filter(Boolean).length ? `<div class="xs-pnote">${opt.note ? `<div>${E(opt.note)}</div>` : ''}${(opt.instructions || []).filter(Boolean).length ? `<ol>${opt.instructions.filter(Boolean).slice(0, 6).map(t => `<li>${E(t)}</li>`).join('')}</ol>` : ''}</div>` : ''}
       ${kind === 'verify' ? `<div style="font-size:11.5px;color:var(--txt2);margin:6px 2px"><i class="fa-solid fa-circle-info"></i> The full ৳${price} is needed — no discount, coupon or promo code applies to this fee.</div>` : ''}
       <span class="sv-lbl">3. Enter the payment details</span>
       <input class="sv-in code" id="pyTrx" placeholder="TRANSACTION ID" maxlength="30" autocomplete="off">
       ${kind === 'verify' ? '' : `<input class="sv-in" id="pySender" type="tel" placeholder="Paid from number (01XXXXXXXXX)" style="margin-top:8px">`}
       <button class="sv-btn ${kind === 'vip' ? 'gold' : ''}" style="margin-top:12px" id="pyBtn" onclick="svPaySubmit()"><i class="fa-solid fa-paper-plane"></i>Submit payment</button>
       <div style="font-size:11.5px;color:var(--txt2);margin-top:9px;text-align:center;line-height:1.6">Our team checks the payment and switches it on — usually within a few hours. You get a notification.</div>`);
-    window._payData = { kind, plan: plan ? plan.id : '', price, payMethod: cur.w.name, toNumber: opt.number };
+    window._payData = { kind, plan: plan ? plan.id : '', price, payMethod: cur.w.name + (opt.type ? ' · ' + opt.type : ''), toNumber: opt.number };
   }
 };
 window.svLang = function(v){ if(window.setLang) setLang(v); toast(v === 'bn' ? 'ভাষা: বাংলা' : 'Language: English'); setTimeout(() => { svClose(); renderHub(); }, 350); };
