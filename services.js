@@ -194,6 +194,7 @@ const css = `
 .sv-lockb{position:absolute;top:-6px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;font-size:8.5px;font-weight:900;letter-spacing:.3px;padding:2px 7px;border-radius:8px;color:#1a1200;background:linear-gradient(135deg,#ffe9a8,#f2b33d);box-shadow:0 3px 10px rgba(242,179,61,.45)}
 .sv-tile.locked .sv-ic{filter:saturate(.75) brightness(.9)}
 .qa-see{float:right;font-size:12px;font-weight:800;color:var(--p);cursor:pointer;margin-top:3px}
+.qa-arr{float:right;margin:0 10px 0 0;width:26px;height:22px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;color:var(--txt2);background:rgba(255,255,255,.06);border:1px solid var(--bord)}
 /* verified-only lock card */
 .vlock{position:relative;overflow:hidden;border-radius:22px;padding:22px 18px 18px;margin:4px 0 14px;text-align:center;background:radial-gradient(140% 120% at 50% 0%,rgba(59,130,246,.28),rgba(6,13,26,0) 65%),linear-gradient(160deg,#0f1c38,#0a1226);border:1px solid rgba(147,197,253,.35);box-shadow:0 18px 40px rgba(0,0,0,.45)}
 .vlock::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.10),transparent);animation:vSweep 3.6s ease-in-out infinite}
@@ -282,6 +283,8 @@ try { if(typeof BN === 'object') Object.assign(BN, {
 .sv-bdg.hot{background:linear-gradient(135deg,#ff4d6a,#ff8c42)}.sv-bdg.new{background:linear-gradient(135deg,#1ddb80,#0e9a5a);box-shadow:0 3px 8px rgba(29,219,128,.35)}
 .sv-bdg.pop{background:linear-gradient(135deg,#b06bff,#7b3fe4);box-shadow:0 3px 8px rgba(176,107,255,.4)}.sv-bdg.ver{background:linear-gradient(135deg,#1da1f2,#0d6efd);box-shadow:0 3px 8px rgba(13,110,253,.4)}
 .sv-bdg.vip{background:linear-gradient(135deg,#ffe08a,#f2a91d);color:#3a2500;box-shadow:0 3px 8px rgba(242,169,29,.4)}
+.sv-bdg.tri{background:linear-gradient(135deg,#b06bff,#7b3fe4);box-shadow:0 3px 8px rgba(176,107,255,.4)}.sv-vr{position:absolute;bottom:4px;right:6px;font-style:normal;font-size:8px;font-weight:900;color:#9fd8ff;opacity:.85}
+.cx-note.trial{background:rgba(176,107,255,.1);border-color:rgba(176,107,255,.4)}.cx-note.trial i{color:#c79bff}
 .cx-hero .sv-bdg,.cx-it .sv-bdg{position:static;display:inline-block;vertical-align:middle;margin-left:4px}
 .sv-stb{position:absolute;top:-6px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:8.5px;font-weight:900;letter-spacing:.3px;padding:2px 7px;border-radius:8px;color:#fff;background:#56627a}
 .sv-stb.busy{background:linear-gradient(135deg,#ff9f43,#e67e22)}.sv-stb.soon{background:linear-gradient(135deg,#6c7a96,#46526b)}.sv-stb.closed{background:linear-gradient(135deg,#ff6b81,#c0392b)}
@@ -331,7 +334,8 @@ const T = {
   recharge: { l: 'Mobile Recharge', ic: 'mobile-screen-button', g: 'g-green', cat: 'account', login: true, page: 'recharge', badge: 'VIP' },
   telegram: { l: 'Telegram', ic: 'paper-plane', g: 'g-blue', cat: 'help', login: true, page: 'telegram', badge: 'JOIN' },
   lang:     { l: 'Language', ic: 'language', g: 'g-teal', cat: 'account', page: 'lang' },
-  all:      { l: 'All Services', ic: 'grip', g: 'g-slate', cat: '', page: 'all' }
+  all:      { l: 'All Services', ic: 'grip', g: 'g-slate', cat: '', page: 'all' },
+  arrange:  { l: 'Arrange my tiles', ic: 'arrows-up-down', g: 'g-slate', cat: '', login: true, page: 'arrange' }
 };
 // other parts of the app (loan tools, help pages) add their own tiles here
 window._svcTiles = T;
@@ -347,10 +351,13 @@ function lockCard(what){
   const pend = SV.st && (SV.st.orders || []).some(o => o.kind === 'verify' && o.status === 'Pending');
   return `<div class="vlock"><span class="big">${seal('', pend ? 'wait' : 'off')}</span><h4>${pend ? 'Verification in progress' : 'For Verified members'}</h4>
     <p>${pend ? 'We are checking your verification payment. ' + E(what) + ' opens as soon as your badge is active.' : E(what) + ' and all offers, events and rewards are for Verified members. Get your Verified badge once and join everything.'}</p>
-    ${pend ? '' : `<ul><li><i class="fa-solid fa-gift"></i>Daily check-in &amp; Spin &amp; Win rewards</li><li><i class="fa-solid fa-fire"></i>Hot offers, events &amp; prizes</li><li><i class="fa-solid fa-ticket"></i>Redeem codes &amp; gift vouchers</li><li><i class="fa-solid fa-percent"></i>0% charge &amp; 0 fee on Extra Services</li><li><i class="fa-solid fa-circle-check"></i>Premium badge &amp; better approval chance</li></ul>
+    ${pend ? '' : `<ul><li><i class="fa-solid fa-gift"></i>Daily check-in &amp; Spin &amp; Win rewards</li><li><i class="fa-solid fa-fire"></i>Hot offers, events &amp; prizes</li><li><i class="fa-solid fa-ticket"></i>Redeem codes &amp; gift vouchers</li><li><i class="fa-solid fa-percent"></i>0% charge &amp; 0 fee on Digital Services</li><li><i class="fa-solid fa-circle-check"></i>Premium badge &amp; better approval chance</li></ul>
     <button class="vbtn" onclick="svGo('verify')">${seal()}Get Verified</button>`}</div>`;
 }
-function tileCfg(k){ const h = (SV.cfg && SV.cfg.hub && SV.cfg.hub.tiles) || {}; return h[k] || {}; }
+function tileCfg(k){ const h = (SV.cfg && SV.cfg.hub && SV.cfg.hub.tiles) || {}, c = h[k] || {};
+  // a trial closes by itself when its time is over
+  if(c.trialEnd && new Date(c.trialEnd).getTime() <= Date.now()) return { ...c, status: 'closed', statusNote: c.statusNote || 'This trial has ended. Thank you for trying it!', trialEnd: '' };
+  return c; }
 function tileOn(k){ const t = T[k]; if(!t) return false; if(k === 'all') return true; if(k === 'lang') return window._langOn !== false; const c = tileCfg(k); if(c.on === false) return false;
   const C = SV.cfg || {}; if(k === 'vip' && C.vip && C.vip.on === false) return false; if(k === 'verify' && C.verify && C.verify.on === false) return false;
   if(k === 'checkin' && C.checkin && C.checkin.on === false) return false; if(k === 'spin' && C.spin && C.spin.on === false) return false;
@@ -358,18 +365,20 @@ function tileOn(k){ const t = T[k]; if(!t) return false; if(k === 'all') return 
 function tileHtml(k){
   const t = T[k], c = tileCfg(k), badge = c.badge !== undefined ? c.badge : (t.badge || '');
   // Mobile Recharge and Micro Jobs: Verified or VIP members
-  const vv = !!user() && !!SV.st && SV.st.verified !== true && !SV.st.vip;
-  const acc = c.access && c.access !== 'all' ? c.access : '', noAcc = acc && !canUse(acc);
-  const lk = noAcc || (VONLY.includes(k) && needsV()) || (k === 'recharge' && vv);
+  const acc = accOf(k), noAcc = acc && !canUse(acc);
+  const lk = noAcc || (VONLY.includes(k) && needsV());
   const st = ST_TXT[c.status] ? c.status : '';
   const dot = !lk && ((k === 'checkin' && SV.st && SV.st.checkin && !SV.st.checkin.doneToday) || (k === 'spin' && SV.st && SV.st.spin && SV.st.spin.canSpin));
   const ic = /fa-/.test(t.ic) ? t.ic : 'fa-solid fa-' + t.ic;
-  return `<div class="sv-tile${lk ? ' locked' : ''}${st === 'closed' || st === 'soon' ? ' off' : ''}" onclick="svGo('${k}')">${st && st !== 'open' ? `<em class="sv-stb ${st}">${ST_TXT[st]}</em>` : lk ? `<em class="sv-lockb${noAcc && acc !== 'verified' ? ' vip' : ''}"><i class="fa-solid fa-${noAcc && acc !== 'verified' ? 'crown' : 'lock'}"></i>${noAcc ? ACC_TXT[acc] : 'VERIFIED'}</em>` : badge ? bdg(badge, t.gold) : dot ? '<em class="sv-dot"></em>' : ''}<div class="sv-ic ${E(c.color || t.g)}"><i class="${E(c.icon ? (/fa-/.test(c.icon) ? c.icon : 'fa-solid fa-' + c.icon) : ic)}"></i></div><span>${E(c.label || t.l)}</span></div>`;
+  const tri = !st && !lk && c.trialEnd && new Date(c.trialEnd).getTime() > Date.now();
+  return `<div class="sv-tile${lk ? ' locked' : ''}${st === 'closed' || st === 'soon' ? ' off' : ''}" onclick="svGo('${k}')">${st && st !== 'open' ? `<em class="sv-stb ${st}">${ST_TXT[st]}</em>` : lk ? `<em class="sv-lockb${noAcc && acc !== 'verified' ? ' vip' : ''}"><i class="fa-solid fa-${noAcc && acc !== 'verified' ? 'crown' : 'lock'}"></i>${noAcc ? ACC_TXT[acc] : 'VERIFIED'}</em>` : tri ? '<em class="sv-bdg tri"><i class="fa-solid fa-flask"></i> TRIAL</em>' : badge ? bdg(badge, t.gold) : dot ? '<em class="sv-dot"></em>' : ''}<div class="sv-ic ${E(c.color || t.g)}"><i class="${E(c.icon ? (/fa-/.test(c.icon) ? c.icon : 'fa-solid fa-' + c.icon) : ic)}"></i></div><span>${E(c.label || t.l)}</span>${c.ver ? `<i class="sv-vr">v${E(c.ver)}</i>` : ''}</div>`;
 }
 /* ───────── tiles the admin manages (Admin → Services → Quick Services) ───────── */
 // badge look by its text: HOT / NEW / POPULAR / VERIFIED / VIP (1·2·3) — any other text keeps the red look
 const BADGE = { HOT: 'hot', SALE: 'hot', NEW: 'new', EARN: 'new', FREE: 'new', POPULAR: 'pop', TOP: 'pop', VERIFIED: 'ver', 'FOR VERIFIED': 'ver', JOIN: 'ver', VIP: 'vip', 'VIP 1': 'vip', 'VIP 2': 'vip', 'VIP 3': 'vip', 'FOR VIP': 'vip' };
 function bdg(text, gold){ const t = String(text || '').trim(); if(!t) return ''; return `<em class="sv-bdg ${BADGE[t.toUpperCase()] || (gold ? 'vip' : '')}">${E(t)}</em>`; }
+// services open by VIP level only (Verified is for rewards: check-in, spin, vouchers, redeem); Mobile Recharge is VIP unless the admin opens it
+function accOf(k){ const a = tileCfg(k).access || (k === 'recharge' ? 'vip' : ''); return a && a !== 'all' && a !== 'verified' ? a : ''; }
 const ACC_TXT = { verified: 'VERIFIED', vip: 'VIP', vip1: 'VIP 1+', vip2: 'VIP 2+', vip3: 'VIP 3' };
 const ST_TXT = { open: '', busy: 'BUSY', closed: 'CLOSED', soon: 'SOON' };
 const hubC = () => (SV.cfg && SV.cfg.hub) || {};
@@ -386,7 +395,7 @@ function regCustom(){
 function gate(k){
   const c = tileCfg(k), t = T[k]; if(!t) return null; const name = c.label || t.l;
   if(c.status === 'closed' || c.status === 'soon') return () => show(name, `<div class="vlock st"><span class="big" style="font-size:44px"><i class="fa-solid fa-${c.status === 'soon' ? 'hourglass-half' : 'store-slash'}"></i></span><h4>${c.status === 'soon' ? 'Coming soon' : 'Closed right now'}</h4><p>${E(c.statusNote || (c.status === 'soon' ? name + ' is coming soon — stay tuned!' : name + ' is closed for now. Please check back later.'))}</p><button class="vbtn" onclick="svBack()">OK</button></div>${nudge()}`);
-  const a = c.access && c.access !== 'all' ? c.access : '';
+  const a = accOf(k);
   if(a && user()){
     if(!SV.st) return () => { show(name, loading); loadState().then(() => { if(_stack[_stack.length - 1] === k) open(k); }); };
     if(!canUse(a)) return () => show(name, a === 'verified' ? lockCard(name) : vipLock(name, a));
@@ -403,7 +412,7 @@ function vipLock(name, a){
 }
 // a reminder on service pages: Verified first, then VIP; the text changes every few seconds
 const NUDGE = {
-  v: [['Get Verified — pay 0% charge', 'Verified members pay no service charge or fee on Extra Services.'], ['Verified members get more', 'Daily rewards, redeem codes, offers and a better approval chance.'], ['One badge, every perk', 'Verify once and unlock rewards, deals and 0 fee orders.']],
+  v: [['Get Verified — pay 0% charge', 'Verified members pay no service charge or fee on Digital Services.'], ['Verified members get more', 'Daily rewards, redeem codes, offers and a better approval chance.'], ['One badge, every perk', 'Verify once and unlock rewards, deals and 0 fee orders.']],
   p: [['Go VIP — be served first', 'VIP orders and loan reviews get high priority.'], ['VIP-only services', 'Some services and deals open only for VIP members.'], ['Faster loan with VIP', 'VIP applications are reviewed first — a better chance of early approval.']]
 };
 function nudge(){
@@ -423,7 +432,7 @@ function customPage(k){
   const sec = secs[at];
   const items = sec ? (sec.items || []).filter(i => i && i.title) : [];
   const st = cf.status && ST_TXT[cf.status] ? cf.status : 'open';
-  show(cf.label || c.label, `<div class="cx-hero"><div class="sv-ic ${E(cf.color || c.color || 'g-teal')}"><i class="${E(ic(cf.icon || c.icon))}"></i></div><div style="min-width:0"><h4>${E(cf.label || c.label)} ${cf.badge ? bdg(cf.badge) : ''}</h4>${c.desc ? `<p>${E(c.desc)}</p>` : ''}
+  show(cf.label || c.label, `<div class="cx-hero"><div class="sv-ic ${E(cf.color || c.color || 'g-teal')}"><i class="${E(ic(cf.icon || c.icon))}"></i></div><div style="min-width:0"><h4>${E(cf.label || c.label)} ${cf.badge ? bdg(cf.badge) : ''}${cf.ver ? `<span class="xs-ver${cf.verKind ? ' ' + E(cf.verKind) : ''}">v${E(cf.ver)}</span>` : ''}</h4>${c.desc ? `<p>${E(c.desc)}</p>` : ''}
       <span class="cx-st ${st}"><i class="fa-solid fa-circle"></i>${st === 'open' ? 'Open now' : st === 'busy' ? 'Busy — replies may be slow' : ST_TXT[st]}</span></div></div>
     ${cf.note || c.note ? `<div class="cx-note"><i class="fa-solid fa-circle-info"></i><span>${E(cf.note || c.note)}</span></div>` : ''}
     ${cf.statusNote && st !== 'open' ? `<div class="cx-note warn"><i class="fa-solid fa-triangle-exclamation"></i><span>${E(cf.statusNote)}</span></div>` : ''}
@@ -439,28 +448,40 @@ function renderHub(){
   const g = document.querySelector('.qa-grid'); if(!g) return;
   const order = (SV.cfg && SV.cfg.hub && Array.isArray(SV.cfg.hub.home) && SV.cfg.hub.home.length) ? SV.cfg.hub.home : HOME_DEF;
   // the admin's tiles, then Language, then All Services (always the last two)
-  let keys = order.filter(k => k !== 'all' && k !== 'lang' && tileOn(k)).slice(0, 6);
+  let keys = myOrder(order.filter(k => k !== 'all' && k !== 'lang' && tileOn(k)).slice(0, 6));
   if(tileOn('lang')) keys.push('lang');
   keys.push('all');
   g.classList.add('sv-hub');
   g.innerHTML = keys.map(tileHtml).join('');
   const ttl = document.querySelector('.quick-actions-title');
   if(ttl && !ttl.querySelector('.qa-see')) ttl.insertAdjacentHTML('beforeend', '<span class="qa-see" onclick="svGo(\'all\')">See all ›</span>');
+  const ar = ttl && ttl.querySelector('.qa-arr'), can = hubC().userArrange === true && !!user();
+  if(ttl && can && !ar) ttl.insertAdjacentHTML('beforeend', '<span class="qa-arr" onclick="svGo(\'arrange\')" title="Arrange my tiles"><i class="fa-solid fa-arrows-up-down"></i></span>'); else if(ar && !can) ar.remove();
 }
 window.svRenderHub = renderHub;
+// the user's own order of the home tiles (only when the admin allows it; the admin still decides which tiles are there)
+function myOrder(keys){ if(hubC().userArrange !== true) return keys; let m = []; try { m = JSON.parse(localStorage.getItem('cf_qorder') || '[]'); } catch (e) {}
+  if(!Array.isArray(m) || !m.length) return keys; const ix = k => { const i = m.indexOf(k); return i < 0 ? 99 + keys.indexOf(k) : i; }; return [...keys].sort((a, b) => ix(a) - ix(b)); }
+window.svArr = (k, d) => { const order = (hubC().home && hubC().home.length ? hubC().home : HOME_DEF).filter(x => x !== 'all' && x !== 'lang' && tileOn(x)).slice(0, 6); const L = myOrder(order), i = L.indexOf(k), j = i + d;
+  if(d === 0){ try { localStorage.removeItem('cf_qorder'); } catch (e) {} } else { if(i < 0 || j < 0 || j >= L.length) return; [L[i], L[j]] = [L[j], L[i]]; try { localStorage.setItem('cf_qorder', JSON.stringify(L)); } catch (e) {} }
+  renderHub(); window.svPage('arrange'); };
 
 /* ───────── the full-screen sheet ───────── */
 let _stack = [];
 function sheet(){
   let s = $s('svSheet');
-  if(!s){ s = document.createElement('div'); s.id = 'svSheet'; s.className = 'sv-sheet'; s.innerHTML = '<div class="sv-wrap"><div class="sv-head"><button onclick="svBack()" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button><h3 id="svTitle"></h3></div><div class="sv-body" id="svBody"></div></div>'; document.body.appendChild(s); }
+  if(!s){ s = document.createElement('div'); s.id = 'svSheet'; s.className = 'sv-sheet'; s.innerHTML = '<div class="sv-wrap"><div class="sv-head"><button onclick="svBack()" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button><h3 id="svTitle"></h3><div id="svHx" class="sv-hx"></div></div><div class="sv-body" id="svBody"></div></div>'; document.body.appendChild(s); }
   return s;
 }
 function show(title, html){
   // the admin's note and a busy notice on that service's own page
   const top = _stack[_stack.length - 1], tc = top && T[top] && !T[top].custom ? tileCfg(top) : {};
+  const recent = tc.ver && tc.verAt && Date.now() - new Date(tc.verAt).getTime() < 14 * 864e5, trialOn = tc.trialEnd && new Date(tc.trialEnd).getTime() > Date.now();
+  if(recent || trialOn) html = `${trialOn ? `<div class="cx-note trial"><i class="fa-solid fa-flask"></i><span><b>Trial</b> — open until ${new Date(tc.trialEnd).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span></div>` : ''}${recent ? `<div class="cx-note"><i class="fa-solid fa-${tc.verKind === 'fixed' ? 'screwdriver-wrench' : 'rotate'}"></i><span><b>v${E(tc.ver)} · ${tc.verKind === 'fixed' ? 'Fixed' : 'Updated'}</b>${tc.verNote ? ' — ' + E(tc.verNote) : ''}</span></div>` : ''}` + html;
   if(tc.note || tc.status === 'busy') html = `${tc.status === 'busy' ? `<div class="cx-note warn"><i class="fa-solid fa-hourglass-half"></i><span>${E(tc.statusNote || 'This service is busy right now — it may take longer than usual.')}</span></div>` : ''}${tc.note ? `<div class="cx-note"><i class="fa-solid fa-circle-info"></i><span>${E(tc.note)}</span></div>` : ''}` + html;
-  sheet().classList.add('on'); $s('svTitle').textContent = title; $s('svBody').innerHTML = html; $s('svBody').scrollTop = 0; document.body.style.overflow = 'hidden'; document.body.classList.add('sv-open'); }
+  sheet().classList.add('on');
+  // the Digital Balance in the header on digital service pages (extra.js decides)
+  { const hx = $s('svHx'); if(hx){ let h = ''; try { h = typeof window._svHeadX === 'function' ? window._svHeadX(top) || '' : ''; } catch (e) {} hx.innerHTML = h; } } $s('svTitle').textContent = title; $s('svBody').innerHTML = html; $s('svBody').scrollTop = 0; document.body.style.overflow = 'hidden'; document.body.classList.add('sv-open'); }
 window.svGo = function(k){
   const t = T[k]; if(!t) return;
   if(t.login && !user()){ if(window.nav) nav('screen-login'); return; }
@@ -493,9 +514,18 @@ const PAGES = {
     show(cur === 'bn' ? 'ভাষা' : 'Language', opt('en', '🇬🇧', 'English', 'Use the app in English') + opt('bn', '🇧🇩', 'বাংলা', 'অ্যাপটি বাংলায় ব্যবহার করুন')
       + `<div style="font-size:11.5px;color:var(--txt2);text-align:center;margin-top:6px" data-noi18n>${cur === 'bn' ? 'আপনার বাছাই এই ফোনে মনে থাকবে।' : 'Your choice is remembered on this phone.'}</div>`);
   },
+  arrange(){
+    const order = (hubC().home && hubC().home.length ? hubC().home : HOME_DEF).filter(x => x !== 'all' && x !== 'lang' && tileOn(x)).slice(0, 6), L = myOrder(order);
+    show('Arrange my tiles', `<div class="cx-note"><i class="fa-solid fa-circle-info"></i><span>Move your favourite services to the front. This order is saved on this phone.</span></div>
+      ${L.map((k, i) => { const t = T[k], c = tileCfg(k); return `<div class="sv-card" style="display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:8px"><div class="sv-ic ${E(c.color || t.g)}" style="width:40px;height:40px;flex:0 0 40px;margin:0;font-size:16px"><i class="${E(/fa-/.test(c.icon || t.ic) ? (c.icon || t.ic) : 'fa-solid fa-' + (c.icon || t.ic))}"></i></div>
+        <b style="flex:1;font-size:13.5px">${E(c.label || t.l)}</b><button class="sv-btn ghost" style="width:40px;height:36px;padding:0;margin:0" ${i ? '' : 'disabled'} onclick="svArr('${k}',-1)"><i class="fa-solid fa-arrow-up"></i></button><button class="sv-btn ghost" style="width:40px;height:36px;padding:0;margin:0" ${i < L.length - 1 ? '' : 'disabled'} onclick="svArr('${k}',1)"><i class="fa-solid fa-arrow-down"></i></button></div>`; }).join('')}
+      <button class="sv-btn ghost" onclick="svArr('',0)"><i class="fa-solid fa-rotate-left"></i>Reset to default</button>`);
+  },
   all(){
     const html = CATS.map(([c, name, ic]) => { const ord = hubC().order || [], ix = k => { const i = ord.indexOf(k); return i < 0 ? 999 : i; }; const ks = Object.keys(T).filter(k => T[k].cat === c && tileOn(k)).sort((a, b) => ix(a) - ix(b)); if(!ks.length) return '';
-      return `<div class="sv-cat"><i class="fa-solid fa-${ic}"></i> ${name}</div><div class="qa-grid sv-hub" style="margin:0">${ks.map(tileHtml).join('')}</div>`; }).join('');
+      // the last tile of each group: suggest a new service for this group only
+      const sug = user() && window.xsSug ? `<div class="sv-tile sg" onclick="xsSug('q:${c}','${name.replace('&', 'and')}')"><div class="sv-ic g-slate"><i class="fa-regular fa-lightbulb"></i></div><span>Suggest</span></div>` : '';
+      return `<div class="sv-cat"><i class="fa-solid fa-${ic}"></i> ${name}</div><div class="qa-grid sv-hub" style="margin:0">${ks.map(tileHtml).join('')}${sug}</div>`; }).join('');
     show('All Services', html);
   },
 
@@ -627,7 +657,7 @@ const PAGES = {
     const pend = s && (s.orders || []).find(o => o.kind === 'verify' && o.status === 'Pending');
     if(s && s.verified){ show('Verify Number', `<div class="vf-hero"><div style="font-size:64px;line-height:1">${seal()}</div><h2>Your account is verified</h2><p>0${E(u.phone)} <span class="vf-chip" data-noi18n>${seal()}VERIFIED</span><br>Since ${fdate(s.verifiedAt)}</p></div><div class="sv-card"><p>Your premium Verified badge shows next to your number and on your profile, and our review team sees that you are a serious customer.</p></div>`); return; }
     show('Verify Number', `<div class="vf-hero"><div style="font-size:64px;line-height:1">${seal()}</div><h2>${E(V.title || 'Get a Verified badge')}</h2><p>${E(V.text || '')}</p></div>
-      <div class="vf-why"><div><i class="fa-solid fa-arrow-trend-up"></i>Better approval chance</div><div><i class="fa-solid fa-handshake"></i>Shows you are a serious customer</div><div><i class="fa-solid fa-certificate"></i>Premium badge on your profile</div><div><i class="fa-solid fa-percent"></i>0% charge &amp; 0 fee on Extra Services</div></div>
+      <div class="vf-why"><div><i class="fa-solid fa-arrow-trend-up"></i>Better approval chance</div><div><i class="fa-solid fa-handshake"></i>Shows you are a serious customer</div><div><i class="fa-solid fa-certificate"></i>Premium badge on your profile</div><div><i class="fa-solid fa-percent"></i>0% charge &amp; 0 fee on Digital Services</div></div>
       <div class="sv-card"><div class="sv-row"><span>Your number</span><b>0${E(u.phone || '')}</b></div><div class="sv-row"><span>One-time fee</span><b>${tk(V.price)}</b></div><div class="sv-row" style="border:0"><span>Pay from</span><b>Any bKash / Nagad number</b></div></div>
       ${pend ? `<div class="ord"><i class="fa-solid fa-hourglass-half" style="color:var(--orange)"></i><div><b>Verification</b> is being checked<br>TrxID ${E(pend.trxId)} · ${ftime(pend.createdAt)}</div><span class="st st-Pending">PENDING</span></div>` : `<button class="sv-btn" style="background:linear-gradient(135deg,#46b0ff,#0d6efd);color:#fff" onclick="svPay('verify')"><i class="fa-solid fa-circle-check"></i>Verify for ${tk(V.price)}</button>`}`);
   },
@@ -839,7 +869,7 @@ function vPopShow(){
     <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>Daily check-in &amp; Spin &amp; Win</b>Win balance rewards every day and every month</div></div>
     <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>Hot offers, events &amp; prizes</b>Join contests and win invite prizes</div></div>
     <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>Redeem codes &amp; gift vouchers</b>Add codes and send gifts to friends</div></div>
-    <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>0% charge · 0 transaction fee</b>On exchange, gift cards, SMM and every Extra Service</div></div>
+    <div class="row lk"><i class="fa-solid fa-lock"></i><div><b>0% charge · 0 transaction fee</b>On exchange, gift cards, SMM and every Digital Service</div></div>
     <div class="row ok"><i class="fa-solid fa-check"></i><div><b>Your sign-up bonus is already yours</b>Use it on your loan fee — no verification needed</div></div>
     <div class="acts"><button class="vbtn" onclick="vPopClose();svGo('verify')">${seal()}Get Verified for ${tk(price)}</button><button class="later" onclick="vPopClose()">Maybe later</button></div></div>`;
   d.addEventListener('click', e => { if(e.target === d) vPopClose(); });

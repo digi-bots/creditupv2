@@ -1,6 +1,6 @@
-/* Creditfy — Extra Services, the second tile section under Quick Services: currency & MFS exchange, gift cards,
+/* Creditfy — Digital Services, the second tile section under Quick Services: currency & MFS exchange, gift cards,
    SMM, virtual cards, promo codes, gift vouchers and Play & Earn. Paid orders: the user sends the money with a TrxID
-   and the team delivers by hand (Admin → Services & Rewards → Orders). List: Admin → Services & Rewards → Extra services. */
+   and the team delivers by hand (Admin → Services & Rewards → Orders). List: Admin → Services & Rewards → Digital services. */
 (function(){
 if(!window._svShow){ console.warn('extra.js needs services.js'); return; }
 const show = window._svShow, api = window._svApi, toast = window._svToast, E = window._svE, tk = window._svTk;
@@ -88,6 +88,57 @@ const css = `
 .xs-it .pr .vp{display:block;font-size:10.5px;font-weight:800;color:#7fc3ff}
 .ln-note{display:-webkit-box;display:flex;position:relative;overflow:hidden;isolation:isolate;gap:11px;align-items:flex-start;text-align:left;border-radius:16px;padding:12px 13px;margin:12px 0;background:linear-gradient(135deg,rgba(255,215,106,.10),rgba(255,140,66,.06));border:1px solid rgba(255,200,90,.35);font-size:12px;color:var(--txt2);line-height:1.55}
 .ln-note .ic{flex:0 0 34px;align-self:flex-start;max-height:34px;overflow:hidden;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(255,200,90,.16);color:#ffd76a;font-size:15px}
+/* header: Digital Balance chip + My orders */
+.sv-head h3{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sv-hx{display:flex;align-items:center;gap:6px;flex:none}.sv-hx:empty{display:none}
+.sv-head .hx-bal{width:auto;font-size:inherit}.sv-head .hx-ord{width:36px;height:36px;font-size:13px}
+.hx-bal{display:flex;align-items:center;gap:7px;height:36px;padding:0 4px 0 10px;border-radius:12px;cursor:pointer;font-family:inherit;color:var(--txt);border:1px solid rgba(29,219,128,.45);background:linear-gradient(135deg,rgba(29,219,128,.16),rgba(29,219,128,.04))}
+.hx-bal>i{color:var(--p);font-size:13px}.hx-bal span{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05;font-size:13.5px;font-weight:900}.hx-bal small{font-size:8.5px;font-weight:700;color:var(--txt2);letter-spacing:.2px}
+.hx-bal em{width:26px;height:26px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#03210f;background:linear-gradient(135deg,var(--p),var(--p2))}
+.hx-bal.zero{border-color:rgba(255,107,129,.55);background:linear-gradient(135deg,rgba(255,107,129,.16),rgba(255,107,129,.04));animation:hxPulse 2.2s ease-in-out infinite}@keyframes hxPulse{50%{box-shadow:0 0 0 4px rgba(255,107,129,.12)}}
+.hx-ord{width:36px;height:36px;border-radius:12px;border:1px solid var(--bord);background:rgba(255,255,255,.06);color:var(--txt);cursor:pointer}
+@media(max-width:360px){.hx-bal small{display:none}}
+/* slim top of a service page */
+.xs-top .xs-hero.sl{display:flex;align-items:center;gap:11px;padding:10px 12px;margin-bottom:8px;border-radius:16px}
+.xs-top .xs-hero.sl .xs-lg{width:44px!important;height:44px!important;flex:0 0 44px;border-radius:13px;font-size:19px}
+.xs-top .xs-hero.sl h4{margin:0;font-size:15px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.xs-top .xs-hero.sl p{margin:2px 0 4px;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.xs-top .xs-meta{margin:0;gap:5px}.xs-top .xs-meta span{font-size:10px;padding:2px 7px}
+.xs-top .cx-note{margin-bottom:8px;padding:7px 10px;font-size:11.5px}
+.xs-top .xs-steps{padding:5px 8px;margin-bottom:8px;gap:2px}.xs-top .xs-steps div{flex-direction:row;justify-content:center;gap:4px;font-size:10px}.xs-top .xs-steps span{width:17px;height:17px;font-size:9px;flex:none}
+.xs-top .sv-nudge,.xs-top .xs-perk{padding:7px 9px;margin-bottom:10px;border-radius:13px}.xs-top .sv-nudge small,.xs-top .xs-perk p{display:none}.xs-top .sv-nudge .ic{flex-basis:26px;width:26px;height:26px;font-size:18px}.xs-top .sv-nudge b,.xs-top .xs-perk b{font-size:12px}
+.xs-top .sv-nudge .go,.xs-top .xs-perk .go{padding:5px 9px;font-size:10.5px}
+.cx-note.trial{background:rgba(176,107,255,.1);border-color:rgba(176,107,255,.4)}.cx-note.trial i{color:#c79bff}
+.xs-ver{display:inline-flex;align-items:center;font-size:9.5px;font-weight:900;padding:2px 7px;border-radius:7px;color:#9fd8ff;background:rgba(70,176,255,.14);border:1px solid rgba(70,176,255,.35)}
+.xs-ver.fixed{color:#8ff0bf;background:rgba(29,219,128,.12);border-color:rgba(29,219,128,.35)}
+/* brand logo: the official mark in the brand's colour */
+.xs-lg.bl{background:linear-gradient(150deg,color-mix(in srgb,var(--bc) 82%,#fff),var(--bc) 55%,color-mix(in srgb,var(--bc) 70%,#000))!important;background-color:var(--bc)!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),0 6px 14px rgba(0,0,0,.35)}
+.xs-lg.bl i{display:block;width:56%;height:56%;background:#fff;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
+.xs-lg.bl.lt i{background:#111}
+/* item card: compact, premium */
+.xs-pgrid{gap:9px!important}
+.xs-pc2{position:relative;display:flex;flex-direction:column;gap:5px;padding:10px;border-radius:16px;cursor:pointer;overflow:hidden;background:linear-gradient(165deg,rgba(255,255,255,.075),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 18px rgba(0,0,0,.25);transition:transform .2s,border-color .2s}
+.xs-pc2:hover{transform:translateY(-2px);border-color:rgba(29,219,128,.45)}.xs-pc2:active{transform:scale(.98)}
+.xs-pc2.sale{border-color:rgba(255,154,90,.45)}.xs-pc2.out{opacity:.55;cursor:not-allowed}
+.xs-pc2 .tp{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}.xs-pc2 .tp .xs-lg{width:38px!important;height:38px!important;flex:0 0 38px;border-radius:11px;font-size:16px;margin:0}
+.xs-pc2 .tg{display:flex;flex-direction:column;align-items:flex-end;gap:3px}.xs-pc2 .tg span{font-size:9px;font-weight:900;padding:2px 6px;border-radius:7px;white-space:nowrap}
+.xs-pc2 .tg .h{color:#fff;background:linear-gradient(135deg,#ff6b4a,#ff3d6e)}.xs-pc2 .tg .o{color:#2a1a00;background:linear-gradient(135deg,#ffe08a,#f2a91d)}
+.xs-pc2 .nm{font-size:12.5px;line-height:1.3;color:var(--txt);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px}
+.xs-pc2 .mt{display:flex;flex-wrap:wrap;gap:5px;min-height:15px}.xs-pc2 .mt span{font-size:10px;font-weight:800;color:var(--txt2)}.xs-pc2 .rt{color:#ffd76a!important}.xs-pc2 .rt small{color:var(--txt3);font-weight:700}
+.xs-pc2 .nt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.xs-pc2 .pp{display:flex;align-items:baseline;gap:6px;margin-top:1px}.xs-pc2 .pp s{font-size:10.5px;color:var(--txt3)}.xs-pc2 .pp span{font-size:16px;font-weight:900;color:#1ddb80;letter-spacing:-.3px}
+.xs-pc2 .pp .by{margin-left:auto;align-self:center;width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11.5px;color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d);box-shadow:0 4px 10px rgba(242,169,29,.35)}
+.xs-pc2 .es .xs-cd{background:none!important;border:0!important;padding:0!important;font-size:10px!important}.xs-pc2 .es .xs-cd i{display:none}.xs-pc2 .es .xs-cd b{font-size:10.5px;padding:1px 5px;border-radius:5px;background:rgba(255,159,122,.15)}
+.xs-pc2 .es{font-size:10px;font-weight:800;color:#ff9f7a;display:flex;align-items:center;gap:4px;flex-wrap:wrap}.xs-pc2 .es.o{color:#ffd76a}.xs-pc2 .es .xs-cd{font-size:10px;padding:1px 6px}
+.xs-pc2 .st{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:10px;font-weight:800;color:#5fe3a1}.xs-pc2 .st span{margin-left:auto;color:#9fd8ff}.xs-pc2 .st.low{color:#ffae6b}.xs-pc2 .st.out{color:#ff8fa3}
+.xs-pc2 .sf{margin:auto -10px -10px;width:calc(100% + 20px);box-sizing:border-box;padding:5px 10px;font-size:9.5px;font-weight:900;letter-spacing:.2px;color:#b9f5d8;background:linear-gradient(90deg,rgba(29,219,128,.16),rgba(29,219,128,.04));border-top:1px solid rgba(29,219,128,.2);display:flex;align-items:center;gap:5px}
+/* suggestions, region confirm, delivery time */
+.xs-sug{display:flex;align-items:center;gap:10px;margin:12px 0 4px;padding:10px 12px;border-radius:14px;cursor:pointer;border:1px dashed rgba(255,215,106,.45);background:rgba(255,215,106,.05)}
+.xs-sug>i:first-child{color:#ffd76a;font-size:18px}.xs-sug div{flex:1;min-width:0}.xs-sug b{display:block;font-size:12.5px;color:var(--txt)}.xs-sug small{font-size:11px;color:var(--txt2)}.xs-sug>i:last-child{color:var(--txt3)}
+.xs-t.sg .xs-lg{opacity:.9}.xs-t .vr{position:absolute;bottom:5px;right:6px;font-style:normal;font-size:8px;font-weight:900;color:#9fd8ff;opacity:.85}
+.xs-t .bd.tri{display:inline-flex;align-items:center;gap:3px;color:#fff;background:linear-gradient(135deg,#b06bff,#7b3fe4)}
+.xs-reg{display:flex;gap:9px;align-items:flex-start;margin:4px 0 10px;padding:10px 11px;border-radius:12px;font-size:12px;line-height:1.5;color:var(--txt2);background:rgba(70,176,255,.07);border:1px solid rgba(70,176,255,.35);cursor:pointer}
+.xs-reg input{margin-top:3px;width:17px;height:17px;flex:none;accent-color:#1ddb80}
+.xs-eta{display:flex;gap:7px;align-items:center;margin:6px 2px 10px;font-size:11.5px;color:#9fd8ff}
 .xb-strip{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 10px 10px 12px;border-radius:16px;background:linear-gradient(135deg,rgba(29,219,128,.12),rgba(29,219,128,.03));border:1px solid rgba(29,219,128,.35)}
 .xb-strip .ic{flex:0 0 34px;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#03210f;background:linear-gradient(135deg,#3be07c,#14b86a)}
 .xb-strip>div{flex:1;min-width:0}.xb-strip small{display:block;font-size:10.5px;color:var(--txt2)}.xb-strip b{font-size:16px;color:var(--txt)}.xb-strip em{display:block;font-style:normal;font-size:10.5px;color:#ff8fa3;font-weight:800}
@@ -182,7 +233,7 @@ const css = `
 .mj-t .r{text-align:right;flex:none}.rw{display:inline-block;font-weight:900;font-size:14px;color:#1ddb80}
 .mj-st{display:block;margin-top:3px;font-size:10px;font-weight:900}.mj-st.ok{color:var(--p)}.mj-st.wait{color:#ffae6b}.mj-st.no{color:#ff8fa3}.mj-st.full{color:var(--txt3)}
 .mj-dh{display:flex;gap:13px;align-items:center;margin-bottom:12px}.mj-dh .xs-lg{width:56px;height:56px;font-size:24px;flex:none}.mj-dh h4{margin:0 0 5px;font-size:16px;color:var(--txt)}
-/* square, realistic 3D glass icons (Quick Services + Extra Services) */
+/* square, realistic 3D glass icons (Quick Services + Digital Services) */
 .sv-ic,.xs-lg{border-radius:14px!important;position:relative;overflow:hidden;
   box-shadow:0 10px 18px -6px rgba(0,0,0,.55),0 3px 6px rgba(0,0,0,.35),inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -4px 8px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.18)!important}
 .sv-ic::before,.xs-lg::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(160deg,rgba(255,255,255,.38) 0%,rgba(255,255,255,.10) 38%,rgba(255,255,255,0) 52%,rgba(0,0,0,.10) 100%);pointer-events:none;z-index:1}
@@ -228,7 +279,7 @@ const css = `
 .sv-tile:has(.g-gold),.xs-t:has(.g-gold){--tglow:#ffc94d}
 .sv-tile:has(.g-slate),.xs-t:has(.g-slate){--tglow:#94aad2}
 @media (prefers-reduced-motion:reduce){.sv-tile .sv-ic,.xs-t .xs-lg{animation:icGlow 6s ease-in-out infinite}}
-/* Extra Balance notice */
+/* Digital Balance notice */
 .xb-note{display:flex;align-items:center;gap:10px;border-radius:16px;padding:10px 10px 10px 12px;margin:0 0 12px;background:linear-gradient(135deg,rgba(255,215,106,.16),rgba(242,169,29,.06));border:1px solid rgba(255,215,106,.55)}
 .xb-note>i{flex:none;font-size:18px;color:#ffd76a}
 .xb-note b{display:block;font-size:12.5px;color:#ffe9a8}.xb-note span{display:block;font-size:11px;color:#d9c9a0;line-height:1.45;margin-top:1px}
@@ -316,7 +367,7 @@ const css = `
 @media (max-width:360px){.xs-grid{gap:8px}.xs-lg{width:46px;height:46px;font-size:20px}}`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
-// each option (pack) can have its own icon or logo (Admin → Extra services → Icon); otherwise one is picked from its name / category
+// each option (pack) can have its own icon or logo (Admin → Digital services → Icon); otherwise one is picked from its name / category
 const AUTO_IC = [[/google\s*play/i, 'fa-brands fa-google-play', 'g-green'], [/itunes|apple/i, 'fa-brands fa-apple', 'g-slate'], [/steam/i, 'fa-brands fa-steam', 'g-dark'],
   [/telegram/i, 'fa-brands fa-telegram', 'g-blue'], [/whatsapp/i, 'fa-brands fa-whatsapp', 'g-green'], [/facebook|meta/i, 'fa-brands fa-facebook', 'g-blue'], [/youtube/i, 'fa-brands fa-youtube', 'g-red'],
   [/instagram/i, 'fa-brands fa-instagram', 'g-pink'], [/tiktok/i, 'fa-brands fa-tiktok', 'g-dark'], [/netflix/i, 'fa-solid fa-film', 'g-red'], [/spotify/i, 'fa-brands fa-spotify', 'g-green'],
@@ -324,14 +375,42 @@ const AUTO_IC = [[/google\s*play/i, 'fa-brands fa-google-play', 'g-green'], [/it
   [/usdt|tether|crypto/i, 'fa-solid fa-coins', 'g-teal'], [/dollar|payoneer|wise|usd/i, 'fa-solid fa-dollar-sign', 'g-green'], [/bkash/i, 'fa-solid fa-mobile-screen', 'g-pink'],
   [/nagad/i, 'fa-solid fa-mobile-screen', 'g-orange'], [/rocket/i, 'fa-solid fa-rocket', 'g-purple'], [/daraz/i, 'fa-solid fa-bag-shopping', 'g-orange'], [/apex|shoe/i, 'fa-solid fa-shoe-prints', 'g-red'],
   [/domain/i, 'fa-solid fa-globe', 'g-cyan'], [/hosting|server/i, 'fa-solid fa-server', 'g-purple'], [/shopping/i, 'fa-solid fa-bag-shopping', 'g-orange'], [/web/i, 'fa-solid fa-globe', 'g-cyan']];
+// official brand marks (Simple Icons, CC0 — hosted with the site in /brand/logos), shown in the brand's own colour
+const BRANDS = [[/apple\s*music/i, 'applemusic', 'FA243C'], [/youtube\s*music/i, 'youtubemusic', 'FF0000'], [/prime\s*video/i, 'primevideo', '1F2E3E'], [/google\s*play|play\s*store/i, 'googleplay', '414141'],
+  [/google\s*drive/i, 'googledrive', '4285F4'], [/google\s*cloud/i, 'googlecloud', '4285F4'], [/gmail/i, 'gmail', 'EA4335'], [/itunes|apple|app\s*store|icloud/i, 'apple', '000000'], [/steam/i, 'steam', '171A21'],
+  [/telegram/i, 'telegram', '26A5E4'], [/whatsapp/i, 'whatsapp', '25D366'], [/messenger/i, 'messenger', '00B2FF'], [/meta\s*verified|\bmeta\b/i, 'meta', '0467DF'], [/facebook|\bfb\b/i, 'facebook', '0866FF'],
+  [/youtube/i, 'youtube', 'FF0000'], [/instagram|\big\b/i, 'instagram', 'FF0069'], [/tik\s*tok/i, 'tiktok', '000000'], [/threads/i, 'threads', '000000'], [/twitter|\bx\s*premium\b|\bx\.com\b/i, 'x', '000000'],
+  [/snapchat/i, 'snapchat', 'FFFC00'], [/pinterest/i, 'pinterest', 'BD081C'], [/linked\s*in/i, 'linkedin', '0A66C2'], [/discord/i, 'discord', '5865F2'], [/twitch/i, 'twitch', '9146FF'], [/viber/i, 'viber', '7360F2'], [/zoom/i, 'zoom', '0B5CFF'],
+  [/netflix/i, 'netflix', 'E50914'], [/spotify/i, 'spotify', '1ED760'], [/hbo/i, 'hbo', '000000'], [/crunchyroll/i, 'crunchyroll', 'F47521'], [/amazon/i, 'amazon', 'FF9900'],
+  [/pubg|\buc\b/i, 'pubg', 'F4B942'], [/valorant|\bvp\b/i, 'valorant', 'FA4454'], [/riot|league\s*of\s*legends/i, 'riotgames', 'EB0029'], [/roblox|robux/i, 'roblox', '000000'], [/playstation|\bpsn\b|\bps\s?[45]\b/i, 'playstation', '0070D1'],
+  [/nintendo/i, 'nintendo', 'E60012'], [/epic\s*games|fortnite/i, 'epicgames', '313131'],
+  [/\bvisa\b/i, 'visa', '1A1F71'], [/master\s*card/i, 'mastercard', 'EB001B'], [/usdt|tether/i, 'tether', '50AF95'], [/bitcoin|\bbtc\b/i, 'bitcoin', 'F7931A'], [/ethereum|\beth\b/i, 'ethereum', '3C3C3D'],
+  [/binance/i, 'binance', 'F0B90B'], [/payoneer/i, 'payoneer', 'FF4800'], [/\bwise\b/i, 'wise', '9FE870'], [/paypal/i, 'paypal', '003087'],
+  [/chat\s*gpt|openai/i, 'openai', '412991'], [/claude/i, 'claude', 'D97757'], [/perplexity/i, 'perplexity', '1FB8CD'], [/grammarly/i, 'grammarly', '027E6F'], [/canva/i, 'canva', '00C4CC'], [/figma/i, 'figma', 'F24E1E'],
+  [/notion/i, 'notion', '000000'], [/adobe|photoshop|illustrator/i, 'adobe', 'FF0000'], [/duolingo/i, 'duolingo', '58CC02'], [/coursera/i, 'coursera', '0056D2'], [/udemy/i, 'udemy', 'A435F0'],
+  [/fiverr/i, 'fiverr', '1DBF73'], [/upwork/i, 'upwork', '6FDA44'], [/freelancer/i, 'freelancer', '29B2FE'], [/namecheap/i, 'namecheap', 'DE3723'], [/godaddy/i, 'godaddy', '1BDBDB'], [/hostinger/i, 'hostinger', '673DE6'],
+  [/digital\s*ocean/i, 'digitalocean', '0080FF'], [/cloudflare/i, 'cloudflare', 'F38020'], [/wordpress/i, 'wordpress', '21759B'], [/shopify/i, 'shopify', '7AB55C'], [/foodpanda/i, 'foodpanda', 'D70F64'], [/dropbox/i, 'dropbox', '0061FF'], [/google/i, 'google', '4285F4']];
+const brandOf = t => { const m = BRANDS.find(([re]) => re.test(String(t || ''))); return m ? { slug: m[1], hex: m[2] } : null; };
+const lum = h => { const n = parseInt(h, 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255; return (0.299 * r + 0.587 * g + 0.114 * b) / 255; };
+function blogo(b){ const u = `/brand/logos/${b.slug}.svg`, light = lum(b.hex) > .62;
+  return `<div class="xs-lg bl${light ? ' lt' : ''}" style="--bc:#${b.hex}"><i style="-webkit-mask-image:url(${u});mask-image:url(${u})"></i></div>`; }
+// a region's flag: "US", "USA", "United Kingdom", "Bangladesh", "Global"…
+const CC = { usa: 'US', 'united states': 'US', america: 'US', uk: 'GB', 'united kingdom': 'GB', england: 'GB', bangladesh: 'BD', india: 'IN', pakistan: 'PK', nepal: 'NP', uae: 'AE', dubai: 'AE', saudi: 'SA', 'saudi arabia': 'SA', ksa: 'SA',
+  qatar: 'QA', kuwait: 'KW', oman: 'OM', canada: 'CA', germany: 'DE', france: 'FR', italy: 'IT', spain: 'ES', turkey: 'TR', 'türkiye': 'TR', japan: 'JP', korea: 'KR', china: 'CN', brazil: 'BR', australia: 'AU',
+  singapore: 'SG', malaysia: 'MY', indonesia: 'ID', philippines: 'PH', thailand: 'TH', nigeria: 'NG', egypt: 'EG', europe: 'EU', eu: 'EU', global: 'GL', worldwide: 'GL', international: 'GL' };
+function flag(r){ const t = String(r || '').trim(); const k = CC[t.toLowerCase()] || (/^[A-Za-z]{2}$/.test(t) ? t.toUpperCase().replace('UK', 'GB') : ''); if(!k) return '';
+  if(k === 'GL') return '🌐'; return String.fromCodePoint(...[...k].map(c => 127397 + c.charCodeAt(0))); }
+window._xsFlag = flag; window._xsBrand = t => { const b = brandOf(t); return b ? blogo(b) : ''; };
 function ilogo(s, i){
   if(!i) return logo(s);
   if(i.icon && /^https:\/\//i.test(i.icon)) return `<div class="xs-lg img"><img src="${E(i.icon)}" alt="${E(i.name)}" loading="lazy"></div>`;
   if(i.icon) return `<div class="xs-lg ${E(i.color || s.color)}"><i class="${E(i.icon)}"></i></div>`;
-  const m = AUTO_IC.find(([re]) => re.test(i.name + ' ' + (i.cat || '')));
+  const b = brandOf(i.name) || brandOf(i.cat) || brandOf(i.group); if(b) return blogo(b);
+  const m = AUTO_IC.find(([re]) => re.test((i.name || '') + ' ' + (i.cat || '')));
   return m ? `<div class="xs-lg ${E(i.color || m[2])}"><i class="${m[1]}"></i></div>` : logo(s);
 }
-function logo(s){ return s.logo ? `<div class="xs-lg img"><img src="${E(s.logo)}" alt="${E(s.name)}" loading="lazy"></div>` : `<div class="xs-lg ${E(s.color)}"><i class="${E(s.icon)}"></i></div>`; }
+function logo(s){ s = { ...s, icon: s.icon || 'fa-solid fa-star' }; const b = !s.logo && (!s.icon || /fa-star$/.test(s.icon)) && brandOf(s.name); if(b) return blogo(b);
+  return s.logo ? `<div class="xs-lg img"><img src="${E(s.logo)}" alt="${E(s.name)}" loading="lazy"></div>` : `<div class="xs-lg ${E(s.color)}"><i class="${E(s.icon)}"></i></div>`; }
 const svcs = () => ((X.cfg && X.cfg.services) || []).filter(s => s.on);
 const isV = () => !!(X.xb && (X.xb.verified || X.xb.vip));
 const PK = () => (X.cfg && X.cfg.perk) || { on: false };
@@ -395,11 +474,11 @@ const can = a => !a || a === 'all' || (typeof window._svCanUse === 'function' &&
 const ACC = { verified: 'VERIFIED', vip: 'VIP', vip1: 'VIP 1+', vip2: 'VIP 2+', vip3: 'VIP 3' };
 const BDC = t => ({ HOT: 'sale', SALE: 'sale', NEW: 'new', EARN: 'earn', FREE: 'new', POPULAR: 'pop', TOP: 'pop', VERIFIED: 'ver', 'FOR VERIFIED': 'ver', JOIN: 'ver' }[String(t).toUpperCase()] || '');
 const nudge = () => typeof window._svNudge === 'function' ? window._svNudge() : '';
-// the Extra Balance on every service page, with Deposit and My orders
+// the Digital Balance on every service page, with Deposit and My orders
 function xbStrip(){
   if(!X.cfg || (X.cfg.wallet || {}).on === false || !user()) return '';
   const b = X.xb ? Number(X.xb.xbal) || 0 : null;
-  return `<div class="xb-strip${b === 0 ? ' empty' : ''}"><span class="ic"><i class="fa-solid fa-wallet"></i></span><div><small>Your Extra Balance</small><b>${b === null ? '…' : tk(b)}</b>${b === 0 ? '<em>Deposit first to order</em>' : ''}</div>
+  return `<div class="xb-strip${b === 0 ? ' empty' : ''}"><span class="ic"><i class="fa-solid fa-wallet"></i></span><div><small>Your Digital Balance</small><b>${b === null ? '…' : tk(b)}</b>${b === 0 ? '<em>Deposit first to order</em>' : ''}</div>
     <button onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Deposit</button><button class="g" onclick="svGo('x_orders')" aria-label="My orders"><i class="fa-solid fa-receipt"></i></button></div>`;
 }
 window._xbStrip = xbStrip;
@@ -413,7 +492,7 @@ function statusBar(s){
 // the Verified exclusive banner
 function perkBanner(){
   const P = PK(); if(!P.on) return '';
-  if(user() && isV()) return `<div class="xs-perk on"><span class="sl">${sealHtml()}</span><div><b>${X.xb && X.xb.vip && !X.xb.verified ? 'VIP Exclusive is active' : 'Verified Exclusive is active'}</b><p>You pay no service charge and no transaction fee on every Extra Service.</p></div><span class="go">0% fee ✓</span></div>`;
+  if(user() && isV()) return `<div class="xs-perk on"><span class="sl">${sealHtml()}</span><div><b>${X.xb && X.xb.vip && !X.xb.verified ? 'VIP Exclusive is active' : 'Verified Exclusive is active'}</b><p>You pay no service charge and no transaction fee on every Digital Service.</p></div><span class="go">0% fee ✓</span></div>`;
   return `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Verified Exclusive: 0% charge · 0 fee</b><p>Verified &amp; VIP members pay no service charge${P.chargePct ? ` (${P.chargePct}%)` : ''} or transaction fee here.</p></div><span class="go">Get Verified</span></div>`;
 }
 // processing-time notice for loans (home page, after applying, application details)
@@ -452,7 +531,7 @@ function refreshNotes(){ document.querySelectorAll('.ln-note').forEach(n => n.re
 async function load(){
   if(X.p) return X.p;
   X.p = fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'extraConfig' }) })
-    .then(r => r.json()).then(c => { X.cfg = c; register(); render(); return c; }).catch(() => { X.p = null; });
+    .then(r => r.json()).then(c => { X.cfg = c; register(); render(); return c; }).catch(e => { console.error("xs load", e && e.message); X.p = null; });
   return X.p;
 }
 // every service gets its own page, opened through the normal Quick Services sheet
@@ -462,7 +541,8 @@ function register(){
   P.recharge = rechargePage; P.jobs = jobsPage; T.x_job = { l: 'Task', cat: '', login: true, page: 'x_job' }; P.x_job = jobPage;
   T.x_order = { l: 'Order', cat: '', login: true, page: 'x_order' }; P.x_order = orderPage;
   T.x_orders = { l: 'My orders', cat: '', login: true, page: 'x_orders' }; P.x_orders = ordersPage;
-  T.x_wallet = { l: 'Extra Balance', cat: '', login: true, page: 'x_wallet' }; P.x_wallet = walletPage; T.x_dep = { l: 'Add balance', cat: '', login: true, page: 'x_dep' }; P.x_dep = depPage;
+  T.x_sug = { l: 'Suggest', cat: '', login: true, page: 'x_sug' }; P.x_sug = sugPage;
+  T.x_wallet = { l: 'Digital Balance', cat: '', login: true, page: 'x_wallet' }; P.x_wallet = walletPage; T.x_dep = { l: 'Add balance', cat: '', login: true, page: 'x_dep' }; P.x_dep = depPage;
 }
 // every home section sits in its own slim-bordered box; Quick Services (title + tiles) are wrapped together
 function boxQuick(){
@@ -481,10 +561,11 @@ function render(){
   const W = X.cfg.wallet || {};
   const tile = s => { const st = s.soon ? 'soon' : s.status !== 'open' ? s.status : '', lk = !st && !can(s.access);
     const bd = st ? `<span class="bd st ${st}">${st.toUpperCase()}</span>` : lk ? `<span class="bd lk"><i class="fa-solid fa-${s.access === 'verified' ? 'lock' : 'crown'}"></i>${ACC[s.access]}</span>` : s.badge ? `<span class="bd ${BDC(s.badge)}">${E(s.badge)}</span>` : s.items.some(i => i.on && priceNow(s, i).kind) ? '<span class="bd sale">SALE</span>' : '';
-    return `<div class="xs-t${st === 'soon' || st === 'closed' ? ' soon' : ''}${lk ? ' lk' : ''}" onclick="xsOpen('${E(s.id)}')">${bd}${logo(s)}<b>${E(s.short || s.name)}</b></div>`; };
-  box.innerHTML = `<div class="hs-tag"><i class="fa-solid fa-wallet"></i>Uses your Extra Balance</div><div class="xs-head">
-      <div class="t"><div><div class="xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em></div><small>Gift cards, exchange, social &amp; digital services — paid from your Extra Balance</small></div></div>
-      <div class="a">${W.on !== false ? `<button class="xs-bal" onclick="svGo('x_wallet')"><i class="fa-solid fa-wallet"></i><span><small>Extra Balance</small>${user() && X.xb ? tk(X.xb.xbal) : 'Open'}</span><i class="p fa-solid fa-plus"></i></button>` : ''}<button class="xs-ord" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button></div>
+    const tri = !st && s.trialEnd && new Date(s.trialEnd).getTime() > Date.now();
+    return `<div class="xs-t${st === 'soon' || st === 'closed' ? ' soon' : ''}${lk ? ' lk' : ''}" onclick="xsOpen('${E(s.id)}')">${tri && !lk ? '<span class="bd tri"><i class="fa-solid fa-flask"></i>TRIAL</span>' : bd}${logo(s)}<b>${E(s.short || s.name)}</b>${s.ver ? `<i class="vr">v${E(s.ver)}</i>` : ''}</div>`; };
+  box.innerHTML = `<div class="hs-tag"><i class="fa-solid fa-wallet"></i>Uses your Digital Balance</div><div class="xs-head">
+      <div class="t"><div><div class="xs-title">${E(X.cfg.title || 'Digital Services')} <em>PREMIUM</em></div><small>Gift cards, exchange, social &amp; digital services — paid from your Digital Balance</small></div></div>
+      <div class="a">${W.on !== false ? `<button class="xs-bal" onclick="svGo('x_wallet')"><i class="fa-solid fa-wallet"></i><span><small>Digital Balance</small>${user() && X.xb ? tk(X.xb.xbal) : 'Open'}</span><i class="p fa-solid fa-plus"></i></button>` : ''}<button class="xs-ord" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button></div>
     </div>
     ${xbNotice()}
     ${perkBanner()}
@@ -492,15 +573,15 @@ function render(){
     ${dealCard()}
     ${hotRow()}
     <div class="xs-cat"><span>All services</span></div>
-    <div class="xs-grid">${(X.cfg.jobs || {}).on !== false ? `<div class="xs-t" onclick="svGo('jobs')"><span class="bd earn">EARN</span><div class="xs-lg g-orange"><i class="fa-solid fa-briefcase"></i></div><b>Micro Jobs</b></div>` : ''}${Ls.map(tile).join('')}</div>
+    <div class="xs-grid">${(X.cfg.jobs || {}).on !== false ? `<div class="xs-t" onclick="svGo('jobs')"><span class="bd earn">EARN</span><div class="xs-lg g-orange"><i class="fa-solid fa-briefcase"></i></div><b>Micro Jobs</b></div>` : ''}${Ls.map(tile).join('')}${user() ? `<div class="xs-t sg" onclick="xsSug('x:all','Digital Services')"><div class="xs-lg g-slate"><i class="fa-regular fa-lightbulb"></i></div><b>Suggest</b></div>` : ''}</div>
     <div id="xsLive"></div>`;
   drawLive();
 }
-// clear notice: everything in this section is paid from the Extra Balance, so deposit first
+// clear notice: everything in this section is paid from the Digital Balance, so deposit first
 function xbNotice(){
   if((X.cfg.wallet || {}).on === false) return '';
   const bal = user() && X.xb ? Number(X.xb.xbal) || 0 : null, empty = bal !== null && bal <= 0;
-  return `<div class="xb-note${empty ? ' empty' : ''}"><i class="fa-solid fa-circle-exclamation"></i><div><b>Paid from your Extra Balance only</b><span>Extra Services are charged from your Extra Balance — not your Creditfy balance. ${empty ? 'Your Extra Balance is ৳0 — deposit first to order.' : 'Keep it topped up to order in one tap.'}</span></div><button onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Deposit</button></div>`;
+  return `<div class="xb-note${empty ? ' empty' : ''}"><i class="fa-solid fa-circle-exclamation"></i><div><b>Paid from your Digital Balance only</b><span>Digital Services are charged from your Digital Balance — not your Creditfy balance. ${empty ? 'Your Digital Balance is ৳0 — deposit first to order.' : 'Keep it topped up to order in one tap.'}</span></div><button onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Deposit</button></div>`;
 }
 // a sliding row of everything on offer right now (offer price or today's deal)
 function hotRow(){
@@ -549,13 +630,50 @@ function drawLive(){
 async function loadLive(){
   try { const r = await fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'extraLive' }) }); const d = await r.json(); X.live = d.list || []; drawLive(); } catch (e) {}
 }
-async function loadXb(){ if(!user()) { X.xb = null; refreshNotes(); return null; } const r = await api('xbalState'); if(r.ok){ X.xb = r.data; render(); refreshNotes(); } return X.xb; }
+async function loadXb(){ if(!user()) { X.xb = null; refreshNotes(); return null; } const r = await api('xbalState'); if(r.ok){ X.xb = r.data; { const hx = $x('svHx'), sh = $x('svSheet'); if(hx && sh && sh.classList.contains('on') && X.hk) hx.innerHTML = window._svHeadX(X.hk); } render(); refreshNotes(); } return X.xb; }
 window.xsOpen = id => { const s = svcs().find(x => x.id === id); if(!s) return; if(s.soon){ toast(s.statusNote || 'Coming soon — stay tuned!'); return; } if(s.status === 'closed'){ toast(s.statusNote || 'Closed right now — please check back later.', true); return; } svGo('x_' + id); };
 
+/* ───────── suggestions: what else users want, kept per section ───────── */
+function sugRow(scope, label){ return user() ? `<div class="xs-sug" onclick="xsSug('${E(scope)}','${E(label)}')"><i class="fa-regular fa-lightbulb"></i><div><b>Want something else in ${E(label)}?</b><small>Tell us — we add the most wanted services first.</small></div><i class="fa-solid fa-chevron-right"></i></div>` : ''; }
+window._xsSugRow = sugRow;
+window.xsSug = (scope, label) => { X.sug = { scope, label }; svGo('x_sug'); };
+function sugPage(){
+  const g = X.sug || { scope: 'x:all', label: 'Digital Services' };
+  show('Suggest a service', `<div class="cx-hero"><div class="sv-ic g-orange"><i class="fa-regular fa-lightbulb"></i></div><div><h4>Your idea for ${E(g.label)}</h4><p>Only for <b>${E(g.label)}</b> — tell us which service, brand, package or region you want.</p></div></div>
+    <textarea class="sv-in" id="sgTxt" rows="4" maxlength="500" placeholder="e.g. ${g.scope.startsWith('q:') ? 'A bill pay service for DESCO' : 'Steam $50 (USA) and Xbox Game Pass'}" style="height:auto;padding:12px;resize:vertical"></textarea>
+    <button class="sv-btn" style="margin-top:10px" id="sgBtn" onclick="xsSugSend()"><i class="fa-solid fa-paper-plane"></i>Send suggestion</button>`);
+}
+window.xsSugSend = async () => { const g = X.sug || { scope: 'x:all', label: '' }, t = (($x('sgTxt') || {}).value || '').trim(); const b = $x('sgBtn');
+  if(t.length < 4){ toast('Please write a few words', true); return; } b.disabled = true;
+  const r = await api('suggest', { scope: g.scope, label: g.label, text: t }); b.disabled = false;
+  if(!r.ok){ toast(r.data.error || 'Could not send', true); return; } toast('Thank you! Your suggestion is sent 💡'); svBack(); };
+// the Digital Balance chip in the page header (digital service pages and admin-made service pages)
+window._svHeadX = k => { X.hk = k; if(!k || k === 'x_sug' || !/^(x_|c_|jobs$|recharge$)/.test(k) || !X.cfg || (X.cfg.wallet || {}).on === false || !user()) return '';
+  if(k === 'recharge') return ''; const b = X.xb ? Number(X.xb.xbal) || 0 : null;
+  return `<button class="hx-bal${b === 0 ? ' zero' : ''}" onclick="svGo('x_dep')" title="Digital Balance — tap to deposit"><i class="fa-solid fa-wallet"></i><span><small>Digital Balance</small>${b === null ? '…' : tk(b)}</span><em><i class="fa-solid fa-plus"></i></em></button>${k !== 'x_orders' ? `<button class="hx-ord" onclick="svGo('x_orders')" aria-label="My orders"><i class="fa-solid fa-receipt"></i></button>` : ''}`; };
 /* ───────── one service: its options ───────── */
+// version tag (v1.2 · Updated / Fixed) — set by the admin when a service is updated
+function verTag(s){ return s.ver ? `<span class="xs-ver${s.verKind ? ' ' + s.verKind : ''}" title="${E(s.verNote || '')}">v${E(s.ver)}${s.verKind ? ' · ' + (s.verKind === 'fixed' ? 'Fixed' : 'Updated') : ''}</span>` : ''; }
+function trialBar(s){ const e = s.trialEnd ? new Date(s.trialEnd).getTime() : 0; return e > Date.now() ? `<div class="cx-note trial"><i class="fa-solid fa-flask"></i><span><b>Trial</b> — try it now, open until ${cd(e, '')}</span></div>` : ''; }
+// one item: logo, name, rating, region, regular price struck through and the price to pay, stock, delivery time
+function card(s, i){
+  const pn = priceNow(s, i), q = quote(s, withNow(s, i), 0, isV()), reg = quote(s, i, 0, false).pay, pay = q.pay;
+  const off = reg > pay ? Math.round((1 - pay / reg) * 100) : 0;
+  const out = i.stock !== null && i.stock !== undefined && i.stock <= 0, low = !out && i.stock !== null && i.stock !== undefined && i.stock <= Math.max(3, i.lowAt || 0);
+  const soon = pn.kind && pn.ends && pn.ends - Date.now() < 864e5, eta = i.eta || s.eta || (s.deliver === 'email' ? '5–10 min' : '');
+  return `<div class="xs-pc2${out ? ' out' : ''}${pn.kind ? ' sale' : ''}" ${out ? '' : `onclick="xsPick('${E(s.id)}','${E(i.id)}')"`}>
+    <div class="tp">${ilogo(s, i)}<div class="tg">${i.hot ? '<span class="h"><i class="fa-solid fa-fire"></i>HOT</span>' : ''}${off ? `<span class="o">−${off}%</span>` : ''}</div></div>
+    <b class="nm">${E(i.name)}</b>
+    <div class="mt">${i.rating ? `<span class="rt">⭐ ${num(i.rating)}<small>/5</small></span>` : ''}${i.region ? `<span class="rg">${flag(i.region)} ${E(i.region)}</span>` : ''}${!i.rating && !i.region && i.note ? `<span class="nt">${E(i.note)}</span>` : ''}</div>
+    <div class="pp">${off ? `<s>${tk(reg)}</s>` : ''}<span>${tk(pay)}</span>${out ? '' : '<em class="by"><i class="fa-solid fa-cart-shopping"></i></em>'}</div>
+    ${soon ? `<div class="es"><i class="fa-solid fa-hourglass-half"></i>Offer ends soon ${cd(pn.ends, '')}</div>` : pn.kind ? `<div class="es o">${cd(pn.ends, pn.kind === 'deal' ? 'Today' : 'Ends in')}</div>` : ''}
+    <div class="st${out ? ' out' : low ? ' low' : ''}">${out ? '<i class="fa-solid fa-ban"></i>Out of stock' : low ? `<i class="fa-solid fa-fire-flame-curved"></i>Only ${i.stock} left` : '<i class="fa-solid fa-circle-check"></i>In stock'}${eta && !out ? `<span><i class="fa-solid fa-bolt"></i>${E(eta)}</span>` : ''}</div>
+    <div class="sf"><i class="fa-solid fa-shield-halved"></i>100% Safe &amp; Secured</div></div>`;
+}
+
 function svcPage(id){
   const s = svcs().find(x => x.id === id); if(!s) return; X.openSid = id;
-  if(s.access !== 'all' && !can(s.access)){
+  if((s.access && s.access !== 'all') && !can(s.access)){
     if(user() && !window._svState && (X._wt = (X._wt || 0) + 1) < 8){ show(s.name, '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Loading…</div>'); setTimeout(() => svcPage(id), 600); return; }
     X._wt = 0; show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(s.name)}</h4><p>${E(s.desc)}</p></div></div>${typeof window._svLock === 'function' ? window._svLock(s.name, s.access) : ''}${xbStrip()}`); return;
   }
@@ -564,20 +682,21 @@ function svcPage(id){
   const items = s.items.filter(i => i.on);
   const cats = [...new Set(items.map(i => i.cat).filter(Boolean))];
   const offers = items.filter(i => priceNow(s, i).kind).length;
-  show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(s.name)}</h4><p>${E(s.desc)}</p>
-      <div class="xs-meta"><span><i class="fa-solid fa-layer-group"></i>${items.length} options</span>${offers ? `<span class="o"><i class="fa-solid fa-tag"></i>${offers} on offer</span>` : ''}<span><i class="fa-solid fa-user-shield"></i>Hand-delivered</span>${s.access !== 'all' ? `<span class="o"><i class="fa-solid fa-crown"></i>${ACC[s.access]}</span>` : ''}</div></div></div>
-    ${statusBar(s)}
-    ${xbStrip()}
+  const eta = s.eta || (s.deliver === 'email' ? '5–10 min' : '');
+  show(s.name, `<div class="xs-top">
+    <div class="xs-hero sl">${logo(s)}<div style="min-width:0;flex:1"><h4>${E(s.name)} ${verTag(s)}</h4>${s.desc ? `<p>${E(s.desc)}</p>` : ''}
+      <div class="xs-meta"><span><i class="fa-solid fa-layer-group"></i>${items.length}</span>${offers ? `<span class="o"><i class="fa-solid fa-tag"></i>${offers} offers</span>` : ''}${eta ? `<span><i class="fa-solid fa-bolt"></i>${E(eta)}</span>` : ''}${(s.access && s.access !== 'all') ? `<span class="o"><i class="fa-solid fa-crown"></i>${ACC[s.access]}</span>` : ''}</div></div></div>
+    ${trialBar(s)}${statusBar(s)}
     ${steps(cats.length > 1 && !X.f.cat ? 0 : 1, cats.length > 1)}
     ${isV() ? nudge() : perkBanner()}
+    </div>
     ${items.length > 3 ? `<div class="xs-tool"><div class="xs-srch"><i class="fa-solid fa-magnifying-glass"></i><input id="xsQ" placeholder="Search ${E(s.name)}" value="${E(X.f.q)}" oninput="xsF('q',this.value)"></div>
-      ${s.mode === 'items' ? `<select id="xsSort" onchange="xsF('sort',this.value)"><option value="pop">Popular</option><option value="off">Offers first</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select>` : ''}</div>` : ''}
-    ${cats.length > 1 ? `<div class="xs-menu">${[['', 'All', items.length], ...cats.map(c => [c, c, items.filter(i => i.cat === c).length])].map(([v, t, n]) => `<button data-c="${E(v)}" class="${X.f.cat === v ? 'on' : ''}" onclick="xsF('cat',this.dataset.c)">${v ? ilogo(s, items.find(i => i.cat === v) || {}) : '<span class="al"><i class="fa-solid fa-grip"></i></span>'}<b>${E(t)}</b><small>${n}</small></button>`).join('')}</div>` : ''}
+      ${s.mode === 'items' ? `<select id="xsSort" onchange="xsF('sort',this.value)"><option value="pop">Popular</option><option value="rate">Top rated</option><option value="off">Offers first</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select>` : ''}</div>` : ''}
+    ${cats.length > 1 ? `<div class="xs-menu">${[['', 'All', items.length], ...cats.map(c => [c, c, items.filter(i => i.cat === c).length])].map(([v, t, n]) => `<button data-c="${E(v)}" class="${X.f.cat === v ? 'on' : ''}" onclick="xsF('cat',this.dataset.c)">${v ? ilogo(s, { name: v, cat: v, ...(items.find(i => i.cat === v && i.icon) ? { icon: items.find(i => i.cat === v && i.icon).icon } : {}) }) : '<span class="al"><i class="fa-solid fa-grip"></i></span>'}<b>${E(t)}</b><small>${n}</small></button>`).join('')}</div>` : ''}
     <div id="xsGrp"></div>
     <div id="xsItems"></div>
-    ${s.note ? `<div class="sv-card"><p>${E(s.note)}</p></div>` : ''}
-    <div class="xs-how"><div><i class="fa-solid fa-hand-pointer"></i><b>Choose</b><small>Pick an option</small></div><div><i class="fa-solid fa-wallet"></i><b>Pay</b><small>Extra Balance or TrxID</small></div><div><i class="fa-solid fa-truck-fast"></i><b>Get it</b><small>Delivered in My orders</small></div></div>
-    <button class="sv-btn ghost" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button>`);
+    ${s.note ? `<div class="cx-note"><i class="fa-solid fa-circle-info"></i><span>${E(s.note)}</span></div>` : ''}
+    ${sugRow('x:' + s.id, s.name)}`);
   const so = $x('xsSort'); if(so) so.value = X.f.sort;
   drawItems();
 }
@@ -590,16 +709,17 @@ function drawItems(){
   const f = X.f || {}, q = String(f.q || '').toLowerCase();
   const inCat = s.items.filter(i => i.on && (!f.cat || i.cat === f.cat));
   const groups = [...new Set(inCat.map(i => i.group).filter(Boolean))];
-  const ge = $x('xsGrp'); if(ge) ge.innerHTML = groups.length > 1 ? `<div class="xs-chips xs-sub"><button data-g="" class="${!f.grp ? 'on' : ''}" onclick="xsF('grp','')">All${f.cat ? ' ' + E(f.cat) : ''}</button>${groups.map(g => `<button data-g="${E(g)}" class="${f.grp === g ? 'on' : ''}" onclick="xsF('grp',this.dataset.g)">${E(g)}</button>`).join('')}</div>` : '';
+  const ge = $x('xsGrp'); if(ge) ge.innerHTML = groups.length > 1 ? `<div class="xs-chips xs-sub"><button data-g="" class="${!f.grp ? 'on' : ''}" onclick="xsF('grp','')">All${f.cat ? ' ' + E(f.cat) : ''}</button>${groups.map(g => `<button data-g="${E(g)}" class="${f.grp === g ? 'on' : ''}" onclick="xsF('grp',this.dataset.g)">${flag(g) ? flag(g) + ' ' : ''}${E(g)}</button>`).join('')}</div>` : '';
   let items = inCat.filter(i => (!f.grp || i.group === f.grp) && (!q || (i.name + ' ' + (i.cat || '') + ' ' + (i.group || '') + ' ' + (i.note || '')).toLowerCase().includes(q)));
   const P = i => priceNow(s, i).price;
   if(f.sort === 'low') items.sort((a, b) => P(a) - P(b)); else if(f.sort === 'high') items.sort((a, b) => P(b) - P(a));
   else if(f.sort === 'off') items.sort((a, b) => (priceNow(s, b).kind ? 1 : 0) - (priceNow(s, a).kind ? 1 : 0));
+  else if(f.sort === 'rate') items.sort((a, b) => (b.rating || 0) - (a.rating || 0));
   else items.sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0));
   if(!items.length){ el.innerHTML = '<div class="sv-empty"><i class="fa-solid fa-magnifying-glass"></i>Nothing matches. Try another word.</div>'; return; }
   // with sub-menus (groups) and no group picked, the options are shown under a heading per group
   const byGroup = !f.grp && groups.length > 1 && f.sort === 'pop' && !q;
-  const wrap = fn => { if(!byGroup) return fn(items); const order = [...groups, '']; return order.map(g => { const L = items.filter(i => (i.group || '') === g); return L.length ? `<div class="xs-gh"><span>${E(g || 'More')}</span><small>${L.length}</small></div>${fn(L)}` : ''; }).join(''); };
+  const wrap = fn => { if(!byGroup) return fn(items); const order = [...groups, '']; return order.map(g => { const L = items.filter(i => (i.group || '') === g); return L.length ? `<div class="xs-gh"><span>${flag(g) ? flag(g) + ' ' : ''}${E(g || 'More')}</span><small>${L.length}</small></div>${fn(L)}` : ''; }).join(''); };
   if(s.mode === 'amount'){
     el.innerHTML = wrap(items => items.map(i => { const hasFee = i.pct || i.fee, free = PK().on && isV();
       const feeTxt = !hasFee ? 'No fee' : free ? '<span style="color:var(--p);font-weight:800">No fee — Verified ✓</span>' : `Fee ${i.pct ? num(i.pct) + '%' : ''}${i.pct && i.fee ? ' + ' : ''}${i.fee ? tk(i.fee) : ''}${PK().on ? ' · <span style="color:#7fc3ff">Verified: no fee</span>' : ''}`;
@@ -607,13 +727,7 @@ function drawItems(){
       return `<div class="xs-it xs-ir" onclick="xsPick('${E(s.id)}','${E(i.id)}')">${ilogo(s, i)}<div style="flex:1;min-width:0"><b>${E(i.name)}</b><small>${rate}${i.min || i.max ? ` · ${num(i.min)}–${num(i.max)} ${E(i.unit)}` : ''}</small></div><div class="pr"><span class="xs-go">Start <i class="fa-solid fa-arrow-right"></i></span></div></div>`; }).join(''));
     return;
   }
-  el.innerHTML = wrap(items => `<div class="xs-pgrid">${items.map(i => { const pn = priceNow(s, i), qq = quote(s, withNow(s, i), 0, isV()), off = pn.kind ? Math.round((1 - pn.price / pn.was) * 100) : 0;
-    return `<div class="xs-pc${pn.kind ? ' sale' : ''}" onclick="xsPick('${E(s.id)}','${E(i.id)}')">${off ? `<span class="off">−${off}%</span>` : ''}${i.hot ? '<span class="hot"><i class="fa-solid fa-fire"></i>Popular</span>' : ''}
-      ${ilogo(s, i)}<b>${E(i.name)}</b><small>${E(i.cat || s.name)}</small>${i.note ? `<em>${E(i.note)}</em>` : ''}
-      <div class="pp">${pn.kind ? `<s>${tk(quote(s, i, 0, isV()).pay)}</s>` : ''}<span>${tk(qq.pay)}</span></div>
-      ${qq.fee ? `<div class="vp"><i class="fa-solid fa-circle-check"></i>Save ${tk(qq.fee)} with Verified</div>` : qq.waived ? `<div class="vp ok"><i class="fa-solid fa-circle-check"></i>You save ${tk(qq.saved)} · Verified</div>` : ''}
-      ${pn.kind ? `<div class="ct">${pn.kind === 'deal' ? '<i class="fa-solid fa-bolt"></i>Today' : ''}${cd(pn.ends, '')}</div>` : ''}
-      <div class="go">Buy now</div></div>`; }).join('')}</div>`);
+  el.innerHTML = wrap(items => `<div class="xs-pgrid">${items.map(i => card(s, i)).join('')}</div>`);
 }
 
 window.xsPick = (sid, iid) => { X.sel = { sid, iid }; window._xsW = 0; window._xsPm = ''; svGo('x_order'); loadXb().then(() => { const typed = [...document.querySelectorAll('#svBody input')].some(e => e.value); if(document.getElementById('xsBtn') && !typed) window.svPage('x_order'); }); };
@@ -643,8 +757,8 @@ function orderPage(){
   const canBal = !sell && W.on !== false, canDirect = sell || W.direct !== false;
   if(!canDirect) window._xsPm = 'xbal'; else if(!canBal) window._xsPm = 'trx'; else if(!window._xsPm) window._xsPm = 'xbal';
   const pm = window._xsPm, q0 = quote(s, withNow(s, i), 0, isV()), price = amt ? 0 : q0.pay;
-  const payBlock = pm === 'xbal' ? `<div class="pay-num" style="border-style:solid"><div><small>Extra Balance</small><b>${tk(bal)}</b></div><button onclick="svGo('x_dep')">+ Add</button></div>
-      <div style="font-size:11.5px;color:var(--txt2);margin:6px 2px" id="xsBalNote">${!amt && price > bal ? `<span style="color:#ff8fa3">You need ${tk(price - bal)} more. Add balance first.</span>` : 'The price is taken from your Extra Balance when you place the order.'}</div>`
+  const payBlock = pm === 'xbal' ? `<div class="pay-num" style="border-style:solid"><div><small>Digital Balance</small><b>${tk(bal)}</b></div><button onclick="svGo('x_dep')">+ Add</button></div>
+      <div style="font-size:11.5px;color:var(--txt2);margin:6px 2px" id="xsBalNote">${!amt && price > bal ? `<span style="color:#ff8fa3">You need ${tk(price - bal)} more. Add balance first.</span>` : 'The price is taken from your Digital Balance when you place the order.'}</div>`
     : `<span class="sv-lbl">${sell ? `Send the ${E(i.unit)} here` : 'Send the payment'}</span>
     ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xsW=${k};svPage('x_order')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}${x.type ? `<small class="pw-t">${E(x.type)}</small>` : ''}</button>`).join('')}</div>` : ''}
     ${payNum(w)}
@@ -658,8 +772,10 @@ function orderPage(){
       <div class="xs-brk" id="xsBrk"></div>`
     : `<div class="xs-brk" id="xsBrk"></div>`}
     ${PK().on && !isV() ? `<div class="xs-perk" onclick="svGo('verify')" style="margin-top:-2px"><span class="sl">${sealHtml()}</span><div><b>Pay no charge with Verified</b><p>Verified members skip the ${amt ? 'transaction fee' : 'service charge'} on every order — a one-time badge that keeps saving.</p></div><span class="go">Get Verified</span></div>` : nudge()}
+    ${i.region ? `<label class="xs-reg"><input type="checkbox" id="xsReg"><span>${flag(i.region)} This works only in <b>${E(i.region)}</b>. I confirm my account / store region is <b>${E(i.region)}</b>.</span></label>` : ''}
+    ${s.deliver === 'email' ? `<span class="sv-lbl">Email for delivery</span><input class="sv-in" id="xsEm" type="email" inputmode="email" maxlength="120" placeholder="you@example.com" autocomplete="email"><div class="xs-eta"><i class="fa-solid fa-envelope-circle-check"></i>Sent to this email by our team — usually within ${E(i.eta || s.eta || '5–10 min')}.</div>` : (i.eta || s.eta) ? `<div class="xs-eta"><i class="fa-solid fa-bolt"></i>Delivery time: about ${E(i.eta || s.eta)}</div>` : ''}
     ${s.fields.map((f, k) => `<span class="sv-lbl">${E(f.label)}${f.req ? '' : ' <small style="color:var(--txt3)">(optional)</small>'}</span><input class="sv-in" id="xsF${k}" maxlength="300" autocomplete="off">`).join('')}
-    ${canBal && canDirect ? `<span class="sv-lbl">How do you want to pay?</span><div class="xs-pm"><button class="${pm === 'xbal' ? 'on' : ''}" onclick="xsPm('xbal')"><i class="fa-solid fa-wallet"></i> Extra Balance<small>${tk(bal)}</small></button><button class="${pm === 'trx' ? 'on' : ''}" onclick="xsPm('trx')"><i class="fa-solid fa-mobile-screen"></i> bKash / Nagad<small>Send &amp; give TrxID</small></button></div>` : ''}
+    ${canBal && canDirect ? `<span class="sv-lbl">How do you want to pay?</span><div class="xs-pm"><button class="${pm === 'xbal' ? 'on' : ''}" onclick="xsPm('xbal')"><i class="fa-solid fa-wallet"></i> Digital Balance<small>${tk(bal)}</small></button><button class="${pm === 'trx' ? 'on' : ''}" onclick="xsPm('trx')"><i class="fa-solid fa-mobile-screen"></i> bKash / Nagad<small>Send &amp; give TrxID</small></button></div>` : ''}
     ${payBlock}
     <button class="sv-btn gold" style="margin-top:12px" id="xsBtn" onclick="xsSubmit()" ${pm === 'xbal' || w ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Place order</button>
     <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> Orders are checked and delivered by hand. If we cannot complete it, your money is returned.</div>`);
@@ -675,7 +791,7 @@ window.xsCalc = () => {
   const feeRow = !PK().on && !q.fee ? '' : q.waived ? `<div><span>${lbl}</span><span><s>${tk(q.saved)}</s> <span class="ok">Waived — Verified ✓</span></span></div>` : q.fee ? `<div><span>${lbl}</span><span>${sell ? '−' : '+'}${tk(q.fee)}</span></div>` : `<div><span>${lbl}</span><span class="ok">৳0</span></div>`;
   const offRow = pn.kind ? `<div><span>Regular price</span><span><s>${tk(pn.was)}</s></span></div><div><span>${pn.kind === 'deal' ? "Today's deal" : 'Offer price'} ${cd(pn.ends, '')}</span><span class="ok">${tk(pn.price)}</span></div>` : '';
   const b = $x('xsBrk'); if(b) b.innerHTML = (pn.kind ? offRow : `<div><span>${amt ? (sell ? 'Value' : 'Amount') : 'Price'}</span><span>${tk(amt ? (a > 0 ? q.base : 0) : q.base)}</span></div>`) + `${feeRow}<div class="tot"><span>${sell ? 'You get' : 'You pay'}</span><b>${tk(v)}</b></div>`;
-  const n = $x('xsBalNote'); if(n && i.flow !== 'sell'){ const bal = X.xb ? X.xb.xbal : 0; n.innerHTML = v > bal ? `<span style="color:#ff8fa3">You need ${tk(v - bal)} more. Add balance first.</span>` : 'The price is taken from your Extra Balance when you place the order.'; }
+  const n = $x('xsBalNote'); if(n && i.flow !== 'sell'){ const bal = X.xb ? X.xb.xbal : 0; n.innerHTML = v > bal ? `<span style="color:#ff8fa3">You need ${tk(v - bal)} more. Add balance first.</span>` : 'The price is taken from your Digital Balance when you place the order.'; }
 };
 window.xsSubmit = async function(){
   const c = window._xsCur; if(!c) return; const { s, i, w, pm } = c;
@@ -684,8 +800,10 @@ window.xsSubmit = async function(){
   if(pm !== 'xbal' && trxId.length < 6){ toast('Enter the Transaction ID', true); return; }
   const fields = s.fields.map((f, k) => (($x('xsF' + k) || {}).value || '').trim());
   const miss = s.fields.find((f, k) => f.req && !fields[k]); if(miss){ toast('Please fill in: ' + miss.label, true); return; }
+  if(i.region && !($x('xsReg') || {}).checked){ toast('Please confirm the region (' + i.region + ')', true); return; }
+  const email = (($x('xsEm') || {}).value || '').trim(); if(s.deliver === 'email' && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)){ toast('Enter the email for delivery', true); return; }
   const b = $x('xsBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Placing order…';
-  const r = await api('extraOrder', { sid: s.id, iid: i.id, amount: Number(($x('xsAmt') || {}).value) || 0, fields, trxId, payWith: pm, payMethod: w ? w.name : '', toNumber: w ? w.number : '' });
+  const r = await api('extraOrder', { regionOk: !!i.region, email, sid: s.id, iid: i.id, amount: Number(($x('xsAmt') || {}).value) || 0, fields, trxId, payWith: pm, payMethod: w ? w.name : '', toNumber: w ? w.number : '' });
   b.disabled = false; b.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Place order';
   if(!r.ok){ toast(r.data.error || 'Could not place the order', true); if(r.data.code === 'xbal_low') svGo('x_dep'); return; }
   if(r.data.xbal !== null && r.data.xbal !== undefined && X.xb){ X.xb.xbal = r.data.xbal; render(); }
@@ -694,15 +812,15 @@ window.xsSubmit = async function(){
   svGo('x_orders');
 };
 
-/* ───────── Extra Balance ───────── */
+/* ───────── Digital Balance ───────── */
 async function walletPage(){
-  show('Extra Balance', '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Loading…</div>');
+  show('Digital Balance', '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Loading…</div>');
   const x = await loadXb();
-  if(!x){ show('Extra Balance', '<div class="sv-empty">Please login again.</div>'); return; }
+  if(!x){ show('Digital Balance', '<div class="sv-empty">Please login again.</div>'); return; }
   const when = t => { try { return new Date(t).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
   const TY = { deposit: ['arrow-down', 'g-green', 'Deposit'], order: ['bag-shopping', 'g-purple', 'Order'], refund: ['rotate-left', 'g-blue', 'Refund'], admin: ['user-shield', 'g-slate', 'Adjustment'], bonus: ['gift', 'g-gold', 'Deposit bonus'], task: ['briefcase', 'g-orange', 'Micro job'] };
   const dep = (x.deposits || []).filter(d => d.status !== 'Approved');
-  show('Extra Balance', `<div class="xb-card"><small>EXTRA BALANCE</small><div class="v">${tk(x.xbal)}</div><p>Only for Extra Services. It is separate from your loan and cannot be used for loan fees.</p></div>
+  show('Digital Balance', `<div class="xb-card"><small>EXTRA BALANCE</small><div class="v">${tk(x.xbal)}</div><p>Only for Digital Services. It is separate from your loan and cannot be used for loan fees.</p></div>
     <button class="sv-btn gold" onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Add balance</button>
     ${dep.length ? `<span class="sv-lbl" style="margin-top:14px">Deposits</span>${dep.map(d => `<div class="xs-od"><div class="h"><div><b>${tk(d.amount)}</b><div>TrxID <span style="font-family:monospace">${E(d.trxId)}</span> · ${when(d.createdAt)}</div></div><span class="xs-st ${d.status === 'Rejected' ? 'Rejected' : 'Pending'}">${d.status === 'Rejected' ? 'Not approved' : 'Checking'}</span></div>${d.reason ? `<div style="margin-top:6px;color:#ff8fa3">${E(d.reason)}</div>` : ''}</div>`).join('')}` : ''}
     <span class="sv-lbl" style="margin-top:14px">History</span>
@@ -715,8 +833,8 @@ function depPage(){
   const tg = payTargets({}); const w = tg[window._xbW || 0] || tg[0];
   const amts = [100, 500, 1000, 2000, 5000].filter(a => a >= (W.min || 1) && (!W.max || a <= W.max));
   const DB = (X.cfg && X.cfg.depBonus) || {};
-  show('Add balance', `<div class="xb-card"><small>EXTRA BALANCE</small><div class="v">${tk(X.xb ? X.xb.xbal : 0)}</div><p>Add money once and order any Extra Service in one tap.</p></div>
-    ${DB.on && DB.tiers.length ? `<div class="xb-bonus"><div class="h"><i class="fa-solid fa-gift"></i>Deposit bonus</div><div class="tiers">${DB.tiers.map(t => `<div><b>+${num(t.pct)}%</b><small>on ${tk(t.min)}+</small></div>`).join('')}</div><small>Added to your Extra Balance as soon as your deposit is approved${DB.max ? ` · up to ${tk(DB.max)} per deposit` : ''}.</small><div class="you" id="xbBon"></div></div>` : ''}
+  show('Add balance', `<div class="xb-card"><small>EXTRA BALANCE</small><div class="v">${tk(X.xb ? X.xb.xbal : 0)}</div><p>Add money once and order any Digital Service in one tap.</p></div>
+    ${DB.on && DB.tiers.length ? `<div class="xb-bonus"><div class="h"><i class="fa-solid fa-gift"></i>Deposit bonus</div><div class="tiers">${DB.tiers.map(t => `<div><b>+${num(t.pct)}%</b><small>on ${tk(t.min)}+</small></div>`).join('')}</div><small>Added to your Digital Balance as soon as your deposit is approved${DB.max ? ` · up to ${tk(DB.max)} per deposit` : ''}.</small><div class="you" id="xbBon"></div></div>` : ''}
     <span class="sv-lbl">1. Amount</span>
     <div class="xb-chips">${amts.map(a => `<button onclick="xbAmt(${a},this)">${tk(a)}</button>`).join('')}</div>
     <input class="sv-in" id="xbAmt" type="number" inputmode="numeric" oninput="xbBon()" placeholder="Amount (min ${tk(W.min || 50)}${W.max ? ', max ' + tk(W.max) : ''})">
@@ -728,7 +846,7 @@ function depPage(){
     <span class="sv-lbl">3. Transaction ID from your payment SMS</span>
     <input class="sv-in code" id="xbTrx" placeholder="TRANSACTION ID" maxlength="40" autocomplete="off">
     <button class="sv-btn gold" style="margin-top:12px" id="xbBtn" onclick="xbSubmit()" ${w ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Submit deposit</button>
-    <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> We add it as soon as we check your payment. Extra Balance is only for Extra Services — not for loans or loan fees.</div>`);
+    <div style="font-size:11.5px;color:var(--txt2);margin:10px 2px;line-height:1.6"><i class="fa-solid fa-circle-info"></i> We add it as soon as we check your payment. Digital Balance is only for Digital Services — not for loans or loan fees.</div>`);
   window._xbCur = w;
 }
 window.xbAmt = (v, el) => { $x('xbAmt').value = v; document.querySelectorAll('.xb-chips button').forEach(b => b.classList.toggle('on', b === el)); xbBon(); };
@@ -762,9 +880,8 @@ async function rechargePage(){
   show('Mobile Recharge', '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Loading…</div>');
   await load(); const x = await loadXb(); const R = (X.cfg && X.cfg.recharge) || {};
   if(!R.on){ show('Mobile Recharge', '<div class="sv-empty">Mobile recharge is switched off right now.</div>'); return; }
-  if(!x || !(x.verified || x.vip)){
-    show('Mobile Recharge', `<div class="rc-lock"><div class="big"><i class="fa-solid fa-mobile-screen-button"></i></div><h3>For Verified &amp; VIP members</h3><p>Recharge any Bangladeshi number from your Creditfy balance — a members-only service.</p>
-      <button class="vbtn" onclick="svGo('verify')">${sealHtml()}Get Verified</button><button class="sv-btn gold" style="margin-top:8px" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>Join VIP</button></div>`); return; }
+  const rcAcc = (() => { const t = (((window._svCfg && window._svCfg().hub) || {}).tiles || {}).recharge || {}; return !t.access || t.access === 'verified' ? 'vip' : t.access; })();
+  if(rcAcc !== 'all' && !can(rcAcc)){ show('Mobile Recharge', typeof window._svLock === 'function' ? window._svLock('Mobile Recharge', rcAcc) : '<div class="sv-empty">For VIP members.</div>'); return; }
   const me = (user() || {}).phone || '';
   window._rc = window._rc || { op: R.ops[0], type: 'prepaid' };
   show('Mobile Recharge', `<div class="rc-hero"><div><small>CREDITFY BALANCE</small><b>${tk(x.balance)}</b></div><button onclick="svGo('wallet')"><i class="fa-solid fa-wallet"></i>Wallet</button></div>
@@ -799,7 +916,7 @@ async function jobsPage(){
   if(!d.on){ show('Micro Jobs', '<div class="sv-empty">Micro jobs are switched off right now.</div>'); return; }
   const types = [...new Set(d.tasks.map(t => t.type))];
   const open = d.tasks.filter(t => !t.mine || t.mine.status === 'Rejected').length;
-  show('Micro Jobs', `<div class="mj-hero"><div><small>EARNED FROM TASKS</small><b>${tk(d.earned)}</b><span>${open} task${open === 1 ? '' : 's'} open · rewards go to your Extra Balance</span></div><i class="fa-solid fa-briefcase"></i></div>
+  show('Micro Jobs', `<div class="mj-hero"><div><small>EARNED FROM TASKS</small><b>${tk(d.earned)}</b><span>${open} task${open === 1 ? '' : 's'} open · rewards go to your Digital Balance</span></div><i class="fa-solid fa-briefcase"></i></div>
     ${d.needVerify ? `<div class="xs-perk" onclick="svGo('verify')"><span class="sl">${sealHtml()}</span><div><b>Get Verified to earn</b><p>Task rewards are for Verified and VIP members. You can look at the tasks now.</p></div><span class="go">Get Verified</span></div>` : ''}
     ${types.length > 1 ? `<div class="xs-chips"><button class="${!X.jf ? 'on' : ''}" onclick="X_jf('')">All</button>${types.map(t => `<button class="${X.jf === t ? 'on' : ''}" onclick="X_jf('${t}')">${(JT[t] || JT.other)[2]}</button>`).join('')}</div>` : ''}
     <div id="mjList"></div>`);
@@ -822,7 +939,7 @@ function jobPage(){
   show(t.title, `<div class="mj-dh"><div class="xs-lg ${m[1]}"><i class="${m[0]}"></i></div><div><h4>${E(t.title)}</h4><span class="rw">Reward +${tk(t.reward)}</span></div></div>
     ${t.steps ? `<div class="sv-card"><h4>What to do</h4><p style="white-space:pre-line">${E(t.steps)}</p></div>` : ''}
     ${t.link ? `<a class="sv-btn ghost" href="${E(t.link)}" target="_blank" rel="noopener nofollow" style="display:flex;text-decoration:none"><i class="fa-solid fa-arrow-up-right-from-square"></i>Open the task</a>` : ''}
-    ${done ? '<div class="sv-card" style="text-align:center"><h4 style="color:var(--p)">Done ✓</h4><p>The reward is in your Extra Balance.</p></div>'
+    ${done ? '<div class="sv-card" style="text-align:center"><h4 style="color:var(--p)">Done ✓</h4><p>The reward is in your Digital Balance.</p></div>'
       : wait ? '<div class="sv-card" style="text-align:center"><h4 style="color:#ffae6b">Being checked</h4><p>We are checking your proof. The reward is added as soon as it is approved.</p></div>'
       : t.left === 0 ? '<div class="sv-empty">All places for this task are taken.</div>'
       : `${t.mine && t.mine.reason ? `<div class="sv-card"><p style="color:#ff8fa3">Last time: ${E(t.mine.reason)}</p></div>` : ''}<span class="sv-lbl" style="margin-top:12px">Proof: ${E(t.proof)}</span><textarea class="sv-in" id="mjProof" rows="3" maxlength="400" style="height:auto;padding:12px" placeholder="${E(t.proof)}"></textarea>
@@ -850,7 +967,7 @@ async function ordersPage(){
       <div style="margin-top:6px">${o.amount ? `${num(o.amount)} ${E(o.unit)} · ` : ''}${o.flow === 'sell' ? 'You get ' + tk(o.get) : 'Paid ' + tk(o.price)} · TrxID <span style="font-family:monospace">${E(o.trxId)}</span></div>
       ${o.status === 'Delivered' && o.delivery ? `<div class="xs-dl">${E(o.delivery)}<button onclick="navigator.clipboard&&navigator.clipboard.writeText(this.parentNode.firstChild.textContent).then(()=>svToastOk('Copied'))"><i class="fa-regular fa-copy"></i> Copy</button></div>` : ''}
       ${o.status === 'Rejected' && o.reason ? `<div style="margin-top:6px;color:#ff8fa3">${E(o.reason)}</div>` : ''}</div>`).join('')
-    : `<div class="sv-empty"><i class="fa-solid fa-bag-shopping"></i>No orders yet.</div><button class="sv-btn ghost" onclick="svClose()">Browse Extra Services</button>`);
+    : `<div class="sv-empty"><i class="fa-solid fa-bag-shopping"></i>No orders yet.</div><button class="sv-btn ghost" onclick="svClose()">Browse Digital Services</button>`);
 }
 
 /* ───────── Play & Earn: Tic-Tac-Toe ───────── */
@@ -874,7 +991,7 @@ function drawGame(r){
     <div class="tt-msg">${msg}</div>
     <div class="tt-b">${b.map((v, k) => `<button class="tt-c ${v === '.' ? '' : v}" ${live && v === '.' ? `onclick="xsMove(${k})"` : 'disabled'}>${v === '.' ? '' : v === 'X' ? '✕' : '○'}</button>`).join('')}</div>
     ${live ? '' : `<button class="sv-btn gold" onclick="xsNew()" ${g.plays >= g.maxPlays ? 'disabled' : ''}><i class="fa-solid fa-play"></i>${g.b ? 'Play again' : 'Start game'}</button>`}
-    <div class="sv-card" style="margin-top:14px"><h4>How it works</h4><p>Get three ✕ in a row before the computer does. Each win adds ${tk(g.prize)} to your Extra Balance — up to ${g.perDay} paid wins a day. The game runs on our server, so every result is fair.</p></div>
+    <div class="sv-card" style="margin-top:14px"><h4>How it works</h4><p>Get three ✕ in a row before the computer does. Each win adds ${tk(g.prize)} to your Digital Balance — up to ${g.perDay} paid wins a day. The game runs on our server, so every result is fair.</p></div>
     <div class="xs-soon"><i class="fa-solid fa-dice" style="font-size:20px;color:#ffd76a"></i>More games are coming soon.</div>`);
 }
 window.xsNew = async () => drawGame(await api('ttt', { op: 'new' }));
@@ -886,11 +1003,14 @@ window.xsMove = async k => {
 };
 
 load().then(() => { loadLive(); loadXb();
-  // ?go=extra (from the daily reminder) opens the home page at Extra Services
+  // ?go=extra (from the daily reminder) opens the home page at Digital Services
   const go = new URLSearchParams(location.search).get('go');
   if(go === 'extra') setTimeout(() => { const b = $x('xsBlock'); if(b) b.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 1200);
   // ?go=redeem (the daily code): open Redeem Code
-  if(go === 'redeem') setTimeout(() => { if(user() && window.svGo) window.svGo('redeem'); }, 1500); });
+  if(go === 'redeem') setTimeout(() => { if(user() && window.svGo) window.svGo('redeem'); }, 1500);
+  // a link from an announcement: ?go=x_<service> (Digital Services) or ?go=q_<tile> (Quick Services)
+  if(go && /^x_[\w-]+$/.test(go)) setTimeout(() => { if(user()) window.xsOpen(go.slice(2)); else { const b = $x('xsBlock'); if(b) b.scrollIntoView({ behavior: 'smooth' }); } }, 1500);
+  if(go && /^q_[\w-]+$/.test(go)) setTimeout(() => { if(window.svGo) window.svGo(go.slice(2)); }, 1800); });
 setInterval(loadLive, 30e3);
 // redraw the section after the language changes or the home page is rebuilt; reload the balance after login / logout
 let _ph = (user() || {}).phone || '';

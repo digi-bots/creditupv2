@@ -2161,8 +2161,8 @@ function viewUser(id){
       +`<div style="display:flex;gap:6px;flex-wrap:wrap;width:100%;margin-top:6px">
         <button class="btn btn-sm ${u.phoneVerified?'btn-d':'btn-p'}" type="button" onclick="uSetVerified(${u.phoneVerified?'false':'true'})"><i class="fa-solid fa-circle-check"></i>${u.phoneVerified?'Remove verified':'Mark verified'}</button>
         ${vipOn?`<button class="btn btn-sm btn-d" type="button" onclick="uSetVip(false)"><i class="fa-solid fa-crown"></i>End VIP</button>`:`<select id="uVipPlan" style="height:30px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="vip">VIP</option><option value="super">Super VIP</option><option value="supreme">Supreme VIP</option></select><input id="uVipDays" type="number" min="0" placeholder="days (empty = plan, 0 = lifetime)" style="height:30px;width:170px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border);padding:0 8px"><button class="btn btn-sm btn-o" type="button" onclick="uSetVip(true)"><i class="fa-solid fa-crown"></i>Give VIP</button>`}</div>`
-      // Extra Balance (only for Extra Services; separate from the loan balance)
-      +`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;width:100%;margin-top:6px"><span class="b" style="background:rgba(29,219,128,.12);color:var(--p)"><i class="fa-solid fa-wallet"></i> Extra Balance ৳${fa(u.xbal||0)}</span>
+      // Digital Balance (only for Digital Services; separate from the loan balance)
+      +`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;width:100%;margin-top:6px"><span class="b" style="background:rgba(29,219,128,.12);color:var(--p)"><i class="fa-solid fa-wallet"></i> Digital Balance ৳${fa(u.xbal||0)}</span>
         <input id="uXb" type="number" placeholder="৳ (minus to take)" style="height:30px;width:140px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border);padding:0 8px"><input id="uXbNote" placeholder="note (user sees it)" style="height:30px;width:170px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border);padding:0 8px"><button class="btn btn-sm btn-p" type="button" onclick="uXbal()"><i class="fa-solid fa-wallet"></i>Update</button></div>`; }
   document.getElementById('uStat').value=u.status||'active';
   document.getElementById('uNote').value=u.adminNote||'';
@@ -2197,10 +2197,10 @@ async function uXbal(){
   const u=findById('users',_userId); if(!u) return;
   const amount=Math.round(Number(document.getElementById('uXb').value)||0), note=document.getElementById('uXbNote').value.trim();
   if(!amount){ toast('Enter an amount (minus to take)','w'); return; }
-  if(!confirm(`${amount>0?'Add':'Take'} ৳${fa(Math.abs(amount))} ${amount>0?'to':'from'} the Extra Balance of 0${u.phone}?`)) return;
+  if(!confirm(`${amount>0?'Add':'Take'} ৳${fa(Math.abs(amount))} ${amount>0?'to':'from'} the Digital Balance of 0${u.phone}?`)) return;
   showL(true); const r=await window._accountApi('adminXbal',{phone:String(u.phone),amount,note}); showL(false);
   if(!r.ok){ toast(r.data.error||'Failed','e'); return; }
-  u.xbal=r.data.xbal; await logAct(`Extra Balance ${amount>0?'+':'−'}৳${Math.abs(amount)} by hand${note?' ('+note+')':''}`,'user',_userId); toast('Extra Balance now ৳'+fa(r.data.xbal)); viewUser(_userId);
+  u.xbal=r.data.xbal; await logAct(`Digital Balance ${amount>0?'+':'−'}৳${Math.abs(amount)} by hand${note?' ('+note+')':''}`,'user',_userId); toast('Digital Balance now ৳'+fa(r.data.xbal)); viewUser(_userId);
 }
 async function adjBal(action){
   const amt=parseFloat(document.getElementById('uAmt').value); if(!amt||amt<=0){toast('Valid amount required','w');return;}
@@ -4947,7 +4947,7 @@ onAuthStateChanged(fbAuth, async user=>{
 });
 </script>
 <script src="admin-pro.js?v=3"></script>
-<script src="admin-svc.js?v=12"></script>
+<script src="admin-svc.js?v=13"></script>
 <script src="admin-tg.js?v=7"></script>
 </body>
 </html>

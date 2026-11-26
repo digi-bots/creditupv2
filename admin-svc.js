@@ -68,12 +68,12 @@ const SV_TILES = [['vip', 'VIP Express'], ['verify', 'Verify Number'], ['checkin
   ['recharge', 'Mobile Recharge'], ['telegram', 'Telegram'], ['calc', 'Calculator'], ['refer', 'Refer & Earn'], ['history', 'History'], ['profile', 'Profile'],
   ['loans', 'My Loans'], ['repay', 'Pay Installment'], ['payoff', 'Early Payoff'], ['limit', 'Loan Limit'], ['trust', 'Trust Level'], ['statement', 'Statement (PDF)'], ['budget', 'Budget Planner'], ['compare', 'EMI Compare'],
   ['tips', 'Smart Tips'], ['sponsors', 'Partners & Sites'], ['faq', 'Help Center'], ['fees', 'Fees Explained'], ['safety', 'Stay Safe'], ['callback', 'Call Me Back'], ['terms', 'Loan Terms'], ['offices', 'Our Offices']];
-let _SV = clone(SVD), _ORD = [], _CODES = [], _USES = [];
+let _SV = clone(SVD), _SV0 = null, _ORD = [], _CODES = [], _USES = [];
 
 function buildSvc(){
   const s = $p('sec-services'); if(!s || s.dataset.built) return; s.dataset.built = 1;
   s.innerHTML = `<div class="sec-head"><h2>Services &amp; Rewards</h2>${svBtn('services')}</div>${roBanner}
-  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['help', 'circle-question', 'Help & Info'], ['hub', 'grip', 'Quick Services tiles'], ['extra', 'store', 'Extra services'], ['jobs', 'briefcase', 'Micro jobs'], ['report', 'chart-line', 'Income report']], 'orders')}
+  ${proTabs('services', [['orders', 'receipt', 'Orders'], ['vipq', 'stopwatch', 'VIP 72h queue'], ['codes', 'ticket', 'Promo & Redeem codes'], ['vip', 'crown', 'VIP plans'], ['verify', 'circle-check', 'Verified badge'], ['rewards', 'gift', 'Check-in · Spin · Voucher'], ['loans', 'hand-holding-dollar', 'Loan tools'], ['help', 'circle-question', 'Help & Info'], ['hub', 'grip', 'Quick Services tiles'], ['extra', 'store', 'Digital services'], ['jobs', 'briefcase', 'Micro jobs'], ['sug', 'lightbulb', 'Suggestions'], ['report', 'chart-line', 'Income report']], 'orders')}
   <div class="pro-pane" data-k="help">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-file-contract"></i>Loan Terms page (Quick Services → Loan Terms)</div>
       <div class="hint" style="margin-bottom:8px">Amounts, terms, fees, interest and the yearly cost are taken from Site Config automatically. Write the parts below in your own words (empty = a clear default text).</div>
@@ -111,7 +111,7 @@ function buildSvc(){
   </div>
   <div class="pro-pane" data-k="orders">
     <div class="sv-st" id="odStats"></div>
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Orders — VIP, verification &amp; extra services
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-receipt"></i>Orders — VIP, verification &amp; digital services
       <select id="odFilter" onchange="odRender()" style="margin-left:auto;height:32px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting for check</option><option value="Processing">In progress (extra)</option><option value="Delivered">Delivered (extra)</option><option value="all">All</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
       <button class="btn btn-sm btn-s ro-ok" onclick="odLoad()"><i class="fa-solid fa-rotate-right"></i></button></div>
       <div class="bk-bar" id="odBulk"><label><input type="checkbox" id="odAll" onchange="odSelAll(this.checked)"> Select all</label><span id="odSelN">0 selected</span>
@@ -130,7 +130,7 @@ function buildSvc(){
   <div class="pro-pane" data-k="codes">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-plus"></i>New code</div>
       <div class="fgrid fgrid3">
-        <div class="fg"><label>Kind</label><select id="cd-kind" onchange="cdKind()"><option value="redeem">Redeem — adds balance</option><option value="voucher">Gift voucher — adds balance, single use</option><option value="deposit">Deposit coupon — extra bonus on an Extra Balance deposit</option></select></div>
+        <div class="fg"><label>Kind</label><select id="cd-kind" onchange="cdKind()"><option value="redeem">Redeem — adds balance</option><option value="voucher">Gift voucher — adds balance, single use</option><option value="deposit">Deposit coupon — extra bonus on an Digital Balance deposit</option></select></div>
         <div class="fg"><label>Code (empty = random)</label><input id="cd-code" maxlength="24" placeholder="e.g. EID50" style="text-transform:uppercase"></div>
         <div class="fg cd-promo"><label>Discount type</label><select id="cd-type"><option value="flat">Fixed taka (৳)</option><option value="percent">Percent of the fee (%)</option></select></div>
         <div class="fg cd-dep" style="display:none"><label>Bonus type</label><select id="cd-dtype"><option value="percent">Percent of the deposit (%)</option><option value="flat">Fixed taka (৳)</option></select></div>
@@ -199,28 +199,36 @@ function buildSvc(){
       <div class="hint" style="margin-bottom:8px"><b>Drag</b> <i class="fa-solid fa-grip-vertical"></i> to change the order (it is the order on the home page and in All Services). Tick <b>Home</b> for up to 6 tiles — “Language” and “All Services” are always last. <b>Show</b> off hides a service everywhere. Tap <i class="fa-solid fa-pen"></i> to set the badge, who can open it, its status and a note — or to build the page of your own tile.</div>
       <div id="hbList"></div>
       <button class="btn btn-sm btn-p ro-ok" style="margin-top:8px" onclick="hbAdd()"><i class="fa-solid fa-plus"></i>Add a new tile</button>
+      <div class="fgrid fgrid3" style="margin-top:10px">${tog('hb-uarr', 'Let users arrange their home tiles (only the tiles you put on Home)', false)}</div>
       <datalist id="bdgList"><option>HOT</option><option>NEW</option><option>POPULAR</option><option>SALE</option><option>FREE</option><option>EARN</option><option>FOR VERIFIED</option><option>VIP</option><option>VIP 1</option><option>VIP 2</option><option>VIP 3</option></datalist>
     </div>
   </div>
   <div class="pro-pane" data-k="report">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-chart-line"></i>Income report <select id="irMonths" data-nodirty="1" onchange="irRender()" style="margin-left:auto;height:30px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="3">Last 3 months</option><option value="6" selected>Last 6 months</option><option value="12">Last 12 months</option></select>
       <button class="btn btn-sm btn-s ro-ok" onclick="irLoad()"><i class="fa-solid fa-rotate-right"></i>Load</button><button class="btn btn-sm btn-p ro-ok" onclick="irCsv()"><i class="fa-solid fa-file-csv"></i>Download CSV</button></div>
-      <div class="hint" style="margin-bottom:10px">Money in, by month (Bangladesh time), from approved / verified records only. <b>Extra Services sales</b> is what users paid (the cost of the cards / recharge is not known to the app); <b>service charges</b> is the part that is pure income. <b>Deposits</b> are users' money held as Extra Balance — not income. <b>Rewards given</b> is what check-in, spin, codes, games, tasks and bonuses added to users' balances.</div>
+      <div class="hint" style="margin-bottom:10px">Money in, by month (Bangladesh time), from approved / verified records only. <b>Digital Services sales</b> is what users paid (the cost of the cards / recharge is not known to the app); <b>service charges</b> is the part that is pure income. <b>Deposits</b> are users' money held as Digital Balance — not income. <b>Rewards given</b> is what check-in, spin, codes, games, tasks and bonuses added to users' balances.</div>
       <div id="irOut" class="hint">Press Load.</div></div>
   </div>
   <div class="pro-pane" data-k="jobs">
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-briefcase"></i>Micro Jobs — tasks users do to earn (in Extra Services, paid to the Extra Balance)</div>
-      <div class="hint" style="margin-bottom:8px">Add a task (join a Telegram / WhatsApp group or channel, visit a link, sign up, fill a form, a survey, share, refer…), its link, the reward and what proof you want. Users send the proof, you check it below and approve — the reward goes to their <b>Extra Balance</b> (Micro Jobs is in Extra Services). Rewards are for Verified &amp; VIP members. Slots = how many people can do it (0 = no limit). Press <b>Save changes</b> after editing tasks.</div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-briefcase"></i>Micro Jobs — tasks users do to earn (in Digital Services, paid to the Digital Balance)</div>
+      <div class="hint" style="margin-bottom:8px">Add a task (join a Telegram / WhatsApp group or channel, visit a link, sign up, fill a form, a survey, share, refer…), its link, the reward and what proof you want. Users send the proof, you check it below and approve — the reward goes to their <b>Digital Balance</b> (Micro Jobs is in Digital Services). Rewards are for Verified &amp; VIP members. Slots = how many people can do it (0 = no limit). Press <b>Save changes</b> after editing tasks.</div>
       <div class="fgrid fgrid3">${tog('mj-on', 'Micro Jobs on', true)}</div>
       <div id="mjTasks"></div>
       <button class="btn btn-sm btn-s ro-ok" onclick="mjAdd()"><i class="fa-solid fa-plus"></i>Add a task</button>
     </div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-list-check"></i>Proofs to check <select id="mjFilter" onchange="mjSubsRender()" style="margin-left:auto;height:30px;border-radius:8px;background:var(--card);color:var(--txt);border:1px solid var(--border)"><option value="Pending">Waiting</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option><option value="all">All</option></select><button class="btn btn-sm btn-s ro-ok" onclick="mjLoad()"><i class="fa-solid fa-rotate-right"></i></button></div><div class="bk-bar"><label><input type="checkbox" onchange="document.querySelectorAll('#mjSubs .bk-ck').forEach(c=>c.checked=this.checked)"> Select all</label><button class="btn btn-sm btn-p ro-ok" onclick="mjBulk('approve')"><i class="fa-solid fa-check-double"></i>Approve selected</button><button class="btn btn-sm btn-d ro-ok" onclick="mjBulk('reject')"><i class="fa-solid fa-xmark"></i>Reject selected</button></div><div id="mjSubs"></div></div>
   </div>
+  <div class="pro-pane" data-k="sug">
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-lightbulb"></i>What users want next <button class="btn btn-sm btn-s ro-ok" style="margin-left:auto" onclick="sgLoad()"><i class="fa-solid fa-rotate-right"></i>Load</button></div>
+      <div class="hint" style="margin-bottom:8px">Ideas users sent from the “Suggest” tile and the “Want something else?” line at the bottom of each service. They are kept per section, so ideas for Gift Cards stay with Gift Cards.</div>
+      <div id="sgOut" class="hint">Press Load.</div></div>
+  </div>
   <div class="pro-pane" data-k="extra">
-    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-store"></i>Extra Services (the section under Quick Services)</div>
+    <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-store"></i>Digital Services (the section under Quick Services)</div>
       <div class="hint" style="margin-bottom:10px">Paid services the team delivers by hand. Orders come into the <b>Orders</b> tab: press <i class="fa-solid fa-hourglass-half"></i> when you start, <i class="fa-solid fa-check"></i> to deliver (write the code or details — only that user sees it), or <i class="fa-solid fa-xmark"></i> to reject. Logo = an image link (square, e.g. 200×200); without one the icon is shown.</div>
-      <div class="fgrid fgrid3">${tog('xs-on', 'Show Extra Services on the home page', true)}${inp('xs-title', 'Section title', 'Extra Services')}</div>
+      <div id="xsLow"></div>
+      <div class="fgrid fgrid3">${tog('xs-on', 'Show Digital Services on the home page', true)}${inp('xs-title', 'Section title', 'Digital Services')}${tog('an-auto', 'Announce good news automatically (new services, items, tasks, bonus)', true)}</div>
+      <div class="hint">When you save, anything <b>new</b> (a new service, a new item, a service switched on, a new Micro Job, the deposit bonus switched on) is announced once to everyone — in-app, push, Telegram channel and bot. Deleting, hiding or editing never sends anything. Use <b>Publish update</b> on a service for an “Updated / Fixed” note with a new version number.</div>
       <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-circle-check" style="color:#46b0ff"></i>Verified exclusive: no charge, no fee</div>
       <div class="fgrid fgrid3">${tog('xs-p-on', 'Verified members pay no charge and no fee', true)}${inp('xs-p-pct', 'Service charge for others on fixed-price services (%)', '5', 'type="number" min="0" max="50"')}${inp('xs-p-min', 'Smallest service charge (৳)', '10', 'type="number" min="0"')}</div>
       <div class="hint">Fixed-price services: others pay the price + this charge, Verified members pay the price only. Exchange services: the Fee % and Fee ৳ of each option are skipped for Verified members. A banner tells users about it.</div>
@@ -230,16 +238,16 @@ function buildSvc(){
       <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-gamepad"></i>Play &amp; Earn (Tic-Tac-Toe)</div>
       <div class="fgrid fgrid3">${tog('xs-g-on', 'Games on', true)}${inp('xs-g-reward', 'Reward per win (৳)', '1', 'type="number" min="0"')}${inp('xs-g-perday', 'Paid wins per day', '5', 'type="number" min="0"')}${inp('xs-g-plays', 'Games per day', '30', 'type="number" min="1"')}${inp('xs-g-level', 'Computer skill (0–100)', '75', 'type="number" min="0" max="100"')}</div>
       <div id="xsCost" class="hint"></div>
-      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-wallet"></i>Extra Balance (separate from loans and loan fees)</div>
-      <div class="fgrid fgrid3">${tog('xs-w-on', 'Extra Balance on', true)}${tog('xs-w-direct', 'Also allow paying each order with a TrxID', true)}${inp('xs-w-min', 'Smallest deposit (৳)', '50', 'type="number" min="1"')}${inp('xs-w-max', 'Largest deposit (৳, 0 = no limit)', '50000', 'type="number" min="0"')}</div>
-      <div class="hint">Deposits come into the Orders tab — press ✓ when the money arrived. An order paid from Extra Balance that you reject is refunded to the user's Extra Balance automatically. Users → open a user → “Extra Balance” to add or take money by hand.</div>
-      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-gift"></i>Deposit bonus (Extra Balance)</div>
+      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-wallet"></i>Digital Balance (separate from loans and loan fees)</div>
+      <div class="fgrid fgrid3">${tog('xs-w-on', 'Digital Balance on', true)}${tog('xs-w-direct', 'Also allow paying each order with a TrxID', true)}${inp('xs-w-min', 'Smallest deposit (৳)', '50', 'type="number" min="1"')}${inp('xs-w-max', 'Largest deposit (৳, 0 = no limit)', '50000', 'type="number" min="0"')}</div>
+      <div class="hint">Deposits come into the Orders tab — press ✓ when the money arrived. An order paid from Digital Balance that you reject is refunded to the user's Digital Balance automatically. Users → open a user → “Digital Balance” to add or take money by hand.</div>
+      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-gift"></i>Deposit bonus (Digital Balance)</div>
       <div class="fgrid fgrid3">${tog('xs-b-on', 'Give a bonus on deposits', false)}${inp('xs-b-max', 'Largest bonus per deposit (৳, 0 = no limit)', '500', 'type="number" min="0"')}${area('xs-b-tiers', 'Tiers — one per line: deposit from = bonus %', '500 = 2\n2000 = 3\n5000 = 5', 3)}</div>
       <div class="hint">The best matching tier is used. Example: ৳2,500 deposit with “2000 = 3” → ৳75 bonus. The bonus is added when you approve the deposit, as its own line in the user's history. Users see the tiers on the Add balance page.</div>
       <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-mobile-screen-button"></i>Mobile Recharge (Quick Services · Verified &amp; VIP only)</div>
       <div class="fgrid fgrid3">${tog('xs-rc-on', 'Mobile recharge on', true)}${inp('xs-rc-min', 'Smallest (৳)', '20', 'type="number" min="10"')}${inp('xs-rc-max', 'Largest (৳)', '1000', 'type="number" min="10"')}${area('xs-rc-ops', 'Operators — one per line', 'Grameenphone\nRobi\nAirtel\nBanglalink\nTeletalk', 3)}</div>
-      <div class="hint">A Quick Service, so it is paid from the user's <b>Creditfy balance</b> (not Extra Balance). Recharges come into the Orders tab as “Mobile Recharge” — send it, then press ✓. Rejecting refunds the Creditfy balance.</div>
-      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-bolt"></i>Live orders list (under Extra Services)</div>
+      <div class="hint">A Quick Service, so it is paid from the user's <b>Creditfy balance</b> (not Digital Balance). Recharges come into the Orders tab as “Mobile Recharge” — send it, then press ✓. Rejecting refunds the Creditfy balance.</div>
+      <div class="cfg-t" style="margin-top:12px;font-size:13px"><i class="fa-solid fa-bolt"></i>Live orders list (under Digital Services)</div>
       <div class="fgrid fgrid3">${tog('xs-l-on', 'Show the live list', true)}${inp('xs-l-count', 'How many to show', '12', 'type="number" min="3" max="30"')}</div>
       <div class="hint">Shows real orders and deposits only, with the number masked (017****013).</div>
     </div>
@@ -301,7 +309,7 @@ function odRender(){
     const u = (_D.users || []).find(x => String(x.phone) === String(o.uid)) || {};
     const own = String(o.sender) === String(o.uid);
     if(o.kind === 'xdeposit'){
-      return `<div class="od-row">${odCk(o)}<div><b><i class="fa-solid fa-wallet" style="color:var(--p)"></i> Extra Balance deposit</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
+      return `<div class="od-row">${odCk(o)}<div><b><i class="fa-solid fa-wallet" style="color:var(--p)"></i> Digital Balance deposit</b><small>${ep(u.name || '')} · 0${ep(o.uid)}</small></div>
       <div><b>৳${fa(o.price)}</b><small>${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
       <div><span class="mono">${ep(o.trxId)}</span><small>TrxID</small></div>
       <div>${sb(o.status === 'Approved' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${fd(o.createdAt)}</small></div>
@@ -312,7 +320,7 @@ function odRender(){
       const info = (o.fields || []).filter(f => f.value).map(f => `${ep(f.label)}: <b>${ep(f.value)}</b>`).join('<br>');
       return `<div class="od-row">${odCk(o)}<div><b><i class="fa-solid fa-store" style="color:#ffd76a"></i> ${ep(o.iname)}</b><small>${ep(o.sname)} · ${ep(u.name || '')} · 0${ep(o.uid)}</small>${info ? `<small>${info}</small>` : ''}</div>
       <div><b>${o.flow === 'sell' ? 'Pay user ৳' + fa(o.get) : '৳' + fa(o.price)}</b>${o.feeWaived ? '<small style="color:#46b0ff">Verified · fee waived</small>' : o.fee ? `<small>incl. fee ৳${fa(o.fee)}</small>` : ''}<small>${o.amount ? ep(o.amount) + ' ' + ep(o.unit) + ' · ' : ''}${ep(o.payMethod || '')} → ${ep(o.toNumber || '-')}</small></div>
-      <div>${o.paidWith === 'xbal' ? '<b style="color:var(--p)">Paid from Extra Balance</b><small>no TrxID needed</small>' : `<span class="mono">${ep(o.trxId)}</span><small>${o.sender ? 'from 0' + ep(o.sender) : 'TrxID only'}</small>`}</div>
+      <div>${o.paidWith === 'xbal' ? '<b style="color:var(--p)">Paid from Digital Balance</b><small>no TrxID needed</small>' : `<span class="mono">${ep(o.trxId)}</span><small>${o.sender ? 'from 0' + ep(o.sender) : 'TrxID only'}</small>`}</div>
       <div>${sb(o.status === 'Delivered' ? 'Verified' : o.status === 'Rejected' ? 'Rejected' : 'Pending')}<small>${ep(o.status)} · ${fd(o.createdAt)}</small></div>
       <div class="acts">${live ? `${o.status === 'Pending' ? `<button class="ab" title="Payment OK — start working" onclick="xsOrder('${ep(o._id)}','process')"><i class="fa-solid fa-hourglass-half"></i></button>` : ''}<button class="ab ab-ok" title="Deliver" onclick="xsOrder('${ep(o._id)}','deliver')"><i class="fa-solid fa-check"></i></button><button class="ab ab-no" title="Reject" onclick="xsOrder('${ep(o._id)}','reject')"><i class="fa-solid fa-xmark"></i></button>` : `<small>${ep(o.delivery || o.reason || '')}</small>`}</div></div>`;
     }
@@ -496,10 +504,10 @@ function dgSort(box, sel, done){
     window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }; });
 }
-const HB_ACC = [['all', 'Everyone'], ['verified', 'Verified members (and VIP)'], ['vip', 'Any VIP plan'], ['vip1', 'VIP 1 and above'], ['vip2', 'VIP 2 and above'], ['vip3', 'VIP 3 only']];
+const HB_ACC = [['all', 'Everyone'], ['vip', 'Any VIP plan'], ['vip1', 'VIP 1 and above'], ['vip2', 'VIP 2 and above'], ['vip3', 'VIP 3 only']];
 const HB_ST = [['open', 'Open'], ['busy', 'Busy (slow)'], ['closed', 'Closed'], ['soon', 'Coming soon']];
 const HB_CATS = [['premium', 'Premium'], ['rewards', 'Rewards'], ['loans', 'Loans'], ['help', 'Help & Info'], ['account', 'Account']];
-const HB_BTN = [['', 'No button'], ['tile', 'Open a Quick Service'], ['extra', 'Open an Extra Service'], ['url', 'Open a link (https)'], ['support', 'Open Support chat']];
+const HB_BTN = [['', 'No button'], ['tile', 'Open a Quick Service'], ['extra', 'Open an Digital Service'], ['url', 'Open a link (https)'], ['support', 'Open Support chat']];
 const BDG_C = t => ({ HOT: '#ff6b4a', SALE: '#ff6b4a', NEW: '#1ddb80', FREE: '#1ddb80', EARN: '#ff9f43', POPULAR: '#a46bff', 'FOR VERIFIED': '#2d8cff', VERIFIED: '#2d8cff', VIP: '#f2a91d', 'VIP 1': '#f2a91d', 'VIP 2': '#f2a91d', 'VIP 3': '#f2a91d' }[String(t).toUpperCase()] || '#ff5a6e');
 const opts = (L, v) => L.map(([k, t]) => `<option value="${ep(k)}"${k === (v || L[0][0]) ? ' selected' : ''}>${ep(t)}</option>`).join('');
 const hbSel = (L, v, on, w = '') => `<select onchange="${on}" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border);min-width:0;width:100%${w}">${opts(L, v)}</select>`;
@@ -514,7 +522,7 @@ function hbName(k){ const c = (_SV.hub.custom || []).find(x => 'c_' + x.id === k
 function hbRender(){
   const H = _SV.hub, home = H.home || [], keys = hbKeys(); H.order = keys;
   $p('hbList').innerHTML = keys.map((k, i) => { const c = H.tiles[k] || {}, cu = (H.custom || []).find(x => 'c_' + x.id === k), open = _hbOpen === k;
-    const chips = [c.badge ? `<em class="hb-b" style="background:${BDG_C(c.badge)}">${ep(c.badge)}</em>` : '', c.access && c.access !== 'all' ? `<em class="hb-c">🔒 ${ep((HB_ACC.find(a => a[0] === c.access) || [0, c.access])[1])}</em>` : '', c.status && c.status !== 'open' ? `<em class="hb-c st">${ep((HB_ST.find(a => a[0] === c.status) || [0, c.status])[1])}</em>` : '', cu ? '<em class="hb-c own">Own tile</em>' : ''].join('');
+    const chips = [c.badge ? `<em class="hb-b" style="background:${BDG_C(c.badge)}">${ep(c.badge)}</em>` : '', c.access && c.access !== 'all' ? `<em class="hb-c">🔒 ${ep((HB_ACC.find(a => a[0] === c.access) || [0, c.access])[1])}</em>` : '', c.trialEnd && new Date(c.trialEnd) > new Date() ? '<em class="hb-c st" style="background:rgba(176,107,255,.18);color:#c79bff">Trial</em>' : '', c.ver ? `<em class="hb-c">v${ep(c.ver)}</em>` : '', c.status && c.status !== 'open' ? `<em class="hb-c st">${ep((HB_ST.find(a => a[0] === c.status) || [0, c.status])[1])}</em>` : '', cu ? '<em class="hb-c own">Own tile</em>' : ''].join('');
     return `<div class="hb-row${open ? ' on' : ''}${c.on === false ? ' off' : ''}" data-i="${i}"><div class="hb-top">
       <span class="dg" title="Drag to move"><i class="fa-solid fa-grip-vertical"></i></span>
       <label class="tog" title="Show"><input type="checkbox" ${c.on !== false ? 'checked' : ''} onchange="hbSet('${k}','on',this.checked,1)"><span class="tog-sl"></span></label>
@@ -535,6 +543,8 @@ function hbForm(k, c, cu){
     <div class="fg"><label>Status message (closed / busy / soon)</label>${f('statusNote', 'e.g. Back on Sunday 10 AM')}</div>
     <div class="fg"><label>Icon (Font Awesome, optional)</label>${f('icon', cu ? 'fa-solid fa-star' : 'keep')}</div>
     <div class="fg"><label>Colour</label>${hbSel([['', cu ? 'g-teal' : 'Keep'], ...XS_COLORS.map(x => [x, x])], c.color, `hbSet('${k}','color',this.value)`)}</div>
+    <div class="fg"><label>Trial until (blank = not a trial)</label><input type="datetime-local" value="${ep(xsLocal(c.trialEnd))}" onchange="hbSet('${k}','trialEnd',this.value?new Date(this.value).toISOString():'',1)" style="height:34px;padding:0 6px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12px;width:100%;box-sizing:border-box;color-scheme:dark"></div>
+    <div class="fg"><label>Version</label><div style="display:flex;gap:6px;align-items:center"><b style="font-size:13px">${c.ver ? 'v' + ep(c.ver) + (c.verKind ? ' · ' + ep(c.verKind) : '') : '—'}</b><button class="btn btn-sm btn-p ro-ok" onclick="verOpen('q','${k}')"><i class="fa-solid fa-rocket"></i>Publish update</button></div></div>
     <div class="fg full"><label>Service note (shown at the top of its page)</label>${f('note', 'e.g. Orders are delivered within 30 minutes')}</div></div>`;
   if(cu){ const n = _SV.hub.custom.indexOf(cu);
     h += `<div class="cfg-t" style="margin-top:10px;font-size:13px"><i class="fa-solid fa-file-lines"></i>Its page</div><div class="fgrid fgrid3">
@@ -550,7 +560,7 @@ function hbForm(k, c, cu){
           <div class="hb-ig" style="margin-top:5px">${hbSel(HB_BTN, (it.btn || {}).kind, `hbB(${n},${j},${m},'kind',this.value)`)}${xsInp((it.btn || {}).label, `hbB(${n},${j},${m},'label',this.value)`, 'Button text')}${xsInp((it.btn || {}).to, `hbB(${n},${j},${m},'to',this.value)`, 'tile key / service id / https link')}</div></div>`).join('')}
         <button class="btn btn-sm btn-s ro-ok" onclick="hbItAdd(${n},${j})"><i class="fa-solid fa-plus"></i>Add menu item</button></div>`).join('')}
       <button class="btn btn-sm btn-s ro-ok" style="margin-top:6px" onclick="hbSecAdd(${n})"><i class="fa-solid fa-folder-plus"></i>Add tab</button>
-      <div class="hint" style="margin-top:6px">Button “Open a Quick Service” takes a tile key such as <code>vip</code>, <code>verify</code>, <code>recharge</code>, <code>telegram</code>; “Open an Extra Service” takes the service id from the Extra services tab (${(_SV.extra && _SV.extra.services || []).slice(0, 6).map(x => '<code>' + ep(x.id) + '</code>').join(' ')}).</div>`;
+      <div class="hint" style="margin-top:6px">Button “Open a Quick Service” takes a tile key such as <code>vip</code>, <code>verify</code>, <code>recharge</code>, <code>telegram</code>; “Open an Digital Service” takes the service id from the Digital services tab (${(_SV.extra && _SV.extra.services || []).slice(0, 6).map(x => '<code>' + ep(x.id) + '</code>').join(' ')}).</div>`;
   }
   return h + '</div>';
 }
@@ -574,7 +584,7 @@ function hbSecMove(n, j, d){ const L = hbCu(n).sections, t = j + d; if(t < 0 || 
 function hbItAdd(n, j){ const sc = hbCu(n).sections[j]; sc.items = sc.items || []; sc.items.push({ title: '', text: '', sub: [] }); markDirty('services', 'hub'); hbRender(); }
 function hbItDel(n, j, m){ hbCu(n).sections[j].items.splice(m, 1); markDirty('services', 'hub'); hbRender(); }
 
-/* ═════════ Extra services ═════════ */
+/* ═════════ Digital services ═════════ */
 const XS_COLORS = ['g-teal', 'g-green', 'g-blue', 'g-cyan', 'g-purple', 'g-pink', 'g-red', 'g-orange', 'g-gold', 'g-slate', 'g-dark'];
 const xsInp = (v, on, ph = '', t = 'text', w = '') => `<input type="${t}" value="${ep(v ?? '')}" placeholder="${ep(ph)}" oninput="${on}" style="height:34px;padding:0 9px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12.5px;font-family:inherit;min-width:0;width:100%;box-sizing:border-box${w}">`;
 function xsRender(){
@@ -582,13 +592,13 @@ function xsRender(){
   el.innerHTML = X.services.map((s, n) => {
     const amt = s.mode === 'amount';
     const head = amt ? ['Option', 'Icon', 'Unit', 'Rate ৳/unit', 'Fee %', 'Fee ৳', 'Min', 'Max', 'Buy / Sell', 'Pay-to number / address (blank = payment wallets)', 'On', '']
-      : ['Option', 'Icon', 'Menu (category)', 'Sub-menu (group)', 'Price ৳', 'Offer ৳', 'Offer ends (date & time)', 'Note for the user', 'Pay-to (blank = wallets)', 'Popular', 'On', ''];
-    const cols = amt ? '1.4fr 1fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.3fr 1fr .8fr .8fr .55fr .55fr 1.15fr 1.1fr .9fr 44px 34px 34px';
+      : ['Option', 'Icon', 'Menu (category)', 'Sub-menu (group)', 'Region', 'Rating ★', 'Stock (blank = ∞)', 'Low at', 'Delivery', 'Price ৳', 'Offer ৳', 'Offer ends (date & time)', 'Note for the user', 'Pay-to (blank = wallets)', 'Popular', 'On', ''];
+    const cols = amt ? '1.4fr 1fr .5fr .7fr .5fr .5fr .5fr .6fr .7fr 1.6fr 34px 34px' : '1.3fr .9fr .8fr .8fr .5fr .45fr .55fr .45fr .6fr .55fr .55fr 1.15fr 1fr .8fr 44px 34px 34px';
     const row = (i, k) => { const f = (key, ph, t) => xsInp(i[key], `xsItem(${n},${k},'${key}',this.value)`, ph, t);
       return `<div style="display:grid;grid-template-columns:${cols};gap:6px;align-items:center;margin-bottom:5px">${amt
         ? f('name', 'bKash → Nagad') + f('icon', 'auto') + f('unit', '৳') + f('rate', '1', 'number') + f('pct', '0', 'number') + f('fee', '0', 'number') + f('min', '0', 'number') + f('max', '0', 'number')
           + `<select onchange="xsItem(${n},${k},'flow',this.value)" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border)"><option value="buy"${i.flow !== 'sell' ? ' selected' : ''}>User pays</option><option value="sell"${i.flow === 'sell' ? ' selected' : ''}>User sells</option></select>` + f('to', 'e.g. bKash 017XXXXXXXX')
-        : f('name', 'Google Play $10') + f('icon', 'auto') + f('cat', 'e.g. Steam') + f('group', 'e.g. USA') + f('price', '0', 'number') + f('offer', 'none', 'number')
+        : f('name', 'Google Play $10') + f('icon', 'auto') + f('cat', 'e.g. Steam') + f('group', 'e.g. USA') + f('region', 'US') + f('rating', '4.8', 'number') + stockInp(n, k, i) + f('lowAt', '3', 'number') + f('eta', 'auto') + f('price', '0', 'number') + f('offer', 'none', 'number')
           + `<input type="datetime-local" value="${ep(xsLocal(i.offerEnd))}" onchange="xsItem(${n},${k},'offerEnd',this.value?new Date(this.value).toISOString():'');xsRender()" style="height:34px;padding:0 6px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid ${xsOfferLive(i) ? 'rgba(255,215,106,.7)' : 'var(--border)'};color:var(--txt);font-size:12px;min-width:0;width:100%;box-sizing:border-box;color-scheme:dark">`
           + f('note', 'optional') + f('to', 'optional') + `<input type="checkbox" title="Popular" ${i.hot ? 'checked' : ''} onchange="xsItem(${n},${k},'hot',this.checked)">`}
         <input type="checkbox" ${i.on !== false ? 'checked' : ''} onchange="xsItem(${n},${k},'on',this.checked)"><button class="ab ab-no ro-ok" title="Remove" onclick="xsDelItem(${n},${k})"><i class="fa-solid fa-trash"></i></button></div>`; };
@@ -602,6 +612,10 @@ function xsRender(){
         <div class="fg"><label>Who can order</label>${hbSel(HB_ACC, s.access, `xsSet(${n},'access',this.value)`)}</div>
         <div class="fg"><label>Status</label>${hbSel(HB_ST.filter(x => x[0] !== 'soon'), s.status, `xsSet(${n},'status',this.value)`)}</div>
         <div class="fg"><label>Status / service message</label>${xsInp(s.statusNote, `xsSet(${n},'statusNote',this.value)`, 'e.g. Delivery within 1 hour')}</div>
+        <div class="fg"><label>Delivery time (shown on cards)</label>${xsInp(s.eta, `xsSet(${n},'eta',this.value)`, s.deliver === 'email' ? '5–10 min' : 'e.g. 1–6 hours')}</div>
+        <div class="fg"><label class="hp-sw"><input type="checkbox" ${s.deliver === 'email' ? 'checked' : ''} onchange="xsSet(${n},'deliver',this.checked?'email':'',1)"> Digital goods — ask the user's email, deliver by email</label></div>
+        <div class="fg"><label>Trial until (blank = not a trial)</label><input type="datetime-local" value="${ep(xsLocal(s.trialEnd))}" onchange="xsSet(${n},'trialEnd',this.value?new Date(this.value).toISOString():'')" style="height:34px;padding:0 6px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);font-size:12px;width:100%;box-sizing:border-box;color-scheme:dark"></div>
+        <div class="fg"><label>Version</label><div style="display:flex;gap:6px;align-items:center"><b style="font-size:13px">${s.ver ? 'v' + ep(s.ver) + (s.verKind ? ' · ' + ep(s.verKind) : '') : '—'}</b><button class="btn btn-sm btn-p ro-ok" onclick="verOpen('x',${n})"><i class="fa-solid fa-rocket"></i>Publish update</button></div></div>
         <div class="fg"><label>Logo image link</label>${xsInp(s.logo, `xsSet(${n},'logo',this.value)`, 'https://…/logo.png')}</div>
         <div class="fg"><label>Icon (Font Awesome)</label>${xsInp(s.icon, `xsSet(${n},'icon',this.value)`, 'fa-brands fa-steam')}</div>
         <div class="fg"><label>Colour</label><select onchange="xsSet(${n},'color',this.value,1)">${XS_COLORS.map(c => `<option${c === s.color ? ' selected' : ''}>${c}</option>`).join('')}</select></div>
@@ -610,7 +624,7 @@ function xsRender(){
         <div class="fg full"><label>Description</label>${xsInp(s.desc, `xsSet(${n},'desc',this.value)`, 'What this service gives')}</div>
         <div class="fg full"><label>Questions for the user — one per line, add <b>*</b> at the end if required</label><textarea rows="2" oninput="xsFields(${n},this.value)" style="width:100%;box-sizing:border-box">${ep((s.fields || []).map(f => f.label + (f.req ? ' *' : '')).join('\n'))}</textarea></div>
       </div>
-      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 1120 : 1340}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
+      ${s.mode === 'game' ? '<div class="hint">The game settings are at the top of this page.</div>' : `<div style="overflow-x:auto"><div style="min-width:${amt ? 1120 : 1780}px"><div style="display:grid;grid-template-columns:${cols};gap:6px;font-size:10.5px;color:var(--txt2);font-weight:800;margin:8px 0 5px">${head.map(h => `<span>${h}</span>`).join('')}</div>
         ${(s.items || []).map(row).join('')}</div></div>
         <button class="btn btn-sm btn-s ro-ok" onclick="xsAddItem(${n})"><i class="fa-solid fa-plus"></i>Add option</button>
         <div class="hint" style="margin-top:6px"><b>Icon</b>: leave empty for an automatic icon (Google Play, Steam, Telegram, Visa, bKash… are recognised from the name), or write a Font Awesome icon such as <code>fa-brands fa-steam</code>, <code>fa-brands fa-playstation</code>, <code>fa-solid fa-film</code>, or paste a logo image link starting with https://.</div>
@@ -620,7 +634,7 @@ function xsRender(){
   dgSort(el, '.xs-blk', ord => { const L = _SV.extra.services; _SV.extra.services = ord.map(i => L[i]); xsDirty(); xsRender(); });
   const g = { r: numv('xs-g-reward', 1, 0, 1e5), d: numv('xs-g-perday', 5, 0, 1e3) };
   if(typeof xsDealsRender === 'function') xsDealsRender();
-  if($p('xsCost')) $p('xsCost').innerHTML = `Game wins go to the Extra Balance. Most a Verified user can win: <b>৳${fa(g.r * g.d)} a day</b> (about ৳${fa(g.r * g.d * 30)} a month).`;
+  if($p('xsCost')) $p('xsCost').innerHTML = `Game wins go to the Digital Balance. Most a Verified user can win: <b>৳${fa(g.r * g.d)} a day</b> (about ৳${fa(g.r * g.d * 30)} a month).`;
 }
 const xsDirty = () => markDirty('services', 'extra');
 const XS_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -646,20 +660,26 @@ function xsSet(n, k, v, re){ const s = _SV.extra.services[n]; if(!s) return; s[k
 function xsFields(n, txt){ _SV.extra.services[n].fields = txt.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 6).map(l => ({ label: l.replace(/\s*\*$/, ''), req: /\*$/.test(l) })); xsDirty(); }
 const xsLocal = iso => { if(!iso) return ''; const d = new Date(iso); if(isNaN(d)) return ''; return new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 16); };
 const xsOfferLive = i => Number(i.offer) > 0 && Number(i.offer) < Number(i.price) && i.offerEnd && new Date(i.offerEnd) > new Date();
-function xsItem(n, k, f, v){ const i = _SV.extra.services[n].items[k]; if(!i) return; i[f] = ['price', 'rate', 'pct', 'fee', 'min', 'max', 'offer'].includes(f) ? (Number(v) || 0) : v; xsDirty(); }
+function xsItem(n, k, f, v){ const i = _SV.extra.services[n].items[k]; if(!i) return; i[f] = ['price', 'rate', 'pct', 'fee', 'min', 'max', 'offer', 'rating', 'lowAt'].includes(f) ? (Number(v) || 0) : f === 'stock' ? (v === '' ? null : Math.max(0, Math.floor(Number(v) || 0))) : v; xsDirty(); xsLowRender(); }
+// stock: blank = unlimited; red when it is low
+function stockInp(n, k, i){ const low = i.stock !== null && i.stock !== undefined && i.stock <= (i.lowAt ?? 3);
+  return `<input type="number" min="0" value="${i.stock === null || i.stock === undefined ? '' : ep(i.stock)}" placeholder="∞" oninput="xsItem(${n},${k},'stock',this.value)" style="height:34px;padding:0 9px;border-radius:8px;background:${low ? 'rgba(255,107,129,.12)' : 'rgba(255,255,255,.04)'};border:1.5px solid ${low ? 'rgba(255,107,129,.6)' : 'var(--border)'};color:var(--txt);font-size:12.5px;min-width:0;width:100%;box-sizing:border-box">`; }
+function xsLowRender(){ const el = $p('xsLow'); if(!el || !_SV.extra) return; const L = [];
+  _SV.extra.services.forEach(s => (s.items || []).forEach(i => { if(i.on !== false && i.stock !== null && i.stock !== undefined && i.stock <= (i.lowAt ?? 3)) L.push(`${ep(s.name)} · ${ep(i.name)} — ${i.stock === 0 ? '<b style="color:#ff8fa3">out of stock</b>' : '<b style="color:#ffae6b">' + i.stock + ' left</b>'}`); }));
+  el.innerHTML = L.length ? `<div style="margin-bottom:10px;padding:10px 12px;border-radius:10px;background:rgba(255,107,129,.08);border:1px solid rgba(255,107,129,.4);font-size:12.5px"><b><i class="fa-solid fa-boxes-stacked"></i> Restock soon (${L.length})</b><div style="margin-top:4px;line-height:1.7">${L.join('<br>')}</div></div>` : ''; }
 function xsAddItem(n){ const s = _SV.extra.services[n]; s.items = s.items || []; s.items.push(s.mode === 'amount' ? { id: 'o' + hid(), name: '', unit: '৳', rate: 1, pct: 0, fee: 0, min: 0, max: 0, flow: 'buy', to: '', on: true } : { id: 'o' + hid(), name: '', price: 0, note: '', to: '', on: true }); xsDirty(); xsRender(); }
 function xsDelItem(n, k){ _SV.extra.services[n].items.splice(k, 1); xsDirty(); xsRender(); }
 function xsAddSvc(){ _SV.extra.services.push({ id: 's' + hid(), name: 'New service', short: '', icon: 'fa-solid fa-star', color: 'g-teal', mode: 'items', on: true, desc: '', fields: [], items: [] }); xsDirty(); xsRender(); setTimeout(() => { const l = $p('xsList'); if(l && l.lastElementChild) l.lastElementChild.scrollIntoView({ behavior: 'smooth' }); }, 50); }
-function xsDelSvc(n){ const s = _SV.extra.services[n]; confirm2(`Remove “${s.name}” from Extra Services? Past orders stay in the Orders tab.`, () => { _SV.extra.services.splice(n, 1); xsDirty(); xsRender(); }); }
+function xsDelSvc(n){ const s = _SV.extra.services[n]; confirm2(`Remove “${s.name}” from Digital Services? Past orders stay in the Orders tab.`, () => { _SV.extra.services.splice(n, 1); xsDirty(); xsRender(); }); }
 function xsMove(n, d){ const L = _SV.extra.services, j = n + d; if(j < 0 || j >= L.length) return; [L[n], L[j]] = [L[j], L[n]]; xsDirty(); xsRender(); }
 function xsData(){
   const X = _SV.extra;
   const services = X.services.filter(s => String(s.name || '').trim()).map(s => ({ ...s, id: s.id || 's' + hid(), name: String(s.name).trim().slice(0, 40), short: String(s.short || '').trim().slice(0, 16),
     items: (s.items || []).filter(i => String(i.name || '').trim()).map(i => ({ ...i, id: i.id || 'o' + hid(), name: String(i.name).trim().slice(0, 60) })) }));
-  if(services.some(s => s.logo && !/^https:\/\//i.test(s.logo))) throw new Error('Extra services: a logo link must start with https://');
-  if(services.some(s => (s.items || []).some(i => i.icon && /^http:/i.test(i.icon)))) throw new Error('Extra services: an icon image link must start with https://');
+  if(services.some(s => s.logo && !/^https:\/\//i.test(s.logo))) throw new Error('Digital services: a logo link must start with https://');
+  if(services.some(s => (s.items || []).some(i => i.icon && /^http:/i.test(i.icon)))) throw new Error('Digital services: an icon image link must start with https://');
   const deals = (X.deals || []).filter(d => d.sid && d.iid && Number(d.price) > 0 && (d.days || []).length).map(d => ({ id: d.id || 'd' + hid(), sid: d.sid, iid: d.iid, price: Math.round(Number(d.price)), days: d.days, on: d.on !== false }));
-  return { on: chk('xs-on'), deals, redFriday: { on: chk('xs-r-on'), title: val('xs-r-title') || 'Red Friday', day: Number(val('xs-r-day') || 5), text: val('xs-r-text') }, title: val('xs-title') || 'Extra Services', services,
+  return { on: chk('xs-on'), deals, redFriday: { on: chk('xs-r-on'), title: val('xs-r-title') || 'Red Friday', day: Number(val('xs-r-day') || 5), text: val('xs-r-text') }, title: val('xs-title') || 'Digital Services', services,
     perk: { on: chk('xs-p-on'), chargePct: numv('xs-p-pct', 5, 0, 50), chargeMin: numv('xs-p-min', 10, 0, 1e5) },
     loanNotice: { on: chk('xs-n-on'), days: val('xs-n-days') || '7–14' },
     wallet: { on: chk('xs-w-on'), direct: chk('xs-w-direct'), min: numv('xs-w-min', 50, 1, 1e7), max: numv('xs-w-max', 50000, 0, 1e8) },
@@ -671,7 +691,7 @@ function xsData(){
 }
 async function xsLoad(){
   const r = await window._accountApi('extraConfig', {});
-  _SV.extra = r.ok ? r.data : { on: true, title: 'Extra Services', services: [], games: { on: true, reward: 1, perDay: 5, plays: 30, level: 75 } };
+  _SV.extra = r.ok ? r.data : { on: true, title: 'Digital Services', services: [], games: { on: true, reward: 1, perDay: 5, plays: 30, level: 75 } };
   fillIn({ 'xs-on': _SV.extra.on !== false, 'xs-title': _SV.extra.title, 'xs-g-on': _SV.extra.games.on !== false, 'xs-g-reward': _SV.extra.games.reward, 'xs-g-perday': _SV.extra.games.perDay, 'xs-g-plays': _SV.extra.games.plays, 'xs-g-level': _SV.extra.games.level,
     'xs-w-on': (_SV.extra.wallet || {}).on !== false, 'xs-w-direct': (_SV.extra.wallet || {}).direct !== false, 'xs-w-min': (_SV.extra.wallet || {}).min ?? 50, 'xs-w-max': (_SV.extra.wallet || {}).max ?? 50000,
     'xs-p-on': (_SV.extra.perk || {}).on !== false, 'xs-p-pct': (_SV.extra.perk || {}).chargePct ?? 5, 'xs-p-min': (_SV.extra.perk || {}).chargeMin ?? 10,
@@ -684,14 +704,16 @@ async function xsLoad(){
   _SV.extra.jobs = _SV.extra.jobs || { on: true, tasks: [] }; mjRender(); mjLoad();
   ['xs-g-reward', 'xs-g-perday'].forEach(id => { const e = $p(id); if(e) e.oninput = xsRender; });
   _SV.extra.deals = _SV.extra.deals || [];
-  xsRender(); xsDealsRender();
+  _SV.ann = { auto: ((await window._getDoc('siteConfig', 'services')) || {}).announce?.auto !== false }; fillIn({ 'an-auto': _SV.ann.auto });
+  _SV0 = { extra: clone(_SV.extra), hub: clone(_SV.hub) };
+  xsRender(); xsDealsRender(); xsLowRender();
 }
 async function xsOrder(id, op){
   const o = _ORD.find(x => x._id === id); if(!o) return;
   let text = '', reason = '';
   if(op === 'deliver'){ text = prompt(`Deliver ${o.planName} to 0${o.uid}.\nWrite the code / card details / note the user should see (only this user sees it):`, ''); if(text === null) return; }
   if(op === 'reject'){ reason = prompt('Reason (the user sees it):', 'We could not find this payment.'); if(reason === null) return; }
-  if(op === 'approve' && !confirm(`Add ৳${fa(o.price)} Extra Balance to 0${o.uid}? Check that ৳${fa(o.price)} with TrxID ${o.trxId} arrived first.`)) return;
+  if(op === 'approve' && !confirm(`Add ৳${fa(o.price)} Digital Balance to 0${o.uid}? Check that ৳${fa(o.price)} with TrxID ${o.trxId} arrived first.`)) return;
   if(op === 'process' && !confirm(`Payment ${o.price ? '৳' + fa(o.price) + ' ' : ''}(TrxID ${o.trxId}) checked? Mark “${o.planName}” as in progress.`)) return;
   showL(true); const r = await window._accountApi('adminExtraOrder', { id, op, text, reason }); showL(false);
   if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; }
@@ -730,10 +752,10 @@ function irRender(){
   const row = (lbl, r, b) => `<tr${b ? ' style="font-weight:900;border-top:2px solid var(--border)"' : ''}><td>${lbl}</td><td>৳${fa(r.fees)}<small> (${r.feeN})</small></td><td>৳${fa(r.verify)}</td><td>৳${fa(r.vip)}</td><td>৳${fa(r.extra)}<small> (${r.extraN})</small></td><td>৳${fa(r.charge)}</td><td style="color:var(--p);font-weight:900">৳${fa(inc(r))}</td><td>৳${fa(r.inst)}</td><td>৳${fa(r.dep)}</td><td style="color:var(--orange)">−৳${fa(r.rewards)}</td></tr>`;
   const max = Math.max(1, ...months.map(m => inc(R[m])));
   el.className = '';
-  el.innerHTML = `<div class="sv-st">${[['Income*', '৳' + fa(inc(T)), 'var(--p)'], ['Loan fees & interest', '৳' + fa(T.fees), '#46b0ff'], ['Verified + VIP', '৳' + fa(T.verify + T.vip), '#ffd76a'], ['Extra Services sales', '৳' + fa(T.extra), '#c085ff'], ['Rewards given', '৳' + fa(T.rewards), 'var(--orange)']].map(([l, v, c]) => `<div class="sv-k"><b style="color:${c}">${v}</b><span>${l}</span></div>`).join('')}</div>
+  el.innerHTML = `<div class="sv-st">${[['Income*', '৳' + fa(inc(T)), 'var(--p)'], ['Loan fees & interest', '৳' + fa(T.fees), '#46b0ff'], ['Verified + VIP', '৳' + fa(T.verify + T.vip), '#ffd76a'], ['Digital Services sales', '৳' + fa(T.extra), '#c085ff'], ['Rewards given', '৳' + fa(T.rewards), 'var(--orange)']].map(([l, v, c]) => `<div class="sv-k"><b style="color:${c}">${v}</b><span>${l}</span></div>`).join('')}</div>
     <div style="display:flex;align-items:flex-end;gap:8px;height:120px;margin:6px 0 14px;padding:0 4px">${months.map(m => `<div style="flex:1;text-align:center"><div title="৳${fa(inc(R[m]))}" style="height:${Math.round(inc(R[m]) / max * 92) + 2}px;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,#1ddb80,#0e9a5a)"></div><small style="font-size:10px;color:var(--txt2)">${m.slice(2)}</small></div>`).join('')}</div>
     <div style="overflow-x:auto"><table class="ir-t"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${months.slice().reverse().map(m => row(m, R[m])).join('')}${row('Total', T, true)}</tbody></table></div>
-    <div class="hint" style="margin-top:8px">* Income = loan fees &amp; interest + Verified + VIP + Extra Services charges. Installments are loan money coming back (not income).</div>`;
+    <div class="hint" style="margin-top:8px">* Income = loan fees &amp; interest + Verified + VIP + Digital Services charges. Installments are loan money coming back (not income).</div>`;
   _IR.months = months; _IR.R = R; _IR.T = T;
 }
 function irCsv(){
@@ -776,7 +798,7 @@ async function mjBulk(op){
   const ids = [...document.querySelectorAll('#mjSubs .bk-ck:checked')].map(c => c.value); if(!ids.length){ toast('Tick the proofs first', 'w'); return; }
   let reason = '';
   if(op === 'reject'){ reason = prompt(`Reject ${ids.length} proof(s). Reason (the users see it):`, 'We could not confirm this task.'); if(reason === null) return; }
-  else if(!confirm(`Approve ${ids.length} proof(s)? Each user gets the task reward in their Extra Balance.`)) return;
+  else if(!confirm(`Approve ${ids.length} proof(s)? Each user gets the task reward in their Digital Balance.`)) return;
   showL(true); let done = 0, fail = 0;
   for(const id of ids){ const r = await window._accountApi('adminJobs', { op, id, reason }); r.ok ? done++ : fail++; }
   showL(false); await logAct(`Bulk micro job ${op}: ${done}${fail ? `, ${fail} failed` : ''}`, 'user', 'bulk');
@@ -816,6 +838,7 @@ async function loadSvc(){
   fillIn({ 'vp-on': _SV.vip.on !== false, 'vp-hours': _SV.vip.hours, 'vp-normal': _SV.vip.normal, 'vf-on': _SV.verify.on !== false, 'vf-price': _SV.verify.price, 'vf-title': _SV.verify.title, 'vf-text': _SV.verify.text,
     'ck-on': _SV.checkin.on !== false, 'sp-on': _SV.spin.on !== false, 'sp-period': _SV.spin.period || 'month', 'vc-on': _SV.voucher.on !== false, 'vc-min': _SV.voucher.min, 'vc-max': _SV.voucher.max, 'vc-days': _SV.voucher.days,
     'cd-promo-on': _SV.codes.promo !== false, 'cd-redeem-on': _SV.codes.redeem !== false, 'bn-reqv': _SV.bonus.requireVerified !== false });
+  fillIn({ 'hb-uarr': _SV.hub.userArrange === true });
   vpRender(); ckRender(); spRender(); hbRender(); cdKind();
   proTabStart('services', 'orders');
   afterLoad('services');
@@ -832,11 +855,11 @@ function hubData(){
   custom.forEach(c => c.sections.forEach(x => x.items.forEach(i => { if(i.btn && i.btn.kind === 'url' && !/^https:\/\//i.test(i.btn.to)) throw new Error('Quick Services: a button link must start with https://'); })));
   const keys = hbKeys(), tiles = {};
   keys.forEach(k => { const c = (H.tiles || {})[k]; if(!c) return; const t = {}; ['on'].forEach(f => { if(c[f] === false) t[f] = false; });
-    ['label', 'badge', 'access', 'status', 'statusNote', 'note', 'icon', 'color'].forEach(f => { const v = str(c[f], f === 'note' ? 300 : f === 'statusNote' ? 160 : 60); if(v && !(f === 'access' && v === 'all') && !(f === 'status' && v === 'open')) t[f] = v; });
+    ['label', 'badge', 'access', 'status', 'statusNote', 'note', 'icon', 'color', 'trialEnd', 'ver', 'verKind', 'verNote', 'verAt'].forEach(f => { const v = str(c[f], f === 'note' ? 300 : f === 'statusNote' || f === 'verNote' ? 160 : 60); if(v && !(f === 'access' && v === 'all') && !(f === 'status' && v === 'open')) t[f] = v; });
     if(c.badge === '' && SV_TILES.some(x => x[0] === k)) t.badge = '';   // an empty badge hides the built-in one (HOT, VIP…)
     if(Object.keys(t).length) tiles[k] = t; });
   hbSyncHome();
-  return { home: H.home, order: keys, tiles, custom };
+  return { home: H.home, order: keys, tiles, custom, userArrange: chk('hb-uarr') };
 }
 async function saveSvc(){
   const plans = _SV.vip.plans.filter(p => String(p.name || '').trim()).map(p => ({ ...p, id: p.id || 'p' + hid(), price: Math.max(0, Math.round(Number(p.price) || 0)), days: Math.max(0, Math.round(Number(p.days) || 0)) }));
@@ -866,9 +889,74 @@ async function saveSvc(){
     terms: { repay: $p('ht-repay').value.trim(), late: $p('ht-late').value.trim(), complaint: $p('ht-complaint').value.trim(), extra: $p('ht-extra').value.trim() },
     offices: clean(_SV.help.offices, 'name'), callback: { on: chk('cb-on'), text: val('cb-text'), topics: lines('cb-topics'), slots: lines('cb-slots') } };
   if(_SV.extra) data.extra = xsData();
+  data.announce = { auto: chk('an-auto') };
+  // stock goes down with every order: where the admin did not change a stock number here, keep the live number
+  if(data.extra && _SV0 && _SV0.extra){ const live = ((await window._getDoc('siteConfig', 'services')) || {}).extra || {};
+    data.extra.services.forEach(sv => (sv.items || []).forEach(it => { const o = ((_SV0.extra.services.find(x => x.id === sv.id) || {}).items || []).find(x => x.id === it.id);
+      const l = (((live.services || []).find(x => x.id === sv.id) || {}).items || []).find(x => x.id === it.id);
+      if(o && l && (o.stock ?? null) === (it.stock ?? null) && l.stock !== undefined) it.stock = l.stock; })); }
+  const news = [...(data.announce.auto ? annDiff() : []), ..._ANNQ];
   await window._setDoc('siteConfig', 'services', data);
   await logAct('Services & Rewards saved', 'config', 'services');
+  _ANNQ = []; _SV0 = { extra: clone(_SV.extra || {}), hub: clone(_SV.hub) };
+  if(news.length){ const links = [...new Set(news.map(x => x.link))];
+    const r = await window._accountApi('adminAnnounce', { lines: news.map(x => ({ kind: x.kind, text: x.text })), link: links.length === 1 ? links[0] : '/?go=extra' });
+    toast(r.ok ? `Announced to users: ${news.length} item(s) ✓` : 'Saved — the announcement could not be sent: ' + ((r.data || {}).error || ''), r.ok ? 's' : 'w'); }
 }
+/* ── good news on save: only what is new or switched on (never deletes, hides or edits) ── */
+let _ANNQ = [];
+function annDiff(){
+  const A = _SV0 || {}, L = [], live = x => x && x.on !== false && !x.soon && x.status !== 'closed';
+  const old = new Map((((A.extra || {}).services) || []).map(x => [x.id, x]));
+  ((_SV.extra || {}).services || []).forEach(sv => { if(!String(sv.name || '').trim()) return; const o = old.get(sv.id);
+    if(live(sv) && !live(o)) L.push({ kind: 'new', text: `New: ${sv.name}${sv.desc ? ' — ' + String(sv.desc).slice(0, 70) : ''}`, link: '/?go=x_' + sv.id });
+    else if(live(sv)){ const had = new Set(((o && o.items) || []).filter(i => i.on !== false).map(i => i.id)); const ni = (sv.items || []).filter(i => i.on !== false && String(i.name || '').trim() && !had.has(i.id));
+      if(ni.length) L.push({ kind: 'new', text: `New in ${sv.name}: ${ni.slice(0, 3).map(i => i.name).join(', ')}${ni.length > 3 ? ` +${ni.length - 3} more` : ''}`, link: '/?go=x_' + sv.id }); } });
+  const oj = new Set(((((A.extra || {}).jobs) || {}).tasks || []).map(t => t.id)), nj = ((((_SV.extra || {}).jobs) || {}).tasks || []).filter(t => t.on !== false && String(t.title || '').trim() && !oj.has(t.id));
+  if(nj.length) L.push({ kind: 'new', text: `New Micro Job${nj.length > 1 ? 's' : ''}: ${nj.slice(0, 2).map(t => t.title).join(', ')} — earn to your Digital Balance`, link: '/?go=extra' });
+  const ob = ((A.extra || {}).depBonus || {}), nb = { on: chk('xs-b-on'), max: numv('xs-b-max', 500, 0, 1e7) };
+  if(nb.on && !ob.on) L.push({ kind: 'bonus', text: `Deposit bonus is ON — get extra on every Digital Balance deposit (up to ৳${nb.max})`, link: '/?go=x_dep' });
+  const oh = A.hub || {}, nh = _SV.hub || {}, oc = new Set((oh.custom || []).map(c => c.id));
+  (nh.custom || []).forEach(c => { const t = (nh.tiles || {})['c_' + c.id] || {}; if(!oc.has(c.id) && t.on !== false && t.status !== 'closed' && t.status !== 'soon') L.push({ kind: 'new', text: `New in Quick Services: ${t.label || c.label}${c.desc ? ' — ' + String(c.desc).slice(0, 70) : ''}`, link: '/?go=q_c_' + c.id }); });
+  Object.keys(nh.tiles || {}).forEach(k => { const a = (oh.tiles || {})[k] || {}, b = nh.tiles[k] || {}; if(a.on === false && b.on !== false && !L.some(x => x.link === '/?go=q_' + k)) L.push({ kind: 'new', text: `Now open in Quick Services: ${b.label || hbName(k)}`, link: '/?go=q_' + k }); });
+  return L;
+}
+/* ── Publish update: a new version number with "Updated" or "Fixed" and a short note ── */
+function verBump(v){ const p = String(v || '1.0').split('.').map(x => parseInt(x, 10) || 0); if(p.length < 2) p.push(0); p[p.length - 1]++; return p.join('.'); }
+function verOpen(t, key){
+  const o = t === 'x' ? _SV.extra.services[key] : ((_SV.hub.tiles = _SV.hub.tiles || {})[key] = _SV.hub.tiles[key] || {});
+  const name = t === 'x' ? o.name : (o.label || hbName(key));
+  let m = document.getElementById('verMo'); if(m) m.remove();
+  m = document.createElement('div'); m.id = 'verMo'; m.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML = `<div style="width:min(420px,100%);background:var(--card,#101a2c);border:1px solid var(--border);border-radius:16px;padding:16px">
+    <div style="font-weight:900;font-size:15px;margin-bottom:10px"><i class="fa-solid fa-rocket"></i> Publish update — ${ep(name)}</div>
+    <div class="fg"><label>New version</label><input id="vrVer" value="${ep(verBump(o.ver))}" style="height:34px;padding:0 9px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);width:100%;box-sizing:border-box"></div>
+    <div class="fg" style="margin-top:8px"><label>What is it?</label><select id="vrKind" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border);width:100%"><option value="updated">Updated — something new or better</option><option value="fixed">Fixed — a problem is solved</option></select></div>
+    <div class="fg" style="margin-top:8px"><label>Short note for users</label><input id="vrNote" maxlength="140" placeholder="e.g. New UK and Canada cards, faster delivery" style="height:34px;padding:0 9px;border-radius:8px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--txt);width:100%;box-sizing:border-box"></div>
+    <label class="hp-sw" style="margin-top:10px;display:flex"><input type="checkbox" id="vrAnn" checked> Announce it to users when I save</label>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn btn-sm btn-s" onclick="document.getElementById('verMo').remove()">Cancel</button><button class="btn btn-sm btn-p" onclick="verDo('${t}','${ep(String(key))}')"><i class="fa-solid fa-check"></i>Publish</button></div></div>`;
+  document.body.appendChild(m);
+}
+function verDo(t, key){
+  const o = t === 'x' ? _SV.extra.services[Number(key)] : _SV.hub.tiles[key]; const name = t === 'x' ? o.name : (o.label || hbName(key));
+  const ver = String($p('vrVer').value || '').trim().replace(/^v/i, '').slice(0, 12), kind = $p('vrKind').value, note = String($p('vrNote').value || '').trim().slice(0, 140);
+  if(!ver){ toast('Write the version, e.g. 1.1', 'w'); return; }
+  Object.assign(o, { ver, verKind: kind, verNote: note, verAt: new Date().toISOString() });
+  if($p('vrAnn').checked) _ANNQ = [..._ANNQ.filter(x => x.key !== t + key), { key: t + key, kind, text: `${name} v${ver} — ${kind === 'fixed' ? 'Fixed' : 'Updated'}${note ? ': ' + note : ''}`, link: t === 'x' ? '/?go=x_' + o.id : '/?go=q_' + key }];
+  document.getElementById('verMo').remove(); markDirty('services', t === 'x' ? 'extra' : 'hub'); t === 'x' ? xsRender() : hbRender();
+  toast('Version set — press Save changes to publish it', 's');
+}
+/* ── suggestions from users, per section ── */
+async function sgLoad(){
+  const el = $p('sgOut'); if(!el) return; el.innerHTML = 'Loading…';
+  const r = await window._accountApi('adminSuggestions', {}); if(!r.ok){ el.innerHTML = 'Could not load.'; return; }
+  const L = r.data.list || []; if(!L.length){ el.innerHTML = 'No suggestions yet.'; return; }
+  const G = {}; L.forEach(x => { (G[x.scope] = G[x.scope] || { label: x.label || x.scope, list: [] }).list.push(x); });
+  el.innerHTML = Object.entries(G).sort((a, b) => b[1].list.length - a[1].list.length).map(([k, g]) => `<div style="margin:10px 0 4px;font-weight:900;font-size:13px">${k.startsWith('q:') ? 'Quick Services' : 'Digital Services'} › ${ep(g.label)} <span style="color:var(--txt2);font-weight:600">(${g.list.length})</span></div>`
+    + g.list.map(x => `<div class="od-row" style="grid-template-columns:1fr auto;${x.status === 'new' ? '' : 'opacity:.6'}"><div>${ep(x.text)}<small>0${ep(x.uid)} · ${fd(x.createdAt)}</small></div>
+      <div class="acts">${x.status === 'new' ? `<button class="ab ab-ok ro-ok" title="Mark seen" onclick="sgDo('${ep(x.id)}','done')"><i class="fa-solid fa-check"></i></button>` : ''}<button class="ab ab-no ro-ok" title="Delete" onclick="sgDo('${ep(x.id)}','delete')"><i class="fa-solid fa-trash"></i></button></div></div>`).join('')).join('');
+}
+async function sgDo(id, op){ await window._accountApi('adminSuggestions', { op, id }); sgLoad(); }
 window._SAVERS.services = { load: loadSvc, save: saveSvc, data: () => ({ 'VIP › Plans': _SV.vip.plans, 'Spin › Prizes': _SV.spin.prizes, 'Home tiles': _SV.hub.home }) };
 // the pending-orders counter on the menu, shortly after login
 setTimeout(function tick(){ if(window._db && (window._perm || {}).services !== 'none') window._getDocs('serviceOrders').then(o => { const n = o.filter(x => x.status === 'Pending').length; const b = $p('nb-svc'); if(b){ b.textContent = n; b.style.display = n ? '' : 'none'; } }).catch(() => {}); else setTimeout(tick, 4000); }, 5000);

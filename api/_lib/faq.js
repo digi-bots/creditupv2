@@ -3,10 +3,10 @@
 const BUILTIN = [
   { q: 'How long does approval take?', a: 'Loan money is processed through the bank, so approval and disbursement can take up to 7–14 working days. VIP applications are reviewed first.' },
   { q: 'What fees do I pay?', a: 'All fees and the upfront interest are shown before you apply and again on the fee page. See Quick Services → Fees Explained and Loan Terms.' },
-  { q: 'How do I get Verified?', a: 'Open the app → Quick Services → Verify Number and pay the one-time fee. Verified members join every offer and reward and pay no service charge on Extra Services.' },
+  { q: 'How do I get Verified?', a: 'Open the app → Quick Services → Verify Number and pay the one-time fee. Verified members join every offer and reward and pay no service charge on Digital Services.' },
   { q: 'How do I use the daily bonus code?', a: 'Copy today’s code from the notification or our Telegram channel → Creditfy → Quick Services → Redeem Code → paste → Redeem. It works until midnight, once per person, for Verified members.' },
   { q: 'How do I invite friends?', a: 'Open the app → Refer & Earn and share your link. The more friends join, the bigger the offers you can unlock.' },
-  { q: 'How do I add Extra Balance?', a: 'Extra Services → Extra Balance → Add balance: send the amount to the number shown and enter the Transaction ID. It is added after we check the payment.' },
+  { q: 'How do I add Digital Balance?', a: 'Digital Services → Digital Balance → Add balance: send the amount to the number shown and enter the Transaction ID. It is added after we check the payment.' },
   { q: 'Is my application rejected? Do I get a refund?', a: 'If your application is rejected, the fee you paid is refunded to the number you paid from.' },
   { q: 'Will you ask for my PIN or OTP?', a: 'Never. Creditfy never asks for your PIN, OTP or password. Pay only to the numbers shown inside the app.' }
 ];

@@ -53,8 +53,8 @@ function buildTg(){
   </div>
   <div class="pro-pane" data-k="auto">
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-bolt"></i>Post automatically to the channel</div>
-      <div class="fgrid">${tog('ta-broadcast', 'Broadcasts to all users (Broadcast page)', true)}${tog('ta-offers', 'New offers &amp; weekday deals (Extra services)', true)}${tog('ta-deals', 'Every morning: today’s deals / Red Friday is live (12:05am)', true)}
-        ${tog('ta-tasks', 'New micro jobs', true)}${tog('ta-services', 'New Extra services', true)}</div>
+      <div class="fgrid">${tog('ta-broadcast', 'Broadcasts to all users (Broadcast page)', true)}${tog('ta-offers', 'New offers &amp; weekday deals (Digital services)', true)}${tog('ta-deals', 'Every morning: today’s deals / Red Friday is live (12:05am)', true)}
+        ${tog('ta-tasks', 'New micro jobs', true)}${tog('ta-services', 'New Digital services', true)}</div>
       <div class="hint">Offers, deals, micro jobs and new services are posted when you press Save on Services &amp; Rewards. Broadcasts have their own “Also post to Telegram” switch.</div></div>
   </div>
   <div class="pro-pane" data-k="group">
@@ -222,10 +222,10 @@ function aaUnlink(chat){ confirm2('Stop admin alerts for this Telegram?', async 
 async function aaSummary(){ showL(true); const r = await window._accountApi('adminTgAdmins', { op: 'summary' }); showL(false); if(!r.ok){ toast(r.data.error || 'Failed', 'e'); return; } toast(r.data.sent ? `Summary sent to ${r.data.sent} admin${r.data.sent > 1 ? 's' : ''} ✓` : 'No admin Telegram linked (or alerts are off)'); }
 
 /* ═════════ daily reminder ═════════ */
-const DR_DEF = { title: '☀️ Good morning from Creditfy', pushText: 'Loans are running smoothly ✅ Recharge, gift cards, exchange & more in Extra Services. Invite friends for bigger offers, get Verified and try VIP.',
+const DR_DEF = { title: '☀️ Good morning from Creditfy', pushText: 'Loans are running smoothly ✅ Recharge, gift cards, exchange & more in Digital Services. Invite friends for bigger offers, get Verified and try VIP.',
   text: `✅ Loans are running smoothly — applications are reviewed and processed every day, and you can follow every step in the app.
 
-🛍️ Extra Services, all in one place:
+🛍️ Digital Services, all in one place:
 • 📱 Mobile recharge for every operator
 • 🎁 Gift cards — Google Play, iTunes, Steam
 • 💱 Currency & MFS exchange (bKash ⇄ Nagad ⇄ Rocket)
@@ -236,7 +236,7 @@ const DR_DEF = { title: '☀️ Good morning from Creditfy', pushText: 'Loans ar
 
 🎁 Bonus & referrals: share your invite link — the more friends join, the bigger the offers you can unlock.
 
-✔️ Get Verified today for a smoother review, full access to every service and no service charge on Extra Services.
+✔️ Get Verified today for a smoother review, full access to every service and no service charge on Digital Services.
 
 👑 Need it sooner? VIP applications are reviewed first.
 
@@ -318,14 +318,14 @@ setTimeout(function hideNav(){ const p = window._perm; if(!p) return setTimeout(
     const X = _SV.extra || {}, svcs = X.services || [], find = (sid, iid) => { const s = svcs.find(x => x.id === sid); return { s, i: s && (s.items || []).find(x => x.id === iid) }; };
     const posts = [];
     const newSvc = svcs.filter(s => !b.svc.has(s.id) && s.on !== false && !s.soon);
-    if(newSvc.length) posts.push({ kind: 'services', title: '🆕 New on Creditfy', text: newSvc.map(s => `• ${s.name}${s.desc ? ' — ' + s.desc : ''}`).join('\n') + '\n\nOpen Extra Services in the app to try it.' });
+    if(newSvc.length) posts.push({ kind: 'services', title: '🆕 New on Creditfy', text: newSvc.map(s => `• ${s.name}${s.desc ? ' — ' + s.desc : ''}`).join('\n') + '\n\nOpen Digital Services in the app to try it.' });
     const offs = [...a.off].filter(k => !b.off.has(k)).map(k => { const [sid, iid] = k.split(':'); return find(sid, iid); }).filter(x => x.i);
     const deals = (X.deals || []).filter(d => d.on !== false && !b.deal.has(d.sid + ':' + d.iid + ':' + d.price + ':' + (d.days || []).join(''))).map(d => ({ d, ...find(d.sid, d.iid) })).filter(x => x.i && x.d.price < x.i.price);
     if(offs.length || deals.length) posts.push({ kind: 'offers', title: '🔥 New offers', text: [
       ...offs.map(({ i }) => `• ${i.name} — ${tk(i.price)} → ${tk(i.offer)} (till ${new Date(i.offerEnd).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })})`),
       ...deals.map(({ d, i }) => `• ${i.name} — ${tk(i.price)} → ${tk(d.price)} every ${(d.days || []).map(n => WD[n]).join(', ')}`)].join('\n') + '\n\nVerified & VIP members pay no service charge.' });
     const tasks = ((X.jobs || {}).tasks || []).filter(t => t.on !== false && !b.task.has(t.id) && String(t.title || '').trim());
-    if(tasks.length) posts.push({ kind: 'tasks', title: '💼 New micro jobs', text: tasks.map(t => `• ${t.title} — earn ${tk(t.reward)}`).join('\n') + '\n\nOpen Extra Services → Micro Jobs in the app.' });
+    if(tasks.length) posts.push({ kind: 'tasks', title: '💼 New micro jobs', text: tasks.map(t => `• ${t.title} — earn ${tk(t.reward)}`).join('\n') + '\n\nOpen Digital Services → Micro Jobs in the app.' });
     let n = 0;
     for(const p of posts){ const r = await window._accountApi('adminTgPost', p); if(r.ok && r.data.sent) n++; }
     if(n) toast(`Posted ${n} update${n > 1 ? 's' : ''} on Telegram ✓`);

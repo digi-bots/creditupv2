@@ -16,10 +16,10 @@ function describe(kind, o, id) {
   if (kind === 'order') {
     if (o.kind === 'verify') return { title: '✅ Verified badge payment', body: `${who} paid ${tk(o.price)}\nTrxID <code>${esc(o.trxId)}</code>${o.payMethod ? ` · ${esc(o.payMethod)}` : ''}`, btn: [['approve', '✅ Approve'], ['reject', '❌ Reject']] };
     if (o.kind === 'vip') return { title: `👑 ${esc(o.planName)} payment`, body: `${who} paid ${tk(o.price)}\nTrxID <code>${esc(o.trxId)}</code>${o.sender ? ` · from 0${esc(o.sender)}` : ''}`, btn: [['approve', '✅ Approve'], ['reject', '❌ Reject']] };
-    if (o.kind === 'xdeposit') return { title: '💳 Extra Balance deposit', body: `${who} sent ${tk(o.price)}\nTrxID <code>${esc(o.trxId)}</code>${o.coupon ? `\nCoupon ${esc(o.coupon)} (+${tk(o.couponBonus)})` : ''}`, btn: [['approve', '✅ Add balance'], ['reject', '❌ Reject']] };
+    if (o.kind === 'xdeposit') return { title: '💳 Digital Balance deposit', body: `${who} sent ${tk(o.price)}\nTrxID <code>${esc(o.trxId)}</code>${o.coupon ? `\nCoupon ${esc(o.coupon)} (+${tk(o.couponBonus)})` : ''}`, btn: [['approve', '✅ Add balance'], ['reject', '❌ Reject']] };
     if (o.kind === 'extra') {
       const info = (o.fields || []).filter(f => f.value).map(f => `${esc(f.label)}: <b>${esc(f.value)}</b>`).join('\n');
-      const paid = o.paidWith === 'xbal' ? 'paid from Extra Balance' : o.paidWith === 'main' ? 'paid from Creditfy balance' : `TrxID <code>${esc(o.trxId)}</code>`;
+      const paid = o.paidWith === 'xbal' ? 'paid from Digital Balance' : o.paidWith === 'main' ? 'paid from Creditfy balance' : `TrxID <code>${esc(o.trxId)}</code>`;
       return { title: o.sid === 'recharge' ? '📱 Mobile recharge' : `🛒 ${esc(o.sname)}`, body: `${who} — <b>${esc(o.iname)}</b>${o.amount ? ` (${esc(o.amount)} ${esc(o.unit)})` : ''}\n${o.flow === 'sell' ? 'Pay the user ' + tk(o.get) : tk(o.price)} · ${paid}${info ? '\n' + info : ''}`,
         btn: o.status === 'Processing' ? [['deliver', '✅ Done / delivered'], ['reject', '❌ Reject']] : [['process', '⏳ Payment OK'], ['deliver', '✅ Delivered'], ['reject', '❌ Reject']] };
     }

@@ -441,6 +441,23 @@ const actions = {
   },
 
   // a user who joined without an invite link can add the inviter's code later (Home Page → Invite Code in Profile)
+  // the profile gets the name, email and NID from the user's own newest application (users cannot write their
+  // profile directly; before this, a self-made application never reached the profile, so admin saw an empty one)
+  async syncProfile(b, me) {
+    if (!me) return [401, { error: 'Please login again.' }];
+    const d = await findUserDoc(me.uid);
+    if (!d) return [404, { error: 'Account not found.' }];
+    const u = d.data() || {}, up = {};
+    const q = await db().collection('applications').where('uid', '==', String(me.uid)).get();
+    const a = q.docs.map(x => x.data()).filter(x => !x.removed).sort((x, y) => String(y.submittedAt || '').localeCompare(String(x.submittedAt || '')))[0] || {};
+    const clean = (v, n) => String(v || '').replace(/[<>]/g, '').trim().slice(0, n);
+    if (!u.name && clean(a.name, 80)) up.name = clean(a.name, 80);
+    if (!u.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean(a.email, 120))) up.email = clean(a.email, 120);
+    const nid = clean(b.nid || a.nid, 30).replace(/[^0-9A-Za-z]/g, '');
+    if (nid.length >= 8 && nid !== u.nid) { up.nid = nid; up.nidUpdatedAt = new Date().toISOString(); }
+    if (Object.keys(up).length) { up.profileFrom = 'application'; await d.ref.update(up); }
+    return [200, { ok: true, updated: Object.keys(up) }];
+  },
   async myReferral(b, me) {
     if (!me) return [401, { error: 'Please login again.' }];
     const d = await findUserDoc(me.uid);

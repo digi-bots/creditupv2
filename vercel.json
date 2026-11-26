@@ -41,6 +41,9 @@
   "functions": {
     "api/cron/*.js": {
       "maxDuration": 60
+    },
+    "api/account.js": {
+      "maxDuration": 60
     }
   }
 }
