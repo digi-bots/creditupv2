@@ -280,7 +280,7 @@ try { if(typeof BN === 'object') Object.assign(BN, {
 /* ───────── data ───────── */
 const SV = { cfg: null, st: null, cfgP: null };
 function loadCfg(){ if(!SV.cfgP) SV.cfgP = fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'svcConfig' }) }).then(r => r.json()).then(j => (SV.cfg = j || {})).catch(() => (SV.cfg = {})); return SV.cfgP; }
-async function loadState(){ if(!user()) return null; const r = await api('svcState'); SV.st = r.ok ? r.data : null; badges(); return SV.st; }
+async function loadState(){ if(!user()) return null; const r = await api('svcState'); SV.st = r.ok ? r.data : null; window._svState = SV.st; badges(); return SV.st; }
 
 /* ───────── services list ───────── */
 const T = {
