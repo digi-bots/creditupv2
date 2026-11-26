@@ -334,6 +334,14 @@ Object.assign(BN, {
   'Application submit time:': 'আবেদন জমার সময়:',
   'Complaints:': 'অভিযোগ:'
 });
+// payment picker
+Object.assign(BN, {
+  'Choose how you will pay': 'কীভাবে পেমেন্ট করবেন বেছে নিন',
+  'Ends soon': 'শিগগির শেষ',
+  'Choose how you paid (bKash, Nagad…)': 'কীভাবে পেমেন্ট করেছেন বেছে নিন (বিকাশ, নগদ…)',
+  'Home': 'হোম',
+  'Add balance': 'ব্যালেন্স যোগ করুন'
+});
 // re-translate what is already on screen
 try { if(document.documentElement.lang === 'bn' && window.setLang) setLang('bn', false); } catch (e) {}
 })();

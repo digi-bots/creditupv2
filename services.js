@@ -179,6 +179,9 @@ const css = `
 @media (min-width:600px){.sv-sheet{border-left:1px solid rgba(255,255,255,.06);border-right:1px solid rgba(255,255,255,.06)}}
 .sv-wrap{max-width:100%}
 .sv-body{overflow-x:hidden}
+/* phones: slimmer cards and fields so more fits on screen */
+@media(max-width:480px){.sv-body{padding:12px 12px 32px}.sv-card{padding:12px 13px;border-radius:15px;margin-bottom:10px}.sv-in{height:46px;border-radius:12px;font-size:14.5px}
+  .sv-btn{padding:12px;border-radius:13px;font-size:14px}.sv-lbl{margin:10px 2px 5px}.sv-head{padding:10px 12px}.sv-head h3{font-size:15px}.cx-hero{padding:11px;border-radius:16px}.vlock{padding:16px 14px 14px}}
 .sv-body *{max-width:100%;box-sizing:border-box}
 .sv-head{background:linear-gradient(180deg,rgba(12,30,24,.95),rgba(6,13,26,.9));border-bottom:1px solid rgba(29,219,128,.18)}
 .sv-head h3{letter-spacing:-.2px;background:linear-gradient(90deg,#fff,#9ff5cf);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -314,6 +317,62 @@ try { if(typeof BN === 'object') Object.assign(BN, {
 .cx-it .b{display:none;padding:0 12px 12px 40px;font-size:12.5px;color:var(--txt2);line-height:1.6}.cx-it.on .b{display:block}.cx-it .b p{margin:0 0 6px;white-space:pre-line}
 .cx-sub{padding:8px 10px;margin-top:6px;border-radius:11px;background:rgba(255,255,255,.04);border-left:3px solid var(--p)}.cx-sub b{display:block;font-size:12.5px;color:var(--txt)}.cx-sub small{font-size:11.5px}
 `; document.head.appendChild(st); })();
+/* ───────── one way to pay, everywhere: method cards with logos (like the loan fee page) → type → number to copy ───────── */
+(function(){
+const st = document.createElement('style'); st.textContent = `
+.pp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px;margin:0 0 10px}
+.pp-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 5px 8px;border-radius:13px;cursor:pointer;background:linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,.015));border:1.5px solid var(--bord);transition:transform .15s,border-color .2s}
+.pp-card:active{transform:scale(.97)}.pp-card img{width:30px;height:30px;object-fit:contain;border-radius:8px;background:#fff;padding:2px}.pp-card .fb{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(29,219,128,.14);color:var(--p)}
+.pp-card span{font-size:11.5px;font-weight:800;color:var(--txt);text-align:center;line-height:1.15}.pp-card em{font-size:9px;font-style:normal;color:var(--txt3);text-align:center;line-height:1.2}
+.pp-card.sel{border-color:var(--p);background:rgba(29,219,128,.08);box-shadow:0 0 0 3px rgba(29,219,128,.12)}.pp-card.sel::after{content:"✓";position:absolute;top:4px;right:6px;font-size:10px;font-weight:900;color:var(--p)}
+.pp-hint{font-size:11.5px;color:#ffd76a;margin:-2px 2px 10px;display:flex;gap:6px;align-items:center}
+.pp-types{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 9px}.pp-types button{border:1.5px solid var(--bord);background:rgba(255,255,255,.04);color:var(--txt2);border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:800;font-family:inherit;cursor:pointer}.pp-types button.on{border-color:var(--p);color:var(--p);background:rgba(29,219,128,.08)}
+.pp-num{display:flex;align-items:center;gap:10px;padding:10px 10px 10px 13px;border-radius:14px;margin-bottom:8px;background:linear-gradient(135deg,rgba(29,219,128,.1),rgba(29,219,128,.02));border:1.5px dashed rgba(29,219,128,.45)}
+.pp-num>div{flex:1;min-width:0}.pp-num small{display:block;font-size:10.5px;color:var(--txt2);font-weight:700}.pp-num b{font-size:19px;letter-spacing:1px;color:var(--txt);font-family:ui-monospace,Menlo,monospace}
+.pp-amt{display:flex;align-items:center;gap:8px;margin:-2px 0 8px;font-size:12px;color:var(--txt2)}.pp-amt b{color:#ffd76a;font-size:14px}
+.pp-steps{margin:0 0 10px;padding:8px 11px;border-radius:12px;font-size:11px;line-height:1.55;color:var(--txt2);background:rgba(77,143,255,.06);border:1px dashed rgba(77,143,255,.3)}.pp-steps ol{margin:3px 0 0;padding-left:17px}
+/* a 3D copy button for important values */
+.cp3d{flex:none;display:inline-flex;align-items:center;gap:5px;border:0;border-radius:10px;padding:7px 11px;font-size:11.5px;font-weight:900;font-family:inherit;cursor:pointer;color:#03210f;
+  background:linear-gradient(180deg,#5ff0a6,#1ddb80 55%,#14b86a);box-shadow:0 3px 0 #0b7a45,0 6px 12px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.5);transform:translateY(0);transition:transform .08s,box-shadow .08s}
+.cp3d:active{transform:translateY(3px);box-shadow:0 0 0 #0b7a45,0 2px 6px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.5)}
+.cp3d.sm{padding:4px 8px;font-size:10px;border-radius:8px;box-shadow:0 2px 0 #0b7a45,0 4px 8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.5)}
+.cp3d.ok{background:linear-gradient(180deg,#fff3c4,#ffd76a 55%,#f2a91d);box-shadow:0 3px 0 #a86f05,0 6px 12px rgba(0,0,0,.3)}`;
+document.head.appendChild(st);
+const E = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const tk = n => '৳' + Math.round(Number(n) || 0).toLocaleString('en-US');
+// copy with a small "Copied" on the button
+window._cp = function(text, btn){ const done = () => { if(btn){ const h = btn.innerHTML; btn.classList.add('ok'); btn.innerHTML = '<i class="fa-solid fa-check"></i>Copied'; setTimeout(() => { btn.classList.remove('ok'); btn.innerHTML = h; }, 1400); } else if(window._svToast) window._svToast('Copied'); };
+  try { navigator.clipboard.writeText(String(text)).then(done, () => { const t = document.createElement('textarea'); t.value = String(text); document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (e) {} t.remove(); done(); }); } catch (e) { done(); } };
+window._cpBtn = (text, sm) => `<button type="button" class="cp3d${sm ? ' sm' : ''}" data-cp="${E(text)}" onclick="event.stopPropagation();_cp(this.dataset.cp,this)"><i class="fa-regular fa-copy"></i>Copy</button>`;
+const PP = window._pp = window._pp || {};
+const opts = w => typeof window._walletOptions === 'function' ? window._walletOptions(w) : (Array.isArray(w.methods) && w.methods.length ? w.methods.filter(o => o && o.number) : [{ type: w.payMethod || 'Send Money', number: w.collectionNumber || w.paymentNumber }].filter(o => o.number));
+const list = () => (window._feeWallets || []).map(w => ({ w, o: opts(w) })).filter(x => x.o.length);
+function inner(k){
+  const S = PP[k];
+  if(S.fixed){ S.cur = S.fixed; return num(S.cur, S.amount); }
+  const L = list();
+  if(!L.length){ if(window._loadWallets && !S.tried){ S.tried = 1; Promise.resolve(window._loadWallets()).then(() => window._ppRender(k)).catch(() => {}); } S.cur = null; return '<div class="sv-empty" style="padding:14px">No payment method is open right now. Please contact Support.</div>'; }
+  if(L.length === 1 && S.w < 0) S.w = 0;
+  const grid = `<div class="pp-grid">${L.map((x, i) => `<div class="pp-card${i === S.w ? ' sel' : ''}" onclick="_ppSel('${k}',${i})">${x.w.logoUrl ? `<img src="${E(x.w.logoUrl)}" alt="" onerror="this.outerHTML='<div class=&quot;fb&quot;><i class=&quot;fa-solid fa-wallet&quot;></i></div>'">` : '<div class="fb"><i class="fa-solid fa-wallet"></i></div>'}<span>${E(x.w.name)}</span><em>${E(x.o.map(o => o.type).filter(Boolean).join(' · '))}</em></div>`).join('')}</div>`;
+  if(S.w < 0 || !L[S.w]){ S.cur = null; return grid + '<div class="pp-hint"><i class="fa-solid fa-hand-pointer"></i>Choose how you will pay</div>'; }
+  const x = L[S.w]; if(!x.o[S.o]) S.o = 0; const o = x.o[S.o];
+  S.cur = { name: x.w.name, type: o.type || 'Send Money', number: o.number, note: o.note || '', steps: Array.isArray(o.instructions) ? o.instructions.filter(Boolean).slice(0, 6) : [] };
+  return grid + (x.o.length > 1 ? `<div class="pp-types">${x.o.map((y, j) => `<button class="${j === S.o ? 'on' : ''}" onclick="_ppType('${k}',${j})">${E(y.type || 'Send Money')}</button>`).join('')}</div>` : '') + num(S.cur, S.amount);
+}
+function num(c, amount){
+  return `${amount ? `<div class="pp-amt">${E(c.type || 'Send')} exactly <b>${tk(amount)}</b> ${window._cpBtn(Math.round(amount), 1)}</div>` : ''}
+    <div class="pp-num"><div><small>${E(c.name)}${c.type ? ' · ' + E(c.type) : ''}</small><b>${E(c.number)}</b></div>${window._cpBtn(c.number)}</div>
+    ${c.note || (c.steps || []).length ? `<div class="pp-steps">${c.note ? `<div>${E(c.note)}</div>` : ''}${(c.steps || []).length ? `<ol>${c.steps.map(t => `<li>${E(t)}</li>`).join('')}</ol>` : ''}</div>` : ''}`;
+}
+// key: one picker per page; fixed: a number set by the admin for that item; amount: shown with its own copy button
+window._payPick = function(k, o = {}){ PP[k] = PP[k] || { w: -1, o: 0 }; PP[k].amount = o.amount || 0; PP[k].fixed = o.fixed || null; return `<div class="pp-box" id="pp_${k}">${inner(k)}</div>`; };
+window._ppRender = k => { const el = document.getElementById('pp_' + k); if(el && PP[k]) el.innerHTML = inner(k); };
+window._ppSel = (k, i) => { PP[k].w = i; PP[k].o = 0; window._ppRender(k); };
+window._ppType = (k, j) => { PP[k].o = j; window._ppRender(k); };
+window._ppAmount = (k, a) => { if(PP[k]){ PP[k].amount = a; window._ppRender(k); } };
+window._ppCur = k => (PP[k] && PP[k].cur) || null;
+})();
+
 /* ───────── data ───────── */
 const SV = { cfg: null, st: null, cfgP: null };
 function loadCfg(){ if(!SV.cfgP) SV.cfgP = fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'svcConfig' }) }).then(r => r.json()).then(j => { SV.cfg = j || {}; regCustom(); return SV.cfg; }).catch(() => (SV.cfg = {})); return SV.cfgP; }
@@ -470,7 +529,7 @@ window.svArr = (k, d) => { const order = (hubC().home && hubC().home.length ? hu
 let _stack = [];
 function sheet(){
   let s = $s('svSheet');
-  if(!s){ s = document.createElement('div'); s.id = 'svSheet'; s.className = 'sv-sheet'; s.innerHTML = '<div class="sv-wrap"><div class="sv-head"><button onclick="svBack()" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button><h3 id="svTitle"></h3><div id="svHx" class="sv-hx"></div></div><div class="sv-body" id="svBody"></div></div>'; document.body.appendChild(s); }
+  if(!s){ s = document.createElement('div'); s.id = 'svSheet'; s.className = 'sv-sheet'; s.innerHTML = '<div class="sv-wrap"><div class="sv-head"><button onclick="svBack()" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button><h3 id="svTitle"></h3><div id="svHx" class="sv-hx"></div><button id="svHomeB" class="sv-homeb" onclick="svHome()" aria-label="Home" style="display:none"><i class="fa-solid fa-house"></i></button></div><div class="sv-body" id="svBody"></div></div>'; document.body.appendChild(s); }
   return s;
 }
 function show(title, html){
@@ -480,20 +539,29 @@ function show(title, html){
   if(recent || trialOn) html = `${trialOn ? `<div class="cx-note trial"><i class="fa-solid fa-flask"></i><span><b>Trial</b> — open until ${new Date(tc.trialEnd).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span></div>` : ''}${recent ? `<div class="cx-note"><i class="fa-solid fa-${tc.verKind === 'fixed' ? 'screwdriver-wrench' : 'rotate'}"></i><span><b>v${E(tc.ver)} · ${tc.verKind === 'fixed' ? 'Fixed' : 'Updated'}</b>${tc.verNote ? ' — ' + E(tc.verNote) : ''}</span></div>` : ''}` + html;
   if(tc.note || tc.status === 'busy') html = `${tc.status === 'busy' ? `<div class="cx-note warn"><i class="fa-solid fa-hourglass-half"></i><span>${E(tc.statusNote || 'This service is busy right now — it may take longer than usual.')}</span></div>` : ''}${tc.note ? `<div class="cx-note"><i class="fa-solid fa-circle-info"></i><span>${E(tc.note)}</span></div>` : ''}` + html;
   sheet().classList.add('on');
+  { const hb = $s('svHomeB'); if(hb) hb.style.display = _stack.length > 1 ? '' : 'none'; }
   // the Digital Balance in the header on digital service pages (extra.js decides)
   { const hx = $s('svHx'); if(hx){ let h = ''; try { h = typeof window._svHeadX === 'function' ? window._svHeadX(top) || '' : ''; } catch (e) {} hx.innerHTML = h; } } $s('svTitle').textContent = title; $s('svBody').innerHTML = html; $s('svBody').scrollTop = 0; document.body.style.overflow = 'hidden'; document.body.classList.add('sv-open'); }
-window.svGo = function(k){
+let _jump = 0;
+window.svGo = function(k, o){
   const t = T[k]; if(!t) return;
   if(t.login && !user()){ if(window.nav) nav('screen-login'); return; }
   if(!t.page){ svClose(); return t.go && t.go(); }
+  // a page already open further back: go back to it (no copies piling up, so Back reaches home quickly)
+  const at = _stack.indexOf(k);
+  if(at >= 0 && !(o && o.replace)){ const n = _stack.length - 1 - at; _stack = _stack.slice(0, at + 1); if(n > 0){ _jump++; try { history.go(-n); } catch (e) { _jump--; } } open(k); return; }
+  // a finished step (order placed, deposit sent) is replaced by the next page instead of stacking on it
+  if(o && o.replace && _stack.length){ _stack[_stack.length - 1] = k; try { history.replaceState({ sv: k }, ''); } catch (e) {} open(k); return; }
   _stack.push(k); try { history.pushState({ sv: k }, ''); } catch (e) {}
   open(k);
 };
+// close every open page at once (the house button in the header)
+window.svHome = function(){ const n = _stack.length; _stack = []; if(n > 0){ _jump++; try { history.go(-n); } catch (e) { _jump--; } } svClose(true); };
 function open(k){ const g = gate(k); if(g) return g(); const P = PAGES[k] || window._svcPages[k]; if(P) P(); }
 window.svBack = function(){ try { if(history.state && history.state.sv) { history.back(); return; } } catch (e) {} _pop(); };
 function _pop(){ _stack.pop(); const k = _stack[_stack.length - 1]; if(k) open(k); else svClose(true); }
 window.svClose = function(silent){ const s = $s('svSheet'); if(s) s.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('sv-open'); _stack = []; renderHub(); };
-window.addEventListener('popstate', () => { if($s('svSheet') && $s('svSheet').classList.contains('on')) _pop(); });
+window.addEventListener('popstate', () => { if(_jump > 0){ _jump--; return; } if($s('svSheet') && $s('svSheet').classList.contains('on')) _pop(); });
 window._svShow = show; window._svApi = api; window._svToast = toast; window._svE = E; window._svTk = tk; window._svCfg = () => SV.cfg || {}; window._svLoadCfg = loadCfg;
 
 /* ───────── effects ───────── */
@@ -671,26 +739,18 @@ const PAGES = {
     if(kind === 'vip' && !plan){ show('Payment', '<div class="sv-empty">No VIP plan is available right now.</div>'); return; }
     if(plan) window._vipSel = plan.id;
     const price = kind === 'vip' ? (plan ? plan.price : 0) : V.verify.price;
-    const ws = (window._feeWallets || []).map(w => ({ w, opts: typeof window._walletOptions === 'function' ? window._walletOptions(w) : Array.isArray(w.methods) && w.methods.length ? w.methods.filter(o => o && o.number) : [{ type: w.payMethod || 'Send Money', number: w.collectionNumber || w.paymentNumber }] })).filter(x => x.opts.length && x.opts[0].number);
-    if(!ws.length){ show('Payment', '<div class="sv-empty">No payment number is available right now. Please contact support.</div>'); return; }
-    window._payW = window._payW || 0; if(!ws[window._payW]) window._payW = 0;
-    const cur = ws[window._payW]; if(!cur.opts[window._payO || 0]) window._payO = 0; const opt = cur.opts[window._payO || 0];
     const u = user() || {};
     show(kind === 'vip' ? `${plan ? plan.name : 'VIP'} payment` : 'Verification payment', `
-      <div class="sv-card" style="text-align:center"><div style="font-size:12px;color:var(--txt2)">Amount to send</div><div style="font-size:34px;font-weight:900;color:${kind === 'vip' ? '#ffd76a' : '#46b0ff'}">${tk(price)}</div><div style="font-size:12px;color:var(--txt2)">${kind === 'vip' ? E(plan.name) + ' · one-time' : 'Verified badge · one-time'}</div></div>
+      <div class="pp-num" style="border-style:solid;border-color:${kind === 'vip' ? 'rgba(255,215,106,.55)' : 'rgba(70,176,255,.55)'};background:${kind === 'vip' ? 'rgba(255,215,106,.08)' : 'rgba(70,176,255,.08)'}"><div><small>Amount to send · ${kind === 'vip' ? E(plan.name) : 'Verified badge'} · one-time</small><b style="font-family:inherit;color:${kind === 'vip' ? '#ffd76a' : '#46b0ff'}">${tk(price)}</b></div>${window._cpBtn(price)}</div>
       <span class="sv-lbl">1. Choose how to pay</span>
-      <div class="pay-w">${ws.map((x, i) => `<button class="${i === window._payW ? 'on' : ''}" onclick="window._payW=${i};window._payO=0;svPage('pay')">${x.w.logoUrl ? `<img src="${E(x.w.logoUrl)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.w.name)}</button>`).join('')}</div>
-      ${cur.opts.length > 1 ? `<div class="xs-chips" style="margin:-2px 0 8px">${cur.opts.map((o, j) => `<button class="${j === (window._payO || 0) ? 'on' : ''}" onclick="window._payO=${j};svPage('pay')">${E(o.type || 'Send Money')}</button>`).join('')}</div>` : ''}
-      <span class="sv-lbl">2. ${E(opt.type || 'Send Money')} ${tk(price)} to this number</span>
-      <div class="pay-num"><div><small>${E(cur.w.name)} · ${E(opt.type || 'Send Money')}</small><b>${E(opt.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(opt.number)}').then(()=>svToastOk('Number copied'))">Copy</button></div>
-      ${opt.note || (opt.instructions || []).filter(Boolean).length ? `<div class="xs-pnote">${opt.note ? `<div>${E(opt.note)}</div>` : ''}${(opt.instructions || []).filter(Boolean).length ? `<ol>${opt.instructions.filter(Boolean).slice(0, 6).map(t => `<li>${E(t)}</li>`).join('')}</ol>` : ''}</div>` : ''}
+      ${window._payPick('sv')}
       ${kind === 'verify' ? `<div style="font-size:11.5px;color:var(--txt2);margin:6px 2px"><i class="fa-solid fa-circle-info"></i> The full ৳${price} is needed — no discount, coupon or promo code applies to this fee.</div>` : ''}
-      <span class="sv-lbl">3. Enter the payment details</span>
+      <span class="sv-lbl">2. Enter the payment details</span>
       <input class="sv-in code" id="pyTrx" placeholder="TRANSACTION ID" maxlength="30" autocomplete="off">
       ${kind === 'verify' ? '' : `<input class="sv-in" id="pySender" type="tel" placeholder="Paid from number (01XXXXXXXXX)" style="margin-top:8px">`}
       <button class="sv-btn ${kind === 'vip' ? 'gold' : ''}" style="margin-top:12px" id="pyBtn" onclick="svPaySubmit()"><i class="fa-solid fa-paper-plane"></i>Submit payment</button>
       <div style="font-size:11.5px;color:var(--txt2);margin-top:9px;text-align:center;line-height:1.6">Our team checks the payment and switches it on — usually within a few hours. You get a notification.</div>`);
-    window._payData = { kind, plan: plan ? plan.id : '', price, payMethod: cur.w.name + (opt.type ? ' · ' + opt.type : ''), toNumber: opt.number };
+    window._payData = { kind, plan: plan ? plan.id : '', price };
   }
 };
 window.svLang = function(v){ if(window.setLang) setLang(v); toast(v === 'bn' ? 'ভাষা: বাংলা' : 'Language: English'); setTimeout(() => { svClose(); renderHub(); }, 350); };
@@ -755,7 +815,8 @@ window.svVcBack = async function(code){
 };
 window.svPay = function(kind){ window._payKind = kind; _stack.push('pay'); try { history.pushState({ sv: 'pay' }, ''); } catch (e) {} PAGES.pay(); };
 window.svPaySubmit = async function(){
-  const d = window._payData || {}; const trxId = ($s('pyTrx').value || '').trim(), sender = (($s('pySender') || {}).value || '').trim();
+  const w = window._ppCur('sv'); if(!w){ toast('Choose how you paid (bKash, Nagad…)', true); return; }
+  const d = { ...(window._payData || {}), payMethod: w.name + (w.type ? ' · ' + w.type : ''), toNumber: w.number }; const trxId = ($s('pyTrx').value || '').trim(), sender = (($s('pySender') || {}).value || '').trim();
   if(trxId.length < 6){ toast('Enter the Transaction ID from your payment SMS', true); return; }
   const b = $s('pyBtn'); b.disabled = true; b.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>Submitting…';
   const r = await api('buyService', { ...d, trxId, sender });

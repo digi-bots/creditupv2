@@ -38,7 +38,7 @@ function norm(t) {
     appLink: str(t.appLink, 200), siteUrl: /^https:\/\//.test(String(t.siteUrl || '')) ? str(t.siteUrl, 200).replace(/\/+$/, '') : DEF.siteUrl,
     footer: str(t.footer ?? DEF.footer, 120), button: str(t.button || DEF.button, 30),
     auto: { ...DEF.auto, ...(t.auto || {}) }, welcome: { ...DEF.welcome, ...(t.welcome || {}) }, rules: str(t.rules ?? DEF.rules, 1500),
-    mod: (() => { const m = t.mod || {}; return { on: m.on !== false, links: m.links !== false, payNeg: m.payNeg !== false, abuse: m.abuse !== false, phones: m.phones !== false, flood: m.flood !== false, forwards: m.forwards !== false, spam: m.spam !== false,
+    mod: (() => { const m = t.mod || {}; return { on: m.on !== false, noComments: m.noComments !== false, links: m.links !== false, payNeg: m.payNeg !== false, abuse: m.abuse !== false, phones: m.phones !== false, flood: m.flood !== false, forwards: m.forwards !== false, spam: m.spam !== false,
       limit: Math.max(1, Math.min(10, Math.floor(Number(m.limit) || 3))), words: (Array.isArray(m.words) ? m.words : []).map(w => str(w, 40).toLowerCase()).filter(Boolean).slice(0, 100) }; })(),
     on: t.on !== false, dm: t.dm !== false, miniApp: t.miniApp !== false,
     adminAlerts: { on: (t.adminAlerts || {}).on !== false, orders: (t.adminAlerts || {}).orders !== false, trx: (t.adminAlerts || {}).trx !== false, summary: (t.adminAlerts || {}).summary !== false }

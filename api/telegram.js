@@ -126,6 +126,11 @@ async function onGroup(m, S) {
   const target = m.reply_to_message && m.reply_to_message.from && !m.reply_to_message.from.is_bot ? m.reply_to_message.from : null;
   const del = () => TG.call('deleteMessage', { chat_id: chat, message_id: m.message_id }).catch(() => {});
   const note = (t, quiet = true) => TG.call('sendMessage', { chat_id: chat, text: t, parse_mode: 'HTML', disable_notification: quiet }).catch(() => {});
+  // the channel is for notices only: comments under channel posts are removed — members talk in the group itself
+  if (!isAdm && S.mod.noComments !== false && m.reply_to_message && m.reply_to_message.is_automatic_forward) {
+    await del();
+    return note(`💬 ${TG.esc(MOD.nameOf(m.from))}, comments on channel posts are off. Please write your message here in the group as a new message.`);
+  }
   // everyone's commands
   if (cmd === '/offers') return say(chat, S, await offersText(), false);
   if (cmd === '/rules') return say(chat, S, `📜 <b>Community rules</b>\n\n${TG.esc(S.rules)}\n\n${NOTICE(S.mod.limit)}`, false);
