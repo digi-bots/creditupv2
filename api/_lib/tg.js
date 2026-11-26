@@ -34,6 +34,32 @@ function norm(t) {
     adminAlerts: { on: (t.adminAlerts || {}).on !== false, orders: (t.adminAlerts || {}).orders !== false, trx: (t.adminAlerts || {}).trx !== false, summary: (t.adminAlerts || {}).summary !== false }
   };
 }
+// the webhook address: try the site's host and its www / no-www twin; the first that answers our endpoint
+// directly (no 3xx) wins. Telegram never follows a redirect.
+const twin = host => host.startsWith('www.') ? host.slice(4) : 'www.' + host;
+async function bestHook(siteUrl) {
+  const host = new URL(siteUrl).host, cands = [...new Set([host.startsWith('www.') ? host : 'www.' + host, host, twin(host)])];
+  for (const h of cands) {
+    try {
+      const r = await fetch(`https://${h}/api/telegram`, { method: 'GET', redirect: 'manual' });
+      if (r.status >= 300 && r.status < 400) continue;
+      const j = await r.json().catch(() => null);
+      if (j && j.ok === true && j.creditfy === true) return `https://${h}/api/telegram`;
+    } catch (e) {}
+  }
+  return `https://${cands[0]}/api/telegram`;
+}
+// self-repair: if Telegram reports a redirect for the current webhook, switch to the twin host
+// (waiting messages are kept and delivered once it works). Returns the new address or ''.
+async function fixHook(db) {
+  if (!configured()) return '';
+  const info = await call('getWebhookInfo').catch(() => null);
+  if (!info || !info.url || !/30[1278]|redirect/i.test(info.last_error_message || '')) return '';
+  const u = new URL(info.url), next = `https://${twin(u.host)}/api/telegram`;
+  await call('setWebhook', { url: next, secret_token: hookSecret(), allowed_updates: ['message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: false });
+  try { await db().collection('tgMeta').doc('hook').set({ url: next, fixedFrom: info.url, at: iso() }); } catch (e) {}
+  return next;
+}
 async function settings(db) { try { const s = await db().collection('siteConfig').doc('app').get(); return norm(s.exists ? s.data().telegram : null); } catch (e) { return norm(null); } }
 
 async function call(method, body) {
@@ -126,6 +152,7 @@ async function runSchedule(db, force) {
     await db().runTransaction(async t => { const s = await t.get(lock); const at = s.exists ? Number(s.data().at) || 0 : 0; if (Date.now() - at > 4 * 60e3) { t.set(lock, { at: Date.now() }); go = true; } });
     if (!go) return { ran: 0, skipped: 'recent' };
   }
+  try { await fixHook(db); } catch (e) {}
   const all = await db().collection('tgSchedule').get();
   let ran = 0;
   for (const d of all.docs) {
@@ -141,7 +168,7 @@ async function runSchedule(db, force) {
   return { ran };
 }
 
-module.exports = { DEF, norm, settings, call, publish, dm, verifyInitData, configured, hookSecret, chatId, compose, esc, appUrl, TOKEN, runSchedule, isDue, bdNow };
+module.exports = { fixHook, bestHook, DEF, norm, settings, call, publish, dm, verifyInitData, configured, hookSecret, chatId, compose, esc, appUrl, TOKEN, runSchedule, isDue, bdNow };
 
 // account actions (admin + user), merged into /api/account
 module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
@@ -158,29 +185,22 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
       if (!configured()) return [200, { configured: false }];
       const S = await settings(db);
       const me = await call('getMe');
+      const fixed = await fixHook(db).catch(() => '');
       const hook = await call('getWebhookInfo').catch(() => ({}));
       const check = async c => { if (!c) return null; try { const chat = await call('getChat', { chat_id: chatId(c) }); const m = await call('getChatMember', { chat_id: chat.id, user_id: me.id }).catch(() => ({})); const n = await call('getChatMemberCount', { chat_id: chat.id }).catch(() => null);
         return { ok: true, title: chat.title, username: chat.username || '', id: chat.id, type: chat.type, admin: ['administrator', 'creator'].includes(m.status), canPost: m.can_post_messages !== false, canDelete: !!m.can_delete_messages, members: n }; } catch (e) { return { ok: false, error: e.message }; } };
       const [channel, group] = await Promise.all([check(S.channel), check(S.group)]);
       const site = S.siteUrl;
-      return [200, { configured: true, bot: { id: me.id, username: me.username, name: me.first_name }, webhook: { url: hook.url || '', ok: /^https:\/\/[^/]+\/api\/telegram$/.test(hook.url || ''), lastError: hook.last_error_date ? iso(hook.last_error_date * 1000) : '', pending: hook.pending_update_count || 0, error: hook.last_error_message || '' }, channel, group }];
+      return [200, { configured: true, fixed, bot: { id: me.id, username: me.username, name: me.first_name }, webhook: { url: hook.url || '', ok: /^https:\/\/[^/]+\/api\/telegram$/.test(hook.url || ''), lastError: hook.last_error_date ? iso(hook.last_error_date * 1000) : '', pending: hook.pending_update_count || 0, error: hook.last_error_message || '' }, channel, group }];
     }),
     // one-tap setup: webhook, commands, the "Open app" menu button, bot descriptions
     adminTgSetup: wrapE(async (b, user) => {
       const no = await admin(user); if (no) return no;
       const S = await settings(db);
       const me = await call('getMe');
-      // Telegram does not follow redirects (www ⇄ no-www): find the address that answers directly
-      let hookUrl = S.siteUrl + '/api/telegram';
-      for (let k = 0; k < 4; k++) {
-        try {
-          const r = await fetch(hookUrl, { method: 'POST', redirect: 'manual', headers: { 'Content-Type': 'application/json' }, body: '{}' });
-          const loc = r.status >= 300 && r.status < 400 && r.headers.get('location');
-          if (!loc) break;
-          const u = new URL(loc, hookUrl); hookUrl = 'https://' + u.host + '/api/telegram';
-        } catch (e) { break; }
-      }
-      await call('setWebhook', { url: hookUrl, secret_token: hookSecret(), allowed_updates: ['message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: true });
+      // Telegram does not follow redirects (www ⇄ no-www): pick the address that answers without one
+      const hookUrl = await bestHook(S.siteUrl);
+      await call('setWebhook', { url: hookUrl, secret_token: hookSecret(), allowed_updates: ['message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: false });
       const cmds = [{ command: 'start', description: 'Open Creditfy & connect your account' }, { command: 'offers', description: 'Today’s offers and deals' }, { command: 'balance', description: 'Your Creditfy & Extra Balance' },
         { command: 'app', description: 'Open the Creditfy app' }, { command: 'rules', description: 'Community rules' }, { command: 'help', description: 'Help' }];
       await call('setMyCommands', { commands: cmds });

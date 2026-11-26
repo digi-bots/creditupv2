@@ -5,7 +5,7 @@ const STEPS = ['Applied', 'Fee Pending', 'Fee Submitted', 'Fee Verified', 'Appro
 // status → index of the current step (steps before it are done)
 const AT = { 'Pending Fee Payment': 1, 'TrxID Submitted': 2, 'Fee Verified': 3, 'Approved': 4, 'Disbursement Rejected': 4, 'Disbursed': 6, 'Active': 6, 'Overdue': 6, 'Repaid': 8 };
 const css = `
-#lnJourney{position:relative;border-radius:22px;padding:14px 12px 12px;margin:14px -8px 6px;background:radial-gradient(120% 140% at 0% 0%,rgba(29,219,128,.14),transparent 55%),linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.012));border:1px solid rgba(29,219,128,.28);box-shadow:0 12px 28px rgba(0,0,0,.25);cursor:pointer}
+#lnJourney{position:relative;border-radius:22px;padding:14px 12px 12px;margin:0 -8px 18px;background:radial-gradient(120% 140% at 0% 0%,rgba(29,219,128,.14),transparent 55%),linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.012));border:1px solid rgba(29,219,128,.28);box-shadow:0 12px 28px rgba(0,0,0,.25);cursor:pointer}
 #lnJourney .hd{display:flex;align-items:center;gap:8px;margin:0 4px 10px}
 #lnJourney .hd b{font-size:14.5px;color:var(--txt)}#lnJourney .hd span{margin-left:auto;font-size:11px;font-weight:900;padding:3px 9px;border-radius:9px;background:rgba(29,219,128,.14);color:var(--p)}
 #lnJourney .hd span.bad{background:rgba(255,77,106,.15);color:#ff8fa3}#lnJourney .hd span.warn{background:rgba(255,140,66,.15);color:#ffae6b}

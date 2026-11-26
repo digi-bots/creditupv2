@@ -118,7 +118,7 @@ async function onGroup(m, S) {
 }
 
 module.exports = async (req, res) => {
-  if (req.method !== 'POST') return res.status(200).json({ ok: true });
+  if (req.method !== 'POST') return res.status(200).json({ ok: true, creditfy: true });   // also used to find the right webhook address
   if (!TG.configured() || req.headers['x-telegram-bot-api-secret-token'] !== TG.hookSecret()) return res.status(401).json({ ok: false });
   let u = req.body; if (typeof u === 'string') { try { u = JSON.parse(u); } catch (e) { u = {}; } }
   try {
