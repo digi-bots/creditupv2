@@ -80,7 +80,7 @@ async function onPrivate(m, S) {
     const q = await db().collection('users').where('tgChatId', '==', String(chat)).limit(1).get();
     if (q.empty) return say(chat, S, 'Your account is not connected yet. Open Creditfy → Telegram → <b>Connect</b>.', true);
     const u = q.docs[0].data();
-    return say(chat, S, `💼 <b>Your balances</b>\nCreditfy balance: <b>${tk(u.balance)}</b>\nExtra Balance: <b>${tk(u.xbal)}</b>${u.phoneVerified ? '\n✅ Verified member' : ''}`, true);
+    return say(chat, S, `💼 <b>Your balances</b>\nCreditfy balance: <b>${tk(u.balance)}</b>\nDigital Balance: <b>${tk(u.xbal)}</b>${u.phoneVerified ? '\n✅ Verified member' : ''}`, true);
   }
   if (cmd === '/rules') return say(chat, S, `📜 <b>Community rules</b>\n\n${TG.esc(S.rules)}`, true);
   if (cmd === '/app') return say(chat, S, 'Open the Creditfy app 👇', true);

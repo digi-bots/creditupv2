@@ -14,7 +14,7 @@ const DEF = {
   title: '☀️ Good morning from Creditfy',
   text: `✅ Loans are running smoothly — applications are reviewed and processed every day, and you can follow every step in the app.
 
-🛍️ Extra Services, all in one place:
+🛍️ Digital Services, all in one place:
 • 📱 Mobile recharge for every operator
 • 🎁 Gift cards — Google Play, iTunes, Steam
 • 💱 Currency & MFS exchange (bKash ⇄ Nagad ⇄ Rocket)
@@ -25,12 +25,12 @@ const DEF = {
 
 🎁 Bonus & referrals: share your invite link — the more friends join, the bigger the offers you can unlock.
 
-✔️ Get Verified today for a smoother review, full access to every service and no service charge on Extra Services.
+✔️ Get Verified today for a smoother review, full access to every service and no service charge on Digital Services.
 
 👑 Need it sooner? VIP applications are reviewed first.
 
 Open Creditfy and make the most of it today 👇`,
-  pushText: 'Loans are running smoothly ✅ Recharge, gift cards, exchange & more in Extra Services. Invite friends for bigger offers, get Verified and try VIP.'
+  pushText: 'Loans are running smoothly ✅ Recharge, gift cards, exchange & more in Digital Services. Invite friends for bigger offers, get Verified and try VIP.'
 };
 const norm = d => { d = d || {}; return { ...DEF, ...d, title: str(d.title || DEF.title, 120), text: str(d.text || DEF.text, 3500), pushText: str(d.pushText || DEF.pushText, 230),
   on: d.on !== false, site: d.site !== false, push: d.push !== false, channel: d.channel !== false, bot: d.bot !== false, pin: d.pin === true,
@@ -116,7 +116,7 @@ async function runDaily(db, { force = false, only = null } = {}) {
       const old = await db().collection('broadcasts').where('daily', '==', true).get();
       await Promise.all(old.docs.filter(d => d.data().removed !== true).map(d => d.ref.update({ removed: true })));
       await db().collection('broadcasts').add({ title: D.title, subject: tc ? `🎟️ Today's code ${tc.code} = ৳${tc.amount}` : D.pushText, message: D.text + codeTxt, type: 'info', from: 'daily', daily: true, createdAt: iso(), expiresAt: iso(bdMidnight()),
-        ...(tc ? { buttonText: 'Redeem the code', buttonUrl: '/?go=redeem' } : { buttonText: 'Open Extra Services', buttonUrl: '/?go=extra' }) });
+        ...(tc ? { buttonText: 'Redeem the code', buttonUrl: '/?go=redeem' } : { buttonText: 'Open Digital Services', buttonUrl: '/?go=extra' }) });
       out.site = 'ok';
     } catch (e) { out.site = 'failed: ' + e.message; }
   }

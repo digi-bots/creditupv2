@@ -1,6 +1,6 @@
-// Extra Services (below Quick Services): currency & MFS exchange, gift cards, SMM, virtual cards, promo codes,
+// Digital Services (below Quick Services): currency & MFS exchange, gift cards, SMM, virtual cards, promo codes,
 // gift vouchers and games. Most are paid: the user sends the money (TrxID), the admin delivers the order by hand.
-// The list lives in siteConfig/services → extra (Admin → Services & Rewards → Extra services).
+// The list lives in siteConfig/services → extra (Admin → Services & Rewards → Digital services).
 // Orders: serviceOrders with kind 'extra' (Pending → Processing → Delivered, or Rejected).
 
 const iso = (t = Date.now()) => new Date(t).toISOString();
@@ -11,7 +11,7 @@ const str = (v, n = 200) => String(v ?? '').replace(/[<>]/g, '').trim().slice(0,
 const item = (id, name, price, note = '', cat = '', hot = false) => ({ id, name, price, note, on: true, cat, hot });
 const pair = (id, name, o = {}) => ({ id, name, on: true, unit: '৳', rate: 1, pct: 1.5, fee: 0, min: 100, max: 25000, flow: 'buy', to: '', note: '', ...o });
 const DEF = {
-  on: true, title: 'Extra Services',
+  on: true, title: 'Digital Services',
   services: [
     { id: 'exchange', name: 'Currency Exchange', short: 'Exchange', icon: 'fa-solid fa-money-bill-transfer', color: 'g-teal', mode: 'amount', on: true,
       desc: 'Buy or sell USDT and dollars at our daily rate. Our team sends it by hand after checking your payment.',
@@ -45,13 +45,13 @@ const DEF = {
       items: [pair('b2n', 'bKash → Nagad'), pair('n2b', 'Nagad → bKash'), pair('b2r', 'bKash → Rocket'), pair('r2b', 'Rocket → bKash'), pair('n2r', 'Nagad → Rocket'), pair('r2n', 'Rocket → Nagad')] }
   ],
   games: { on: true, reward: 1, perDay: 5, plays: 30, level: 75 },
-  // Extra Balance: deposit once, pay for orders from it; direct = also allow paying each order with a TrxID
+  // Digital Balance: deposit once, pay for orders from it; direct = also allow paying each order with a TrxID
   wallet: { on: true, min: 50, max: 50000, direct: true },
   // deposit bonus: the best matching tier (by deposit amount) adds a % on top, up to a cap
   depBonus: { on: false, tiers: [{ min: 500, pct: 2 }, { min: 2000, pct: 3 }, { min: 5000, pct: 5 }], max: 500 },
-  // mobile recharge (Quick Services): Verified and VIP members only, paid from Extra Balance, done by hand
+  // mobile recharge (Quick Services): Verified and VIP members only, paid from Digital Balance, done by hand
   recharge: { on: true, min: 20, max: 1000, ops: ['Grameenphone', 'Robi', 'Airtel', 'Banglalink', 'Teletalk'] },
-  // micro jobs: tasks a user finishes and proves; the admin checks and adds the reward to Extra Balance
+  // micro jobs: tasks a user finishes and proves; the admin checks and adds the reward to Digital Balance
   jobs: { on: true, tasks: [] },
   live: { on: true, count: 12 },
   // Verified exclusive: no service charge on fixed-price services and no transaction fee on exchanges
@@ -75,21 +75,30 @@ function canUse(access, verified, level) {
   return level >= Number(access.slice(3));
 }
 const accessText = a => ({ verified: 'Verified members', vip: 'VIP members', vip1: 'VIP 1 members and above', vip2: 'VIP 2 members and above', vip3: 'VIP 3 members' }[a] || '');
+// a service on trial until a set time: after it ends, it closes by itself (no order can be placed)
+function trial(s) {
+  const end = s.trialEnd ? new Date(s.trialEnd).getTime() : 0, st = ['open', 'busy', 'closed'].includes(s.status) ? s.status : 'open';
+  if (end && end <= Date.now()) return { status: 'closed', statusNote: str(s.trialNote, 160) || 'This trial has ended. Thank you for trying it!', trialEnd: str(s.trialEnd, 40), trialOver: true };
+  return { status: st, statusNote: str(s.statusNote, 160), trialEnd: end ? str(s.trialEnd, 40) : '' };
+}
 function norm(x) {
   x = x || {};
   const list = Array.isArray(x.services) ? x.services : DEF.services;
   return {
-    on: x.on !== false, title: str(x.title || DEF.title, 40),
+    on: x.on !== false, title: /^(extra|additional) services?$/i.test(String(x.title || '').trim()) ? DEF.title : str(x.title || DEF.title, 40),
     services: list.filter(s => s && s.id && s.name).map(s => ({
       id: str(s.id, 30), name: str(s.name, 40), short: str(s.short || s.name, 16), logo: str(s.logo, 500), icon: str(s.icon || 'fa-solid fa-star', 60), color: str(s.color || 'g-teal', 20),
       mode: ['items', 'amount', 'game'].includes(s.mode) ? s.mode : 'items', on: s.on !== false, soon: s.soon === true, badge: str(s.badge, 14), desc: str(s.desc, 400), note: str(s.note, 400),
-      access: ACCESS.includes(s.access) ? s.access : 'all', status: ['open', 'busy', 'closed'].includes(s.status) ? s.status : 'open', statusNote: str(s.statusNote, 160),
+      access: ACCESS.includes(s.access) && s.access !== 'verified' ? s.access : 'all', ...trial(s),
+      eta: str(s.eta, 40), deliver: s.deliver === 'email' ? 'email' : '', ver: str(s.ver, 12), verKind: s.verKind === 'fixed' ? 'fixed' : s.verKind === 'updated' ? 'updated' : '', verNote: str(s.verNote, 160), verAt: str(s.verAt, 40),
       fields: (Array.isArray(s.fields) ? s.fields : []).filter(f => f && f.label).slice(0, 6).map(f => ({ label: str(f.label, 60), req: f.req === true })),
       items: (Array.isArray(s.items) ? s.items : []).filter(i => i && i.id && i.name).slice(0, 60).map(i => ({
         id: str(i.id, 30), name: str(i.name, 60), on: i.on !== false, note: str(i.note, 300), price: money(i.price), to: str(i.to, 120),
         unit: str(i.unit || '৳', 8), rate: Math.max(0, Number(i.rate) || 0) || 1, pct: Math.max(0, Math.min(50, Number(i.pct) || 0)), fee: money(i.fee),
         min: Math.max(0, Number(i.min) || 0), max: Math.max(0, Number(i.max) || 0), flow: i.flow === 'sell' ? 'sell' : 'buy',
         offer: money(i.offer), offerEnd: str(i.offerEnd, 40), cat: str(i.cat, 24), group: str(i.group, 24), hot: i.hot === true,
+        rating: Math.max(0, Math.min(5, Math.round((Number(i.rating) || 0) * 10) / 10)), region: str(i.region, 30), eta: str(i.eta, 40),
+        stock: i.stock === '' || i.stock === null || i.stock === undefined || Number(i.stock) < 0 || isNaN(Number(i.stock)) ? null : Math.floor(Number(i.stock)), lowAt: Math.max(0, Math.floor(Number(i.lowAt ?? 3) || 0)),
         icon: /^https:\/\//i.test(String(i.icon || '')) ? str(i.icon, 500) : str(i.icon, 60), color: str(i.color, 20) }))
     })),
     deals: (Array.isArray(x.deals) ? x.deals : []).filter(d => d && d.sid && d.iid && money(d.price) > 0).slice(0, 30).map(d => ({ id: str(d.id || d.sid + d.iid, 30), sid: str(d.sid, 30), iid: str(d.iid, 30),
@@ -126,7 +135,7 @@ function priceNow(C, s, i, t = Date.now()) {
 }
 
 // what the user pays (buy) or gets (sell) for an amount
-// Verified members pay no service charge and no transaction fee (the perk; Admin → Extra services)
+// Verified members pay no service charge and no transaction fee (the perk; Admin → Digital services)
 function quote(s, i, amount, verified, P) {
   const free = !!(P && P.on && verified);
   if (s.mode !== 'amount') {
@@ -165,14 +174,14 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
     catch (e) { if (e.status) return [e.status, { error: e.message, ...(e.code ? { code: e.code } : {}) }]; throw e; }
   };
   let _live = null;
-  // add (or take) Extra Balance and write a history line — one transaction; `also` adds more writes to it
+  // add (or take) Digital Balance and write a history line — one transaction; `also` adds more writes to it
   async function xcredit(ref, uid, amount, type, note, extra = {}, also) {
     const log = db().collection('xbalLog').doc();
     let after = 0;
     await db().runTransaction(async t => {
       const s = await t.get(ref);
       after = (Number((s.data() || {}).xbal) || 0) + amount;
-      if (after < 0) throw Object.assign(new Error('Not enough Extra Balance. Please add balance first.'), { status: 400, code: 'xbal_low' });
+      if (after < 0) throw Object.assign(new Error('Not enough Digital Balance. Please add balance first.'), { status: 400, code: 'xbal_low' });
       t.update(ref, { xbal: after });
       t.set(log, { uid, amount, type, note: String(note || '').slice(0, 140), after, at: iso(), ...extra });
       if (also) also(t);
@@ -208,13 +217,55 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
   const pubOrder = o => ({ id: o.id, sid: o.sid, sname: o.sname, iname: o.iname, unit: o.unit, amount: o.amount, price: o.price, get: o.get, fee: o.fee || 0, feeWaived: o.feeWaived === true, saved: o.saved || 0, flow: o.flow, fields: o.fields || [], trxId: o.trxId,
     status: o.status, reason: o.reason || '', delivery: o.status === 'Delivered' ? (o.delivery || '') : '', createdAt: o.createdAt, decidedAt: o.decidedAt || '' });
 
+  // one less in stock; tell the admins on Telegram when it gets low (the admin panel also shows a low-stock banner)
+  async function takeStock(sid, iid) {
+    const ref = db().collection('siteConfig').doc('services'); let left = null, name = '', low = 3;
+    await db().runTransaction(async t => {
+      const snap = await t.get(ref); const x = (snap.exists && snap.data().extra) || {}; const list = Array.isArray(x.services) ? x.services : [];
+      const sv = list.find(v => v && v.id === sid), it = sv && (sv.items || []).find(v => v && v.id === iid);
+      if (!it || it.stock === '' || it.stock === null || it.stock === undefined || Number(it.stock) < 0) return;
+      it.stock = Math.max(0, Math.floor(Number(it.stock) || 0) - 1); left = it.stock; name = `${sv.name} · ${it.name}`; low = Math.max(0, Math.floor(Number(it.lowAt ?? 3) || 0));
+      t.update(ref, { 'extra.services': list });
+    });
+    if (left !== null && left <= low) {
+      const txt = left === 0 ? `⛔ Out of stock: ${name}` : `⚠️ Low stock: ${name} — only ${left} left`;
+      const TG = require('./tg'); if (TG.configured()) { const A = await require('./alerts').admins(db); await Promise.all(A.map(a => TG.call('sendMessage', { chat_id: a.chat, text: txt + '\nRestock it in Admin → Services → Digital services.' }).catch(() => {}))); }
+    }
+  }
   const actions = {
+    // a user's idea for a new service, kept per section (scope) so ideas do not get mixed: 'x:<service id>', 'q:<category>', 'x:all'
+    suggest: wrap(async (b, uid) => {
+      const scope = str(b.scope, 60).replace(/[^\w:.-]/g, ''), text = str(b.text, 500);
+      if (!/^[xq]:[\w.-]{1,50}$/.test(scope)) return [400, { error: 'Please try again.' }];
+      if (text.length < 4) return [400, { error: 'Please write a few words about the service you want.' }];
+      const day = new Date(Date.now() + 6 * 3600e3).toISOString().slice(0, 10);
+      const mine = await db().collection('suggestions').where('uid', '==', uid).get();
+      if (mine.docs.filter(x => String(x.data().createdAt || '').slice(0, 10) >= day).length >= 5) return [429, { error: 'You can send up to 5 suggestions a day. Thank you!' }];
+      await db().collection('suggestions').add({ uid, scope, label: str(b.label, 60), text, status: 'new', createdAt: iso() });
+      return [200, { ok: true }];
+    }),
+    // good news to everyone (new service / item / task / bonus, or a service update or fix) — admins only
+    adminAnnounce: async (b, user) => {
+      if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admins only.' }];
+      const lines = (Array.isArray(b.lines) ? b.lines : []).slice(0, 8);
+      if (!lines.length) return [400, { error: 'Nothing to announce.' }];
+      const out = await require('./announce').announce(db, { lines, link: /^\/\?go=[\w-]+$/.test(String(b.link || '')) ? b.link : '/?go=extra', where: b.where || {} });
+      await db().collection('announcements').add({ lines, out, by: user.uid, at: iso() }).catch(() => {});
+      return [200, { ok: true, out }];
+    },
+    adminSuggestions: async (b, user) => {
+      if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admins only.' }];
+      if (b.op === 'done' && b.id) { await db().collection('suggestions').doc(str(b.id, 60)).update({ status: b.status === 'new' ? 'new' : 'seen' }); return [200, { ok: true }]; }
+      if (b.op === 'delete' && b.id) { await db().collection('suggestions').doc(str(b.id, 60)).delete(); return [200, { ok: true }]; }
+      const s = await db().collection('suggestions').get();
+      return [200, { list: s.docs.map(x => ({ id: x.id, ...x.data() })).sort((a, c) => String(c.createdAt).localeCompare(String(a.createdAt))).slice(0, 300) }];
+    },
     extraConfig: async () => [200, await cfg()],
 
     extraOrder: wrap(async (b, uid) => {
       const { d, u } = await me(uid);
       const C = await cfg();
-      if (!C.on) return [400, { error: 'Extra services are switched off right now.' }];
+      if (!C.on) return [400, { error: 'Digital services are switched off right now.' }];
       const s = C.services.find(x => x.id === b.sid && x.on && !x.soon && x.mode !== 'game');
       if (!s) return [400, { error: 'This service is not available right now.' }];
       if (s.status === 'closed') return [400, { error: s.statusNote || 'This service is closed right now. Please try again later.' }];
@@ -239,16 +290,25 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const fields = s.fields.map((f, k) => ({ label: f.label, value: str(vals[k], 300) }));
       const miss = s.fields.find((f, k) => f.req && !fields[k].value);
       if (miss) return [400, { error: `Please fill in: ${miss.label}` }];
+      // out of stock / region confirmed / where to send a digital product
+      if (i.stock !== null && i.stock <= 0) return [400, { error: 'Sorry, this item is out of stock right now.', code: 'stock' }];
+      if (i.region && b.regionOk !== true) return [400, { error: `Please confirm that your account region is ${i.region}.`, code: 'region' }];
+      if (s.deliver === 'email') {
+        const em = str(b.email, 120).toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/.test(em)) return [400, { error: 'Please enter the email where we should send it.', code: 'email' }];
+        fields.push({ label: 'Delivery email', value: em });
+      }
+      if (i.region) fields.push({ label: 'Region (confirmed)', value: i.region });
       const mine = await db().collection('serviceOrders').where('uid', '==', uid).get();
       if (mine.docs.filter(x => x.data().kind === 'extra' && ['Pending', 'Processing'].includes(x.data().status)).length >= 5) return [400, { error: 'You have 5 orders in progress. Please wait until they are delivered.' }];
-      // pay from the Extra Balance (buy options only), or send money and give the TrxID
+      // pay from the Digital Balance (buy options only), or send money and give the TrxID
       const useBal = b.payWith === 'xbal' && i.flow !== 'sell';
       let trxId;
       if (useBal) {
-        if (!C.wallet.on) return [400, { error: 'Extra Balance is switched off right now.' }];
+        if (!C.wallet.on) return [400, { error: 'Digital Balance is switched off right now.' }];
         trxId = 'XB' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase();
       } else {
-        if (i.flow !== 'sell' && !C.wallet.direct) return [400, { error: 'Please pay from your Extra Balance. Add balance first.' }];
+        if (i.flow !== 'sell' && !C.wallet.direct) return [400, { error: 'Please pay from your Digital Balance. Add balance first.' }];
         trxId = String(b.trxId || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 80);
         if (trxId.length < 6) return [400, { error: i.flow === 'sell' ? 'Please enter the transaction ID / hash of what you sent.' : 'Please enter the Transaction ID from your payment SMS.' }];
         const [dupO, dupT] = await Promise.all([db().collection('serviceOrders').where('trxId', '==', trxId).limit(1).get(), db().collection('transactions').doc('trx_' + trxId).get()]);
@@ -257,14 +317,15 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const sender = String(b.sender || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
       const ref = db().collection('serviceOrders').doc();
       const order = { uid, kind: 'extra', sid: s.id, sname: s.name, iid: i.id, iname: i.name, planName: `${s.name} · ${i.name}`, unit: i.unit, flow: i.flow,
-        amount, price: q.pay, get: q.get, base: q.base, regular: pn.was, offerKind: pn.kind, fee: q.fee, feeWaived: q.waived, saved: q.saved, fields, trxId, paidWith: useBal ? 'xbal' : 'trx', sender: isPhone(sender) ? sender : '', payMethod: useBal ? 'Extra Balance' : str(b.payMethod, 30),
+        amount, price: q.pay, get: q.get, base: q.base, regular: pn.was, offerKind: pn.kind, fee: q.fee, feeWaived: q.waived, saved: q.saved, fields, trxId, paidWith: useBal ? 'xbal' : 'trx', sender: isPhone(sender) ? sender : '', payMethod: useBal ? 'Digital Balance' : str(b.payMethod, 30),
         toNumber: useBal ? '' : str(b.toNumber || i.to, 120), status: useBal ? 'Processing' : 'Pending', createdAt: iso() };
       let xbal = null;
       if (useBal) xbal = await xcredit(d.ref, uid, -q.pay, 'order', `${s.name} · ${i.name}`, { orderId: ref.id }, t => t.set(ref, order));
       else await ref.set(order);
       await require('./alerts').notify(db, 'order', ref.id, order);
+      if (i.stock !== null) await takeStock(s.id, i.id).catch(e => console.error('stock', e.message));
       await feed(uid, `ordered ${i.name}`, s);
-      await notifyUser(uid, 'Order received 🛒', `${s.name} · ${i.name}${amount ? ` (${amount} ${i.unit})` : ''} — ${useBal ? `paid ৳${q.pay} from your Extra Balance` : 'TrxID ' + trxId}. Our team will deliver it soon. See Extra Services → My orders.`, 'transaction');
+      await notifyUser(uid, 'Order received 🛒', `${s.name} · ${i.name}${amount ? ` (${amount} ${i.unit})` : ''} — ${useBal ? `paid ৳${q.pay} from your Digital Balance` : 'TrxID ' + trxId}. Our team will deliver it soon. See Digital Services → My orders.`, 'transaction');
       return [200, { ok: true, id: ref.id, xbal }];
     }),
 
@@ -274,7 +335,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       return [200, { list }];
     }),
 
-    // Extra Balance: a separate balance only for Extra Services (not the loan balance, not for loan fees)
+    // Digital Balance: a separate balance only for Digital Services (not the loan balance, not for loan fees)
     xbalState: wrap(async (b, uid) => {
       const { u } = await me(uid);
       const [lg, od] = await Promise.all([db().collection('xbalLog').where('uid', '==', uid).get(), db().collection('serviceOrders').where('uid', '==', uid).get()]);
@@ -288,7 +349,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
     xbalDeposit: wrap(async (b, uid) => {
       await me(uid);
       const C = await cfg(), W = C.wallet;
-      if (!W.on) return [400, { error: 'Extra Balance is switched off right now.' }];
+      if (!W.on) return [400, { error: 'Digital Balance is switched off right now.' }];
       const amount = money(b.amount);
       if (amount < W.min) return [400, { error: `The smallest deposit is ৳${W.min}.` }];
       if (W.max && amount > W.max) return [400, { error: `The largest deposit is ৳${W.max}.` }];
@@ -302,14 +363,14 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       // a deposit coupon: checked now, its bonus is added when the deposit is approved
       let coupon = '', cbonus = 0;
       if (b.coupon) { const q = await depCoupon(b.coupon, uid, amount); coupon = q.code; cbonus = q.bonus; }
-      const ref = await db().collection('serviceOrders').add({ uid, kind: 'xdeposit', planName: 'Extra Balance deposit', sname: 'Extra Balance', iname: 'Deposit', price: amount, trxId, coupon, couponBonus: cbonus,
+      const ref = await db().collection('serviceOrders').add({ uid, kind: 'xdeposit', planName: 'Digital Balance deposit', sname: 'Digital Balance', iname: 'Deposit', price: amount, trxId, coupon, couponBonus: cbonus,
         sender: isPhone(sender) ? sender : '', payMethod: str(b.payMethod, 30), toNumber: str(b.toNumber, 40), status: 'Pending', createdAt: iso() });
       await require('./alerts').notify(db, 'order', ref.id, { uid, kind: 'xdeposit', price: amount, trxId, coupon, couponBonus: cbonus, status: 'Pending' });
-      await notifyUser(uid, 'Deposit received 💳', `We received your Extra Balance deposit of ৳${amount} (TrxID ${trxId}). It is added as soon as we check it.`, 'transaction');
+      await notifyUser(uid, 'Deposit received 💳', `We received your Digital Balance deposit of ৳${amount} (TrxID ${trxId}). It is added as soon as we check it.`, 'transaction');
       return [200, { ok: true, id: ref.id }];
     }),
 
-    // live list under Extra Services: the latest real orders and deposits (numbers are masked)
+    // live list under Digital Services: the latest real orders and deposits (numbers are masked)
     async extraLive() {
       const C = await cfg();
       if (!C.on || !C.live.on) return [200, { list: [] }];
@@ -349,12 +410,12 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
               if (cb) await xcredit(ud.ref, o.uid, cb, 'bonus', `Coupon ${o.coupon} on ৳${o.price}`, { orderId: s.id });
             } catch (e) { console.warn('coupon', e.message); }
           }
-          await feed(o.uid, `added ৳${o.price} Extra Balance`, null);
-          await notifyUser(o.uid, 'Extra Balance added ✅', `৳${o.price} is added to your Extra Balance${bonus ? ` + ৳${bonus} deposit bonus` : ''}${cb ? ` + ৳${cb} coupon bonus` : ''}. You can order any Extra Service now.`, 'success');
+          await feed(o.uid, `added ৳${o.price} Digital Balance`, null);
+          await notifyUser(o.uid, 'Digital Balance added ✅', `৳${o.price} is added to your Digital Balance${bonus ? ` + ৳${bonus} deposit bonus` : ''}${cb ? ` + ৳${cb} coupon bonus` : ''}. You can order any Digital Service now.`, 'success');
         } else if (b.op === 'reject') {
           const reason = str(b.reason, 200);
           await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
-          await notifyUser(o.uid, 'Deposit not approved', `Your Extra Balance deposit of ৳${o.price} (TrxID ${o.trxId}) could not be approved.${reason ? ' Reason: ' + reason : ''}`, 'warning');
+          await notifyUser(o.uid, 'Deposit not approved', `Your Digital Balance deposit of ৳${o.price} (TrxID ${o.trxId}) could not be approved.${reason ? ' Reason: ' + reason : ''}`, 'warning');
         } else return [400, { error: 'Unknown action.' }];
         return [200, { ok: true }];
       }
@@ -365,25 +426,28 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       } else if (b.op === 'deliver') {
         const text = String(b.text || '').trim().slice(0, 2000);
         await ref.update({ status: 'Delivered', delivery: text, decidedAt: iso(), decidedBy: user.uid });
-        await notifyUser(o.uid, 'Order delivered ✅', `${what} is delivered.${text ? ' Open Extra Services → My orders to see the details.' : ''}`, 'success');
+        await notifyUser(o.uid, 'Order delivered ✅', `${what} is delivered.${text ? ' Open Digital Services → My orders to see the details.' : ''}`, 'success');
       } else if (b.op === 'reject') {
         const reason = str(b.reason, 200);
-        // paid from the Extra Balance: the money goes straight back
+        // paid from the Digital Balance: the money goes straight back
         // paid from the Creditfy balance (Quick Services, e.g. Mobile Recharge): back to the Creditfy balance
         if (o.paidWith === 'main' && o.price > 0 && ud) { await ref.update({ status: 'Rejected', reason, refunded: true, decidedAt: iso(), decidedBy: user.uid }); await SVC.credit(ud.ref, o.uid, o.price, 'refund', `Refund · ${what}`); }
         else if (o.paidWith === 'xbal' && o.price > 0 && ud) await xcredit(ud.ref, o.uid, o.price, 'refund', `Refund · ${what}`, { orderId: s.id }, t => t.update(ref, { status: 'Rejected', reason, refunded: true, decidedAt: iso(), decidedBy: user.uid }));
         else await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
-        await notifyUser(o.uid, 'Order not completed', `Your order ${what} could not be completed.${reason ? ' Reason: ' + reason : ''} ${o.paidWith === 'xbal' ? `৳${o.price} is back in your Extra Balance.` : o.paidWith === 'main' ? `৳${o.price} is back in your Creditfy balance.` : 'Please contact support if you paid.'}`, 'warning');
+        await notifyUser(o.uid, 'Order not completed', `Your order ${what} could not be completed.${reason ? ' Reason: ' + reason : ''} ${o.paidWith === 'xbal' ? `৳${o.price} is back in your Digital Balance.` : o.paidWith === 'main' ? `৳${o.price} is back in your Creditfy balance.` : 'Please contact support if you paid.'}`, 'warning');
       } else return [400, { error: 'Unknown action.' }];
       return [200, { ok: true }];
     },
 
-    // mobile recharge: Verified and VIP members only; paid from Extra Balance; the team sends it by hand
+    // mobile recharge: Verified and VIP members only; paid from Digital Balance; the team sends it by hand
     rechargeOrder: wrap(async (b, uid) => {
       const { d, u } = await me(uid);
       const C = await cfg(), R = C.recharge;
       if (!R.on) return [400, { error: 'Mobile recharge is switched off right now.' }];
-      if (u.phoneVerified !== true && !SVC.vipState(u)) return [403, { error: 'Mobile recharge is for Verified and VIP members.', code: 'verify_required' }];
+      // who can recharge: the Mobile Recharge tile's "Who can open it" (Admin → Quick Services); VIP when not set
+      { const sc = await db().collection('siteConfig').doc('services').get().catch(() => null); const D = (sc && sc.exists && sc.data()) || {};
+        let acc = (((D.hub || {}).tiles || {}).recharge || {}).access || 'vip'; if (acc === 'verified') acc = 'vip';
+        if (!canUse(acc, false, vipLevel(SVC.vipState(u), (D.vip || {}).plans || []))) return [403, { error: `Mobile recharge is for ${accessText(acc)}.`, code: 'vip_required' }]; }
       const op = R.ops.find(o => o === b.op); if (!op) return [400, { error: 'Please choose the operator.' }];
       const number = String(b.number || '').replace(/\D/g, '').replace(/^(?:880|0)+/, '');
       if (!isPhone(number)) return [400, { error: 'Please enter a valid mobile number.' }];
@@ -396,7 +460,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const order = { uid, kind: 'extra', sid: 'recharge', sname: 'Mobile Recharge', iid: op, iname: `${op} ${type} · 0${number}`, planName: `Mobile Recharge · ${op} 0${number}`, unit: '৳', flow: 'buy',
         amount, price: amount, get: amount, base: amount, fee: 0, fields: [{ label: 'Number', value: '0' + number }, { label: 'Operator', value: op }, { label: 'Type', value: type }],
         trxId: 'CB' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase(), paidWith: 'main', sender: '', payMethod: 'Creditfy Balance', toNumber: '', status: 'Processing', createdAt: iso() };
-      // Quick Services use the Creditfy balance (not the Extra Balance)
+      // Quick Services use the Creditfy balance (not the Digital Balance)
       let balance;
       try { balance = await SVC.credit(d.ref, uid, -amount, 'recharge', `Recharge ${op} 0${number}`, { orderId: ref.id }); }
       catch (e) { if (e.status) return [400, { error: 'Not enough Creditfy balance for this recharge.', code: 'bal_low' }]; throw e; }
@@ -446,10 +510,10 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       const o = s.data(); if (o.status !== 'Pending') return [400, { error: 'Already ' + o.status + '.' }];
       if (b.op === 'approve') {
         const ud = await findUserDoc(o.uid); if (!ud) return [404, { error: 'The user no longer exists.' }];
-        // Micro Jobs is in Extra Services: the reward goes to the Extra Balance
+        // Micro Jobs is in Digital Services: the reward goes to the Digital Balance
         await xcredit(ud.ref, o.uid, o.reward, 'task', `Task: ${o.title}`, { taskId: o.tid }, t => t.update(ref, { status: 'Approved', decidedAt: iso(), decidedBy: user.uid }));
         await feed(o.uid, `earned ৳${o.reward} from a task`, { icon: 'fa-solid fa-briefcase', color: 'g-orange' });
-        await notifyUser(o.uid, 'Task approved 💼', `“${o.title}” is approved — ৳${o.reward} is added to your Extra Balance.`, 'success');
+        await notifyUser(o.uid, 'Task approved 💼', `“${o.title}” is approved — ৳${o.reward} is added to your Digital Balance.`, 'success');
       } else if (b.op === 'reject') {
         const reason = str(b.reason, 200);
         await ref.update({ status: 'Rejected', reason, decidedAt: iso(), decidedBy: user.uid });
@@ -458,7 +522,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       return [200, { ok: true }];
     },
 
-    // admin: add or take Extra Balance by hand (refunds, corrections)
+    // admin: add or take Digital Balance by hand (refunds, corrections)
     async adminXbal(b, user) {
       if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admin login required.' }];
       if (!(await adminCan(user, ['users', 'services']))) return [403, { error: 'Your admin role does not allow this.' }];
@@ -469,8 +533,8 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
       if (!amount) return [400, { error: 'Enter an amount (use minus to take money).' }];
       const note = str(b.note, 120) || (amount > 0 ? 'Added by Creditfy' : 'Adjustment');
       let after;
-      try { after = await xcredit(ud.ref, phone, amount, 'admin', note, { by: user.uid }); } catch (e) { if (e.status) return [e.status, { error: 'The user does not have that much Extra Balance.' }]; throw e; }
-      await notifyUser(phone, amount > 0 ? 'Extra Balance added' : 'Extra Balance updated', `${amount > 0 ? '+' : '−'}৳${Math.abs(amount)} · ${note}. Extra Balance now ৳${after}.`, amount > 0 ? 'success' : 'info');
+      try { after = await xcredit(ud.ref, phone, amount, 'admin', note, { by: user.uid }); } catch (e) { if (e.status) return [e.status, { error: 'The user does not have that much Digital Balance.' }]; throw e; }
+      await notifyUser(phone, amount > 0 ? 'Digital Balance added' : 'Digital Balance updated', `${amount > 0 ? '+' : '−'}৳${Math.abs(amount)} · ${note}. Digital Balance now ৳${after}.`, amount > 0 ? 'success' : 'info');
       return [200, { ok: true, xbal: after }];
     },
 
@@ -506,7 +570,7 @@ module.exports = function extra({ db, findUserDoc, isAdmin, adminCan, notifyUser
         t.update(d.ref, { ttt: g });
         out = g;
       });
-      // Play & Earn is an Extra Service: wins go to the Extra Balance
+      // Play & Earn is an Digital Service: wins go to the Digital Balance
       let xbal = null;
       if (b.op === 'move' && out.result === 'win' && out.reward > 0) xbal = await xcredit(d.ref, uid, out.reward, 'game', 'Tic-Tac-Toe win');
       return [200, { b: out.b || '', over: out.over !== false, result: out.result || '', reward: b.op === 'move' ? (out.reward || 0) : 0, xbal,

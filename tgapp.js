@@ -49,8 +49,16 @@ if(inTg){
   };
   document.documentElement.classList.add('in-tg');
   try { W.ready(); W.expand(); W.setHeaderColor('#06101f'); W.setBackgroundColor('#050b16'); if(W.disableVerticalSwipes) W.disableVerticalSwipes(); } catch (e) {}
+  // full screen (Telegram 8.0+): no Telegram header; our content starts below Telegram's own buttons (safe area)
+  const fsPad = () => { try { const a = W.safeAreaInset || {}, c = W.contentSafeAreaInset || {}; const top = (Number(a.top) || 0) + (Number(c.top) || 0);
+    document.documentElement.style.setProperty('--tgTop', (W.isFullscreen ? top : 0) + 'px'); document.documentElement.classList.toggle('tg-fs', !!W.isFullscreen); } catch (e) {} };
+  try { if(W.requestFullscreen && (!W.isVersionAtLeast || W.isVersionAtLeast('8.0')) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) W.requestFullscreen(); } catch (e) {}
+  try { ['fullscreenChanged', 'safeAreaChanged', 'contentSafeAreaChanged', 'viewportChanged'].forEach(ev => W.onEvent(ev, fsPad)); } catch (e) {}
+  fsPad(); setTimeout(fsPad, 400); setTimeout(fsPad, 1500);
   const st = document.createElement('style');
-  st.textContent = '.in-tg .pw-bar{display:none!important}.in-tg body{overscroll-behavior:none}';
+  st.textContent = '.in-tg .pw-bar{display:none!important}.in-tg body{overscroll-behavior:none}'
+    + '.tg-fs body{padding-top:var(--tgTop,0px)}.tg-fs body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--tgTop,0px);background:#06101f;z-index:99990;pointer-events:none}'
+    + '.tg-fs #appBar{top:var(--tgTop,0px)}.tg-fs .sv-wrap{padding-top:var(--tgTop,0px);box-sizing:border-box}.tg-fs .modal-overlay,.tg-fs .sheet-back{padding-top:var(--tgTop,0px)}';
   document.head.appendChild(st);
   // Telegram's back button follows the app: an open sheet or any screen other than home
   const back = W.BackButton;

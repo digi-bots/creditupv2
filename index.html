@@ -456,12 +456,18 @@ body:has(.hot-offer-floating[style*="block"]:not(.away):not(.folded)) .pw-bar{bo
 .ft-rank i{font-size:10px}
 .ft-tag{font-size:12px;color:var(--txt2);line-height:1.6;margin:12px 0 4px}
 .ft-tag:empty{display:none}
-.ft-trust{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin:16px 0;padding:14px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+.ft-disc{display:flex;gap:9px;align-items:flex-start;margin:0 0 12px;padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+.ft-disc:empty{display:none}.ft-disc i{color:#ffd76a;font-size:13px;margin-top:2px;flex:none}.ft-disc p{margin:0;font-size:10.5px;line-height:1.55;color:var(--txt3)}.ft-disc b{color:var(--txt2);margin-right:3px}
+.ft-trust{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin:12px 0;padding:10px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
 .ft-trust:empty{display:none}
 .ft-ti{display:flex;gap:9px;align-items:flex-start}
 .ft-ti i{color:var(--p);font-size:15px;margin-top:2px;width:18px;text-align:center;flex:none}
 .ft-ti b{display:block;font-size:12px;color:var(--txt);line-height:1.25}
 .ft-ti span{display:block;font-size:10.5px;color:var(--txt2);line-height:1.4;margin-top:1px}
+/* slim footer: one line per trust point, a compact signature card */
+.ft{padding-top:18px!important}.ft-ti span{display:none}.ft-ti i{font-size:13px}.ft-ti b{font-size:11.5px}
+.ft-vip{width:48px!important;height:48px!important}.ft-name{font-size:18px!important}.ft-tag{margin:8px 0 2px!important;font-size:11.5px!important}
+.ft-sign{padding:9px 11px!important;gap:10px!important}.ft-contact{gap:4px!important;margin-bottom:10px!important}.ft-bottom{margin-top:10px!important;padding-top:9px!important}
 .ft-tnote{grid-column:1/-1;font-size:10.5px;color:var(--txt3);text-align:center}
 .ft-links{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:12px}
 .ft-links:empty{display:none}
@@ -3124,6 +3130,7 @@ document.addEventListener('DOMContentLoaded', function(){
       <p class="ft-tag" id="ftTag"></p>
       <div class="ft-trust" id="ftTrust"></div>
       <div class="ft-links" id="ftLinks"></div>
+      <div class="ft-disc" id="ftDisc"></div>
       <div class="ft-contact" id="ftContact"></div>
       <div class="ft-sign" id="ftSign">
         <div class="fs-l"><div class="fs-cap">Digital Signature</div><div class="fs-sig" id="ftSig">Creditfy</div><div class="fs-line"></div><div class="fs-who"><b id="ftSigName">Authorized Signatory</b><span id="ftSigTitle"></span></div></div>
@@ -4195,16 +4202,9 @@ async function saveUserNid(nid){
   if(!val) return;
   _savedNid = val;
   try {
-    const u = _getUser(); if(!u?.phone || !db) return;
-    if(window._userDocId){
-      await updateDoc(doc(db, 'users', window._userDocId), { nid: val, nidUpdatedAt: new Date().toISOString() });
-    } else {
-      const snap = await getDocs(query(collection(db, 'users'), where('phone', '==', u.phone)));
-      if(!snap.empty){
-        window._userDocId = snap.docs[0].id;
-        await updateDoc(snap.docs[0].ref, { nid: val, nidUpdatedAt: new Date().toISOString() });
-      }
-    }
+    const u = _getUser(); if(!u?.phone) return;
+    // the server saves it (the profile is not writable from the phone)
+    if(window._api) await window._api('syncProfile', { nid: val }, true);
   } catch(e) { console.warn('saveUserNid:', e?.message); }
 }
 
@@ -6046,6 +6046,9 @@ async function _api(action, data, withToken){
   return { ok: r.ok, status: r.status, data: j };
 }
 window._api = _api;
+// older accounts: copy the name / email / NID from their applications into the profile once
+setTimeout(() => { try { const u = JSON.parse(localStorage.getItem('creditUpUser') || 'null'); if(!u || !u.phone || localStorage.getItem('cf_psync') === u.phone) return;
+  _api('syncProfile', {}, true).then(r => { if(r && r.ok) localStorage.setItem('cf_psync', u.phone); }).catch(() => {}); } catch (e) {} }, 8000);
 // live balance: the profile document is watched while the user is signed in
 window._watchBalance = function(docId){
   if(!db || !docId || window._balDocId === docId && window._balUnsub) return;
@@ -6989,6 +6992,7 @@ window.saveApplicationToFirebase=async function(){
       status: 'Pending Fee Payment', submittedAt:new Date().toISOString(),
       ...(window._promoClaimed ? { promo: window._promoLabel || 'First installment free' } : {})
     }).then(ref => { window._latestAppId = ref.id; return ref; });
+    if(window._api) window._api('syncProfile', {}, true).catch(() => {});   // name, email, NID → the user's profile (server side)
     _pushMyNotif(u?.phone, 'Application Received 📝', `Your loan application ${'CU-' + String(window._latestAppId||'').slice(-6).toUpperCase()} for ৳${selAmount} (${selTerm} months) has been received. Next step: pay the fee to start verification.`, 'application');
     return true;
   }catch(e){ console.error('saveApp:',e); return false; }
@@ -7151,7 +7155,11 @@ window.renderFooter = function(cfg){
   const T = window._ftTrust || { on:true, items:[], note:'' };
   document.getElementById('ftTrust').innerHTML = F.trust !== false && T.on && T.items.length
     ? T.items.map(x => `<div class="ft-ti"><i class="fa-solid fa-${_escT(x.icon || 'shield-halved')}"></i><div><b>${_escT(x.title)}</b>${x.text ? `<span>${_escT(x.text)}</span>` : ''}</div></div>`).join('') + (T.note ? `<div class="ft-tnote">${_escT(T.note)}</div>` : '') : '';
-  const LINKS = Array.isArray(F.links) ? F.links : [ { label:'Loan Calculator', icon:'calculator', action:'calculator' }, { label:'Invite & Earn', icon:'gift', action:'refer' }, { label:'Privacy & Fees', icon:'shield-halved', action:'policy' }, { label:'Support', icon:'headset', action:'support' } ];
+  // our role, said once and only here: banks process the money, we are the platform in between
+  const DISC = F.disclaimer !== undefined ? F.disclaimer : 'All payments and loan disbursements are processed by banks and licensed payment providers — Creditfy works only as the platform in between. We are not liable for issues caused by banks, providers or third parties; every service is used by your own choice and confidence.';
+  document.getElementById('ftDisc').innerHTML = DISC ? `<i class="fa-solid fa-building-columns"></i><p><b>Disclaimer</b> ${_escT(DISC)}</p>` : '';
+  // the footer no longer lists services (the pages are one tap away in Quick Services)
+  const LINKS = [];
   const C = window._siteContact || {};
   document.getElementById('ftLinks').innerHTML = LINKS.filter(l => l && l.on !== false && l.label).map((l, i) => {
     const u = String(l.url || '');
@@ -7681,14 +7689,14 @@ setTimeout(async () => {
 <script src="app-pro.js?v=5"></script>
 <script>/* inside Telegram (Mini App): load Telegram's helper first; normal browsers skip it */
 if(/tgWebApp/.test(location.hash + location.search) || window.TelegramWebviewProxy) document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>');</script>
-<script src="services.js?v=17"></script>
+<script src="services.js?v=18"></script>
 <script src="loans.js?v=4"></script>
 <script src="help.js?v=3"></script>
-<script src="extra.js?v=19"></script>
-<script src="tgapp.js?v=5"></script>
+<script src="extra.js?v=20"></script>
+<script src="tgapp.js?v=6"></script>
 <script src="dock.js?v=2"></script>
 <script src="ux.js?v=2"></script>
-<script src="progress.js?v=2"></script>
-<script src="i18n-bn.js?v=20"></script>
+<script src="progress.js?v=3"></script>
+<script src="i18n-bn.js?v=21"></script>
 </body>
 </html>

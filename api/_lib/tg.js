@@ -210,7 +210,7 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
       // Telegram does not follow redirects (www ⇄ no-www): pick the address that answers without one
       const hookUrl = await bestHook(S.siteUrl);
       await call('setWebhook', { url: hookUrl, secret_token: hookSecret(), allowed_updates: ['message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: false });
-      const cmds = [{ command: 'start', description: 'Open Creditfy & connect your account' }, { command: 'offers', description: 'Today’s offers and deals' }, { command: 'balance', description: 'Your Creditfy & Extra Balance' },
+      const cmds = [{ command: 'start', description: 'Open Creditfy & connect your account' }, { command: 'offers', description: 'Today’s offers and deals' }, { command: 'balance', description: 'Your Creditfy & Digital Balance' },
         { command: 'app', description: 'Open the Creditfy app' }, { command: 'rules', description: 'Community rules' }, { command: 'help', description: 'Help' }];
       await call('setMyCommands', { commands: cmds });
       await call('setMyCommands', { commands: cmds.filter(c => ['offers', 'app', 'rules', 'help'].includes(c.command)), scope: { type: 'all_group_chats' } });

@@ -1,30 +1,32 @@
 /* Creditfy — "Your loan journey" on the home page: the 8 steps of a loan (Applied → Repaid), with the
    user's current step highlighted and one clear button for what to do next. Uses the newest application. */
 (function(){
-const STEPS = ['Applied', 'Fee Pending', 'Fee Submitted', 'Fee Verified', 'Approved', 'Disbursed', 'Active', 'Repaid'];
+const STEPS = ['Applied', 'Fee due', 'Fee sent', 'Verified', 'Approved', 'Sent', 'Active', 'Repaid'];
 // status → index of the current step (steps before it are done)
 const AT = { 'Pending Fee Payment': 1, 'TrxID Submitted': 2, 'Fee Verified': 3, 'Approved': 4, 'Disbursement Rejected': 4, 'Disbursed': 6, 'Active': 6, 'Overdue': 6, 'Repaid': 8 };
 const css = `
-#lnJourney{position:relative;border-radius:22px;padding:14px 12px 12px;margin:0 -8px 18px;background:radial-gradient(120% 140% at 0% 0%,rgba(29,219,128,.14),transparent 55%),linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.012));border:1px solid rgba(29,219,128,.28);box-shadow:0 12px 28px rgba(0,0,0,.25);cursor:pointer}
-#lnJourney .hd{display:flex;align-items:center;gap:8px;margin:0 4px 10px}
-#lnJourney .hd b{font-size:14.5px;color:var(--txt)}#lnJourney .hd span{margin-left:auto;font-size:11px;font-weight:900;padding:3px 9px;border-radius:9px;background:rgba(29,219,128,.14);color:var(--p)}
+#lnJourney{position:relative;border-radius:18px;padding:10px 10px 9px;margin:0 -8px 14px;background:radial-gradient(120% 140% at 0% 0%,rgba(29,219,128,.12),transparent 55%),linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.012));border:1px solid rgba(29,219,128,.28);box-shadow:0 8px 20px rgba(0,0,0,.22);cursor:pointer}
+#lnJourney .hd{display:flex;align-items:center;gap:7px;margin:0 2px 8px}
+#lnJourney .hd b{font-size:13px;color:var(--txt)}#lnJourney .hd span{margin-left:auto;font-size:10px;font-weight:900;padding:2px 8px;border-radius:8px;background:rgba(29,219,128,.14);color:var(--p);white-space:nowrap}
 #lnJourney .hd span.bad{background:rgba(255,77,106,.15);color:#ff8fa3}#lnJourney .hd span.warn{background:rgba(255,140,66,.15);color:#ffae6b}
-.lj-track{display:flex;overflow-x:auto;scrollbar-width:none;padding:4px 2px 2px;scroll-behavior:smooth}.lj-track::-webkit-scrollbar{display:none}
-.lj-s{flex:0 0 62px;display:flex;flex-direction:column;align-items:center;position:relative;text-align:center}
-.lj-s::before{content:"";position:absolute;top:15px;left:-50%;width:100%;height:3px;background:rgba(255,255,255,.1);z-index:0}
+.lj-track{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));padding:2px 0 0}
+.lj-s{min-width:0;display:flex;flex-direction:column;align-items:center;position:relative;text-align:center}
+.lj-s::before{content:"";position:absolute;top:11px;left:-50%;width:100%;height:2px;background:rgba(255,255,255,.1);z-index:0}
 .lj-s:first-child::before{display:none}
 .lj-s.done::before,.lj-s.now::before{background:linear-gradient(90deg,#1ddb80,#14b86a)}
-.lj-d{position:relative;z-index:1;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:900;color:var(--txt3);background:#0f1a2e;border:2px solid rgba(255,255,255,.14)}
-.lj-s.done .lj-d{color:#03210f;background:linear-gradient(135deg,#3be07c,#14b86a);border-color:transparent;box-shadow:0 4px 12px rgba(29,219,128,.35)}
-.lj-s.now .lj-d{color:#fff;background:linear-gradient(135deg,#ffcf5a,#f2a91d);border-color:#fff3c4;box-shadow:0 0 0 4px rgba(255,207,90,.22);animation:ljPulse 1.8s ease-in-out infinite}
-.lj-s.now.bad .lj-d{background:linear-gradient(135deg,#ff6b81,#e0334f);border-color:#ffd0d6;box-shadow:0 0 0 4px rgba(255,77,106,.2)}
-@keyframes ljPulse{50%{box-shadow:0 0 0 8px rgba(255,207,90,.08)}}
-.lj-l{margin-top:6px;font-size:10px;font-weight:800;color:var(--txt3);line-height:1.2}
+.lj-d{position:relative;z-index:1;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:900;color:var(--txt3);background:#0f1a2e;border:2px solid rgba(255,255,255,.14)}
+.lj-s.done .lj-d{color:#03210f;background:linear-gradient(135deg,#3be07c,#14b86a);border-color:transparent}
+.lj-s.now .lj-d{color:#fff;background:linear-gradient(135deg,#ffcf5a,#f2a91d);border-color:#fff3c4;box-shadow:0 0 0 3px rgba(255,207,90,.22);animation:ljPulse 1.8s ease-in-out infinite}
+.lj-s.now.bad .lj-d{background:linear-gradient(135deg,#ff6b81,#e0334f);border-color:#ffd0d6;box-shadow:0 0 0 3px rgba(255,77,106,.2)}
+@keyframes ljPulse{50%{box-shadow:0 0 0 6px rgba(255,207,90,.08)}}
+.lj-l{margin-top:4px;font-size:8.5px;font-weight:800;color:var(--txt3);line-height:1.15;max-width:100%;overflow-wrap:anywhere;hyphens:auto}
 .lj-s.done .lj-l{color:var(--txt2)}.lj-s.now .lj-l{color:#ffd76a}.lj-s.now.bad .lj-l{color:#ff8fa3}
-.lj-next{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 10px 10px 12px;border-radius:15px;background:rgba(255,255,255,.04);border:1px solid var(--bord)}
-.lj-next .t{flex:1;min-width:0}.lj-next b{display:block;font-size:12.5px;color:var(--txt)}.lj-next small{font-size:11px;color:var(--txt2);line-height:1.4}
-.lj-next button{flex:none;border:0;border-radius:12px;padding:9px 13px;font-weight:900;font-size:12px;cursor:pointer;font-family:inherit;color:#03210f;background:linear-gradient(135deg,var(--p),var(--p2))}
-.lj-next button.gold{color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}`;
+.lj-next{display:flex;align-items:center;gap:8px;margin-top:8px;padding:7px 7px 7px 10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--bord)}
+.lj-next .t{flex:1;min-width:0}.lj-next b{display:block;font-size:12px;color:var(--txt)}.lj-next small{display:block;font-size:10.5px;color:var(--txt2);line-height:1.35;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lj-next button{flex:none;border:0;border-radius:10px;padding:8px 11px;font-weight:900;font-size:11.5px;cursor:pointer;font-family:inherit;color:#03210f;background:linear-gradient(135deg,var(--p),var(--p2))}
+.lj-next button.gold{color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
+@media(max-width:360px){.lj-l{display:none}.lj-s.now .lj-l{display:block;position:absolute;top:25px;left:50%;transform:translateX(-50%);white-space:nowrap}.lj-track{padding-bottom:12px}.lj-d{width:21px;height:21px;font-size:9.5px}.lj-s::before{top:10px}}
+@media(min-width:380px){.lj-l{font-size:9px}}`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 const E = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const user = () => { try { return JSON.parse(localStorage.getItem('creditUpUser')); } catch (e) { return null; } };
@@ -69,9 +71,6 @@ function render(){
     <div class="lj-track">${STEPS.map((s, i) => { const done = i < n || status === 'Repaid', now = !done && i === n;
       return `<div class="lj-s${done ? ' done' : ''}${now ? ' now' : ''}${now && bad ? ' bad' : ''}"><div class="lj-d">${done ? '<i class="fa-solid fa-check"></i>' : now && status === 'Rejected' ? '<i class="fa-solid fa-xmark"></i>' : i + 1}</div><div class="lj-l">${i === 0 && status === 'none' ? 'Apply' : s}</div></div>`; }).join('')}</div>
     <div class="lj-next"><div class="t"><b>${E(N[0])}</b><small>${E(N[1])}</small></div><button class="${N[4]}" onclick="event.stopPropagation();${N[3]}">${E(N[2])}</button></div>`;
-  // show the current step in view
-  const t = box.querySelector('.lj-track'), cur = box.querySelector('.lj-s.now') || box.querySelectorAll('.lj-s')[Math.min(7, n)];
-  if(t && cur) requestAnimationFrame(() => { t.scrollLeft = Math.max(0, cur.offsetLeft - t.clientWidth / 2 + 31); });
 }
 setInterval(render, 1500);
 setTimeout(render, 600);
