@@ -86,8 +86,34 @@ const css = `
 .xs-brk div{display:flex;justify-content:space-between;gap:8px;padding:4px 0}.xs-brk s{opacity:.6}.xs-brk .ok{color:var(--p);font-weight:800}
 .xs-brk .tot{border-top:1px dashed var(--bord);margin-top:4px;padding-top:8px;font-size:14px;color:var(--txt);font-weight:900}.xs-brk .tot b{font-size:19px}
 .xs-it .pr .vp{display:block;font-size:10.5px;font-weight:800;color:#7fc3ff}
-.ln-note{display:flex;gap:11px;align-items:flex-start;text-align:left;border-radius:16px;padding:12px 13px;margin:12px 0;background:linear-gradient(135deg,rgba(255,215,106,.10),rgba(255,140,66,.06));border:1px solid rgba(255,200,90,.35);font-size:12px;color:var(--txt2);line-height:1.55}
-.ln-note .ic{flex:none;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(255,200,90,.16);color:#ffd76a;font-size:15px}
+.ln-note{display:-webkit-box;display:flex;position:relative;overflow:hidden;isolation:isolate;gap:11px;align-items:flex-start;text-align:left;border-radius:16px;padding:12px 13px;margin:12px 0;background:linear-gradient(135deg,rgba(255,215,106,.10),rgba(255,140,66,.06));border:1px solid rgba(255,200,90,.35);font-size:12px;color:var(--txt2);line-height:1.55}
+.ln-note .ic{flex:0 0 34px;align-self:flex-start;max-height:34px;overflow:hidden;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(255,200,90,.16);color:#ffd76a;font-size:15px}
+.xb-strip{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 10px 10px 12px;border-radius:16px;background:linear-gradient(135deg,rgba(29,219,128,.12),rgba(29,219,128,.03));border:1px solid rgba(29,219,128,.35)}
+.xb-strip .ic{flex:0 0 34px;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#03210f;background:linear-gradient(135deg,#3be07c,#14b86a)}
+.xb-strip>div{flex:1;min-width:0}.xb-strip small{display:block;font-size:10.5px;color:var(--txt2)}.xb-strip b{font-size:16px;color:var(--txt)}.xb-strip em{display:block;font-style:normal;font-size:10.5px;color:#ff8fa3;font-weight:800}
+.xb-strip button{flex:none;border:0;border-radius:11px;padding:8px 11px;font-weight:900;font-size:11.5px;cursor:pointer;font-family:inherit;color:#03210f;background:linear-gradient(135deg,var(--p),var(--p2));display:inline-flex;align-items:center;gap:5px}
+.xb-strip button.g{color:var(--txt);background:rgba(255,255,255,.07);border:1px solid var(--bord)}
+.xb-strip.empty{border-color:rgba(255,107,129,.45);background:linear-gradient(135deg,rgba(255,107,129,.12),rgba(255,107,129,.03))}
+.xs-steps{display:flex;gap:4px;margin:0 0 12px;padding:8px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--bord)}
+.xs-steps div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:800;color:var(--txt3);position:relative}
+.xs-steps span{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.14)}
+.xs-steps .done{color:var(--txt2)}.xs-steps .done span{color:#03210f;background:var(--p);border-color:transparent}
+.xs-steps .now{color:#ffd76a}.xs-steps .now span{color:#2a1a00;background:linear-gradient(135deg,#ffe08a,#f2a91d);border-color:#fff3c4}
+.xs-menu{display:flex;gap:8px;overflow-x:auto;margin:0 0 10px;padding:2px 2px 4px;scrollbar-width:none}.xs-menu::-webkit-scrollbar{display:none}
+.xs-menu button{flex:0 0 auto;min-width:74px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 8px 8px;border-radius:15px;cursor:pointer;font-family:inherit;color:var(--txt2);background:rgba(255,255,255,.035);border:1.5px solid var(--bord)}
+.xs-menu button .xs-lg,.xs-menu button .al{flex:none;margin:0!important;width:30px!important;height:30px!important;border-radius:10px;font-size:13px!important;display:flex;align-items:center;justify-content:center}
+.xs-menu button .al{background:rgba(255,255,255,.08);color:var(--txt)}
+.xs-menu button b{font-size:11px;color:var(--txt);max-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xs-menu button small{font-size:9.5px;color:var(--txt3)}
+.xs-menu button.on{border-color:rgba(29,219,128,.65);background:rgba(29,219,128,.09);box-shadow:0 0 0 3px rgba(29,219,128,.12)}
+.xs-sub{justify-content:flex-start}.xs-sub button{flex:0 0 auto!important;width:auto!important;font-size:11.5px!important;padding:6px 11px!important}
+.xs-gh{display:flex;align-items:center;gap:8px;margin:14px 2px 8px;font-size:12.5px;font-weight:900;color:var(--txt)}.xs-gh::after{content:"";flex:1;height:1px;background:var(--bord)}.xs-gh small{order:2;font-size:10.5px;color:var(--txt3);font-weight:700}
+.xs-gh:first-child{margin-top:2px}
+.xs-t .bd.new{background:linear-gradient(135deg,#1ddb80,#0e9a5a);color:#fff}.xs-t .bd.pop{background:linear-gradient(135deg,#b06bff,#7b3fe4);color:#fff}.xs-t .bd.ver{background:linear-gradient(135deg,#1da1f2,#0d6efd);color:#fff}
+.xs-t .bd.lk{display:inline-flex;align-items:center;gap:3px;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d);color:#2a1a00}
+.xs-t .bd.st{background:#56627a;color:#fff}.xs-t .bd.st.busy{background:linear-gradient(135deg,#ff9f43,#e67e22)}.xs-t .bd.st.closed{background:linear-gradient(135deg,#ff6b81,#c0392b)}
+.xs-t.lk .xs-lg{filter:saturate(.7) brightness(.9)}
+.xs-pnote{margin:-2px 0 8px;padding:9px 11px;border-radius:12px;background:rgba(77,143,255,.07);border:1px dashed rgba(77,143,255,.35);font-size:11.5px;color:var(--txt2);line-height:1.55}.xs-pnote ol{margin:4px 0 0;padding-left:18px}
+.pay-w button .pw-t{display:block;font-size:9.5px;font-weight:700;opacity:.75;margin-top:1px}
 .ln-note b{display:block;color:var(--txt);font-size:13px;margin-bottom:2px}
 .ln-note .vb{display:inline-flex;align-items:center;gap:5px;margin-top:7px;border:0;border-radius:10px;padding:7px 11px;font-weight:900;font-size:11.5px;cursor:pointer;font-family:inherit;color:#3a2500;background:linear-gradient(135deg,#ffe08a,#f2a91d)}
 .ln-note.vip{background:linear-gradient(135deg,rgba(255,215,106,.16),rgba(29,219,128,.06))}
@@ -96,12 +122,12 @@ const css = `
   background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));color:var(--txt);font-size:11px;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:transform .25s}
 .cz-tg i{transition:transform .3s}.cz-slim .cz-tg i{transform:rotate(180deg)}
 .cz-tg:hover{transform:scale(1.08)}
-.cz-m{min-width:0;flex:1}
-.cz-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .35s ease,opacity .3s ease}
-.cz-body>div{overflow:hidden;min-height:0}
-.cz-slim .cz-body{grid-template-rows:0fr;opacity:0}
+.cz-m{min-width:0;flex:1 1 auto;width:100%}
+.cz-body{display:block;max-height:600px;overflow:hidden;transition:max-height .35s ease,opacity .3s ease}
+.cz-body>div{overflow:hidden}
+.cz-slim .cz-body{max-height:0;opacity:0}
 .cz-slim{padding-top:9px!important;padding-bottom:9px!important;align-items:center!important}
-.cz-slim .ic,.cz-slim .pc-ic{width:28px!important;height:28px!important;font-size:12px!important;transition:.3s}
+.cz-slim .ic,.cz-slim .pc-ic{width:28px!important;height:28px!important;flex-basis:28px!important;max-height:28px!important;font-size:12px!important;transition:.3s}
 .cz-slim b{margin:0!important}
 .ln-note .cz-body>div{padding-top:1px}
 /* premium finish */
@@ -189,6 +215,7 @@ const css = `
 .sv-tile:active .sv-ic,.xs-t:active .xs-lg{transform:scale(.94)!important}
 @media (hover:hover){.sv-tile:hover .sv-ic,.xs-t:hover .xs-lg{animation-play-state:paused;transform:translateY(-4px) rotate(-4deg) scale(1.05)!important;box-shadow:0 16px 26px -6px rgba(0,0,0,.5),0 0 26px 2px var(--glow),inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(0,0,0,.25)!important}}
 /* the tile itself picks up a faint coloured light from its icon */
+.sv-tile,.xs-t{background-image:linear-gradient(160deg,rgba(255,255,255,.085),rgba(255,255,255,.02))!important}
 .sv-tile,.xs-t{background-image:radial-gradient(70% 55% at 50% 30%,color-mix(in srgb,var(--tglow,transparent) 22%,transparent),transparent 70%),linear-gradient(160deg,rgba(255,255,255,.085),rgba(255,255,255,.02))!important}
 .sv-tile:has(.g-green),.xs-t:has(.g-green){--tglow:#1ddb80}
 .sv-tile:has(.g-teal),.xs-t:has(.g-teal){--tglow:#2fd6d0}
@@ -363,6 +390,26 @@ function quote(s, i, amount, ver){
   return { base: Math.ceil(base), fee: free ? 0 : Math.ceil(f), saved: free ? Math.ceil(f) : 0, pay: Math.ceil(free ? base : base + f), get: amount, waived: free };
 }
 const sealHtml = () => { try { return window._svSeal ? window._svSeal() : '<i class="fa-solid fa-circle-check" style="color:#46b0ff"></i>'; } catch (e) { return ''; } };
+// who can order: everyone / Verified / VIP / VIP 1·2·3 (the server checks the same rule)
+const can = a => !a || a === 'all' || (typeof window._svCanUse === 'function' && window._svCanUse(a));
+const ACC = { verified: 'VERIFIED', vip: 'VIP', vip1: 'VIP 1+', vip2: 'VIP 2+', vip3: 'VIP 3' };
+const BDC = t => ({ HOT: 'sale', SALE: 'sale', NEW: 'new', EARN: 'earn', FREE: 'new', POPULAR: 'pop', TOP: 'pop', VERIFIED: 'ver', 'FOR VERIFIED': 'ver', JOIN: 'ver' }[String(t).toUpperCase()] || '');
+const nudge = () => typeof window._svNudge === 'function' ? window._svNudge() : '';
+// the Extra Balance on every service page, with Deposit and My orders
+function xbStrip(){
+  if(!X.cfg || (X.cfg.wallet || {}).on === false || !user()) return '';
+  const b = X.xb ? Number(X.xb.xbal) || 0 : null;
+  return `<div class="xb-strip${b === 0 ? ' empty' : ''}"><span class="ic"><i class="fa-solid fa-wallet"></i></span><div><small>Your Extra Balance</small><b>${b === null ? '…' : tk(b)}</b>${b === 0 ? '<em>Deposit first to order</em>' : ''}</div>
+    <button onclick="svGo('x_dep')"><i class="fa-solid fa-plus"></i>Deposit</button><button class="g" onclick="svGo('x_orders')" aria-label="My orders"><i class="fa-solid fa-receipt"></i></button></div>`;
+}
+window._xbStrip = xbStrip;
+// where the user is in the order: category → item → details → pay
+function steps(n, has){ const L = (has === false ? ['Item', 'Details', 'Pay'] : ['Category', 'Item', 'Details', 'Pay']); if(has === false) n = Math.max(0, n - 1);
+  return `<div class="xs-steps" id="xsSteps">${L.map((t, i) => `<div class="${i < n ? 'done' : i === n ? 'now' : ''}"><span>${i < n ? '<i class="fa-solid fa-check"></i>' : i + 1}</span>${t}</div>`).join('')}</div>`; }
+function statusBar(s){
+  if(s.status === 'busy') return `<div class="cx-note warn"><i class="fa-solid fa-hourglass-half"></i><span>${E(s.statusNote || 'Busy right now — delivery may take longer than usual.')}</span></div>`;
+  return s.statusNote && s.status === 'open' ? `<div class="cx-note"><i class="fa-solid fa-circle-info"></i><span>${E(s.statusNote)}</span></div>` : '';
+}
 // the Verified exclusive banner
 function perkBanner(){
   const P = PK(); if(!P.on) return '';
@@ -432,7 +479,9 @@ function render(){
   if(!X.cfg || !X.cfg.on || !Ls.length){ if(box) box.remove(); return; }
   if(!box){ box = document.createElement('div'); box.id = 'xsBlock'; box.className = 'hs-box xs'; g.insertAdjacentElement('afterend', box); }
   const W = X.cfg.wallet || {};
-  const tile = s => `<div class="xs-t${s.soon ? ' soon' : ''}" onclick="xsOpen('${E(s.id)}')">${s.badge || s.soon ? `<span class="bd">${E(s.soon ? 'SOON' : s.badge)}</span>` : s.items.some(i => i.on && priceNow(s, i).kind) ? '<span class="bd sale">SALE</span>' : ''}${logo(s)}<b>${E(s.short || s.name)}</b></div>`;
+  const tile = s => { const st = s.soon ? 'soon' : s.status !== 'open' ? s.status : '', lk = !st && !can(s.access);
+    const bd = st ? `<span class="bd st ${st}">${st.toUpperCase()}</span>` : lk ? `<span class="bd lk"><i class="fa-solid fa-${s.access === 'verified' ? 'lock' : 'crown'}"></i>${ACC[s.access]}</span>` : s.badge ? `<span class="bd ${BDC(s.badge)}">${E(s.badge)}</span>` : s.items.some(i => i.on && priceNow(s, i).kind) ? '<span class="bd sale">SALE</span>' : '';
+    return `<div class="xs-t${st === 'soon' || st === 'closed' ? ' soon' : ''}${lk ? ' lk' : ''}" onclick="xsOpen('${E(s.id)}')">${bd}${logo(s)}<b>${E(s.short || s.name)}</b></div>`; };
   box.innerHTML = `<div class="hs-tag"><i class="fa-solid fa-wallet"></i>Uses your Extra Balance</div><div class="xs-head">
       <div class="t"><div><div class="xs-title">${E(X.cfg.title || 'Extra Services')} <em>PREMIUM</em></div><small>Gift cards, exchange, social &amp; digital services — paid from your Extra Balance</small></div></div>
       <div class="a">${W.on !== false ? `<button class="xs-bal" onclick="svGo('x_wallet')"><i class="fa-solid fa-wallet"></i><span><small>Extra Balance</small>${user() && X.xb ? tk(X.xb.xbal) : 'Open'}</span><i class="p fa-solid fa-plus"></i></button>` : ''}<button class="xs-ord" onclick="svGo('x_orders')"><i class="fa-solid fa-receipt"></i>My orders</button></div>
@@ -501,22 +550,30 @@ async function loadLive(){
   try { const r = await fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'extraLive' }) }); const d = await r.json(); X.live = d.list || []; drawLive(); } catch (e) {}
 }
 async function loadXb(){ if(!user()) { X.xb = null; refreshNotes(); return null; } const r = await api('xbalState'); if(r.ok){ X.xb = r.data; render(); refreshNotes(); } return X.xb; }
-window.xsOpen = id => { const s = svcs().find(x => x.id === id); if(!s) return; if(s.soon){ toast('Coming soon — stay tuned!'); return; } svGo('x_' + id); };
+window.xsOpen = id => { const s = svcs().find(x => x.id === id); if(!s) return; if(s.soon){ toast(s.statusNote || 'Coming soon — stay tuned!'); return; } if(s.status === 'closed'){ toast(s.statusNote || 'Closed right now — please check back later.', true); return; } svGo('x_' + id); };
 
 /* ───────── one service: its options ───────── */
 function svcPage(id){
   const s = svcs().find(x => x.id === id); if(!s) return; X.openSid = id;
+  if(s.access !== 'all' && !can(s.access)){
+    if(user() && !window._svState && (X._wt = (X._wt || 0) + 1) < 8){ show(s.name, '<div class="sv-empty"><i class="fa-solid fa-circle-notch fa-spin"></i>Loading…</div>'); setTimeout(() => svcPage(id), 600); return; }
+    X._wt = 0; show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(s.name)}</h4><p>${E(s.desc)}</p></div></div>${typeof window._svLock === 'function' ? window._svLock(s.name, s.access) : ''}${xbStrip()}`); return;
+  }
   if(s.mode === 'game') return gamePage(s);
-  if(!X.f || X.f.sid !== id) X.f = { sid: id, q: '', cat: '', sort: 'pop' };
+  if(!X.f || X.f.sid !== id) X.f = { sid: id, q: '', cat: '', grp: '', sort: 'pop' };
   const items = s.items.filter(i => i.on);
   const cats = [...new Set(items.map(i => i.cat).filter(Boolean))];
   const offers = items.filter(i => priceNow(s, i).kind).length;
   show(s.name, `<div class="xs-hero">${logo(s)}<div><h4>${E(s.name)}</h4><p>${E(s.desc)}</p>
-      <div class="xs-meta"><span><i class="fa-solid fa-layer-group"></i>${items.length} options</span>${offers ? `<span class="o"><i class="fa-solid fa-tag"></i>${offers} on offer</span>` : ''}<span><i class="fa-solid fa-user-shield"></i>Hand-delivered</span></div></div></div>
-    ${perkBanner()}
+      <div class="xs-meta"><span><i class="fa-solid fa-layer-group"></i>${items.length} options</span>${offers ? `<span class="o"><i class="fa-solid fa-tag"></i>${offers} on offer</span>` : ''}<span><i class="fa-solid fa-user-shield"></i>Hand-delivered</span>${s.access !== 'all' ? `<span class="o"><i class="fa-solid fa-crown"></i>${ACC[s.access]}</span>` : ''}</div></div></div>
+    ${statusBar(s)}
+    ${xbStrip()}
+    ${steps(cats.length > 1 && !X.f.cat ? 0 : 1, cats.length > 1)}
+    ${isV() ? nudge() : perkBanner()}
     ${items.length > 3 ? `<div class="xs-tool"><div class="xs-srch"><i class="fa-solid fa-magnifying-glass"></i><input id="xsQ" placeholder="Search ${E(s.name)}" value="${E(X.f.q)}" oninput="xsF('q',this.value)"></div>
       ${s.mode === 'items' ? `<select id="xsSort" onchange="xsF('sort',this.value)"><option value="pop">Popular</option><option value="off">Offers first</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select>` : ''}</div>` : ''}
-    ${cats.length > 1 ? `<div class="xs-chips"><button data-c="" class="${!X.f.cat ? 'on' : ''}" onclick="xsF('cat','')">All</button>${cats.map(c => `<button data-c="${E(c)}" class="${X.f.cat === c ? 'on' : ''}" onclick="xsF('cat',this.dataset.c)">${E(c)}</button>`).join('')}</div>` : ''}
+    ${cats.length > 1 ? `<div class="xs-menu">${[['', 'All', items.length], ...cats.map(c => [c, c, items.filter(i => i.cat === c).length])].map(([v, t, n]) => `<button data-c="${E(v)}" class="${X.f.cat === v ? 'on' : ''}" onclick="xsF('cat',this.dataset.c)">${v ? ilogo(s, items.find(i => i.cat === v) || {}) : '<span class="al"><i class="fa-solid fa-grip"></i></span>'}<b>${E(t)}</b><small>${n}</small></button>`).join('')}</div>` : ''}
+    <div id="xsGrp"></div>
     <div id="xsItems"></div>
     ${s.note ? `<div class="sv-card"><p>${E(s.note)}</p></div>` : ''}
     <div class="xs-how"><div><i class="fa-solid fa-hand-pointer"></i><b>Choose</b><small>Pick an option</small></div><div><i class="fa-solid fa-wallet"></i><b>Pay</b><small>Extra Balance or TrxID</small></div><div><i class="fa-solid fa-truck-fast"></i><b>Get it</b><small>Delivered in My orders</small></div></div>
@@ -524,30 +581,39 @@ function svcPage(id){
   const so = $x('xsSort'); if(so) so.value = X.f.sort;
   drawItems();
 }
-window.xsF = (k, v) => { if(!X.f) return; X.f[k] = v; if(k === 'cat') document.querySelectorAll('.xs-chips button').forEach(b => b.classList.toggle('on', b.dataset.c === v)); drawItems(); };
+window.xsF = (k, v) => { if(!X.f) return; X.f[k] = v;
+  if(k === 'cat'){ X.f.grp = ''; document.querySelectorAll('.xs-menu button').forEach(b => b.classList.toggle('on', b.dataset.c === v)); const st = $x('xsSteps'); if(st) st.outerHTML = steps(v ? 1 : 0, true); }
+  if(k === 'grp') document.querySelectorAll('#xsGrp button').forEach(b => b.classList.toggle('on', b.dataset.g === v));
+  drawItems(); };
 function drawItems(){
   const el = $x('xsItems'); const s = svcs().find(x => x.id === X.openSid); if(!el || !s) return;
   const f = X.f || {}, q = String(f.q || '').toLowerCase();
-  let items = s.items.filter(i => i.on && (!f.cat || i.cat === f.cat) && (!q || (i.name + ' ' + (i.cat || '') + ' ' + (i.note || '')).toLowerCase().includes(q)));
+  const inCat = s.items.filter(i => i.on && (!f.cat || i.cat === f.cat));
+  const groups = [...new Set(inCat.map(i => i.group).filter(Boolean))];
+  const ge = $x('xsGrp'); if(ge) ge.innerHTML = groups.length > 1 ? `<div class="xs-chips xs-sub"><button data-g="" class="${!f.grp ? 'on' : ''}" onclick="xsF('grp','')">All${f.cat ? ' ' + E(f.cat) : ''}</button>${groups.map(g => `<button data-g="${E(g)}" class="${f.grp === g ? 'on' : ''}" onclick="xsF('grp',this.dataset.g)">${E(g)}</button>`).join('')}</div>` : '';
+  let items = inCat.filter(i => (!f.grp || i.group === f.grp) && (!q || (i.name + ' ' + (i.cat || '') + ' ' + (i.group || '') + ' ' + (i.note || '')).toLowerCase().includes(q)));
   const P = i => priceNow(s, i).price;
   if(f.sort === 'low') items.sort((a, b) => P(a) - P(b)); else if(f.sort === 'high') items.sort((a, b) => P(b) - P(a));
   else if(f.sort === 'off') items.sort((a, b) => (priceNow(s, b).kind ? 1 : 0) - (priceNow(s, a).kind ? 1 : 0));
   else items.sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0));
   if(!items.length){ el.innerHTML = '<div class="sv-empty"><i class="fa-solid fa-magnifying-glass"></i>Nothing matches. Try another word.</div>'; return; }
+  // with sub-menus (groups) and no group picked, the options are shown under a heading per group
+  const byGroup = !f.grp && groups.length > 1 && f.sort === 'pop' && !q;
+  const wrap = fn => { if(!byGroup) return fn(items); const order = [...groups, '']; return order.map(g => { const L = items.filter(i => (i.group || '') === g); return L.length ? `<div class="xs-gh"><span>${E(g || 'More')}</span><small>${L.length}</small></div>${fn(L)}` : ''; }).join(''); };
   if(s.mode === 'amount'){
-    el.innerHTML = items.map(i => { const hasFee = i.pct || i.fee, free = PK().on && isV();
+    el.innerHTML = wrap(items => items.map(i => { const hasFee = i.pct || i.fee, free = PK().on && isV();
       const feeTxt = !hasFee ? 'No fee' : free ? '<span style="color:var(--p);font-weight:800">No fee — Verified ✓</span>' : `Fee ${i.pct ? num(i.pct) + '%' : ''}${i.pct && i.fee ? ' + ' : ''}${i.fee ? tk(i.fee) : ''}${PK().on ? ' · <span style="color:#7fc3ff">Verified: no fee</span>' : ''}`;
       const rate = i.unit === '৳' ? feeTxt : `1 ${E(i.unit)} = ${tk(i.rate)} · ${feeTxt}`;
-      return `<div class="xs-it xs-ir" onclick="xsPick('${E(s.id)}','${E(i.id)}')">${ilogo(s, i)}<div style="flex:1;min-width:0"><b>${E(i.name)}</b><small>${rate}${i.min || i.max ? ` · ${num(i.min)}–${num(i.max)} ${E(i.unit)}` : ''}</small></div><div class="pr"><span class="xs-go">Start <i class="fa-solid fa-arrow-right"></i></span></div></div>`; }).join('');
+      return `<div class="xs-it xs-ir" onclick="xsPick('${E(s.id)}','${E(i.id)}')">${ilogo(s, i)}<div style="flex:1;min-width:0"><b>${E(i.name)}</b><small>${rate}${i.min || i.max ? ` · ${num(i.min)}–${num(i.max)} ${E(i.unit)}` : ''}</small></div><div class="pr"><span class="xs-go">Start <i class="fa-solid fa-arrow-right"></i></span></div></div>`; }).join(''));
     return;
   }
-  el.innerHTML = `<div class="xs-pgrid">${items.map(i => { const pn = priceNow(s, i), qq = quote(s, withNow(s, i), 0, isV()), off = pn.kind ? Math.round((1 - pn.price / pn.was) * 100) : 0;
+  el.innerHTML = wrap(items => `<div class="xs-pgrid">${items.map(i => { const pn = priceNow(s, i), qq = quote(s, withNow(s, i), 0, isV()), off = pn.kind ? Math.round((1 - pn.price / pn.was) * 100) : 0;
     return `<div class="xs-pc${pn.kind ? ' sale' : ''}" onclick="xsPick('${E(s.id)}','${E(i.id)}')">${off ? `<span class="off">−${off}%</span>` : ''}${i.hot ? '<span class="hot"><i class="fa-solid fa-fire"></i>Popular</span>' : ''}
       ${ilogo(s, i)}<b>${E(i.name)}</b><small>${E(i.cat || s.name)}</small>${i.note ? `<em>${E(i.note)}</em>` : ''}
       <div class="pp">${pn.kind ? `<s>${tk(quote(s, i, 0, isV()).pay)}</s>` : ''}<span>${tk(qq.pay)}</span></div>
       ${qq.fee ? `<div class="vp"><i class="fa-solid fa-circle-check"></i>Save ${tk(qq.fee)} with Verified</div>` : qq.waived ? `<div class="vp ok"><i class="fa-solid fa-circle-check"></i>You save ${tk(qq.saved)} · Verified</div>` : ''}
       ${pn.kind ? `<div class="ct">${pn.kind === 'deal' ? '<i class="fa-solid fa-bolt"></i>Today' : ''}${cd(pn.ends, '')}</div>` : ''}
-      <div class="go">Buy now</div></div>`; }).join('')}</div>`;
+      <div class="go">Buy now</div></div>`; }).join('')}</div>`);
 }
 
 window.xsPick = (sid, iid) => { X.sel = { sid, iid }; window._xsW = 0; window._xsPm = ''; svGo('x_order'); loadXb().then(() => { const typed = [...document.querySelectorAll('#svBody input')].some(e => e.value); if(document.getElementById('xsBtn') && !typed) window.svPage('x_order'); }); };
@@ -555,12 +621,22 @@ window.xsPick = (sid, iid) => { X.sel = { sid, iid }; window._xsW = 0; window._x
 /* ───────── the order form ───────── */
 function payTargets(i){
   if(i.to) return [{ name: i.flow === 'sell' ? 'Send to' : 'Pay to', type: '', number: i.to }];
-  return (window._feeWallets || []).map(w => { const o = Array.isArray(w.methods) && w.methods.length ? w.methods.filter(m => m && m.number)[0] : { type: w.payMethod || 'Send Money', number: w.collectionNumber || w.paymentNumber };
-    return o && o.number ? { name: w.name, type: o.type || 'Send Money', number: o.number, logo: w.logoUrl } : null; }).filter(Boolean);
+  // every receiving method the admin turned on for fees (Admin → Payment methods), each with its own type and note
+  const opts = w => typeof window._walletOptions === 'function' ? window._walletOptions(w) : (Array.isArray(w.methods) && w.methods.length ? w.methods.filter(m => m && m.number) : [{ type: w.payMethod || 'Send Money', number: w.collectionNumber || w.paymentNumber }].filter(m => m.number));
+  if(!(window._feeWallets || []).length && window._loadWallets && !X._wl){ X._wl = 1; Promise.resolve(window._loadWallets()).then(() => { if(document.getElementById('xsBtn') || document.getElementById('xbBtn')) window.svPage(_cur()); }).catch(() => {}); }
+  return (window._feeWallets || []).flatMap(w => opts(w).map(o => ({ name: w.name, type: o.type || 'Send Money', number: o.number, logo: w.logoUrl, note: o.note || '', steps: Array.isArray(o.instructions) ? o.instructions.filter(Boolean).slice(0, 6) : [] })));
+}
+const _cur = () => document.getElementById('xbBtn') ? 'x_dep' : 'x_order';
+// the chosen receiving method: number, copy button, the admin's note and steps
+function payNum(w){
+  if(!w) return '<div class="sv-empty">No payment number is set yet. Please contact support.</div>';
+  return `<div class="pay-num"><div><small>${E(w.name)}${w.type ? ' · ' + E(w.type) : ''}</small><b>${E(w.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(w.number)}').then(()=>svToastOk('Copied'))">Copy</button></div>
+    ${w.note || w.steps.length ? `<div class="xs-pnote">${w.note ? `<div>${E(w.note)}</div>` : ''}${w.steps.length ? `<ol>${w.steps.map(t => `<li>${E(t)}</li>`).join('')}</ol>` : ''}</div>` : ''}`;
 }
 function orderPage(){
   const sel = X.sel || {}; const s = svcs().find(x => x.id === sel.sid); const i = s && s.items.find(x => x.id === sel.iid);
   if(!s || !i){ show('Order', '<div class="sv-empty">Please choose an option again.</div>'); return; }
+  if(!can(s.access) || s.status === 'closed') return svcPage(s.id);
   const amt = s.mode === 'amount', sell = i.flow === 'sell';
   const tg = payTargets(i); const w = tg[window._xsW || 0] || tg[0];
   const W = X.cfg.wallet || {}, bal = X.xb ? X.xb.xbal : 0;
@@ -570,17 +646,18 @@ function orderPage(){
   const payBlock = pm === 'xbal' ? `<div class="pay-num" style="border-style:solid"><div><small>Extra Balance</small><b>${tk(bal)}</b></div><button onclick="svGo('x_dep')">+ Add</button></div>
       <div style="font-size:11.5px;color:var(--txt2);margin:6px 2px" id="xsBalNote">${!amt && price > bal ? `<span style="color:#ff8fa3">You need ${tk(price - bal)} more. Add balance first.</span>` : 'The price is taken from your Extra Balance when you place the order.'}</div>`
     : `<span class="sv-lbl">${sell ? `Send the ${E(i.unit)} here` : 'Send the payment'}</span>
-    ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xsW=${k};svPage('x_order')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}</button>`).join('')}</div>` : ''}
-    ${w ? `<div class="pay-num"><div><small>${E(w.name)}${w.type ? ' · ' + E(w.type) : ''}</small><b>${E(w.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(w.number)}').then(()=>svToastOk('Copied'))">Copy</button></div>`
-      : '<div class="sv-empty">No payment number is set for this service yet. Please contact support.</div>'}
+    ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xsW=${k};svPage('x_order')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}${x.type ? `<small class="pw-t">${E(x.type)}</small>` : ''}</button>`).join('')}</div>` : ''}
+    ${payNum(w)}
     <span class="sv-lbl">${sell ? 'Transaction ID / hash of what you sent' : 'Transaction ID from your payment SMS'}</span>
     <input class="sv-in code" id="xsTrx" placeholder="TRANSACTION ID" maxlength="80" autocomplete="off">`;
-  show(s.name, `<div class="xs-hero">${ilogo(s, i)}<div><h4>${E(i.name)}</h4><p>${E(i.note || s.desc)}</p></div></div>
+  const hasCats = new Set(s.items.filter(x => x.on).map(x => x.cat).filter(Boolean)).size > 1;
+  show(s.name, `${steps(sell || pm !== 'xbal' ? 3 : 2, hasCats)}<div class="xs-hero">${ilogo(s, i)}<div><h4>${E(i.name)}</h4><p>${E(i.note || s.desc)}</p>${i.cat || i.group ? `<div class="xs-meta"><span>${E([i.cat, i.group].filter(Boolean).join(' › '))}</span></div>` : ''}</div></div>
+    ${statusBar(s)}
     ${amt ? `<span class="sv-lbl">${sell ? 'How much will you send?' : 'How much do you want?'} (${E(i.unit)})</span>
       <input class="sv-in" id="xsAmt" type="number" inputmode="decimal" min="${i.min || 0}" ${i.max ? `max="${i.max}"` : ''} placeholder="${i.min ? 'Min ' + num(i.min) : 'Amount'}${i.max ? ' · max ' + num(i.max) : ''}" oninput="xsCalc()">
       <div class="xs-brk" id="xsBrk"></div>`
     : `<div class="xs-brk" id="xsBrk"></div>`}
-    ${PK().on && !isV() ? `<div class="xs-perk" onclick="svGo('verify')" style="margin-top:-2px"><span class="sl">${sealHtml()}</span><div><b>Pay no charge with Verified</b><p>Verified members skip the ${amt ? 'transaction fee' : 'service charge'} on every order — a one-time badge that keeps saving.</p></div><span class="go">Get Verified</span></div>` : ''}
+    ${PK().on && !isV() ? `<div class="xs-perk" onclick="svGo('verify')" style="margin-top:-2px"><span class="sl">${sealHtml()}</span><div><b>Pay no charge with Verified</b><p>Verified members skip the ${amt ? 'transaction fee' : 'service charge'} on every order — a one-time badge that keeps saving.</p></div><span class="go">Get Verified</span></div>` : nudge()}
     ${s.fields.map((f, k) => `<span class="sv-lbl">${E(f.label)}${f.req ? '' : ' <small style="color:var(--txt3)">(optional)</small>'}</span><input class="sv-in" id="xsF${k}" maxlength="300" autocomplete="off">`).join('')}
     ${canBal && canDirect ? `<span class="sv-lbl">How do you want to pay?</span><div class="xs-pm"><button class="${pm === 'xbal' ? 'on' : ''}" onclick="xsPm('xbal')"><i class="fa-solid fa-wallet"></i> Extra Balance<small>${tk(bal)}</small></button><button class="${pm === 'trx' ? 'on' : ''}" onclick="xsPm('trx')"><i class="fa-solid fa-mobile-screen"></i> bKash / Nagad<small>Send &amp; give TrxID</small></button></div>` : ''}
     ${payBlock}
@@ -646,8 +723,8 @@ function depPage(){
     <div class="xb-cp"><input class="sv-in" id="xbCp" placeholder="Coupon code (optional)" maxlength="24" autocomplete="off" style="text-transform:uppercase"><button onclick="xbCoupon()" id="xbCpB">Apply</button></div>
     <div id="xbCpMsg" style="font-size:12px;margin:-2px 2px 8px"></div>
     <span class="sv-lbl">2. Send it to</span>
-    ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xbW=${k};svPage('x_dep')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}</button>`).join('')}</div>` : ''}
-    ${w ? `<div class="pay-num"><div><small>${E(w.name)}${w.type ? ' · ' + E(w.type) : ''}</small><b>${E(w.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(w.number)}').then(()=>svToastOk('Copied'))">Copy</button></div>` : '<div class="sv-empty">No payment number is available right now. Please contact support.</div>'}
+    ${tg.length > 1 ? `<div class="pay-w">${tg.map((x, k) => `<button class="${x === w ? 'on' : ''}" onclick="window._xbW=${k};svPage('x_dep')">${x.logo ? `<img src="${E(x.logo)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.name)}${x.type ? `<small class="pw-t">${E(x.type)}</small>` : ''}</button>`).join('')}</div>` : ''}
+    ${payNum(w)}
     <span class="sv-lbl">3. Transaction ID from your payment SMS</span>
     <input class="sv-in code" id="xbTrx" placeholder="TRANSACTION ID" maxlength="40" autocomplete="off">
     <button class="sv-btn gold" style="margin-top:12px" id="xbBtn" onclick="xbSubmit()" ${w ? '' : 'disabled'}><i class="fa-solid fa-paper-plane"></i>Submit deposit</button>

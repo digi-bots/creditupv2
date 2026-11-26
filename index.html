@@ -241,6 +241,7 @@ body{background:#000;color:var(--txt);display:flex;justify-content:center;min-he
 .sx-sub:empty{display:none}
 .sx-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;perspective:900px}
 .sx-card{--c1:#1ddb80;--c2:#0a8a48;--glow:rgba(29,219,128,.35);position:relative;border-radius:20px;padding:14px 13px 13px;min-height:122px;overflow:hidden;transform-style:preserve-3d;
+  background:linear-gradient(160deg,#13233c,#0b1628 70%);border:1px solid rgba(255,255,255,.12);
   background:radial-gradient(120% 90% at 100% 0%,color-mix(in srgb,var(--c1) 30%,transparent),transparent 60%),linear-gradient(160deg,#13233c,#0b1628 70%);
   border:1px solid color-mix(in srgb,var(--c1) 35%,transparent);box-shadow:0 18px 30px -14px var(--glow),0 2px 0 rgba(255,255,255,.06) inset,0 -10px 24px rgba(0,0,0,.25) inset;
   transform:rotateX(6deg) translateZ(0);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;animation:sxIn .6s cubic-bezier(.2,.8,.2,1) both}
@@ -361,7 +362,7 @@ body:has(.hot-offer-floating[style*="block"]:not(.away):not(.folded)) .pw-bar{bo
 @keyframes sxFloat{0%,100%{transform:translateZ(30px) translateY(0)}50%{transform:translateZ(30px) translateY(-3px)}}
 .sx-val{font-size:clamp(19px,6vw,23px);font-weight:900;color:#fff;letter-spacing:-.4px;line-height:1.1;font-variant-numeric:tabular-nums;text-shadow:0 2px 12px var(--glow)}
 .sx-lbl{font-size:11.5px;font-weight:700;color:var(--txt2);margin-top:3px}
-.sx-tag{position:absolute;top:12px;right:12px;font-size:9.5px;font-weight:800;color:var(--c1);background:color-mix(in srgb,var(--c1) 14%,transparent);padding:2px 7px;border-radius:8px}
+.sx-tag{position:absolute;top:12px;right:12px;font-size:9.5px;font-weight:800;color:var(--c1);background:rgba(255,255,255,.08);background:color-mix(in srgb,var(--c1) 14%,transparent);padding:2px 7px;border-radius:8px}
 .sx-note{font-size:10.5px;color:var(--txt3);margin:10px 5px 0;text-align:center}
 .sx-note:empty{display:none}
 /* ── showcase: invite champions ── */
@@ -1050,7 +1051,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 30px var(--bg) inset !important;
 .nc-item{display:flex;gap:11px;padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);position:relative}
 .nc-item.new{background:linear-gradient(135deg,rgba(29,219,128,.07),rgba(255,255,255,.02));border-color:rgba(29,219,128,.28)}
 .nc-item.new::before{content:'';position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:3px;background:var(--nc)}
-.nc-ic{width:38px;height:38px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--nc);background:color-mix(in srgb,var(--nc) 14%,transparent);border:1px solid color-mix(in srgb,var(--nc) 30%,transparent)}
+.nc-ic{width:38px;height:38px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--nc);background:rgba(255,255,255,.08);background:color-mix(in srgb,var(--nc) 14%,transparent);border:1px solid color-mix(in srgb,var(--nc) 30%,transparent)}
 .nc-body{flex:1;min-width:0}
 .nc-meta{display:flex;align-items:center;gap:6px;margin-bottom:3px}
 .nc-tag{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--nc)}
@@ -6118,6 +6119,7 @@ async function loadGatewayState(cfgGateway){
   renderPayGrid();
 }
 
+window._walletOptions = w => walletOptions(w); window._loadWallets = () => loadWallets();
 async function loadWallets(){
   if(!db) return;
   try{
@@ -7679,14 +7681,14 @@ setTimeout(async () => {
 <script src="app-pro.js?v=5"></script>
 <script>/* inside Telegram (Mini App): load Telegram's helper first; normal browsers skip it */
 if(/tgWebApp/.test(location.hash + location.search) || window.TelegramWebviewProxy) document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>');</script>
-<script src="services.js?v=16"></script>
-<script src="loans.js?v=3"></script>
+<script src="services.js?v=17"></script>
+<script src="loans.js?v=4"></script>
 <script src="help.js?v=3"></script>
-<script src="extra.js?v=18"></script>
-<script src="tgapp.js?v=4"></script>
+<script src="extra.js?v=19"></script>
+<script src="tgapp.js?v=5"></script>
 <script src="dock.js?v=2"></script>
 <script src="ux.js?v=2"></script>
 <script src="progress.js?v=2"></script>
-<script src="i18n-bn.js?v=19"></script>
+<script src="i18n-bn.js?v=20"></script>
 </body>
 </html>

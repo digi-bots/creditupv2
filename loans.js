@@ -135,18 +135,20 @@ function pickLive(title, next){
   return { v, sel };
 }
 function wallets(){
-  return (window._feeWallets || []).map(w => ({ w, opts: Array.isArray(w.methods) && w.methods.length ? w.methods.filter(o => o && o.number) : [{ type: w.payMethod || 'Send Money', number: w.collectionNumber || w.paymentNumber }] })).filter(x => x.opts.length && x.opts[0].number);
+  return (window._feeWallets || []).map(w => ({ w, opts: typeof window._walletOptions === 'function' ? window._walletOptions(w) : Array.isArray(w.methods) && w.methods.length ? w.methods.filter(o => o && o.number) : [{ type: w.payMethod || 'Send Money', number: w.collectionNumber || w.paymentNumber }] })).filter(x => x.opts.length && x.opts[0].number);
 }
 function payBlock(amount, kind){
   const ws = wallets();
   if(!ws.length) return '<div class="sv-empty">No payment number is available right now. Please contact support.</div>';
   window._lnW = window._lnW || 0; if(!ws[window._lnW]) window._lnW = 0;
-  const cur = ws[window._lnW], opt = cur.opts[0];
-  window._lnPay = { payMethod: cur.w.name, toNumber: opt.number };
+  const cur = ws[window._lnW]; if(!cur.opts[window._lnO || 0]) window._lnO = 0; const opt = cur.opts[window._lnO || 0];
+  window._lnPay = { payMethod: cur.w.name + (opt.type ? ' · ' + opt.type : ''), toNumber: opt.number };
   return `<span class="sv-lbl">Pay with</span>
-    <div class="pay-w">${ws.map((x, i) => `<button class="${i === window._lnW ? 'on' : ''}" onclick="window._lnW=${i};svPage('${kind}')">${x.w.logoUrl ? `<img src="${E(x.w.logoUrl)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.w.name)}</button>`).join('')}</div>
+    <div class="pay-w">${ws.map((x, i) => `<button class="${i === window._lnW ? 'on' : ''}" onclick="window._lnW=${i};window._lnO=0;svPage('${kind}')">${x.w.logoUrl ? `<img src="${E(x.w.logoUrl)}" alt="">` : '<i class="fa-solid fa-wallet"></i>'}${E(x.w.name)}</button>`).join('')}</div>
+    ${cur.opts.length > 1 ? `<div class="xs-chips" style="margin:-2px 0 8px">${cur.opts.map((o, j) => `<button class="${j === (window._lnO || 0) ? 'on' : ''}" onclick="window._lnO=${j};svPage('${kind}')">${E(o.type || 'Send Money')}</button>`).join('')}</div>` : ''}
     <span class="sv-lbl">${E(opt.type || 'Send Money')} ${tk(amount)} to</span>
     <div class="pay-num"><div><small>${E(cur.w.name)} · ${E(opt.type || 'Send Money')}</small><b>${E(opt.number)}</b></div><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${E(opt.number)}').then(()=>svToastOk('Number copied'))">Copy</button></div>
+    ${opt.note || (opt.instructions || []).filter(Boolean).length ? `<div class="xs-pnote">${opt.note ? `<div>${E(opt.note)}</div>` : ''}${(opt.instructions || []).filter(Boolean).length ? `<ol>${opt.instructions.filter(Boolean).slice(0, 6).map(t => `<li>${E(t)}</li>`).join('')}</ol>` : ''}</div>` : ''}
     <span class="sv-lbl">Payment details</span>
     <input class="sv-in code" id="lnTrx" placeholder="TRANSACTION ID" maxlength="30" autocomplete="off">
     <input class="sv-in" id="lnSender" type="tel" placeholder="Paid from number (01XXXXXXXXX)" value="0${E((user() || {}).phone || '')}" style="margin-top:8px">`;
