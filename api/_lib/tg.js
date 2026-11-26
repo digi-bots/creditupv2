@@ -38,7 +38,8 @@ function norm(t) {
     appLink: str(t.appLink, 200), siteUrl: /^https:\/\//.test(String(t.siteUrl || '')) ? str(t.siteUrl, 200).replace(/\/+$/, '') : DEF.siteUrl,
     footer: str(t.footer ?? DEF.footer, 120), button: str(t.button || DEF.button, 30),
     auto: { ...DEF.auto, ...(t.auto || {}) }, welcome: { ...DEF.welcome, ...(t.welcome || {}) }, rules: str(t.rules ?? DEF.rules, 1500),
-    mod: { links: (t.mod || {}).links !== false, words: (Array.isArray((t.mod || {}).words) ? t.mod.words : []).map(w => str(w, 40).toLowerCase()).filter(Boolean).slice(0, 100) },
+    mod: (() => { const m = t.mod || {}; return { on: m.on !== false, links: m.links !== false, payNeg: m.payNeg !== false, abuse: m.abuse !== false, phones: m.phones !== false, flood: m.flood !== false, forwards: m.forwards !== false, spam: m.spam !== false,
+      limit: Math.max(1, Math.min(10, Math.floor(Number(m.limit) || 3))), words: (Array.isArray(m.words) ? m.words : []).map(w => str(w, 40).toLowerCase()).filter(Boolean).slice(0, 100) }; })(),
     on: t.on !== false, dm: t.dm !== false, miniApp: t.miniApp !== false,
     adminAlerts: { on: (t.adminAlerts || {}).on !== false, orders: (t.adminAlerts || {}).orders !== false, trx: (t.adminAlerts || {}).trx !== false, summary: (t.adminAlerts || {}).summary !== false }
   };
@@ -63,9 +64,15 @@ async function bestHook(siteUrl) {
 async function fixHook(db) {
   if (!configured()) return '';
   const info = await call('getWebhookInfo').catch(() => null);
-  if (!info || !info.url || !/30[1278]|redirect/i.test(info.last_error_message || '')) return '';
+  if (!info || !info.url) return '';
+  // an older setup that does not send edited messages (the group guard checks those too)
+  if (!/30[1278]|redirect/i.test(info.last_error_message || '')) {
+    if (Array.isArray(info.allowed_updates) && !info.allowed_updates.includes('edited_message'))
+      await call('setWebhook', { url: info.url, secret_token: hookSecret(), allowed_updates: ['message', 'edited_message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: false }).catch(() => {});
+    return '';
+  }
   const u = new URL(info.url), next = `https://${twin(u.host)}/api/telegram`;
-  await call('setWebhook', { url: next, secret_token: hookSecret(), allowed_updates: ['message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: false });
+  await call('setWebhook', { url: next, secret_token: hookSecret(), allowed_updates: ['message', 'edited_message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: false });
   try { await db().collection('tgMeta').doc('hook').set({ url: next, fixedFrom: info.url, at: iso() }); } catch (e) {}
   return next;
 }
@@ -209,7 +216,7 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
       const me = await call('getMe');
       // Telegram does not follow redirects (www ⇄ no-www): pick the address that answers without one
       const hookUrl = await bestHook(S.siteUrl);
-      await call('setWebhook', { url: hookUrl, secret_token: hookSecret(), allowed_updates: ['message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: false });
+      await call('setWebhook', { url: hookUrl, secret_token: hookSecret(), allowed_updates: ['message', 'edited_message', 'callback_query', 'chat_member', 'my_chat_member'], drop_pending_updates: false });
       const cmds = [{ command: 'start', description: 'Open Creditfy & connect your account' }, { command: 'offers', description: 'Today’s offers and deals' }, { command: 'balance', description: 'Your Creditfy & Digital Balance' },
         { command: 'app', description: 'Open the Creditfy app' }, { command: 'rules', description: 'Community rules' }, { command: 'help', description: 'Help' }];
       await call('setMyCommands', { commands: cmds });
@@ -272,6 +279,15 @@ module.exports.actions = function ({ db, isAdmin, adminCan, findUserDoc }) {
       const s = await col.get();
       return [200, { list: s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, c) => String(a.time).localeCompare(String(c.time))), now: bdNow() }];
     }),
+    // the group guard: who cannot post, who has warnings; unban / clear
+    adminTgMod: async (b, user) => {
+      if (!user || !(await isAdmin(user.uid))) return [403, { error: 'Admins only.' }];
+      const MOD = require('./tgmod'), id = String(b.id || ''), [chat, uid] = id.split('_');
+      if (b.op === 'unban' && chat && uid) { await MOD.unban(db, chat, uid); return [200, { ok: true }]; }
+      if (b.op === 'clear' && chat && uid) { await MOD.clear(db, chat, uid); return [200, { ok: true }]; }
+      if (b.op === 'forget' && chat && uid) { await db().collection('tgMod').doc(id).delete(); return [200, { ok: true }]; }
+      return [200, await MOD.list(db)];
+    },
     adminTgPosts: wrapE(async (b, user) => {
       const no = await admin(user); if (no) return no;
       const s = await db().collection('tgPosts').orderBy('at', 'desc').limit(30).get();

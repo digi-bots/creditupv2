@@ -68,13 +68,16 @@ function bonusFor(B, amount) { if (!B || !B.on) return 0; const t = [...B.tiers]
 const ACCESS = ['all', 'verified', 'vip', 'vip1', 'vip2', 'vip3'];
 // VIP level = the plan's place in Admin → VIP plans (1 = first plan); 0 = not VIP
 function vipLevel(v, plans) { if (!v) return 0; const i = (plans || []).findIndex(p => p.id === v.plan); return i < 0 ? 1 : i + 1; }
+// services: any VIP plan opens a VIP service (VIP 1 / 2 / 3 only sets how early a loan is reviewed);
+// older settings with a plan level read as plain VIP
 function canUse(access, verified, level) {
-  if (!access || access === 'all') return true;
+  if (!access || access === 'all' || access === 'verified') return true;
+  if (/^vip/.test(access)) return level > 0;
   if (access === 'verified') return verified || level > 0;
   if (access === 'vip') return level > 0;
   return level >= Number(access.slice(3));
 }
-const accessText = a => ({ verified: 'Verified members', vip: 'VIP members', vip1: 'VIP 1 members and above', vip2: 'VIP 2 members and above', vip3: 'VIP 3 members' }[a] || '');
+const accessText = a => (/^vip/.test(a || '') ? 'VIP members (any VIP plan)' : '');
 // a service on trial until a set time: after it ends, it closes by itself (no order can be placed)
 function trial(s) {
   const end = s.trialEnd ? new Date(s.trialEnd).getTime() : 0, st = ['open', 'busy', 'closed'].includes(s.status) ? s.status : 'open';
@@ -89,7 +92,7 @@ function norm(x) {
     services: list.filter(s => s && s.id && s.name).map(s => ({
       id: str(s.id, 30), name: str(s.name, 40), short: str(s.short || s.name, 16), logo: str(s.logo, 500), icon: str(s.icon || 'fa-solid fa-star', 60), color: str(s.color || 'g-teal', 20),
       mode: ['items', 'amount', 'game'].includes(s.mode) ? s.mode : 'items', on: s.on !== false, soon: s.soon === true, badge: str(s.badge, 14), desc: str(s.desc, 400), note: str(s.note, 400),
-      access: ACCESS.includes(s.access) && s.access !== 'verified' ? s.access : 'all', ...trial(s),
+      access: /^vip/.test(s.access || '') ? 'vip' : 'all', ...trial(s),
       eta: str(s.eta, 40), deliver: s.deliver === 'email' ? 'email' : '', ver: str(s.ver, 12), verKind: s.verKind === 'fixed' ? 'fixed' : s.verKind === 'updated' ? 'updated' : '', verNote: str(s.verNote, 160), verAt: str(s.verAt, 40),
       fields: (Array.isArray(s.fields) ? s.fields : []).filter(f => f && f.label).slice(0, 6).map(f => ({ label: str(f.label, 60), req: f.req === true })),
       items: (Array.isArray(s.items) ? s.items : []).filter(i => i && i.id && i.name).slice(0, 60).map(i => ({

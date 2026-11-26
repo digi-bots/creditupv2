@@ -18,7 +18,7 @@ if(inTg){ const sp = (W.initDataUnsafe || {}).start_param || ''; const rc = /^r/
 // visits keep scheduled Telegram posts on time (each phone asks at most every 10 minutes; the server has its own lock)
 try { const last = Number(localStorage.getItem('cf_tg_tick') || 0); if(Date.now() - last > 10 * 60e3){ localStorage.setItem('cf_tg_tick', String(Date.now())); setTimeout(() => fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'tgTick' }) }).catch(() => {}), 6000); } } catch (e) {}
 let BOT = '';
-fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'tgState' }) }).then(r => r.json()).then(d => { if(d && d.on && d.bot) BOT = d.bot; }).catch(() => {});
+fetch('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'tgState' }) }).then(r => r.json()).then(d => { if(d && d.on && d.bot){ BOT = d.bot; window._tgBot = d.bot; if(window.renderFooter && window._lastHomeCfg) window.renderFooter(window._lastHomeCfg); } }).catch(() => {});
 const tgInvite = phone => BOT ? `https://t.me/${BOT}?start=r0${String(phone).replace(/^0+/, '')}` : '';
 window._tgInviteLink = tgInvite;
 // the Telegram share button sends the Telegram link (opens our bot → the app, with the referral kept)

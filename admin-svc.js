@@ -504,12 +504,13 @@ function dgSort(box, sel, done){
     window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }; });
 }
-const HB_ACC = [['all', 'Everyone'], ['vip', 'Any VIP plan'], ['vip1', 'VIP 1 and above'], ['vip2', 'VIP 2 and above'], ['vip3', 'VIP 3 only']];
+// services: everyone, or VIP members on any plan (VIP 1 / 2 / 3 only sets loan priority)
+const HB_ACC = [['all', 'Everyone'], ['vip', 'VIP members (any plan)']];
 const HB_ST = [['open', 'Open'], ['busy', 'Busy (slow)'], ['closed', 'Closed'], ['soon', 'Coming soon']];
 const HB_CATS = [['premium', 'Premium'], ['rewards', 'Rewards'], ['loans', 'Loans'], ['help', 'Help & Info'], ['account', 'Account']];
 const HB_BTN = [['', 'No button'], ['tile', 'Open a Quick Service'], ['extra', 'Open an Digital Service'], ['url', 'Open a link (https)'], ['support', 'Open Support chat']];
 const BDG_C = t => ({ HOT: '#ff6b4a', SALE: '#ff6b4a', NEW: '#1ddb80', FREE: '#1ddb80', EARN: '#ff9f43', POPULAR: '#a46bff', 'FOR VERIFIED': '#2d8cff', VERIFIED: '#2d8cff', VIP: '#f2a91d', 'VIP 1': '#f2a91d', 'VIP 2': '#f2a91d', 'VIP 3': '#f2a91d' }[String(t).toUpperCase()] || '#ff5a6e');
-const opts = (L, v) => L.map(([k, t]) => `<option value="${ep(k)}"${k === (v || L[0][0]) ? ' selected' : ''}>${ep(t)}</option>`).join('');
+const opts = (L, v) => (v = /^vip/.test(v || '') && L === HB_ACC ? 'vip' : v, L).map(([k, t]) => `<option value="${ep(k)}"${k === (v || L[0][0]) ? ' selected' : ''}>${ep(t)}</option>`).join('');
 const hbSel = (L, v, on, w = '') => `<select onchange="${on}" style="height:34px;border-radius:8px;background:var(--card);color:var(--txt);border:1.5px solid var(--border);min-width:0;width:100%${w}">${opts(L, v)}</select>`;
 let _hbOpen = '';
 function hbKeys(){

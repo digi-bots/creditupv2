@@ -292,6 +292,7 @@ try { if(typeof BN === 'object') Object.assign(BN, {
 .sv-lockb.vip{background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
 .vlock.vip{background:radial-gradient(140% 120% at 50% 0%,rgba(255,200,90,.26),rgba(6,13,26,0) 65%),linear-gradient(160deg,#2a1f08,#120d05);border-color:rgba(255,215,106,.45)}
 .vlock.st{background:linear-gradient(160deg,#141d31,#0a1226);border-color:var(--bord)}
+.vip-lv{margin:10px 0 12px;padding:8px 10px;border-radius:11px;font-size:11.5px;line-height:1.5;color:#ffe9a8;background:rgba(255,215,106,.08);border:1px dashed rgba(255,215,106,.35)}.vip-lv i{margin-right:5px}
 .vbtn.gold{color:#2a1a00;background:linear-gradient(135deg,#fff3c4,#ffd76a 45%,#f2a91d)}
 .sv-nudge{display:flex;align-items:center;gap:11px;margin:0 0 12px;padding:11px 12px;border-radius:16px;cursor:pointer;border:1px solid rgba(70,176,255,.45);background:linear-gradient(135deg,rgba(29,161,242,.16),rgba(13,110,253,.05))}
 .sv-nudge.p{border-color:rgba(255,215,106,.5);background:linear-gradient(135deg,rgba(255,215,106,.16),rgba(242,169,29,.04))}
@@ -378,14 +379,14 @@ function tileHtml(k){
 const BADGE = { HOT: 'hot', SALE: 'hot', NEW: 'new', EARN: 'new', FREE: 'new', POPULAR: 'pop', TOP: 'pop', VERIFIED: 'ver', 'FOR VERIFIED': 'ver', JOIN: 'ver', VIP: 'vip', 'VIP 1': 'vip', 'VIP 2': 'vip', 'VIP 3': 'vip', 'FOR VIP': 'vip' };
 function bdg(text, gold){ const t = String(text || '').trim(); if(!t) return ''; return `<em class="sv-bdg ${BADGE[t.toUpperCase()] || (gold ? 'vip' : '')}">${E(t)}</em>`; }
 // services open by VIP level only (Verified is for rewards: check-in, spin, vouchers, redeem); Mobile Recharge is VIP unless the admin opens it
-function accOf(k){ const a = tileCfg(k).access || (k === 'recharge' ? 'vip' : ''); return a && a !== 'all' && a !== 'verified' ? a : ''; }
-const ACC_TXT = { verified: 'VERIFIED', vip: 'VIP', vip1: 'VIP 1+', vip2: 'VIP 2+', vip3: 'VIP 3' };
+function accOf(k){ const a = tileCfg(k).access || (k === 'recharge' ? 'vip' : ''); return /^vip/.test(a) ? 'vip' : ''; }
+const ACC_TXT = { vip: 'VIP' };
 const ST_TXT = { open: '', busy: 'BUSY', closed: 'CLOSED', soon: 'SOON' };
 const hubC = () => (SV.cfg && SV.cfg.hub) || {};
 // VIP level = the plan's place in the VIP plans list (1 = first plan); 0 = not VIP
 function vipLevel(){ const v = SV.st && SV.st.vip; if(!v) return 0; const pl = ((SV.cfg || {}).vip || {}).plans || []; const i = pl.findIndex(p => p.id === v.plan); return i < 0 ? 1 : i + 1; }
-function canUse(a){ if(!a || a === 'all') return true; if(!SV.st) return false; const lv = vipLevel();
-  if(a === 'verified') return SV.st.verified === true || lv > 0; if(a === 'vip') return lv > 0; return lv >= Number(String(a).slice(3)) || 0; }
+// services: any VIP plan opens a VIP service (the plan level only sets loan priority)
+function canUse(a){ if(!a || a === 'all' || a === 'verified') return true; if(!SV.st) return false; return vipLevel() > 0; }
 window._svLock = (name, a) => a === 'verified' ? lockCard(name) : vipLock(name, a); window._svCanUse = canUse; window._svVipLevel = vipLevel; window._svBadge = bdg;
 function regCustom(){
   (hubC().custom || []).forEach(c => { if(!c || !c.id) return; const k = 'c_' + c.id;
@@ -403,12 +404,11 @@ function gate(k){
   return null;
 }
 function vipLock(name, a){
-  const pl = (((SV.cfg || {}).vip || {}).plans || []).filter(p => p.on !== false), need = a === 'vip' ? 1 : Number(a.slice(3)) || 1;
-  const ok = pl.filter((p, i) => i + 1 >= need), cur = vipLevel();
-  return `<div class="vlock vip"><span class="big" style="font-size:44px">👑</span><h4>For ${a === 'vip' ? 'VIP' : 'VIP ' + need + (need < 3 ? ' and above' : '')} members</h4>
-    <p>${E(name)} is a VIP service.${cur ? ' Your plan is VIP ' + cur + ' — upgrade to open it.' : ' Join VIP to open it, with priority on your loan and orders.'}</p>
-    ${ok.length ? `<ul>${ok.map(p => `<li><i class="fa-solid fa-crown"></i>${E(p.name)} — ${tk(p.price)}</li>`).join('')}</ul>` : ''}
-    <button class="vbtn gold" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>${cur ? 'Upgrade VIP' : 'Get VIP'}</button></div>`;
+  const pl = (((SV.cfg || {}).vip || {}).plans || []).filter(p => p.on !== false), cheap = pl.slice().sort((x, y) => (x.price || 0) - (y.price || 0))[0];
+  return `<div class="vlock vip"><span class="big" style="font-size:44px">👑</span><h4>For VIP members</h4>
+    <p>${E(name)} is a VIP service. <b>Any VIP plan</b> opens it${cheap ? ` — from ${tk(cheap.price)}` : ''}.</p>
+    <div class="vip-lv"><i class="fa-solid fa-circle-info"></i>VIP 1, 2 or 3 does not change the services you get — the plan level only sets how early your <b>loan</b> is reviewed.</div>
+    <button class="vbtn gold" onclick="svGo('vip')"><i class="fa-solid fa-crown"></i>Get VIP</button></div>`;
 }
 // a reminder on service pages: Verified first, then VIP; the text changes every few seconds
 const NUDGE = {
@@ -644,6 +644,7 @@ const PAGES = {
         ${i === 1 ? '<span class="bd">MOST POPULAR</span>' : p.days === 0 ? '<span class="bd">BEST VALUE</span>' : ''}
         <div class="t"><div style="font-size:22px">${p.days === 0 ? '💎' : i === 1 ? '🌟' : '👑'}</div><div class="nm">${E(p.name)}</div><div class="pr">${tk(p.price)}</div></div>
         <div class="du">${dur(p)} · one-time payment${p.days > 0 ? ` · ≈ ${tk(Math.ceil(p.price / (p.days / 30)))} / month` : ' · never expires'}</div></div>`).join('')}
+      <div class="vip-lv"><i class="fa-solid fa-circle-info"></i><b>Every VIP plan opens all VIP services</b> (Mobile Recharge and VIP Digital Services). The plan level only sets your <b>loan priority</b> — a higher plan is reviewed earlier.</div>
       <div class="sv-card"><h4>What you get</h4>${(V.perks || []).map(t => `<div class="vp-perk"><i class="fa-solid fa-star"></i><span>${E(t)}</span></div>`).join('')}</div>
       <div class="sv-card"><h4><i class="fa-solid fa-shield-halved" style="color:var(--p)"></i> Our promise</h4>${(V.terms || []).map(t => `<div class="vp-term"><i class="fa-solid fa-circle-check"></i><span>${E(t)}</span></div>`).join('')}</div>
       ${pend ? '' : `<button class="sv-btn gold" onclick="svPay('vip')"><i class="fa-solid fa-crown"></i>Get VIP</button>`}`);

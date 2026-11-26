@@ -3,6 +3,7 @@
 const { db } = require('./_lib/auth');
 const TG = require('./_lib/tg');
 const X = require('./_lib/extra');
+const MOD = require('./_lib/tgmod');
 
 const tk = n => '৳' + Math.round(Number(n) || 0).toLocaleString('en-US');
 let _admins = { at: 0, chat: '', ids: [] };
@@ -89,32 +90,74 @@ async function onPrivate(m, S) {
   return say(chat, S, 'I can help with:\n/offers — today’s offers\n/balance — your balances\n/app — open Creditfy\n/rules — community rules\n\nFor account help, open the app → Support.', true);
 }
 
+// what Creditfy offers, for new members (short, with the house rules)
+const INTRO = `🏦 <b>Loans</b> — apply 24/7 from your phone, every fee shown before you pay, follow each step in the app
+🛍️ <b>Digital Services</b> — gift cards, recharge, exchange, subscriptions, paid from your Digital Balance
+🎁 <b>Rewards</b> — daily check-in, spin, redeem codes, refer &amp; earn
+👑 <b>VIP</b> — VIP services and faster loan review`;
+const NOTICE = n => `⚠️ <b>Please note:</b> links, ads, phone numbers, abuse and complaints about money are removed by the bot. After <b>${n} warnings</b> you can no longer post.
+💬 Account, payment or order problem? Open the app → <b>Support</b> — it goes straight to our admin team.`;
+const GROUP_HELP = `🤖 <b>Community bot</b>
+/rules — group rules
+/offers — today’s offers
+/app — open Creditfy
+/support — get help from the admin team
+/report — reply to a message to report it
+/mywarns — your warnings
+
+<b>Admins</b> (reply to a member’s message):
+/warn [reason] · /unwarn · /mute · /unmute · /ban · /warns · /pin`;
+
 async function onGroup(m, S) {
   const chat = m.chat.id;
-  // new members: delete the "joined" line and say welcome with the rules
+  // new members: greet them by name, explain the services and the house rules
   if (Array.isArray(m.new_chat_members) && m.new_chat_members.length) {
     if (S.welcome.deleteJoin) TG.call('deleteMessage', { chat_id: chat, message_id: m.message_id }).catch(() => {});
     if (S.welcome.on) {
-      const names = m.new_chat_members.filter(u => !u.is_bot).map(u => TG.esc(u.first_name || 'friend')).join(', ');
-      if (names) await say(chat, S, `${TG.esc(S.welcome.text).replace('{name}', `<b>${names}</b>`)}\n\n📜 <b>Rules</b>\n${TG.esc(S.rules)}`, false);
+      const names = m.new_chat_members.filter(u => !u.is_bot).map(u => `<a href="tg://user?id=${u.id}">${TG.esc(u.first_name || 'friend')}</a>`).join(', ');
+      if (names) await say(chat, S, `${TG.esc(S.welcome.text).replace('{name}', `<b>${names}</b>`)}\n\n${INTRO}\n\n📜 <b>Rules</b>\n${TG.esc(S.rules)}\n\n${NOTICE(S.mod.limit)}`, false);
     }
     return;
   }
   if (m.left_chat_member) { if (S.welcome.deleteJoin) TG.call('deleteMessage', { chat_id: chat, message_id: m.message_id }).catch(() => {}); return; }
   const text = String(m.text || m.caption || ''), cmd = text.split(/[\s@]/)[0].toLowerCase();
+  if (!m.from || m.sender_chat) return;   // posts by the channel itself or anonymous admins
+  const admins = await groupAdmins(chat), isAdm = admins.includes(m.from.id);
+  const target = m.reply_to_message && m.reply_to_message.from && !m.reply_to_message.from.is_bot ? m.reply_to_message.from : null;
+  const del = () => TG.call('deleteMessage', { chat_id: chat, message_id: m.message_id }).catch(() => {});
+  const note = (t, quiet = true) => TG.call('sendMessage', { chat_id: chat, text: t, parse_mode: 'HTML', disable_notification: quiet }).catch(() => {});
+  // everyone's commands
   if (cmd === '/offers') return say(chat, S, await offersText(), false);
-  if (cmd === '/rules') return say(chat, S, `📜 <b>Community rules</b>\n\n${TG.esc(S.rules)}`, false);
-  if (cmd === '/app' || cmd === '/help') return say(chat, S, 'Open the Creditfy app 👇  Ask your questions here — our team and members will help.', false);
-  // moderation: members (not admins) may not post links or blocked words
-  if (!m.from || m.sender_chat) return;
-  const admins = await groupAdmins(chat); if (admins.includes(m.from.id)) return;
-  const ents = [...(m.entities || []), ...(m.caption_entities || [])];
-  const hasLink = ents.some(e => ['url', 'text_link'].includes(e.type)) || /(https?:\/\/|t\.me\/|www\.)/i.test(text);
-  const low = text.toLowerCase(), bad = S.mod.words.find(w => w && low.includes(w));
-  if ((S.mod.links && hasLink) || bad) {
-    await TG.call('deleteMessage', { chat_id: chat, message_id: m.message_id }).catch(() => {});
-    await TG.call('sendMessage', { chat_id: chat, text: `⚠️ ${TG.esc(m.from.first_name || 'Member')}, ${hasLink ? 'links are not allowed here' : 'please keep the chat clean'}. Read /rules.`, disable_notification: true }).catch(() => {});
+  if (cmd === '/rules') return say(chat, S, `📜 <b>Community rules</b>\n\n${TG.esc(S.rules)}\n\n${NOTICE(S.mod.limit)}`, false);
+  if (cmd === '/app') return say(chat, S, 'Open the Creditfy app 👇', false);
+  if (cmd === '/help') return note(GROUP_HELP);
+  if (cmd === '/support') return say(chat, S, '💬 For account, payment or order help, open Creditfy → <b>Support</b>. It goes straight to our admin team — please do not share your details in the group.', false);
+  if (cmd === '/mywarns') { const d = await db().collection('tgMod').doc(`${chat}_${m.from.id}`).get(); const w = d.exists ? Number(d.data().warns) || 0 : 0; del(); return note(`${TG.esc(MOD.nameOf(m.from))}: ${w}/${S.mod.limit} warnings${w ? '' : ' — all good ✅'}`); }
+  if (cmd === '/report') {
+    del(); if (!target) return note('Reply to the message you want to report, then send /report.');
+    await MOD.tellAdmins(db, `🚩 <b>Report</b> by ${TG.esc(MOD.nameOf(m.from))}\n👤 About ${TG.esc(MOD.nameOf(target))} · id <code>${target.id}</code>\n💬 “${TG.esc(String(m.reply_to_message.text || m.reply_to_message.caption || '[media]').slice(0, 200))}”`);
+    return note('✅ Thank you — our admins have been told.');
   }
+  // admin tools (reply to a member's message)
+  if (isAdm && /^\/(warn|unwarn|mute|unmute|unban|ban|warns|pin)$/.test(cmd)) {
+    if (cmd === '/pin') { if (m.reply_to_message) await TG.call('pinChatMessage', { chat_id: chat, message_id: m.reply_to_message.message_id, disable_notification: true }).catch(() => {}); return del(); }
+    const id = target ? target.id : Number((text.split(/\s+/)[1] || '').replace(/\D/g, '')) || 0;
+    if (!id) return note('Reply to the member’s message (or give their id), e.g. reply + /warn spam');
+    const who = target || { id, first_name: 'Member ' + id };
+    del();
+    if (cmd === '/warn') { if (m.reply_to_message) TG.call('deleteMessage', { chat_id: chat, message_id: m.reply_to_message.message_id }).catch(() => {}); return MOD.warn(db, chat, who, { kind: 'admin', reason: text.split(/\s+/).slice(1).join(' ').slice(0, 100) || 'please follow the group rules' }, S, { by: 'admin', text: target ? (m.reply_to_message.text || '') : '' }); }
+    if (cmd === '/unwarn') { await MOD.clear(db, chat, id); return note(`🧹 Warnings cleared for ${TG.esc(MOD.nameOf(who))}.`); }
+    if (cmd === '/unmute' || cmd === '/unban') { await MOD.unban(db, chat, id); return note(`✅ ${TG.esc(MOD.nameOf(who))} can post again.`); }
+    if (cmd === '/mute') { await MOD.warn(db, chat, who, { kind: 'admin', reason: 'muted by an admin' }, { ...S, mod: { ...S.mod, limit: 1 } }, { by: 'admin' }); return; }
+    if (cmd === '/ban') { await TG.call('banChatMember', { chat_id: chat, user_id: id }).catch(() => {}); await db().collection('tgMod').doc(`${chat}_${id}`).set({ chat: String(chat), uid: String(id), name: MOD.nameOf(who), banned: true, removed: true, bannedAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, { merge: true }); return note(`⛔ ${TG.esc(MOD.nameOf(who))} was removed from the group.`); }
+    if (cmd === '/warns') { const d = await db().collection('tgMod').doc(`${chat}_${id}`).get(); const x = d.exists ? d.data() : {}; return note(`${TG.esc(MOD.nameOf(who))}: ${Number(x.warns) || 0}/${S.mod.limit} warnings${x.banned ? ' · cannot post' : ''}`); }
+  }
+  // the guard: members only (admins are never checked)
+  if (isAdm) return;
+  const why = MOD.check(m, S);
+  if (!why) return;
+  await del();
+  await MOD.warn(db, chat, m.from, why, S, { text });
 }
 
 module.exports = async (req, res) => {
@@ -124,7 +167,17 @@ module.exports = async (req, res) => {
   try {
     const S = await TG.settings(db);
     // Approve / Reject buttons on admin alerts
+    if (u && u.callback_query && /^m:(unban|clear):/.test(u.callback_query.data || '')) { await MOD.onButton(db, u.callback_query); return res.status(200).json({ ok: true }); }
+    if (u && u.callback_query && /^m:/.test(u.callback_query.data || '')) { await TG.call('answerCallbackQuery', { callback_query_id: u.callback_query.id }).catch(() => {}); return res.status(200).json({ ok: true }); }
     if (u && u.callback_query) { await require('./_lib/alerts').onButton(db, u.callback_query, require('./account').actions); return res.status(200).json({ ok: true }); }
+    // someone joined the channel: Telegram does not allow a greeting inside a channel, so the bot greets them privately
+    // (this reaches people who have started the bot before; others are greeted when they join the group)
+    if (S.on && u && u.chat_member && u.chat_member.chat && u.chat_member.chat.type === 'channel' && sameChat(S.channel, u.chat_member.chat)) {
+      const c = u.chat_member, was = (c.old_chat_member || {}).status, now = (c.new_chat_member || {}).status, who = (c.new_chat_member || {}).user || c.from;
+      if (['left', 'kicked'].includes(was) && now === 'member' && who && !who.is_bot && S.welcome.on)
+        await say(who.id, S, `👋 Thanks for joining our channel, <b>${TG.esc(who.first_name || 'friend')}</b>!\n\n${INTRO}\n\n${S.groupLink ? 'Questions? Join our community group 👇 — ' : ''}For account, payment or order help, open the app → <b>Support</b> (it goes straight to our admin team).`, true).catch(() => {});
+      return res.status(200).json({ ok: true });
+    }
     const m = u && (u.message || u.edited_message);
     if (S.on && m && m.chat) {
       if (m.chat.type === 'private') {

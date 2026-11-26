@@ -1136,6 +1136,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
         <div class="fg"><label>Signer title</label><input id="ft-signtitle" maxlength="50" placeholder="Managing Director, Creditfy"></div>
         <div class="fg"><label>Seal text</label><input id="ft-seal" maxlength="12" placeholder="VERIFIED"></div>
         <div class="fg full"><label>Line under the signature</label><input id="ft-signnote" maxlength="140" placeholder="This website is operated and signed by its management."></div>
+        <div class="fg full"><label style="font-weight:900;color:var(--txt)">Hours, complaints, social &amp; app — shown small in the footer (empty = hidden; the app badge “Install app” and the Telegram bot always show when available)</label></div>
+        <div class="fg"><label>Application submit time</label><input id="ft-hours" maxlength="200" placeholder="24/7"></div><div class="fg"><label>Complaint phone / WhatsApp</label><input id="ft-cmp-phone" maxlength="200" placeholder="01XXXXXXXXX"></div><div class="fg"><label>Complaint email</label><input id="ft-cmp-email" maxlength="200" placeholder="complaint@your-site.com"></div><div class="fg"><label>Facebook page link</label><input id="ft-s-fb" maxlength="200" placeholder="https://facebook.com/..."></div><div class="fg"><label>YouTube link</label><input id="ft-s-yt" maxlength="200" placeholder="https://youtube.com/@..."></div><div class="fg"><label>TikTok link</label><input id="ft-s-tt" maxlength="200" placeholder="https://tiktok.com/@..."></div><div class="fg"><label>Instagram link</label><input id="ft-s-ig" maxlength="200" placeholder="https://instagram.com/..."></div><div class="fg"><label>Telegram channel link</label><input id="ft-s-tg" maxlength="200" placeholder="https://t.me/..."></div><div class="fg"><label>WhatsApp channel / number link</label><input id="ft-s-wa" maxlength="200" placeholder="https://wa.me/..."></div><div class="fg"><label>Google Play app link (optional)</label><input id="ft-play" maxlength="200" placeholder="https://play.google.com/store/apps/details?id=..."></div><div class="fg"><label>App Store link (optional)</label><input id="ft-ios" maxlength="200" placeholder="https://apps.apple.com/..."></div>
       </div>
     </div>
     <div class="cfg-blk"><div class="cfg-t"><i class="fa-solid fa-copyright"></i>Bottom lines</div>
@@ -3902,6 +3904,8 @@ async function loadHome(){
   set('ft-on',Z.on); set('ft-name',Z.name); set('ft-vip',Z.vip); set('ft-viptext',Z.vipText); set('ft-vipsub',Z.vipSub); set('ft-tagline',Z.tagline); set('ft-trust',Z.trust); set('ft-contact',Z.contact); set('ft-address',Z.address);
   set('ft-sign',Z.sign); set('ft-signtext',Z.signText); set('ft-signimg',Z.signImg); set('ft-signname',Z.signName); set('ft-signtitle',Z.signTitle); set('ft-seal',Z.seal); set('ft-signnote',Z.signNote);
   set('ft-copy',Z.copyright); set('ft-legal',Z.legal); set('ft-bottom',Z.bottom);
+  set('ft-hours',Z.hours||'24/7'); set('ft-cmp-phone',(Z.complaint||{}).phone||''); set('ft-cmp-email',(Z.complaint||{}).email||''); set('ft-play',Z.playUrl||''); set('ft-ios',Z.iosUrl||'');
+  [['facebook','ft-s-fb'],['youtube','ft-s-yt'],['tiktok','ft-s-tt'],['instagram','ft-s-ig'],['telegram','ft-s-tg'],['whatsapp','ft-s-wa']].forEach(([k,id])=>set(id,(Z.social||{})[k]||''));
   ftRenderLinks();
   hpRenderNotices(); hpRenderPartners(); hpRenderTrust(); hpRenderPays(); hpRenderOffers(); sxRenderCards();
   _snapTake('home');
@@ -4062,7 +4066,9 @@ function _hpRead(){
   _H.winners.targets=_H.winners.targets.filter(x=>Number(x.need)>0&&String(x.prize||'').trim()).map(x=>({ ...x, need:Math.round(Number(x.need)) })).sort((a,b)=>a.need-b.need);
   Object.assign(_H.footer, { on:c('ft-on'), name:t('ft-name'), vip:c('ft-vip'), vipText:t('ft-viptext')||'VIP', vipSub:t('ft-vipsub'), tagline:t('ft-tagline'), trust:c('ft-trust'), contact:c('ft-contact'), address:c('ft-address'),
     sign:c('ft-sign'), signText:t('ft-signtext'), signImg:/^https:\/\//i.test(t('ft-signimg'))?t('ft-signimg'):'', signName:t('ft-signname')||'Authorized Signatory', signTitle:t('ft-signtitle'), seal:t('ft-seal')||'VERIFIED', signNote:t('ft-signnote'),
-    copyright:t('ft-copy'), legal:t('ft-legal'), bottom:t('ft-bottom') });
+    copyright:t('ft-copy'), legal:t('ft-legal'), bottom:t('ft-bottom'), hours:t('ft-hours')||'24/7', complaint:{ phone:t('ft-cmp-phone'), email:t('ft-cmp-email') },
+    social:Object.fromEntries([['facebook','ft-s-fb'],['youtube','ft-s-yt'],['tiktok','ft-s-tt'],['instagram','ft-s-ig'],['telegram','ft-s-tg'],['whatsapp','ft-s-wa']].map(([k,id])=>[k,/^https:\/\//i.test(t(id))?t(id):''])),
+    playUrl:/^https:\/\//i.test(t('ft-play'))?t('ft-play'):'', iosUrl:/^https:\/\//i.test(t('ft-ios'))?t('ft-ios'):'' });
   Object.assign(_H.topbar, { theme:t('tb-theme')||'green', clear:Math.min(80,Math.max(0,n('tb-clear',35))), glass:c('tb-glass'), compact:c('tb-compact'), hideOnScroll:c('tb-hide'),
     avatar:c('tb-avatar'), greet:c('tb-hi'), balance:c('tb-balance'), notif:c('tb-notif'), support:c('tb-support'), logout:c('tb-logout'), alert:c('tb-alert'), title:t('tb-name')||'phone', visitorText:t('tb-vtext') });
   const mn=Math.min(10,Math.max(0,f('sl-min',1.5)));
@@ -4947,7 +4953,7 @@ onAuthStateChanged(fbAuth, async user=>{
 });
 </script>
 <script src="admin-pro.js?v=3"></script>
-<script src="admin-svc.js?v=13"></script>
-<script src="admin-tg.js?v=7"></script>
+<script src="admin-svc.js?v=14"></script>
+<script src="admin-tg.js?v=8"></script>
 </body>
 </html>
