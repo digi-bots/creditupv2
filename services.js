@@ -159,9 +159,9 @@ const css = `
 .vf-hero{text-align:center;padding:22px 16px;border-radius:22px;background:radial-gradient(130% 120% at 50% 0%,rgba(29,161,242,.25),rgba(6,13,26,0) 70%),var(--surf);border:1px solid rgba(29,161,242,.35);margin-bottom:14px}
 .vf-hero .ic{width:64px;height:64px;margin:0 auto 8px;border-radius:50%;background:linear-gradient(135deg,#1da1f2,#0d6efd);display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;box-shadow:0 10px 26px rgba(13,110,253,.45)}
 .vf-hero h2{margin:0 0 4px;font-size:19px;color:var(--txt)}.vf-hero p{margin:0;color:var(--txt2);font-size:12.5px;line-height:1.6}
-.vf-why{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0}
-.vf-why div{border-radius:14px;padding:11px 6px;text-align:center;font-size:10.5px;color:var(--txt2);background:rgba(255,255,255,.035);border:1px solid var(--bord)}
-.vf-why i{display:block;font-size:18px;color:#46b0ff;margin-bottom:5px}
+.vf-why{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
+.vf-why div{border-radius:12px;padding:8px 4px;text-align:center;font-size:9.5px;line-height:1.3;color:var(--txt2);background:rgba(255,255,255,.035);border:1px solid var(--bord);overflow-wrap:anywhere}
+.vf-why i{display:block;font-size:15px;color:#46b0ff;margin-bottom:4px}
 /* promo on the fee page */
 .pr-box{border-radius:16px;border:1px dashed rgba(168,85,247,.45);background:rgba(168,85,247,.06);padding:12px;margin:12px 0}
 .pr-box .h{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--txt);cursor:pointer}
