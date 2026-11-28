@@ -65,7 +65,11 @@ if(inTg){
     + '.in-tg{--tgCss:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px))}'
     + '.tg-fs{--tgT:max(var(--tgTop,0px),var(--tgCss),calc(env(safe-area-inset-top,0px) + 52px))}'
     + '.tg-fs #app{padding-top:var(--tgT,0px)}.tg-fs body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--tgT,0px);background:#06101f;z-index:99990;pointer-events:none}'
-    + '.tg-fs .sv-wrap{padding-top:var(--tgT,0px);box-sizing:border-box}.tg-fs .modal-overlay,.tg-fs .sheet-back{padding-top:var(--tgT,0px)}';
+    + '.tg-fs .sv-wrap{padding-top:var(--tgT,0px);box-sizing:border-box}.tg-fs .sheet-back{padding-top:var(--tgT,0px)}'
+    // pop-ups: start below Telegram's buttons and never grow under them
+    + '.tg-fs .nc-toast{top:calc(var(--tgT,0px) + 8px) !important}.tg-fs #netBar{top:calc(var(--tgT,0px) + 8px) !important}'
+    + '.tg-fs .modal-overlay,.tg-fs .premium-cs-overlay{padding-top:calc(var(--tgT,0px) + var(--pop-gap,14px)) !important}'
+    + '.tg-fs .modal-overlay .mc,.tg-fs .modal-overlay .conf-card,.tg-fs .modal-overlay .ld-card,.tg-fs #repaymentModal .rep-card,.tg-fs #notifModal .nc-card,.tg-fs #referModal .refer-card,.tg-fs .premium-cs-box,.tg-fs #globalModal > .mc{max-height:calc(100dvh - var(--tgT,0px) - (var(--pop-gap,14px) * 2)) !important}';
   document.head.appendChild(st);
   // Telegram's back button follows the app: an open sheet or any screen other than home
   const back = W.BackButton;
