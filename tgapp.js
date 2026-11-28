@@ -50,15 +50,22 @@ if(inTg){
   document.documentElement.classList.add('in-tg');
   try { W.ready(); W.expand(); W.setHeaderColor('#06101f'); W.setBackgroundColor('#050b16'); if(W.disableVerticalSwipes) W.disableVerticalSwipes(); } catch (e) {}
   // full screen (Telegram 8.0+): no Telegram header; our content starts below Telegram's own buttons (safe area)
+  // full screen: Telegram's Close / menu buttons float over the page, so the page starts below them.
+  // Some phones do not report isFullscreen or the insets right away — the viewport filling the screen also counts.
+  let askedFs = false;
   const fsPad = () => { try { const a = W.safeAreaInset || {}, c = W.contentSafeAreaInset || {}; const top = (Number(a.top) || 0) + (Number(c.top) || 0);
-    document.documentElement.style.setProperty('--tgTop', (W.isFullscreen ? top : 0) + 'px'); document.documentElement.classList.toggle('tg-fs', !!W.isFullscreen); } catch (e) {} };
-  try { if(W.requestFullscreen && (!W.isVersionAtLeast || W.isVersionAtLeast('8.0')) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) W.requestFullscreen(); } catch (e) {}
+    const fs = !!W.isFullscreen || (askedFs && window.innerHeight >= (screen.height || 0) - 4);
+    document.documentElement.style.setProperty('--tgTop', (fs ? top : 0) + 'px'); document.documentElement.classList.toggle('tg-fs', fs); } catch (e) {} };
+  try { if(W.requestFullscreen && (!W.isVersionAtLeast || W.isVersionAtLeast('8.0')) && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){ W.requestFullscreen(); askedFs = true; } } catch (e) {}
   try { ['fullscreenChanged', 'safeAreaChanged', 'contentSafeAreaChanged', 'viewportChanged'].forEach(ev => W.onEvent(ev, fsPad)); } catch (e) {}
-  fsPad(); setTimeout(fsPad, 400); setTimeout(fsPad, 1500);
+  fsPad(); [300, 800, 1500, 3000].forEach(t => setTimeout(fsPad, t)); window.addEventListener('resize', fsPad);
   const st = document.createElement('style');
   st.textContent = '.in-tg .pw-bar{display:none!important}.in-tg body{overscroll-behavior:none}'
-    + '.tg-fs body{padding-top:var(--tgTop,0px)}.tg-fs body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--tgTop,0px);background:#06101f;z-index:99990;pointer-events:none}'
-    + '.tg-fs #appBar{top:var(--tgTop,0px)}.tg-fs .sv-wrap{padding-top:var(--tgTop,0px);box-sizing:border-box}.tg-fs .modal-overlay,.tg-fs .sheet-back{padding-top:var(--tgTop,0px)}';
+    // the space to leave: the biggest of what Telegram tells us (JS or its CSS variables) and the notch + Telegram's button row
+    + '.in-tg{--tgCss:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px))}'
+    + '.tg-fs{--tgT:max(var(--tgTop,0px),var(--tgCss),calc(env(safe-area-inset-top,0px) + 52px))}'
+    + '.tg-fs #app{padding-top:var(--tgT,0px)}.tg-fs body::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--tgT,0px);background:#06101f;z-index:99990;pointer-events:none}'
+    + '.tg-fs .sv-wrap{padding-top:var(--tgT,0px);box-sizing:border-box}.tg-fs .modal-overlay,.tg-fs .sheet-back{padding-top:var(--tgT,0px)}';
   document.head.appendChild(st);
   // Telegram's back button follows the app: an open sheet or any screen other than home
   const back = W.BackButton;
